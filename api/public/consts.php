@@ -1,0 +1,4 @@
+<?php
+
+/* CONSTANTS */
+define("DEFAULT_SOMETHING", "DEFAULT");
