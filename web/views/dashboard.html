@@ -1,0 +1,84 @@
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col s3">
+            <div class="card-panel green-gradient-bg" style="min-height:50px">
+                <center>
+                    <div class="card_quick_actions">
+                        <span><i class="material-icons left">library_add</i>Nova Transação</span>
+                    </div>
+                </center>
+            </div>
+        </div>
+        <div class="col s3">
+            <div class="card-panel orange-gradient-bg" style="min-height:50px">
+            <center>
+                <div class="card_quick_actions">
+                    <span><i class="material-icons left">assignment</i>Novo Orçamento</span>
+                </div>
+            </center>
+            </div>
+        </div>
+        <div class="col s3">
+            <div class="card-panel blue-gradient-bg" style="min-height:50px">
+            <center>
+                <div class="card_quick_actions">
+                    <span><i class="material-icons left">library_books</i>Ver Movimentos</span>
+                </div>
+            </center>
+            </div>
+        </div>
+        <div class="col s3">
+            <div class="card-panel red-gradient-bg" style="min-height:50px">
+            <center>
+                <div class="card_quick_actions">
+                    <span><i class="material-icons left">assessment</i>Ver Estatísticas</span>
+                </div>
+            </center>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s4">
+            <div class="card-panel">
+                <span class="blue-text text-darken-2">
+                    <div>
+                        <canvas id="chart-angular-target-goals" width="600" height="400"></canvas>
+                        <center style="margin-top: -10px;"><span style="font-size:150%">1010.20€</span>/2000</center>
+                    </div>
+
+                    <script>
+                        var data = [70, 30];
+                        chartUtils.setupAngularChart('chart-angular-target-goals', data, null);
+                    </script>
+                </span>
+            </div>
+        </div>
+        <div class="col s8">
+            <div class="card-panel">
+                <span class="blue-text text-darken-2">Dashboard</span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s6">
+            <div class="card-panel" style="height:50px"></div>
+        </div>
+        <div class="col s6">
+            <div class="card-panel">
+                <canvas id="chart_pie_spending_distribution" width="600" height="400"></canvas>
+            </div>
+            <script>
+                var dataset = [10, 20, 30];
+
+                var labels = [
+                    'Red',
+                    'Yellow',
+                    'Blue'
+                ];
+
+                chartUtils.setupPieChart("chart_pie_spending_distribution", dataset, labels);
+            </script>
+        </div>
+    </div>
+</div>

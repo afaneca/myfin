@@ -1,0 +1,101 @@
+/* COLORS:
+    -> #262626 - dark grey  - for sidenav background
+    -> #009688 - main green - for logo background
+    -> #f3f3f3 - light grey - for main background
+*/
+
+#page-wrapper {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#side-nav-logo-wrapper {
+    height: 65px;
+    width: 100%;
+}
+
+.top-nav {
+    float: right;
+    width: 88%;
+    background: white;
+    margin-bottom: 20px;
+}
+
+.side-nav {
+    position:fixed;
+    background-color: red;
+    height: 100%;
+    width: 12%;
+    float: left;
+    margin-top: 0px;
+}
+
+.side-nav-menu li {
+    width: 100%;
+}
+
+.side-nav-menu .material-icons {
+    margin-top: 4px;
+}
+
+.inline-icon {
+    vertical-align: bottom;
+    font-size: 18px !important;
+}
+
+#logo-text {
+    padding-left: 10px;
+    font-size: 180%;
+}
+
+#main-content {
+    padding: 10px;
+    float: right;
+    width: 88%;
+}
+
+/* CONSTANTS */
+
+.dark-gray-bg {
+    background: #262626;
+}
+
+.dark-gray-color {
+    color: #262626;
+}
+
+.light-gray-bg {
+    background: #f3f3f3;
+}
+
+.light-gray-color {
+    color: #f3f3f3;
+}
+
+.green-main-bg {
+    background: #009688;
+}
+
+.green-main-color {
+    color: #009688;
+}
+
+.blue-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #0288d1, #26c6da) !important;
+    background: linear-gradient(45deg, #0288d1, #26c6da) !important;
+}
+
+.red-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #ff5252, #f48fb1)!important;
+    background: linear-gradient(45deg, #ff5252, #f48fb1)!important;
+}
+
+.orange-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #ff6f00, #ffca28)!important;
+    background: linear-gradient(45deg, #ff6f00, #ffca28)!important;
+}
+
+.green-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #43a047, #1de9b6)!important;
+    background: linear-gradient(45deg, #43a047, #1de9b6)!important;
+}

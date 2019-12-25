@@ -1,0 +1,96 @@
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>My Fin</title>
+
+    <!-- Compiled and minified CSS -->
+    <!-- <link rel="stylesheet" href="./css/materialize.min.css" /> -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+
+    <!-- <link href="./js/external/Select2/select2.css" rel="stylesheet" />
+    <link href="./css/select2-materialize.css" type="text/css" rel="stylesheet" />
+    <link href="./js/external/jquery-datepicker/jquery-datepicker.css" rel="stylesheet">
+    <link href="./js/external/fullcalendar/fullcalendar.min.css" rel="stylesheet">
+    <link href="./js/external/monthpicker/monthpicker.css" rel="stylesheet"> -->
+    <!-- <link href="./js/external/fullcalendar/materialDesign.css" rel="stylesheet"> -->
+    <!-- <link href="./js/external/fullcalendar/fullcalendar.print.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/dashboard.css" />
+</head>
+
+<body onLoad="checkPreAuth(); checkPreAuthWithInterval();" class="light-gray-bg fill-height" style="overflow: visible;">
+    <header>
+        <nav class="top-nav">
+            <div class="nav-wrapper">
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="#">Log In</a></li>
+                    <li><a href="#">Sign Up</a></li>
+                </ul>
+            </div>
+        </nav>
+        <nav class="side-nav fixed dark-gray-bg">
+            <div id="side-nav-logo-wrapper" class="green-main-bg">
+                <span id="logo-text">MyFin</span>
+            </div>
+            <ul class="side-nav-menu">
+                <li><a onClick="configs.goToPage('dashboard')" href="#!dashboard"><i
+                            class="material-icons left">view_module</i>Dashboard</a></li>
+                <li><a onClick="configs.goToPage('accounts')" href="#!accounts"><i
+                            class="material-icons left">account_balance</i>Contas</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="fill-height" id="main-content"></div>
+    </main>
+    <footer class="page-footer transparent">
+        <!--
+        <div class="fixed-action-btn">
+          <a href="mailto:antoniofaneca@enso-origins.com" class="btn tooltipped btn-floating btn-large red pulse"
+            data-position="left" data-tooltip="Reportar Bug">
+            <i class="large material-icons">bug_report</i>
+          </a>
+        </div>
+      -->
+        <div class="footer-copyright transparent">
+            <div class="container center-align transparent">
+                <span class="black-text">©</span>
+                <span class="black-text" id="current-year">2020</span>
+                <span class="black-text">António Faneca</span>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="./js/external/js.cookie.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="./js/ensoshared_js_lib/ensoshared.js" type="text/javascript"></script>
+    <script src="./js/configs.js" type="text/javascript"></script>
+    <script src="./js/chartUtils.js"></script>
+    <script src="./js/login.js" type="text/javascript"></script>
+
+    <script>
+        configs.loadFirstView("dashboard");
+        /* if (misc.checkIfUserHasAction('canAccessBackoffice'))
+            ensoConf.loadFirstView("dashboard");
+        else
+            ensoConf.loadFirstView("schedules"); */
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.sidenav').sidenav();
+        });
+    </script>
+</body>
+
+</html>

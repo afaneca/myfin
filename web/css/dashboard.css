@@ -1,0 +1,9 @@
+.card_quick_actions {
+    color: white;
+    transition: 0.25s;
+}
+
+.card_quick_actions:hover {
+    color: black;
+    transition: 0.25s;
+}

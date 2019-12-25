@@ -1,0 +1,54 @@
+<html lang="pt">
+
+<head>
+    <link rel="stylesheet" href="./css/login.css">
+    <!-- <script type = "text/javascript" src ="func.js"></script> -->
+    <meta charset="UTF-8">
+    <title>My Fin</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+</head>
+
+<body onload="checkCredentials()">
+    <div id="login-bg"></div>
+    <div id="login-wrap">
+        <div class="login-box enso-border">
+            <center><img class="logo login-logo-img" src="./img/logo.png" onmouseover="this.src='./img/logo2.png';"
+                    onmouseout="this.src='./img/logo.png';" /></center>
+            <form class="login-form">
+                <input autocomplete="off" id="login-input" type="text" placeholder="username"
+                    class="validate enso-border login-input" />
+                <input autocomplete="off" id="pw-input" type="password" placeholder="password"
+                    class="validate enso-border login-input" />
+                <button class="waves-effect waves-light btn login-btn enso-blue-bg enso-border" id="btn-login"
+                    type="submit">login</button>
+            </form>
+            <div style="margin-top: 31px;border-top: 1px solid #eeeeee;">
+                <p class="message">App Móvel Disponível para: </br><a
+                        href="https://life.enso-origins.com/install/files/android/ensolife1_4.apk"><img
+                            class="mobileAppIcon" src="./img/android-logo.png"></a><a
+                        href="itms-services://?action=download-manifest&url=https://life.enso-origins.com/install/files/ios/manifest.plist"><img
+                            class="mobileAppIcon" src="./img/ios-logo.png"></a></p>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+    <script src="./js/configs.js"></script>
+    <script src="./js/ensoshared_js_lib/ensoshared.js"></script>
+    <script src="./js/login.js"></script>
+    
+    <!-- Compiled and minified JavaScript -->
+    <!-- <script src="./js/js.cookie.js" type="text/javascript"></script>
+    <script src="./js/external/jquery-3.3.1.min.js"></script>
+    <script src="./js/external/materialize.min.js"></script>
+    <script src="./js/ensoshared_js_lib/ensoshared.js"></script>
+    <script src="./js/enso_conf.js"></script>
+    <script src="./js/consts.js"></script>
+    <script src="./js/misc.js"></script>
+    <script src="./js/actions/UserActions.js"></script>
+    -->
+</body>
+
+</html>
