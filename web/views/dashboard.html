@@ -69,16 +69,51 @@
                 <canvas id="chart_pie_spending_distribution" width="600" height="400"></canvas>
             </div>
             <script>
-                var dataset = [10, 20, 30];
+                var dataset = [10, 20, 30, 20, 20];
 
                 var labels = [
                     'Red',
                     'Yellow',
-                    'Blue'
+                    'Blue',
+                    'fdsad',
+                    'fdsa',
                 ];
 
-                chartUtils.setupPieChart("chart_pie_spending_distribution", dataset, labels);
+                chartUtils.setupPieChart("chart_pie_spending_distribution", dataset, labels, "Distribuição de despesas");
             </script>
         </div>
+    </div>
+    <div class="row">
+        <div class="col s6">
+            <div class="card-panel">
+                <canvas id="chart_pie_investing_portfolio" width="600" height="400"></canvas>
+            </div>
+            <script>
+                var dataset2 = [73, 27];
+
+                var labels2 = [
+                    'Conta Poupança (CGD)',
+                    'Crypto',
+                ];
+
+                chartUtils.setupPieChart("chart_pie_investing_portfolio", dataset2, labels2, "Portefólio de Investimento");
+            </script>
+        </div>
+        <div class="col s6">
+            <div class="card-panel">
+                <canvas id="chart_pie_debt_distribution" width="600" height="400"></canvas>
+            </div>
+            <script>
+                var dataset3 = [60, 40];
+
+                var labels3 = [
+                    'Crédito Automóvel (Peugeot)',
+                    'Crédito Formação (Tony)',
+                ];
+
+                chartUtils.setupPieChart("chart_pie_debt_distribution", dataset3, labels3, "Distribuição da Dívida");
+            </script>
+        </div>
+        
     </div>
 </div>

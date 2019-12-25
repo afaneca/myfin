@@ -85,14 +85,14 @@ var chartUtils = {
             options: customOptions
         });
     },
-    setupPieChart: (elementID, chartData, chartLabels) => {
+    setupPieChart: (elementID, chartData, chartLabels, chartTitle) => {
         var ctx = document.getElementById(elementID).getContext('2d');
 
         var customOptions = {
             title: {
                 display: true,
-                text: "Overview Mensal",
-                position: "bottom"
+                text: chartTitle,
+                position: "top"
             }
         }
 
@@ -100,9 +100,7 @@ var chartUtils = {
             labels: chartLabels,
             datasets: [{
                 data: chartData,
-                backgroundColor: [
-                    '#000'
-                ],
+                backgroundColor: chartUtils.getPieChartColorsList()
 
             }]
         };
@@ -112,5 +110,29 @@ var chartUtils = {
             data: chartData,
             options: customOptions
         });
+    },
+    getPieChartColorsList: () => {
+        return ArrayUtils.shuffle([
+            '#F44336',
+            '#E91E63',
+            '#9C27B0',
+            '#673AB7',
+            '#3F51B5',
+            '#2196F3',
+            '#03A9F4',
+            '#00BCD4',
+            '#009688',
+            '#4CAF50',
+            '#8BC34A',
+            '#CDDC39',
+            '#FFEB3B',
+            '#FFC107',
+            '#FF9800',
+            '#FF5722',
+            '#795548',
+            '#9E9E9E',
+            '#607D8B',
+            /* '#000000' */
+        ]);
     }
 }
