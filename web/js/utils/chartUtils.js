@@ -1,7 +1,7 @@
 "use strict";
 
 var chartUtils = {
-    setupAngularChart: (elementID, chartData, customText) => {
+    setupAngularChart: (elementID, chartData, customText, customLabels) => {
 
         if (customText) {
             Chart.pluginService.register({
@@ -56,8 +56,10 @@ var chartUtils = {
                     '#009688',
                     '#d5d5d5',
                 ],
-                borderWidth: 1
+                borderWidth: 1,
+                
             }],
+            labels: customLabels,
         };
 
         var customOptions = {
@@ -76,6 +78,9 @@ var chartUtils = {
                 display: true,
                 text: "Overview Mensal",
                 position: "bottom"
+            },
+            legend: {
+                display: false
             }
         }
 

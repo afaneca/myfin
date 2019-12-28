@@ -11,29 +11,29 @@
         </div>
         <div class="col s3">
             <div class="card-panel orange-gradient-bg" style="min-height:50px">
-            <center>
-                <div class="card_quick_actions">
-                    <span><i class="material-icons left">assignment</i>Novo Orçamento</span>
-                </div>
-            </center>
+                <center>
+                    <div class="card_quick_actions">
+                        <span><i class="material-icons left">assignment</i>Novo Orçamento</span>
+                    </div>
+                </center>
             </div>
         </div>
         <div class="col s3">
             <div class="card-panel blue-gradient-bg" style="min-height:50px">
-            <center>
-                <div class="card_quick_actions">
-                    <span><i class="material-icons left">library_books</i>Ver Movimentos</span>
-                </div>
-            </center>
+                <center>
+                    <div class="card_quick_actions">
+                        <span><i class="material-icons left">library_books</i>Ver Movimentos</span>
+                    </div>
+                </center>
             </div>
         </div>
         <div class="col s3">
             <div class="card-panel red-gradient-bg" style="min-height:50px">
-            <center>
-                <div class="card_quick_actions">
-                    <span><i class="material-icons left">assessment</i>Ver Estatísticas</span>
-                </div>
-            </center>
+                <center>
+                    <div class="card_quick_actions">
+                        <span><i class="material-icons left">assessment</i>Ver Estatísticas</span>
+                    </div>
+                </center>
             </div>
         </div>
     </div>
@@ -44,12 +44,16 @@
                 <span class="blue-text text-darken-2">
                     <div>
                         <canvas id="chart-angular-target-goals" width="600" height="400"></canvas>
-                        <center style="margin-top: -10px;"><span style="font-size:150%">1010.20€</span>/2000</center>
+                        <center style="margin-top: -10px;"><span style="font-size:150%">1500€</span>/2000</center>
                     </div>
 
                     <script>
-                        var data = [70, 30];
-                        chartUtils.setupAngularChart('chart-angular-target-goals', data, null);
+                        var data = [1500, 2000 - 1500];
+                        var customLabels = [
+                            'Atual',
+                            'Restante'
+                        ];
+                        chartUtils.setupAngularChart('chart-angular-target-goals', data, null, customLabels);
                     </script>
                 </span>
             </div>
@@ -104,6 +108,18 @@
                 <canvas id="chart_pie_debt_distribution" width="600" height="400"></canvas>
             </div>
             <script>
+                setInterval(() => {
+                    console.log(isShowing)
+                    if (!isShowing) {
+                        isShowing = true
+                        loadingManager.showLoading()
+                    } else {
+                        loadingManager.hideLoading()
+                        isShowing = false;
+                    }
+
+                }, 5000)
+
                 var dataset3 = [60, 40];
 
                 var labels3 = [
@@ -112,8 +128,10 @@
                 ];
 
                 chartUtils.setupPieChart("chart_pie_debt_distribution", dataset3, labels3, "Distribuição da Dívida");
+                var isShowing = false;
+
             </script>
         </div>
-        
+
     </div>
 </div>

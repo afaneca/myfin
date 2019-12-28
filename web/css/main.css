@@ -22,7 +22,7 @@
 }
 
 .side-nav {
-    position:fixed;
+    position: fixed;
     background-color: red;
     height: 100%;
     width: 12%;
@@ -52,6 +52,16 @@
     padding: 10px;
     float: right;
     width: 88%;
+}
+
+.main-progress-bar {
+    /* padding: 10px; */
+    float: right;
+    width: 88%;
+}
+
+.progress .indeterminate {
+    background-color: #009688;
 }
 
 /* CONSTANTS */
