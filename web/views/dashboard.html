@@ -108,18 +108,6 @@
                 <canvas id="chart_pie_debt_distribution" width="600" height="400"></canvas>
             </div>
             <script>
-                setInterval(() => {
-                    console.log(isShowing)
-                    if (!isShowing) {
-                        isShowing = true
-                        loadingManager.showLoading()
-                    } else {
-                        loadingManager.hideLoading()
-                        isShowing = false;
-                    }
-
-                }, 5000)
-
                 var dataset3 = [60, 40];
 
                 var labels3 = [

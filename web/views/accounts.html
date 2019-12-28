@@ -1,34 +1,111 @@
 <div id="page-wrapper">
     <div class="card-panel">
         <span class="blue-text text-darken-2">Contas</span>
+        <div id="table-wrapper">
 
-        <table class="striped highlight">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Item Name</th>
-                    <th>Item Price</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td>Alvin</td>
-                    <td>Eclair</td>
-                    <td>$0.87</td>
-                </tr>
-                <tr>
-                    <td>Alan</td>
-                    <td>Jellybean</td>
-                    <td>$3.76</td>
-                </tr>
-                <tr>
-                    <td>Jonathan</td>
-                    <td>Lollipop</td>
-                    <td>$7.00</td>
-                </tr>
-            </tbody>
-        </table>
+        </div>
+        <!-- <table id="example" class="display browser-defaults" style="width:100%">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Instituição</th>
+                <th>Tipo</th>
+                <th>Saldo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+             <tr>
+                <td>Lael Greer</td>
+                <td>Systems Administrator</td>
+                <td>London</td>
+                <td>21</td>
+                <td>2009/02/27</td>
+            </tr>
+            <tr>
+                <td>Jonas Alexander</td>
+                <td>Developer</td>
+                <td>San Francisco</td>
+                <td>30</td>
+                <td>2010/07/14</td>
+                <td>$86,500</td>
+            </tr>
+            <tr>
+                <td>Shad Decker</td>
+                <td>Regional Director</td>
+                <td>Edinburgh</td>
+                <td>51</td>
+                <td>2008/11/13</td>
+            </tr>
+            <tr>
+                <td>Michael Bruce</td>
+                <td>Javascript Developer</td>
+                <td>Singapore</td>
+                <td>29</td>
+                <td>2011/06/27</td>
+            </tr>
+            <tr>
+                <td>Donna Snider</td>
+                <td>Customer Support</td>
+                <td>New York</td>
+                <td>27</td>
+                <td>2011/01/25</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+            </tr>
+        </tfoot>
+    </table> -->
 
     </div>
 </div>
+
+<script>
+    var accountsArr = [{
+        id: 0,
+        name: "Conta Xana",
+        institution: "BES",
+        type: "Corrente",
+        "balance": 2000,
+    }, {
+        id: 1,
+        name: "Conta Tony",
+        institution: "BES",
+        type: "Corrente",
+        "balance": 2000,
+    }, {
+        id: 2,
+        name: "Conta Tony",
+        institution: "BES",
+        type: "Corrente",
+        "balance": 3564,
+    }, {
+        id: 3,
+        name: "Conta Tony",
+        institution: "BES",
+        type: "Corrente",
+        "balance": 1010.20,
+    }, {
+        id: 4,
+        name: "Conta Tony",
+        institution: "BES",
+        type: "Corrente",
+        "balance": 000,
+    }, {
+        id: 5,
+        name: "Conta Tony",
+        institution: "BES",
+        type: "Corrente",
+        "balance": 12000,
+    },
+    ]
+
+    Accounts.initTable(accountsArr)
+</script>

@@ -23,7 +23,7 @@
 
 .side-nav {
     position: fixed;
-    background-color: red;
+    /* background-color: red; */
     height: 100%;
     width: 12%;
     float: left;
@@ -32,6 +32,15 @@
 
 .side-nav-menu li {
     width: 100%;
+}
+
+.side-nav-menu-active {
+    background: #1a1616;
+    ;
+}
+
+.side-nav-menu-inactive {
+    background: transparent;
 }
 
 .side-nav-menu .material-icons {
@@ -62,6 +71,10 @@
 
 .progress .indeterminate {
     background-color: #009688;
+}
+
+.table-action-icons {
+    cursor: pointer;
 }
 
 /* CONSTANTS */
