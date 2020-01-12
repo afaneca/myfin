@@ -11,13 +11,11 @@ abstract class Entity implements iEntity
         $db = new EnsoDB();
 
         $sql = "SELECT COUNT(*) AS n
-                    FROM \"" . static::$table . "\" ";
-                    
+                    FROM " . static::$table . " ";
 
         $values = array();
-
         $sql .= static::formulateWhere($filters, $values);
-
+        
         $db->prepare($sql);
         $db->execute($values);
 
@@ -29,9 +27,7 @@ abstract class Entity implements iEntity
         $db = new EnsoDB($transactional);
 
         $sql = "INSERT INTO " . static::$table . "(";
-
         $values = array();
-
         foreach ($attributes as $dbName => $value) {
             if (!in_array($dbName, static::$columns))
                 throw new InexistentAttributeProvidedException();
@@ -39,9 +35,7 @@ abstract class Entity implements iEntity
                 $sql .= "$dbName, ";
             }
         }
-
         $sql = substr($sql, 0, -2) . ") VALUES (";
-
         foreach ($attributes as $dbName => $value) {
             if (!in_array($dbName, static::$columns))
                 throw new InexistentAttributeProvidedException();
@@ -50,43 +44,29 @@ abstract class Entity implements iEntity
                 $values[':' . $dbName] = $value;
             }
         }
-
         $sql = substr($sql, 0, -2) . ")";
-
-        if (!empty($returnField)) {
-            if (!in_array($returnField, static::$columns))
-                throw new InexistentAttributeProvidedException();
-
-            $sql .= " RETURNING $returnField";
-        }
 
         $db->prepare($sql);
         $db->execute($values);
 
-        if (!empty($returnField)) {
-            return $db->fetch()[$returnField];
-        }
+        return $db->getDB()->lastInsertId();
     }
 
     public static function editWhere($filters, $newAttributes, bool $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "UPDATE \"" . static::$table . "\" SET ";
-
+        $sql = "UPDATE " . static::$table . " SET ";
         $values = array();
-
         foreach ($newAttributes as $dbName => $value) {
             if (!in_array($dbName, static::$columns))
                 throw new InexistentAttributeProvidedException();
             else {
-                $sql .= "\"$dbName\" = :$dbName, ";
+                $sql .= "$dbName = :$dbName, ";
                 $values[':' . $dbName] = $value;
             }
         }
-
         $sql = substr($sql, 0, -2);
-
         $sql .= static::formulateWhere($filters, $values);
 
         $db->prepare($sql);
@@ -98,10 +78,9 @@ abstract class Entity implements iEntity
         $db = new EnsoDB($transactional);
         $values = array();
 
-        $sql = "DELETE FROM \"" . static::$table . "\" ";
-
+        $sql = "DELETE FROM " . static::$table . " ";
         $sql .= static::formulateWhere($primaryKeys, $values);
-
+       
         $db->prepare($sql);
         $db->execute($values);
     }
@@ -109,10 +88,8 @@ abstract class Entity implements iEntity
     public static function getWhere($filters, $attributes = null, $range = null)
     {
         $db = new EnsoDB();
-        $values = array();   
-
+        $values = array();
         $sql = "SELECT ";
-
         if ($attributes === null)
             $sql .= "* ";
         else {
@@ -123,27 +100,20 @@ abstract class Entity implements iEntity
                     $sql .= $dbName . ", ";
                 }
             }
-            
             $sql = substr($sql, 0, -2);
         }
-  
         if (static::$view === null)
-            $sql .= " FROM \"" . static::$table . "\" ";
+            $sql .= " FROM " . static::$table . " ";
         else
-            $sql .= " FROM \"" . static::$view . "\" ";
-
-        $sql .= self::formulateWhere($filters, $values);
-
+            $sql .= " FROM " . static::$view . " ";
+        $sql .= static::formulateWhere($filters, $values);
         if (!empty($range)) {
             $sql .= " LIMIT " . $range[0] . ", " . $range[1];
         }
 
         $db->prepare($sql);
-
         $db->execute($values);
-
         return $db->fetchAll();
-        
     }
 
 
@@ -151,7 +121,7 @@ abstract class Entity implements iEntity
     public static function getWhereFromTable($filters, $attributes = null, $range = null)
     {
         $db = new EnsoDB();
-        $values = array();   
+        $values = array();
 
         $sql = "SELECT ";
 
@@ -165,11 +135,11 @@ abstract class Entity implements iEntity
                     $sql .= $dbName . ", ";
                 }
             }
-            
+
             $sql = substr($sql, 0, -2);
         }
 
-            $sql .= " FROM \"" . static::$table . "\" ";
+        $sql .= " FROM \"" . static::$table . "\" ";
 
         $sql .= self::formulateWhere($filters, $values);
 
@@ -182,7 +152,6 @@ abstract class Entity implements iEntity
         $db->execute($values);
 
         return $db->fetchAll();
-        
     }
 
     public static function getAll($attributes = null, $range = null)
@@ -193,17 +162,13 @@ abstract class Entity implements iEntity
     private static function formulateWhere($filters, &$values)
     {
         $sql = "";
-
         if (!empty($filters)) {
             $sql .= " WHERE ";
-            
             foreach ($filters as $dbName => $value) {
                 if (!in_array($dbName, static::$columns)) {
                     throw new InexistentAttributeProvidedException();
                 } else {
-
                     $operator = '';
-
                     if (is_array($value)) {
                         if (count($value) > 1) {
                             $operator = $value[0];
@@ -221,48 +186,47 @@ abstract class Entity implements iEntity
                         else
                             $operator = "=";
                     }
-
-                    $sql .= " \"$dbName\" $operator :WHERE$dbName AND ";
+                    $sql .= " $dbName $operator :WHERE$dbName AND ";
                     $values[':WHERE' . $dbName] = $value;
                 }
             }
-
             $sql = substr($sql, 0, -4);
         }
-
         return $sql;
     }
 
-    public static function getCounter(){
-		$sql = "SELECT count(*) " .
-			"FROM \"" . static::$table . "\"";
-		
-		try {
-			$db = new EnsoDB();
-			$db->prepare($sql);
-			$db->execute();
+    public static function getCounter()
+    {
+        $sql = "SELECT count(*) " .
+            "FROM \"" . static::$table . "\"";
 
-			return $db->fetchAll(PDO::FETCH_COLUMN);
-		} catch (PDOException $e) {
-			return false;
-		}
+        try {
+            $db = new EnsoDB();
+            $db->prepare($sql);
+            $db->execute();
+
+            return $db->fetchAll(PDO::FETCH_COLUMN);
+        } catch (PDOException $e) {
+            return false;
+        }
     }
-    
-    public static function clearUsersinRole($table, $roleId){
-        $sql = 'DELETE FROM ' . $table . 
-        ' WHERE ' . $table . '.id_role = :idRole ';
+
+    public static function clearUsersinRole($table, $roleId)
+    {
+        $sql = 'DELETE FROM ' . $table .
+            ' WHERE ' . $table . '.id_role = :idRole ';
 
         $values = array();
         $values[':idRole'] = $roleId;
 
         try {
-			$db = new EnsoDB();
-			$db->prepare($sql);
-			$db->execute($values);
+            $db = new EnsoDB();
+            $db->prepare($sql);
+            $db->execute($values);
 
-			return true;
-		} catch (PDOException $e) {
-			return false;
-		}
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 }

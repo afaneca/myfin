@@ -1,6 +1,8 @@
 <div id="page-wrapper">
     <div class="card-panel">
-        <span class="blue-text text-darken-2">Contas</span>
+        <span class="blue-text text-darken-2">Contas</span><br>
+        <a class="waves-effect waves-light btn" style="margin: 10px;" onClick="Accounts.addNewAccount()"><i
+                class="material-icons left">add_circle</i>Adicionar Conta</a>
         <div id="table-wrapper">
 
         </div>
@@ -67,45 +69,64 @@
     </div>
 </div>
 
-<script>
-    var accountsArr = [{
-        id: 0,
-        name: "Conta Xana",
-        institution: "BES",
-        type: "Corrente",
-        "balance": 2000,
-    }, {
-        id: 1,
-        name: "Conta Tony",
-        institution: "BES",
-        type: "Corrente",
-        "balance": 2000,
-    }, {
-        id: 2,
-        name: "Conta Tony",
-        institution: "BES",
-        type: "Corrente",
-        "balance": 3564,
-    }, {
-        id: 3,
-        name: "Conta Tony",
-        institution: "BES",
-        type: "Corrente",
-        "balance": 1010.20,
-    }, {
-        id: 4,
-        name: "Conta Tony",
-        institution: "BES",
-        type: "Corrente",
-        "balance": 000,
-    }, {
-        id: 5,
-        name: "Conta Tony",
-        institution: "BES",
-        type: "Corrente",
-        "balance": 12000,
-    },
-    ]
+<!-- MODAL -->
+<!-- Modal Structure -->
+<div id="modal-accounts" class="modal">
+    <div class="modal-content"></div>
+    <div class="modal-footer"></div>
+</div>
 
-    Accounts.initTable(accountsArr)
+
+<script>
+    $(document).ready(function () {
+        $('.modal').modal();
+        
+        var accountsArr = [{
+            id: 0,
+            status: "Ativo",
+            name: "Conta Xana",
+            institution: "BES",
+            type: "Corrente",
+            "balance": 2000,
+        }, {
+            id: 1,
+            status: "Ativo",
+            name: "Conta Tony",
+            institution: "BES",
+            type: "Corrente",
+            "balance": 2000,
+        }, {
+            id: 2,
+            status: "Suspenso",
+            name: "Conta Tony",
+            institution: "BES",
+            type: "Corrente",
+            "balance": 3564,
+        }, {
+            id: 3,
+            status: "Ativo",
+            name: "Conta Tony",
+            institution: "BES",
+            type: "Corrente",
+            "balance": 1010.20,
+        }, {
+            id: 4,
+            status: "Inativo",
+            name: "Conta Tony",
+            institution: "BES",
+            type: "Corrente",
+            "balance": 000,
+        }, {
+            id: 5,
+            status: "Ativo",
+            name: "Conta Tony",
+            institution: "BES",
+            type: "Corrente",
+            "balance": 12000,
+        },
+        ]
+
+        Accounts.initTable(accountsArr)
+        
+    });   
 </script>

@@ -1,0 +1,140 @@
+.monthpicker {
+    display: inline-block;
+    position: relative;
+    font-family: "Century Gothic";
+    font-size: .9em;
+    vertical-align: middle;
+    border: 1px solid #26a69a;
+    width: 0px !important;
+}
+
+.monthpicker_selector *::selection {
+    background: transparent;
+}
+
+.monthpicker_input {
+    display: inline-block;
+    padding: 1px 5px !important;
+    border: 2px solid transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #000;
+}
+
+.monthpicker_input .placeholder {
+    color: #888;
+}
+
+.monthpicker_input.active {
+    background-color: #D4D4D4;
+    color: #000;
+}
+
+.monthpicker_selector {
+    position: absolute;
+    top: 100%;
+    background-color: #2C2C2C;
+    min-width: 173px;
+    box-shadow: 1px 2.5px 5px 0;
+    z-index: 100;
+}
+
+.monthpicker_selector>table {
+    color: #FFF;
+    width: 100%;
+    text-align: center;
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-family: "Century Gothic";
+    font-size: .9em;
+}
+
+.monthpicker_selector>table tr:first-child td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.monthpicker_selector>table tr:first-child>td:nth-child(1) {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: left;
+}
+
+.monthpicker_selector>table tr:first-child>td:nth-child(2) {
+    position: relative;
+}
+
+.monthpicker_selector>table tr:first-child>td:nth-child(3) {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: right;
+}
+
+.yearSwitch {
+    padding: 0 10px;
+    border-radius: 3px;
+    background: #D4D4D4;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.yearSwitch.off {
+    visibility: hidden;
+}
+
+.yearValue {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: none;
+    border: none;
+    color: #FFF;
+    outline: none;
+    font-family: "Century Gothic";
+    font-size: 1.1em;
+}
+
+/* months */
+
+.monthpicker_selector .month {
+    border: 1px solid #444;
+    cursor: pointer;
+}
+
+.monthpicker_selector .month:hover {
+    background-color: #444
+}
+
+.month.selected {
+    background: #D4D4D4;
+    color: #2C2C2C;
+    font-weight: bold;
+}
+
+.monthpicker_selector .month.off {
+    color: #666;
+    cursor: not-allowed;
+}
+
+.monthpicker_selector .month.off:hover {
+    background: none;
+}
+
+.monthpicker_selector>table tr td:first-child {
+    border-left: none;
+}
+
+.monthpicker_selector>table tr td:last-child {
+    border-right: none;
+}
+
+.monthpicker_selector>table tr:last-child td {
+    border-bottom: none;
+}

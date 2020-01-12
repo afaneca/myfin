@@ -1,6 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
-
-html{
+html {
     height: 100%;
 }
 
@@ -8,14 +7,27 @@ body {
     margin: 0px !important;
 }
 
+.input_hidden {
+    visibility: hidden !important;
+    opacity: 0;
+    transition: visibility 0s linear 10s, opacity 0.33s linear;
+}
 
+.input_shown {
+    visibility: visible !important;
+    opacity: 1;
+    transition-delay: 0s;
+}
 
+td {
+    border: 1px #DDD solid;
+    padding: 5px;
+    cursor: pointer;
+}
 
-td {border: 1px #DDD solid; padding: 5px; cursor: pointer;}
-
-#login-bg{
+#login-bg {
     background-image: url('../img/login_bg.jpg');
-    background-size: cover;   
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     position: absolute;
@@ -26,22 +38,22 @@ td {border: 1px #DDD solid; padding: 5px; cursor: pointer;}
     -webkit-filter: blur(3px);
 }
 
-#toast-container{
-    color:white !important;
+#toast-container {
+    color: white !important;
 }
 
-#login-wrap{
+#login-wrap {
     width: 360px;
     padding: 8% 0 0;
     margin: auto;
 }
 
-.login-form{
+.login-form {
     /* position: absolute;
     margin: 0 auto; */
 }
 
-.login-box{
+.login-box {
     position: relative;
     z-index: 1;
     background: #FFFFFF;
@@ -53,18 +65,18 @@ td {border: 1px #DDD solid; padding: 5px; cursor: pointer;}
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
 
-.login-logo-img{
+.login-logo-img {
     width: 155px;
     margin-top: -20px;
     margin-bottom: 35px;
 }
 
-.login-btn{
+.login-btn {
     /* width:175px; */
     margin-top: 30px;
 }
 
-.login-input{
+.login-input {
     /* opacity: 0.03 !important; */
     color: black !important;
     padding-left: 10px !important;
@@ -77,63 +89,75 @@ td {border: 1px #DDD solid; padding: 5px; cursor: pointer;}
     color: #FFF;
 }
 
-
 /* The Modal (background) */
+
 .modal {
-    display: none; /* Hidden by default */
-    /* position: fixed; */ /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none;
+    /* Hidden by default */
+    /* position: fixed; */
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    -webkit-animation-name: fadeIn; /* Fade in the background */
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+    -webkit-animation-name: fadeIn;
+    /* Fade in the background */
     -webkit-animation-duration: 0.4s;
     animation-name: fadeIn;
     animation-duration: 0.4s
 }
 
+::-webkit-input-placeholder {
+    /* WebKit browsers */
+    color: red;
+    opacity: 1 !important;
+}
 
-::-webkit-input-placeholder { /* WebKit browsers */
-    color:    red;
-     opacity: 1 !important;
-} 
 /* ENSO DEFAULTS */
-.enso-input{
+
+.enso-input {
     padding-left: 15px !important;
-    /* -webkit-box-shadow: 0 0 0px 1000px black inset !important; */  /* FOR CHROME: removes the default yellow box */
+    /* -webkit-box-shadow: 0 0 0px 1000px black inset !important; */
+    /* FOR CHROME: removes the default yellow box */
     border: 0px !important;
 }
 
-.enso-border{
+.enso-border {
     border-radius: 10px !important;
 }
 
-.enso-blue-bg{
+.enso-blue-bg {
     background-color: rgb(0, 63, 87) !important;
-
 }
 
-.enso-salmon-bg{
+.enso-salmon-bg {
     background-color: rgb(241, 126, 126) !important;
 }
 
-.enso-gray-bg{
+.enso-gray-bg {
     background-color: rgb(242, 242, 242) !important;
 }
 
-.mobileAppIcon{
+.mobileAppIcon {
     width: 48px;
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
 }
 
-.mobileAppIcon:hover{
+.mobileAppIcon:hover {
     -webkit-filter: grayscale(0%);
     filter: grayscale(0%);
-    -webkit-transition: 0.5s ease; /* Safari */
+    -webkit-transition: 0.5s ease;
+    /* Safari */
     transition: 0.5s ease;
 }

@@ -12,6 +12,7 @@
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="./js/external/monthpicker/monthpicker.css">
 
     <!-- <link href="./js/external/Select2/select2.css" rel="stylesheet" />
     <link href="./css/select2-materialize.css" type="text/css" rel="stylesheet" />
@@ -22,6 +23,7 @@
     <!-- <link href="./js/external/fullcalendar/fullcalendar.print.min.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="./css/main.css" />
     <link rel="stylesheet" href="./css/dashboard.css" />
+    <link rel="stylesheet" href="./css/budgets.css" />
 </head>
 
 <body onLoad="checkPreAuth(); checkPreAuthWithInterval();" class="light-gray-bg fill-height" style="overflow: visible;">
@@ -39,12 +41,35 @@
                 <span id="logo-text">MyFin</span>
             </div>
             <ul class="side-nav-menu">
-                <li><a id="menu-item-dashboard" onClick="configs.goToPage('dashboard');MenuUtils.changeActiveMenu('dashboard')" class="menu-item" href="#!dashboard"><i
-                            class="material-icons left">view_module</i>Dashboard</a></li>
-                <li><a id="menu-item-accounts" class="menu-item" onClick="configs.goToPage('accounts');MenuUtils.changeActiveMenu('accounts')" href="#!accounts"><i
-                            class="material-icons left">account_balance</i>Contas</a></li>
+                <li><a id="menu-item-dashboard"
+                        onClick="configs.goToPage('dashboard');MenuUtils.changeActiveMenu('dashboard')"
+                        class="menu-item" href="#!dashboard"><i class="material-icons left">view_module</i>Dashboard</a>
+                </li>
+                <li><a id="menu-item-accounts" class="menu-item"
+                        onClick="configs.goToPage('accounts');MenuUtils.changeActiveMenu('accounts')"
+                        href="#!accounts"><i class="material-icons left">account_balance</i>Contas</a></li>
+                <li><a id="menu-item-budgets" class="menu-item dropdown-trigger" data-target="dropdown-budgets"
+                        href="#!"><i class="material-icons left">folder_shared</i>Orçamentos<i
+                            class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a id="menu-item-accounts" class="menu-item medium-gray-color" onClick="" href=""><i
+                            class="material-icons left">equalizer</i>Investimentos</a></li>
             </ul>
         </nav>
+
+        <ul id="dropdown-budgets" class="dropdown-content">
+            <li><a id="menu-item-budgets" class="menu-item"
+                    onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
+                        class="material-icons left">folder_shared</i>Ver Orçamentos</a></li>
+            <li class="divider"></li>
+            <li><a id="menu-item-budgets" class="menu-item"
+                    onClick="configs.goToPage('categories');MenuUtils.changeActiveMenu('budgets')"
+                    href="#!categories"><i class="material-icons left">folder_shared</i>Categorias</a></li>
+
+            <li><a id="menu-item-budgets" class="menu-item"
+                    onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
+                        class="material-icons left">folder_shared</i>Estatísticas</a></li>
+        </ul>
+
     </header>
     <main>
         <div id="main-loading-wrapper" style="display: none;" class="progress main-progress-bar">
@@ -78,10 +103,13 @@
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="./js/external/monthpicker/monthpicker.js"></script>
 
     <script src="./js/ensoshared_js_lib/ensoshared.js" type="text/javascript"></script>
+    <script src="./js/consts.js"></script>
     <script src="./js/configs.js" type="text/javascript"></script>
     <script src="./js/utils/menuUtils.js"></script>
+    <script src="./js/utils/pickerUtils.js"></script>
     <script src="./js/utils/tableUtils.js"></script>
     <script src="./js/utils/arrayUtils.js"></script>
     <script src="./js/utils/chartUtils.js"></script>
@@ -89,6 +117,8 @@
     <script src="./js/utils/loadingManager.js"></script>
     <script src="./js/login.js" type="text/javascript"></script>
     <script src="./js/accounts.js" type="text/javascript"></script>
+    <script src="./js/categories.js"></script>
+    <script src="./js/budgets.js"></script>
 
     <script>
         configs.loadFirstView("dashboard");
@@ -100,6 +130,7 @@
     <script>
         $(document).ready(function () {
             $('.sidenav').sidenav();
+            $(".dropdown-trigger").dropdown();
         });
     </script>
 </body>

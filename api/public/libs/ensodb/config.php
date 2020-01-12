@@ -2,10 +2,10 @@
 
 /* Database Settings */
 
-$databaseConfig["database_type"] = "pgsql";
+$databaseConfig["database_type"] = "mysql";
 $databaseConfig["server"] = "localhost";
-$databaseConfig["username"] = "postgres";
-$databaseConfig["password"] = "postgres";
+$databaseConfig["username"] = "admin";
+$databaseConfig["password"] = "kozoklaiu";
 $databaseConfig["charset"] = "utf8";
 $databaseConfig["port"] = "5432";
-$databaseConfig["database_name"] = "ensolife";
+$databaseConfig["database_name"] = "myfin";

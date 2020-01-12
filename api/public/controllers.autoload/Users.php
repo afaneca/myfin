@@ -23,12 +23,14 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
+
 require_once 'consts.php';
 
 
 
 class Users
 {
+    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     /* 
     $app->group('/users/{id:[0-9]+}', function (RouteCollectorProxy $group) {
@@ -46,19 +48,62 @@ class Users
     public static function getUserInfo(Request $request, Response $response, $args)
     {
         //$request = $request->getParsedBody();
-        $userID = $args['userID'];
-        $name = $request->getQueryParams()['name'];
-        $age = $request->getParsedBody()['idade'];
-        
+        $userID = $args['userID']; // xxxx/{userID}
+        $name = $request->getQueryParams()['name']; // xxxx/yy?name={name}
+        $age = $request->getParsedBody()['idade']; // body
+
 
 
         return sendResponse($response, EnsoShared::$REST_OK, "$age , $name , $userID");
     }
+
+    public static function addUser($request, $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getParsedBody()['sessionkey'], Input::$STRING, 0);
+            $authusername = Input::validate($request->getParsedBody()['authusername'], Input::$STRING, 1);
+            $username = Input::validate($request->getParsedBody()["username"], Input::$STRICT_STRING, 2);
+            $email = Input::validate($request->getParsedBody()["email"], Input::$EMAIL, 3);
+            $password = Input::validate($request->getParsedBody()["password"], Input::$STRICT_STRING, 4);
+
+            //$idAuthUser = UserModel::getUserIdByName($authusername);
+
+            /* 1. autenticação - validação do token */
+            try {
+                $mobile = (int) Input::validate($request->getParsedBody('mobile'), Input::$BOOLEAN, 6);
+            } catch (Exception $e) {
+                $mobile = false;
+            }
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+           
+            /* 4. executar operações */
+            UserModel::insert(
+                [
+                    'username' => $username,
+                    'email' => $email,
+                    'password' => EnsoShared::hash($password)
+                ]
+            );
+
+
+            EnsoLogsModel::addEnsoLog($authusername, "Added user '$username'.", EnsoLogsModel::$INFORMATIONAL, 'Users');
+
+            /* 5. response */
+            return sendResponse($response, EnsoShared::$REST_OK, "User added with success.");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (PermissionDeniedException $e) {
+            EnsoLogsModel::addEnsoLog($authusername, "Tried add an User, operation failed due to lack of permissions.", EnsoLogsModel::$NOTICE, "Users");
+            return sendResponse($response, EnsoShared::$REST_FORBIDDEN, "");
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, "");
+        } catch (Exception $e) {
+            EnsoLogsModel::addEnsoLog($authusername, "Tried to add an User, operation failed.", EnsoLogsModel::$ERROR, "Users");
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
-$app->group('users/{id:[0-9]+}', "");
-
-/* $app->get('/users/{userID}', 'Users::getUserInfo');
-$app->put('/users/', 'Users::editUser');
+$app->get('/users/{userID}', 'Users::getUserInfo');
 $app->post('/users/', 'Users::addUser');
-$app->delete('/users/', 'Users::removeUser'); */

@@ -2,7 +2,12 @@
     -> #262626 - dark grey  - for sidenav background
     -> #009688 - main green - for logo background
     -> #f3f3f3 - light grey - for main background
+    -> #938f8f
 */
+
+.modal .modal-footer .btn-flat {
+    color: black !important;
+}
 
 #page-wrapper {
     margin-left: 20px;
@@ -16,7 +21,7 @@
 
 .top-nav {
     float: right;
-    width: 88%;
+    width: 85%;
     background: white;
     margin-bottom: 20px;
 }
@@ -25,7 +30,7 @@
     position: fixed;
     /* background-color: red; */
     height: 100%;
-    width: 12%;
+    width: 15%;
     float: left;
     margin-top: 0px;
 }
@@ -36,7 +41,6 @@
 
 .side-nav-menu-active {
     background: #1a1616;
-    ;
 }
 
 .side-nav-menu-inactive {
@@ -60,13 +64,13 @@
 #main-content {
     padding: 10px;
     float: right;
-    width: 88%;
+    width: 85%;
 }
 
 .main-progress-bar {
     /* padding: 10px; */
     float: right;
-    width: 88%;
+    width: 85%;
 }
 
 .progress .indeterminate {
@@ -93,6 +97,14 @@
 
 .light-gray-color {
     color: #f3f3f3;
+}
+
+.medium-gray-bg {
+    background: #938f8f;
+}
+
+.medium-gray-color {
+    color: #938f8f;
 }
 
 .green-main-bg {
