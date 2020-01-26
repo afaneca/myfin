@@ -60,8 +60,16 @@ class Users
     public static function addUser($request, $response, $args)
     {
         try {
-            $key = Input::validate($request->getParsedBody()['sessionkey'], Input::$STRING, 0);
-            $authusername = Input::validate($request->getParsedBody()['authusername'], Input::$STRING, 1);
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+            } else {
+                $mobile = false;
+            }
+
+
             $username = Input::validate($request->getParsedBody()["username"], Input::$STRICT_STRING, 2);
             $email = Input::validate($request->getParsedBody()["email"], Input::$EMAIL, 3);
             $password = Input::validate($request->getParsedBody()["password"], Input::$STRICT_STRING, 4);
@@ -69,11 +77,6 @@ class Users
             //$idAuthUser = UserModel::getUserIdByName($authusername);
 
             /* 1. autenticação - validação do token */
-            try {
-                $mobile = (int) Input::validate($request->getParsedBody('mobile'), Input::$BOOLEAN, 6);
-            } catch (Exception $e) {
-                $mobile = false;
-            }
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
            

@@ -1,6 +1,18 @@
 "use strict";
 
 var Categories = {
+    getCategories: (type = undefined) => {
+        CategoryServices.getAllCategories(type,
+            (response) => {
+                // SUCCESS
+                debugger;
+            },
+            (response) => {
+                // FAILURE
+                debugger;
+
+            })
+    },
     initTables: (debitCatsList, creditCatsList) => {
         $("#table-debit-wrapper").html(Categories.renderDebitCategoriesTable(debitCatsList))
         $("#table-crebit-wrapper").html(Categories.renderCreditCategoriesTable(creditCatsList))

@@ -64,7 +64,6 @@ function showSignIn() {
 
 
 function checkCredentials() {
-
     if (browserHasGoodCookies()) {
         validateSession();
 
@@ -81,9 +80,11 @@ function validateSession(renewValidity = undefined) {
         type: "POST",
         dataType: "json",
         cache: false,
-        data: {
+        headers: {
             authusername: Cookies.get("username"),
             sessionkey: Cookies.get("sessionkey"),
+        },
+        data: {
             renewValidity: renewValidity
         },
         url: pageUrl,
@@ -94,7 +95,8 @@ function validateSession(renewValidity = undefined) {
                 configs.switchApp("myfin");
         },
         error: function (response) {
-            configs.switchApp("login");
+            if (window.location.pathname.split("/").pop() != "login.html") // If we are not already on the login page
+                configs.switchApp("login");
         }
     });
 
@@ -132,12 +134,14 @@ function addUser(username, email, password) {
         type: "POST",
         dataType: "json",
         cache: false,
+        headers: {
+            authusername: Cookies.get("username"),
+            sessionkey: Cookies.get("sessionkey"),
+        },
         data: {
             username,
             email,
             password,
-            authusername: "admin",
-            sessionkey: "121321"
         },
         url: pageUrl,
         success: (response) => {

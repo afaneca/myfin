@@ -10,10 +10,23 @@ use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 return function (App $app) {
-    /* $app->options('/{routes:.+}', function (Request $request, Response $response) {
-        // CORS Pre-Flight OPTIONS Request Handler
+
+    /* $app->add(function (Request $request, Response $response, $next) {
+        if ($request->getMethod() !== 'OPTIONS' || php_sapi_name() === 'cli') {
+            return $next($request, $response);
+        }
+
+        $response = $next($request, $response);
+
+        $response = $response->withHeader('Access-Control-Allow-Origin', '*');
+        $response = $response->withHeader('Access-Control-Allow-Methods', '*');
+        $response = $response->withHeader('Access-Control-Allow-Headers', '*');
         return $response;
     }); */
+    $app->options('/{routes:.+}', function (Request $request, Response $response) {
+        // CORS Pre-Flight OPTIONS Request Handler
+        return $response;
+    });
 
     $app->get('/hello/', function (Request $request, Response $response, array $args) {
         $name = $args['name'];

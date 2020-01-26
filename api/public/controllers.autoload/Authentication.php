@@ -18,24 +18,22 @@ class Authentication
             $username = Input::validate($request->getParsedBody()["username"], Input::$STRING);
             $password = Input::validate($request->getParsedBody()["password"], Input::$STRING);
 
-            /* 1. autenticação - validação do token */
-            if (array_key_exists('mobile', $request->getParsedBody())) {
-                $mobile = (int) Input::validate($request->getParsedBody()['mobile'], Input::$BOOLEAN);
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
 
-            /* 4. executar operações */
             AuthenticationModel::performCredentialCheck($username, $password);
-            
+
             //Generate Session Key
             $auth_key = AuthenticationModel::generateNewsessionkeyForUser($username, $mobile);
 
-            
+
             $db = new EnsoDB(true);
             $db->getDB()->beginTransaction();
             // Check if user already has default role   
-                  
+
             $trustlimit = UserModel::getWhere(["username" => $username], ["trustlimit"])[0]["trustlimit"];
 
             $db->getDB()->commit();
@@ -62,30 +60,31 @@ class Authentication
     public static function checkValidity($request, $response, $args)
     {
         try {
-            $key = Input::validate($request->getParsedBody()['sessionkey'], Input::$STRING);
-            $authusername = Input::validate($request->getParsedBody()['authusername'], Input::$STRING);
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
-
-            if(array_key_exists('renewValidity', $request->getParsedBody())){
-                $renewValidity = (int) Input::validate($request->getParsedBody()['renewValidity'], Input::$BOOLEAN);
-            }else{
-                $renewValidity = true;
-            }
-            
-            if (array_key_exists('mobile', $request->getParsedBody())) {
-                $mobile = (int) Input::validate($request->getParsedBody()['mobile'], Input::$BOOLEAN);
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
-            
+
+
+            if ($request->getParsedBody() != null && array_key_exists('renewValidity', $request->getParsedBody())) {
+                $renewValidity = (int) Input::validate($request->getParsedBody()['renewValidity'], Input::$BOOLEAN);
+            } else {
+                $renewValidity = true;
+            }
+
+
 
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, $renewValidity, $mobile);
-         
+
             $trustlimit = UserModel::getWhere(["username" => $authusername], ["trustlimit"])[0]["trustlimit"];
 
             return sendResponse($response, EnsoShared::$REST_OK,  ["sessionkey" => $key, "username" => $authusername, "trustlimit" => $trustlimit]);
         } catch (Exception $e) {
-            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, "3");
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, "3");
         }
     }
 }
