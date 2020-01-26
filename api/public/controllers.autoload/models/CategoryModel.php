@@ -7,6 +7,7 @@ class CategoryModel extends Entity
         "category_id",
         "name",
         "type",
+        "description",
         "users_user_id"
     ];
 }

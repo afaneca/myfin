@@ -1,7 +1,7 @@
 <div id="page-wrapper">
     <div class="card-panel">
         <span class="blue-text text-darken-2">Categorias</span><br>
-        <a class="waves-effect waves-light btn right-align" onclick="Categories.addCategory()" style="margin: 10px;"><i class="material-icons left">add_circle</i>Adicionar Categoria</a>
+        <a class="waves-effect waves-light btn right-align" onclick="Categories.showAddCategoryModal()" style="margin: 10px;"><i class="material-icons left">add_circle</i>Adicionar Categoria</a>
         <div class="row">
             <div class="col s6">
                 <h4 class="green-main-color">Débito</h4>
@@ -26,50 +26,7 @@
 
 <script>
     $('.modal').modal();
-    debugger;
     Categories.getCategories()
-    /* var debitCatsArr = [{
-        id: 0,
-        name: "Compras",
-        description: "Uma descrição..."
-    }, {
-        id: 1,
-        name: "Compras",
-        description: "Uma descrição..."
-    },
-    {
-        id: 2,
-        name: "Utilitários",
-        description: "Uma descrição..."
-    },
-    {
-        id: 3,
-        name: "Merdas da Xana",
-        description: "Uma descrição..."
-    },
-    {
-        id: 4,
-        name: "Merdas do Tony",
-        description: "Uma descrição..."
-    },
-    ]
 
-    var creditCatsArr = [{
-        id: 0,
-        name: "Salário Tony",
-        description: "Uma descrição..."
-    }, {
-        id: 1,
-        name: "Salário Xana",
-        description: "Uma descrição..."
-    },
-    {
-        id: 2,
-        name: "Freelancing Tony",
-        description: "Uma descrição..."
-    },
-    ]
-
-    Categories.initTables(debitCatsArr, creditCatsArr) */
 
 </script>

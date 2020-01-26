@@ -6,8 +6,8 @@ var configs = {
 	beforeViewCallBacks: [],
 
 	navigateToPage: function () {
-        if (configs.getCurrentPage() != "") {
-            pageUrl = configs.viewsPath + configs.getCurrentPage() + ".html";
+		if (configs.getCurrentPage() != "") {
+			pageUrl = configs.viewsPath + configs.getCurrentPage() + ".html";
 
 			$.ajax({
 				type: "GET",
@@ -15,16 +15,16 @@ var configs = {
 				cache: false,
 				url: pageUrl,
 				success: function (response) {
-                    $.each(configs.beforeViewCallBacks, function (index, callBack) {
+					$.each(configs.beforeViewCallBacks, function (index, callBack) {
 						callBack();
 					});
 					$("#main-content").empty().append(response);
-                    $.each(configs.afterViewCallBacks, function (index, callBack) {
+					$.each(configs.afterViewCallBacks, function (index, callBack) {
 						callBack();
 					});
 				},
 				error: function (response) {
-                    configs.switchApp(configs.defaultApp);
+					configs.switchApp(configs.defaultApp);
 				}
 			});
 		}
@@ -33,7 +33,7 @@ var configs = {
 	goToPage: function (nextPage, args = {}, forceReload = true) {
 		newHash = "#!" + nextPage;
 
-		if (Object.keys(args).length > 0) {
+		if (args && Object.keys(args).length > 0) {
 			newHash += '?';
 			$.each(args, function (key, val) {
 				newHash += key + '=' + val + '&';
@@ -87,9 +87,9 @@ var configs = {
 	loadFirstView: function (pageToLoad) {
 		$(document).ready(function () {
 			if (window.location.hash == "")
-                configs.goToPage(pageToLoad);
+				configs.goToPage(pageToLoad);
 			else
-                configs.navigateToPage();
+				configs.navigateToPage();
 		});
 	},
 
@@ -123,7 +123,7 @@ var configs = {
 
 	ensoLoadScripts: function (scripts, callback) {
 		if (scripts.length > 0)
-            configs.ensoLoadScriptsRecursive(scripts, 0, callback);
+			configs.ensoLoadScriptsRecursive(scripts, 0, callback);
 	},
 
 	ensoLoadScriptsRecursive: function (scripts, index, callback) {
@@ -133,7 +133,7 @@ var configs = {
 			$.getScript(path, function () {
 				index++;
 				if (index < scripts.length)
-                    configs.ensoLoadScriptsRecursive(scripts, index, callback);
+					configs.ensoLoadScriptsRecursive(scripts, index, callback);
 				else
 					if (callback != null)
 						callback();
@@ -146,30 +146,30 @@ var configs = {
 	},
 
 	addAfterViewCallback: function (arg) {
-        configs.afterViewCallBacks.push(arg);
+		configs.afterViewCallBacks.push(arg);
 	},
 
 	removeAfterViewCallback: function (arg) {
-        index = configs.afterViewCallBacks.indexOf(arg);
+		index = configs.afterViewCallBacks.indexOf(arg);
 
 		if (index > -1)
-            configs.afterViewCallBacks.splice(index, 1);
+			configs.afterViewCallBacks.splice(index, 1);
 	},
 
 	addBeforeViewCallback: function (arg) {
-        configs.beforeViewCallBacks.push(arg);
+		configs.beforeViewCallBacks.push(arg);
 	},
 
 	removeBeforeViewCallback: function (arg) {
-        index = configs.beforeViewCallBacks.indexOf(arg);
+		index = configs.beforeViewCallBacks.indexOf(arg);
 
 		if (index > -1)
-            configs.beforeViewCallBacks.splice(index, 1);
+			configs.beforeViewCallBacks.splice(index, 1);
 	},
 
 	init: function () {
 		$(window).on("hashchange", function () {
-            configs.navigateToPage();
+			configs.navigateToPage();
 		});
 	}
 };

@@ -5,7 +5,12 @@ var Categories = {
         CategoryServices.getAllCategories(type,
             (response) => {
                 // SUCCESS
-                debugger;
+                let debitList = []
+                let creditList = []
+
+                debitList = response.filter(item => item.type === 'D')
+                creditList = response.filter(item => item.type === 'C')
+                Categories.initTables(debitList, creditList)
             },
             (response) => {
                 // FAILURE
@@ -53,17 +58,17 @@ var Categories = {
     },
     renderCategoriesRow: cats => {
         return `
-            <tr data-id='$cats.id_account'>
+            <tr data-id='$cats.category_id'>
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
                 <td>
-                    <i class="material-icons table-action-icons">create</i>
-                    <i class="material-icons table-action-icons" style="margin-left:10px">delete</i>
+                    <i onClick="Categories.showEditCategoryModal('${cats.name}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Categories.showRemoveCategoryModal('${cats.name}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
         `
     },
-    addCategory: () => {
+    showAddCategoryModal: () => {
         $("#modal-categories").modal("open")
         let txt = `
                 <h4>Adicionar nova categoria</h4>
@@ -77,9 +82,8 @@ var Categories = {
                         <div class="input-field col s6">
                             <i class="material-icons prefix">note</i>
                             <select id="category_type_select">
-                                <option value="" disabled selected>Escolha uma opção</option>
-                                <option value="1">Crédito (Renda)</option>
-                                <option value="2">Débito (Despesa)</option>
+                                <option value="C">Crédito (Renda)</option>
+                                <option value="D">Débito (Despesa)</option>
                             </select>
                             <label>Tipo de Categoria</label>
                         </div>
@@ -93,12 +97,57 @@ var Categories = {
                 `;
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a onClick=""  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
+    <a onClick="Categories.addCategory()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
         $("#modal-categories .modal-content").html(txt);
         $("#modal-categories .modal-footer").html(actionLinks);
 
         $('#category_type_select').formSelect();
     },
+    addCategory: () => {
+        const catName = $("input#category_name").val()
+        const catDescription = $("textarea#category_description").val()
+        const catType = $("select#category_type_select").val()
+
+        if (!catName || catName === "" || !catDescription || catDescription === ""
+            || !catType || catType === "") {
+            DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
+            return
+        }
+
+        CategoryServices.addCategory(catName, catDescription, catType,
+            (response) => {
+                // SUCCESS
+                DialogUtils.showSuccessMessage("Categoria adicionada com sucesso!")
+                configs.goToPage("categories", null, true)
+            },
+            (response) => {
+                // FAILURE
+                DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+            })
+    },
+    showRemoveCategoryModal: (catName, catID) => {
+        $("#modal-categories").modal("open")
+        let txt = `
+                <h4>Remover categoria <b>${catName}</b></h4>
+                <div class="row">
+                    <p>Tem a certeza de que pretende remover esta categoria?</p>
+                    <b>Esta ação é irreversível!</b>
+
+                </div>
+                `;
+
+        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
+            <a onClick="Categories.removeCategory(${catID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
+        $("#modal-categories .modal-content").html(txt);
+        $("#modal-categories .modal-footer").html(actionLinks);
+
+        $('#category_type_select').formSelect();
+    },
+    removeCategory: (catID) => {
+        if (!catID) return;
+
+        debugger;
+    }
 }
 
 //# sourceURL=js/categories.js

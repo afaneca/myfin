@@ -45,13 +45,13 @@ class Categories
             if (isset($type)) {
                 $catsArr = CategoryModel::getWhere(
                     ["users_user_id" => $userID, "type" => $type],
-                    ["category_id", "name", "type"]
+                    ["category_id", "name", "type", "description"]
 
                 );
             } else {
                 $catsArr = CategoryModel::getWhere(
                     ["users_user_id" => $userID],
-                    ["category_id", "name", "type", "users_user_id"]
+                    ["category_id", "name", "type", "description"]
 
                 );
             }
@@ -83,6 +83,7 @@ class Categories
 
 
             $name = Input::validate($request->getParsedBody()['name'], Input::$STRING);
+            $description = Input::validate($request->getParsedBody()['description'], Input::$STRING);
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING);
 
 
@@ -101,6 +102,7 @@ class Categories
             CategoryModel::insert([
                 "name" => $name,
                 "type" => $type,
+                "description" => $description,
                 "users_user_id" => $userID
             ], false);
 
