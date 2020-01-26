@@ -163,8 +163,65 @@ class Categories
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function editCategory(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+            } else {
+                $mobile = false;
+            }
+
+
+            $categoryID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 3);
+            $newName = Input::validate($request->getParsedBody()['new_name'], Input::$STRING, 4);
+            $newDescription = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 5);
+            $newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING, 5);
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+            
+            $db->getDB()->beginTransaction(); */
+
+            /* echo "1";
+            die(); */
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            CategoryModel::editWhere(
+                [
+                    "category_id" => $categoryID,
+                    "users_user_id" => $userID
+                ],
+                [
+                    "name" => $newName,
+                    "description" => $newDescription,
+                    "type" => $newType
+                ],
+                false
+            );
+
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, "Category Updated!");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/cats/', 'Categories::getAllCategoriesForUser');
 $app->post('/cats/', 'Categories::addCategory');
 $app->delete('/cats/', 'Categories::removeCategory');
+$app->put('/cats/', 'Categories::editCategory');
