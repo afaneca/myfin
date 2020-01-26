@@ -118,7 +118,53 @@ class Categories
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function removeCategory(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+            } else {
+                $mobile = false;
+            }
+
+
+            $categoryID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 3);
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+            
+            $db->getDB()->beginTransaction(); */
+
+            /* echo "1";
+            die(); */
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            CategoryModel::delete([
+                "category_id" => $categoryID,
+                "users_user_id" => $userID
+            ], false);
+
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, "Category Removed!");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/cats/', 'Categories::getAllCategoriesForUser');
 $app->post('/cats/', 'Categories::addCategory');
+$app->delete('/cats/', 'Categories::removeCategory');

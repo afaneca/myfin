@@ -49,6 +49,30 @@ var CategoryServices = {
                 if (errorCallback) errorCallback(response)
             }
         });
+    },
+    removeCategory: (catID, successCallback, errorCallback) => {
+        var pageUrl = REST_SERVER_PATH + "cats/"
+
+        $.ajax({
+            async: true,
+            type: "DELETE",
+            dataType: "json",
+            cache: false,
+            headers: {
+                authusername: Cookies.get("username"),
+                sessionkey: Cookies.get("sessionkey"),
+            },
+            data: {
+                category_id: catID,
+            },
+            url: pageUrl,
+            success: function (response) {
+                if (successCallback) successCallback(response)
+            },
+            error: function (response) {
+                if (errorCallback) errorCallback(response)
+            }
+        });
     }
 }
 

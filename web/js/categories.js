@@ -146,7 +146,16 @@ var Categories = {
     removeCategory: (catID) => {
         if (!catID) return;
 
-        debugger;
+        CategoryServices.removeCategory(catID,
+            (response) => {
+                // SUCCESS
+                DialogUtils.showSuccessMessage("Categoria adicionada com sucesso!")
+                configs.goToPage("categories", null, true)
+            }),
+            (response) => {
+                // FAILURE
+                DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+            }
     }
 }
 
