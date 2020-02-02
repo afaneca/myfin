@@ -37,7 +37,7 @@ function showSignUp() {
     const emailInputSelector = $("#email-input")
     const btnSelector = $("#btn-login")
 
-    btnSelector.html(SIGN_UP_BTN_TXT);
+    btnSelector.html(SIGN_UP_BTN_TXT)
     signUpSelector.html(SIGN_UP_HTML)
     //emailInputSelector.show()
     emailInputSelector.removeClass("input_hidden")
@@ -213,7 +213,7 @@ function resetSession() {
     Cookies.remove("trustlimit");
 
     if (window.location.pathname.split("/").pop() != "login.html") // if we're not in the login page
-        window.location = ensoConf.defaultApp + ".html"; // redirect to login page
+        window.location = configs.defaultApp + ".html"; // redirect to login page
 }
 
 /* Checks if the browser has stored all the user information required */

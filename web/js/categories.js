@@ -14,7 +14,6 @@ var Categories = {
             },
             (response) => {
                 // FAILURE
-                debugger;
 
             })
     },
@@ -158,7 +157,6 @@ var Categories = {
             }
     },
     showEditCategoryModal: (catName, catDescription, catType, catID) => {
-        debugger;
         $("#modal-categories").modal("open")
         let txt = `
                 <h4>Adicionar nova categoria</h4>
