@@ -57,7 +57,7 @@ var Categories = {
     },
     renderCategoriesRow: cats => {
         return `
-            <tr data-id='$cats.category_id'>
+            <tr data-id='${cats.category_id}'>
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
                 <td>
@@ -148,7 +148,7 @@ var Categories = {
         CategoryServices.removeCategory(catID,
             (response) => {
                 // SUCCESS
-                DialogUtils.showSuccessMessage("Categoria adicionada com sucesso!")
+                DialogUtils.showSuccessMessage("Categoria removida com sucesso!")
                 configs.goToPage("categories", null, true)
             }),
             (response) => {

@@ -1,4 +1,9 @@
 <?php
+
+/* TYPES OF CATEGORIES:
+    - C - credit
+    - D - debit */
+
 class CategoryModel extends Entity
 {
     protected static $table = "categories";

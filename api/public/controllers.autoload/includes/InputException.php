@@ -39,6 +39,7 @@ class BadValidationTypeException extends InputException
     // Redefine the exception so message isn't optional
     public function __construct($message = "Input type was invalid.", $code = 0, Exception $previous = null)
     {
+        $this->message = $message;
         // make sure everything is assigned properly
         if ($code)
             parent::__construct($code, $previous);
@@ -47,7 +48,7 @@ class BadValidationTypeException extends InputException
     // custom string representation of object
     public function __toString()
     {
-        return __class__ . $this->message . "\n";
+        return __class__ . " - " . $this->message;
     }
 }
 
