@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use App\Application\Handlers\HttpErrorHandler;
@@ -112,7 +113,10 @@ $responseEmitter->emit($response);
 
 function sendResponse($responseObj, $responseCode, $responseBody)
 {
-	$responseObj = $responseObj->withHeader('Content-type', 'application/json', 'authusername', 'sessionkey', 'sessionkey_mobile');
+	$responseObj = $responseObj->withHeader('Content-type', 'application/json', 'authusername', 'sessionkey', 'sessionkey_mobile')
+		->withHeader('Access-Control-Allow-Origin', 'htts://myfin.afaneca.com')
+		->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization', 'authusername', 'sessionkey', 'sessionkey_mobile')
+		->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');;
 	$responseObj = $responseObj->withStatus($responseCode);
 	$responseObj->getBody()->rewind();
 	for ($i = 0; $i < $responseObj->getBody()->getSize(); $i++)
