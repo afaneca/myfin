@@ -112,7 +112,7 @@ $responseEmitter->emit($response);
 
 function sendResponse($responseObj, $responseCode, $responseBody)
 {
-	$responseObj = $responseObj->withHeader('Content-type', 'application/json');
+	$responseObj = $responseObj->withHeader('Content-type', 'application/json', 'authusername', 'sessionkey', 'sessionkey_mobile');
 	$responseObj = $responseObj->withStatus($responseCode);
 	$responseObj->getBody()->rewind();
 	for ($i = 0; $i < $responseObj->getBody()->getSize(); $i++)
