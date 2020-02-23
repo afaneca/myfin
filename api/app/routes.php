@@ -24,13 +24,13 @@ return function (App $app) {
         return $response;
     }); */
 
-    $app->add(function ($request, $handler) {
+    /* $app->add(function ($request, $handler) {
         $response = $handler->handle($request);
         return $response
-            ->withHeader('Access-Control-Allow-Origin', 'https://myfin.afaneca.com')
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization', 'authusername', 'sessionkey', 'sessionkey_mobile')
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', '*')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    });
+    }); */
 
     $app->options('/{routes:.+}', function (Request $request, Response $response) {
         // CORS Pre-Flight OPTIONS Request Handler
