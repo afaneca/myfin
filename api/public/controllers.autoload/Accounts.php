@@ -7,7 +7,7 @@ require_once 'consts.php';
 
 class Accounts
 {
-    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     public static function getAllAccountsForUser(Request $request, Response $response, $args)
     {

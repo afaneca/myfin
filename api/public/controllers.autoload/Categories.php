@@ -11,7 +11,7 @@ require_once 'consts.php';
 
 class Categories
 {
-    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     public static function getAllCategoriesForUser(Request $request, Response $response, $args)
     {
