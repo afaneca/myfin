@@ -23,16 +23,25 @@ return function (App $app) {
         $response = $response->withHeader('Access-Control-Allow-Headers', '*');
         return $response;
     }); */
+
+    $app->add(function ($request, $handler) {
+        $response = $handler->handle($request);
+        return $response
+            ->withHeader('Access-Control-Allow-Origin', 'https://myfin.afaneca.com')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization', 'authusername', 'sessionkey', 'sessionkey_mobile')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    });
+
     $app->options('/{routes:.+}', function (Request $request, Response $response) {
         // CORS Pre-Flight OPTIONS Request Handler
         return $response;
     });
 
-    $app->get('/hello/', function (Request $request, Response $response, array $args) {
+    /* $app->get('/hello/', function (Request $request, Response $response, array $args) {
         $name = $args['name'];
         $response->getBody()->write("dsa, $name");
         return sendResponse($response, EnsoShared::$REST_OK, "fdsa"); //$response;
-    });
+    }); */
     /*
     $app->group('/users', function (Group $group) {
         $group->get('', ListUsersAction::class);
