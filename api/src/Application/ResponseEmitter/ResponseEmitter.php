@@ -16,9 +16,11 @@ class ResponseEmitter extends SlimResponseEmitter
         // This variable should be set to the allowed host from which your API can be accessed with
         $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
+
+        
         $response = $response
             ->withHeader('Access-Control-Allow-Credentials', 'true')
-            ->withHeader('Access-Control-Allow-Origin', 'http://localhost', 'https://myfin.afaneca.com')
+            ->withHeader('Access-Control-Allow-Origin', $origin* fi)
             ->withHeader('Access-Control-Allow-Headers', '*')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
             ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
