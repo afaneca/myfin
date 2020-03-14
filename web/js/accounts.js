@@ -15,7 +15,7 @@ var Accounts = {
     initTable: (accountsList) => {
         $("#table-wrapper").html(Accounts.renderAccountsTable(accountsList))
         tableUtils.setupStaticTable("#accounts-table");
-        loadingManager.hideLoading()
+        LoadingManager.hideLoading()
     },
     renderAccountsTable: (accountsList) => {
         return `

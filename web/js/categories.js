@@ -21,7 +21,7 @@ var Categories = {
         $("#table-debit-wrapper").html(Categories.renderDebitCategoriesTable(debitCatsList))
         $("#table-crebit-wrapper").html(Categories.renderCreditCategoriesTable(creditCatsList))
         tableUtils.setupStaticTable("#categories-table");
-        loadingManager.hideLoading()
+        LoadingManager.hideLoading()
     },
     renderDebitCategoriesTable: (catsList) => {
         return `

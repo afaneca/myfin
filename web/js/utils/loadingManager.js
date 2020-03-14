@@ -1,6 +1,6 @@
 "use strict";
 
-var loadingManager = {
+var LoadingManager = {
     showLoading: (loadingID) => {
         if(!loadingID){
             loadingID = "#main-loading-wrapper"
