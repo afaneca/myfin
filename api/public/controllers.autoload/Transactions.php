@@ -55,6 +55,64 @@ class Transactions
         }
     }
 
+    public static function addTransactionStep0(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 9);
+            } else {
+                $mobile = false;
+            }
+
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction(); */
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            $outgoingArr = array();
+            $outgoingArr['entities'] = array();
+            $outgoingArr['categories'] = array();
+            $outgoingArr['type'] = array();
+            $outgoingArr['accounts'] = array();
+
+            /* Entities */
+            $outgoingArr['entities'] = EntityModel::getWhere(["users_user_id" => $userID], ["entity_id", "name"]);
+
+            /* Categories */
+            $outgoingArr['categories'] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name",  "description"]);
+
+            /* Type */
+            $outgoingArr['type'] = ["I" => "Receita", "E" => "Despesa", "T" => "Transferência"];
+
+            /* Accounts */
+            $outgoingArr['accounts'] = AccountModel::getWhere(["users_user_id" => $userID, "status" => DEFAULT_ACCOUNT_ACTIVE_STATUS], ["account_id", "name", "type"]);
+
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outgoingArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    // STEP 1
     public static function addTransaction(Request $request, Response $response, $args)
     {
         try {
@@ -177,6 +235,7 @@ class Transactions
 }
 
 $app->get('/trxs/', 'Transactions::getAllTransactionsForUser');
-$app->post('/trxs/', 'Transactions::addTransaction');
+$app->post('/trxs/step0', 'Transactions::addTransactionStep0');
+$app->post('/trxs/step1', 'Transactions::addTransaction');
 $app->delete('/trxs/', 'Transactions::removeTransaction');
 $app->put('/trxs/', 'Accounts::editAccount');
