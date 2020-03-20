@@ -73,8 +73,10 @@ var Transactions = {
         return str;
     },
     showAddTransactionModal: () => {
+        LoadingManager.showLoading()
         TransactionServices.getAddTransactionStep0(
             (response) => {
+                LoadingManager.hideLoading()
                 const entitiesArr = response["entities"]
                 const categoriesArr = response["categories"]
                 const typesArr = response["type"]
@@ -136,9 +138,10 @@ var Transactions = {
                     setDefaultDate: true,
                     format: "dd/mm/yyyy"
                 });
+                
             },
             (error) => {
-
+                LoadingManager.hideLoading()
             })
 
 
