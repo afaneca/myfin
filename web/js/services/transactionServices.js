@@ -23,6 +23,28 @@ var TransactionServices = {
             }
         });
     },
+    getAddTransactionStep0: (successCallback, errorCallback) => {
+        var pageUrl = REST_SERVER_PATH + "trxs/step0"
+
+        $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "json",
+            cache: false,
+            headers: {
+                authusername: Cookies.get("username"),
+                sessionkey: Cookies.get("sessionkey")
+            },
+            data: {},
+            url: pageUrl,
+            success: function (response) {
+                if (successCallback) successCallback(response)
+            },
+            error: function (response) {
+                if (errorCallback) errorCallback(response)
+            }
+        })
+    },
     // TODO
     addEntity: (name, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "entities/"
@@ -98,7 +120,8 @@ var TransactionServices = {
                 if (errorCallback) errorCallback(response)
             }
         });
-    }
+    },
+
 }
 
 //# sourceURL=js/actions/transactionServices.js

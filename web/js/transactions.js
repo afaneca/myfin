@@ -73,27 +73,88 @@ var Transactions = {
         return str;
     },
     showAddTransactionModal: () => {
-        $("#modal-transactions").modal("open")
-        let txt = `
+        TransactionServices.getAddTransactionStep0(
+            (response) => {
+                const entitiesArr = response["entities"]
+                const categoriesArr = response["categories"]
+                const typesArr = response["type"]
+                const accountsArr = response["accounts"]
+
+                $("#modal-transactions").modal("open")
+                let txt = `
                 <h4>Adicionar nova transação</h4>
-                <div class="row">
+                
                     <form class="col s12">
-                        <div class="input-field col s6">
-                        <i class="material-icons prefix">folder</i>
-                            <input id="trx_amount" type="number" class="validate">
-                            <label for="trx_name">Valor (€)</label>
+                        <div class="row">
+                            <div class="input-field col s5">
+                                <i class="material-icons prefix">folder</i>
+                                <input id="trx_amount" type="number" class="validate">
+                                <label for="trx_amount">Valor (€)</label>
+                            </div>
+                            <input type="text" class="datepicker input-field col s5 offset-s1">
+                             
                         </div>
+                        <div class="row col s12">                     
+                            <div class="input-field col s5">
+                                <select class="select-trxs-accounts" name="accounts">
+                                    ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
+                                </select>
+                            </div>
+                            <div class="input-field col s5 offset-s1">
+                                <select class="select-trxs-types" name="types">
+                                    ${typesArr.map(type => Transactions.renderTypesSelectOptions(type)).join("")}
+                                </select>
+                            </div>
                         </div>
-                        
+                        <div class="row col s12">
+                            <div class="input-field col s5">
+                                <select class="select-trxs-categories" name="categories">
+                                    ${categoriesArr.map(cat => Transactions.renderCategoriesSelectOptions(cat)).join("")}
+                                </select>
+                            </div>
+                            <div class="input-field col s5 offset-s1">
+                                <select class="select-trxs-entities" name="entities">
+                                    ${entitiesArr.map(entity => Transactions.renderEntitiesSelectOptions(entity)).join("")}
+                                </select>
+                            </div> 
+                        </div>
+            
                     </form>
                 </div>
                 `;
 
-        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a onClick="Entities.addEntity()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-entities .modal-content").html(txt);
-        $("#modal-entities .modal-footer").html(actionLinks);
+                let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
+                    <a onClick="Entities.addEntity()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
+                $("#modal-transactions .modal-content").html(txt);
+                $("#modal-transactions .modal-footer").html(actionLinks);
+                $('select.select-trxs-entities').select2({ dropdownParent: "#modal-transactions" });
+                $('select.select-trxs-accounts').select2({ dropdownParent: "#modal-transactions" });
+                $('select.select-trxs-types').select2({ dropdownParent: "#modal-transactions" });
+                $('select.select-trxs-categories').select2({ dropdownParent: "#modal-transactions" });
+                $(".datepicker").datepicker({
+                    defaultDate: new Date(),
+                    setDefaultDate: true,
+                    format: "dd/mm/yyyy"
+                });
+            },
+            (error) => {
+
+            })
+
+
     },
+    renderEntitiesSelectOptions: (entity) => `
+        <option value="${entity.entity_id}">${entity.name}</option>
+    `,
+    renderAccountsSelectOptions: (acc) => `
+        <option value="${acc.account_id}">${acc.name}</option>
+    `,
+    renderTypesSelectOptions: (type) => `
+        <option value="${type.letter}">${type.name}</option>
+    `,
+    renderCategoriesSelectOptions: (cat) => `
+        <option value="${cat.category_id}">${cat.name}</option>
+    `,
     // TODO 
     addEntity: () => {
         const entName = $("input#entity_name").val()

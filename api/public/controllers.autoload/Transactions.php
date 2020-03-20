@@ -94,7 +94,17 @@ class Transactions
             $outgoingArr['categories'] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name",  "description"]);
 
             /* Type */
-            $outgoingArr['type'] = ["I" => "Receita", "E" => "Despesa", "T" => "Transferência"];
+            $outgoingArr['type'] = array(
+                [
+                    "letter" => "I", "name" => "Receita"
+                ],
+                [
+                    "letter" => "E", "name" => "Despesa"
+                ],
+                [
+                    "letter" => "T", "name" => "Transferência"
+                ]
+            );
 
             /* Accounts */
             $outgoingArr['accounts'] = AccountModel::getWhere(["users_user_id" => $userID, "status" => DEFAULT_ACCOUNT_ACTIVE_STATUS], ["account_id", "name", "type"]);

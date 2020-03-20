@@ -5,6 +5,10 @@
     -> #938f8f
 */
 
+.modal {
+    overflow: visible !important;
+}
+
 .modal .modal-footer .btn-flat {
     color: black !important;
 }
