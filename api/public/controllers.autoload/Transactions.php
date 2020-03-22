@@ -138,9 +138,14 @@ class Transactions
             } else {
                 $entityID = null;
             }
-            $accountFrom = Input::validate($request->getParsedBody()['account_from_id'], Input::$INT, 6);
 
-            if (array_key_exists('account_to', $request->getParsedBody())) {
+            if (array_key_exists('account_from_id', $request->getParsedBody())) {
+                $accountFrom = Input::validate($request->getParsedBody()['account_from_id'], Input::$INT, 7);
+            } else {
+                $accountFrom = null;
+            }
+
+            if (array_key_exists('account_to_id', $request->getParsedBody())) {
                 $accountTo = Input::validate($request->getParsedBody()['account_to_id'], Input::$INT, 7);
             } else {
                 $accountTo = null;
@@ -148,8 +153,16 @@ class Transactions
 
             $categoryID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 8);
 
+            if (array_key_exists('date_timestamp', $request->getParsedBody())) {
+                $date_timestamp = Input::validate($request->getParsedBody()['date_timestamp'], Input::$INT, 9);
+            } else {
+                $date_timestamp = time();
+            }
+
+
+
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 9);
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 10);
             } else {
                 $mobile = false;
             }
@@ -177,7 +190,7 @@ class Transactions
             ); */
 
             TransactionModel::insert([
-                "date_timestamp" => time(),
+                "date_timestamp" => $date_timestamp,
                 "amount" => $amount,
                 "type" => $type,
                 "description" => $description,

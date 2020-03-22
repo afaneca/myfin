@@ -17,6 +17,9 @@ var DateUtils = {
 
         const formattedDate = `${date}\/${month}\/${year}`
         return formattedDate;
+    },
+    convertDateToUnixTimestamp: (dateStr) => {
+        return moment(dateStr, "DD-MM-YYYY").unix()
     }
 }
 //# sourceURL=js/utils/stringUtils.js

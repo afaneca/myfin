@@ -46,8 +46,8 @@ var TransactionServices = {
         })
     },
     // TODO
-    addEntity: (name, successCallback, errorCallback) => {
-        var pageUrl = REST_SERVER_PATH + "entities/"
+    addTransaction: (amount, type, description, entity_id, account_from_id, account_to_id, category_id, date_timestamp, successCallback, errorCallback) => {
+        var pageUrl = REST_SERVER_PATH + "trxs/step1"
 
         $.ajax({
             async: true,
@@ -59,7 +59,14 @@ var TransactionServices = {
                 sessionkey: Cookies.get("sessionkey"),
             },
             data: {
-                name,
+                amount,
+                type,
+                description,
+                entity_id,
+                account_from_id,
+                account_to_id,
+                category_id,
+                date_timestamp
             },
             url: pageUrl,
             success: function (response) {
