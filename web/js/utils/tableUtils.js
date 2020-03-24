@@ -3,6 +3,7 @@
 var tableUtils = {
     setupStaticTable: (tableID) => {
         $(tableID).DataTable({
+            "order": [[0, "desc"]], 
             "lengthChange": false,
             "pageLength": 50,
             "language": {
@@ -15,12 +16,13 @@ var tableUtils = {
                 "paginate": {
                     "next": "Página Seguinte",
                     "previous": "Página Anterior",
-                }
+                },
             }
         })
     },
     setupStaticTableWithCustomColumnWidths: (tableID, customColumnWidths) => {
         $(tableID).DataTable({
+            "order": [[0, "desc"]],
             "lengthChange": false,
             "pageLength": 50,
             "columnDefs": customColumnWidths,
@@ -34,7 +36,8 @@ var tableUtils = {
                 "paginate": {
                     "next": "Página Seguinte",
                     "previous": "Página Anterior",
-                }
+                },
+
             }
         })
     }

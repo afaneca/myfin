@@ -52,7 +52,7 @@ var Transactions = {
                 <td>${trx.category_name}</td>
                 <td>${trx.account_from_name}</td>
                 <td>
-                    <i onClick="Transactions.showEditTransactionModal(${trx.transaction_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Transactions.showEditTransactionModal(${trx.transaction_id}, ${trx.amount}, ${trx.date_timestamp}, ${trx.entity_id}, ${trx.categories_category_id}, ${trx.accounts_account_from_id}, ${trx.accounts_account_to_id}, '${trx.type}', '${StringUtils.removeLineBreaksFromString(trx.description)}')" class="material-icons table-action-icons">create</i>
                     <i onClick="Transactions.showRemoveTransactionModal(${trx.transaction_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
@@ -206,7 +206,6 @@ var Transactions = {
     renderCategoriesSelectOptions: (cat) => `
         <option value="${cat.category_id}">${cat.name}</option>
     `,
-    // TODO 
     addTransaction: () => {
         const amount = $("input#trx_amount").val()
         const type = $("select.select-trxs-types").val()
@@ -236,7 +235,7 @@ var Transactions = {
             return
         }
 
-        
+
 
         TransactionServices.addTransaction(amount, type, description, entID, account_from_id, account_to_id, catID, date_timestamp,
             (response) => {
@@ -279,44 +278,140 @@ var Transactions = {
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
-    showEditEntityModal: (entName, entID) => {
-        $("#modal-entities").modal("open")
-        let txt = `
-                <h4>Adicionar nova entidade</h4>
-                <div class="row">
+    showEditTransactionModal: (trxID, selectedAmount, selectedDateTimestamp, selectedEntityID, selectedCategoryID, selectedAccountFromID, selectedAccountToID, selectedTypeID, selectedDescription) => {
+
+        LoadingManager.showLoading()
+        TransactionServices.getAddTransactionStep0(
+            (response) => {
+                LoadingManager.hideLoading()
+                const entitiesArr = response["entities"]
+                const categoriesArr = response["categories"]
+                const typesArr = response["type"]
+                const accountsArr = response["accounts"]
+
+                $("#modal-transactions").modal("open")
+                let txt = `
+                <h4>Editar transação <b>#${trxID}</b></h4>
+                
                     <form class="col s12">
-                        <div class="input-field col s6">
-                        <i class="material-icons prefix">folder</i>
-                            <input id="entity_name" type="text" class="validate">
-                            <label for="entity_name" class="active">Nome da Entidade</label>
+                        <div class="row">
+                            <div class="input-field col s5">
+                                <i class="material-icons prefix">folder</i>
+                                <input id="trx_amount" type="number" step=".01" class="validate">
+                                <label for="trx_amount" class="active">Valor (€)</label>
+                            </div>
+                            <input type="text" class="datepicker input-field col s5 offset-s1">
+                             
                         </div>
+                        <div class="row col s12">                     
+                            <div class="input-field col s4">
+                                <select class="select-trxs-account_from" name="accounts">
+                                    <option disabled selected value="-1">Conta Origem</option>
+                                    ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
+                                </select>
+                                
+                            </div>
+                            <div class="input-field col s4 offset-s1">
+                                <select class="select-trxs-account_to" name="accounts">
+                                    <option disabled selected value="-1">Conta Destino</option>
+                                    ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
+                                </select>
+                            </div>
+                            <div class="input-field col s1 offset-s1">
+                                <select class="select-trxs-types" name="types">
+                                    ${typesArr.map(type => Transactions.renderTypesSelectOptions(type)).join("")}
+                                </select>
+                            </div>
                         </div>
-                        
+                        <div class="row col s12">
+                            <div class="input-field col s5">
+                                <select class="select-trxs-categories" name="categories">
+                                    ${categoriesArr.map(cat => Transactions.renderCategoriesSelectOptions(cat)).join("")}
+                                </select>
+                            </div>
+                            <div class="input-field col s5 offset-s1">
+                                <select class="select-trxs-entities" name="entities">
+                                    ${entitiesArr.map(entity => Transactions.renderEntitiesSelectOptions(entity)).join("")}
+                                </select>
+                            </div> 
+                        </div>
+                        <div class="input-field col s12">
+                            <textarea id="trx-description" class="materialize-textarea"></textarea>
+                            <label class="active" for="trx-description">Descrição</label>
+                        </div>
+            
                     </form>
                 </div>
                 `;
 
-        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a onClick="Entities.editEntity(${entID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-entities .modal-content").html(txt);
-        $("#modal-entities .modal-footer").html(actionLinks);
+                let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
+                    <a onClick="Transactions.editTransaction(${trxID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
 
-        // AUTO-FILL INPUTS
-        $("input#entity_name").val(entName)
+                $("#modal-transactions .modal-content").html(txt);
+                $("#modal-transactions .modal-footer").html(actionLinks);
+
+                $('select.select-trxs-entities').select2({ dropdownParent: "#modal-transactions" });
+                $('select.select-trxs-account_to').select2({ dropdownParent: "#modal-transactions" });
+                $('select.select-trxs-account_from').select2({ dropdownParent: "#modal-transactions" });
+                $('select.select-trxs-types').select2({ dropdownParent: "#modal-transactions" });
+                $('select.select-trxs-categories').select2({ dropdownParent: "#modal-transactions" });
+                $(".datepicker").datepicker({
+                    defaultDate: new Date(DateUtils.convertUnixTimestampToDateString(selectedDateTimestamp)),
+                    setDefaultDate: true,
+                    format: "dd/mm/yyyy"
+                });
+
+                // AUTO-FILL
+                $("input#trx_amount").val(selectedAmount)
+                $("textarea#trx-description").val(selectedDescription)
+                $('select.select-trxs-entities').val(selectedEntityID).trigger('change');
+                $('select.select-trxs-account_to').val(selectedAccountToID).trigger('change');
+                $('select.select-trxs-account_from').val(selectedAccountFromID).trigger('change');
+                $('select.select-trxs-types').select2("val", selectedTypeID);
+                $('select.select-trxs-categories').val(selectedCategoryID).trigger('change');
+
+                Transactions.manageAccountsSelectAvailability()
+
+            },
+            (error) => {
+                LoadingManager.hideLoading()
+            })
+
     },
-    editEntity: (entID) => {
-        const entName = $("input#entity_name").val()
+    editTransaction: (trxID) => {
+        const new_amount = $("input#trx_amount").val()
+        const new_type = $("select.select-trxs-types").val()
+        let new_account_from_id
+        let new_account_to_id
+        switch (new_type) {
+            case "E":
+                new_account_from_id = $("select.select-trxs-account_from").val()
+                break;
+            case "I":
+                new_account_to_id = $("select.select-trxs-account_to").val()
+                break;
+            default:
+                new_account_from_id = $("select.select-trxs-account_from").val()
+                new_account_to_id = $("select.select-trxs-account_to").val()
+                break;
+        }
 
-        if (!entName || entName === "") {
+        const new_description = StringUtils.removeLineBreaksFromString($("textarea#trx-description").val())
+        const new_entity_id = $("select.select-trxs-entities").val()
+        const new_category_id = $("select.select-trxs-categories").val()
+        const new_date_timestamp = DateUtils.convertDateToUnixTimestamp($(".datepicker").val())
+
+
+        if (!ValidationUtils.checkIfFieldsAreFilled([new_amount, new_type, new_entity_id, new_category_id, new_date_timestamp])) {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
         }
 
-        EntityServices.editEntity(entID, entName,
+        TransactionServices.editTransaction(trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp,
             () => {
                 // SUCCESS
-                DialogUtils.showSuccessMessage("Entidade atualizada com sucesso!")
-                configs.goToPage("entities", null, true)
+                DialogUtils.showSuccessMessage("Transação atualizada com sucesso!")
+                configs.goToPage("transactions", null, true)
             },
             () => {
                 // FAILURE
