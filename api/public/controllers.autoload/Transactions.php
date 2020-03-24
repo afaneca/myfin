@@ -257,9 +257,60 @@ class Transactions
             die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
 
+            $trxObj = TransactionModel::getWhere(
+                [
+                    "transaction_id" => $trxID
+                ],
+                ["amount", "date_timestamp", "type", "accounts_account_from_id", "accounts_account_to_id"]
+            )[0];
+
+            $oldTimestamp = $trxObj["date_timestamp"];
+            $oldType = $trxObj["type"];
+
+            if (isset($trxObj["accounts_account_to_id"]))
+                $oldAccountTo = $trxObj["accounts_account_to_id"];
+
+            if (isset($trxObj["accounts_account_from_id"]))
+                $oldAccountFrom = $trxObj["accounts_account_from_id"];
+
             TransactionModel::delete([
                 "transaction_id" => $trxID
             ]);
+
+            // DELETE OLD BALANCE CHANGES
+            switch ($oldType) {
+                case DEFAULT_TYPE_INCOME_TAG:
+                    BalanceModel::delete(
+                        [
+                            "date_timestamp" => $oldTimestamp,
+                            "accounts_account_id" => $oldAccountTo
+                        ]
+                    );
+                    break;
+                case DEFAULT_TYPE_EXPENSE_TAG:
+                    BalanceModel::delete(
+                        [
+                            "date_timestamp" => $oldTimestamp,
+                            "accounts_account_id" => $oldAccountFrom
+                        ]
+                    );
+                    break;
+                case DEFAULT_TYPE_TRANSFER_TAG:
+                    BalanceModel::delete(
+                        [
+                            "date_timestamp" => $oldTimestamp,
+                            "accounts_account_id" => $oldAccountTo
+                        ]
+                    );
+                    BalanceModel::delete(
+                        [
+                            "date_timestamp" => $oldTimestamp,
+                            "accounts_account_id" => $oldAccountFrom
+                        ]
+                    );
+                    break;
+            }
+
 
             /* $db->getDB()->commit(); */
 
