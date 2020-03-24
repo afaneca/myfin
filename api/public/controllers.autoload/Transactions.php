@@ -200,6 +200,23 @@ class Transactions
                 "categories_category_id" => $categoryID
             ]);
 
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            switch ($type) {
+                case DEFAULT_TYPE_INCOME_TAG:
+                    BalanceModel::changeBalance($userID, $accountTo, $amount, $date_timestamp, false);
+                    break;
+                case DEFAULT_TYPE_EXPENSE_TAG:
+                    BalanceModel::changeBalance($userID, $accountFrom, -$amount, $date_timestamp, false);
+                    break;
+                case DEFAULT_TYPE_TRANSFER_TAG:
+                    BalanceModel::changeBalance($userID, $accountFrom, -$amount, $date_timestamp, false);
+                    BalanceModel::changeBalance($userID, $accountTo, $amount, $date_timestamp, false);
+                    break;
+            }
+
+
+
             /* $db->getDB()->commit(); */
 
             return sendResponse($response, EnsoShared::$REST_OK, "Transaction added successfully!");
@@ -322,6 +339,21 @@ class Transactions
             ["account_id", "name", "type", "description"]
 
             ); */
+            $trxObj = TransactionModel::getWhere(
+                [
+                    "transaction_id" => $trxID
+                ],
+                ["amount", "date_timestamp", "type", "accounts_account_from_id", "accounts_account_to_id"]
+            )[0];
+
+            $oldTimestamp = $trxObj["date_timestamp"];
+            $oldType = $trxObj["type"];
+
+            if (isset($trxObj["accounts_account_to_id"]))
+                $oldAccountTo = $trxObj["accounts_account_to_id"];
+
+            if (isset($trxObj["accounts_account_from_id"]))
+                $oldAccountFrom = $trxObj["accounts_account_from_id"];
 
             TransactionModel::editWhere([
                 "transaction_id" => $trxID,
@@ -335,6 +367,58 @@ class Transactions
                 "accounts_account_to_id" => $accountTo,
                 "categories_category_id" => $categoryID
             ]);
+
+            // DELETE OLD BALANCE CHANGES
+            switch ($oldType) {
+                case DEFAULT_TYPE_INCOME_TAG:
+                    BalanceModel::delete(
+                        [
+                            "date_timestamp" => $oldTimestamp,
+                            "accounts_account_id" => $oldAccountTo
+                        ]
+                    );
+                    break;
+                case DEFAULT_TYPE_EXPENSE_TAG:
+                    BalanceModel::delete(
+                        [
+                            "date_timestamp" => $oldTimestamp,
+                            "accounts_account_id" => $oldAccountFrom
+                        ]
+                    );
+                    break;
+                case DEFAULT_TYPE_TRANSFER_TAG:
+                    BalanceModel::delete(
+                        [
+                            "date_timestamp" => $oldTimestamp,
+                            "accounts_account_id" => $oldAccountTo
+                        ]
+                    );
+                    BalanceModel::delete(
+                        [
+                            "date_timestamp" => $oldTimestamp,
+                            "accounts_account_id" => $oldAccountFrom
+                        ]
+                    );
+                    break;
+            }
+
+            // ADD THE NEW
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            switch ($type) {
+                case DEFAULT_TYPE_INCOME_TAG:
+                    BalanceModel::changeBalance($userID, $accountTo, $amount, $date_timestamp, false);
+                    break;
+                case DEFAULT_TYPE_EXPENSE_TAG:
+                    BalanceModel::changeBalance($userID, $accountFrom, -$amount, $date_timestamp, false);
+                    break;
+                case DEFAULT_TYPE_TRANSFER_TAG:
+                    BalanceModel::changeBalance($userID, $accountFrom, -$amount, $date_timestamp, false);
+                    BalanceModel::changeBalance($userID, $accountTo, $amount, $date_timestamp, false);
+                    break;
+            }
+
 
             /* $db->getDB()->commit(); */
 
