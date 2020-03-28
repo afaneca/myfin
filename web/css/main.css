@@ -5,6 +5,13 @@
     -> #938f8f
 */
 
+:root {
+    --main-green: #009688;
+    --dark-grey: #262626;
+    --light-grey: #f3f3f3;
+    --medium-grey: #938f8f;
+}
+
 .modal {
     overflow: visible !important;
 }
@@ -78,7 +85,7 @@
 }
 
 .progress .indeterminate {
-    background-color: #009688;
+    background-color: var(--main-green);
 }
 
 .table-action-icons {
@@ -88,35 +95,35 @@
 /* CONSTANTS */
 
 .dark-gray-bg {
-    background: #262626;
+    background: var(--dark-grey);
 }
 
 .dark-gray-color {
-    color: #262626;
+    color: var(--dark-grey);
 }
 
 .light-gray-bg {
-    background: #f3f3f3;
+    background: var(--light-grey);
 }
 
 .light-gray-color {
-    color: #f3f3f3;
+    color: var(--light-grey);
 }
 
 .medium-gray-bg {
-    background: #938f8f;
+    background: var(--medium-grey)
 }
 
 .medium-gray-color {
-    color: #938f8f;
+    color: var(--medium-grey);
 }
 
 .green-main-bg {
-    background: #009688;
+    background: var(--main-green);
 }
 
 .green-main-color {
-    color: #009688;
+    color: var(--main-green);
 }
 
 .blue-gradient-bg {
