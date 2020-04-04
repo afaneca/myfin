@@ -28,6 +28,7 @@ var Budgets = {
             <thead>
                 <th>Tipo</th>
                 <th>Valor Previsto</th>
+                <th>Valor Atual</th>
             </thead>
             <tbody>
                 ${categoriesArr.map(cat => Budgets.renderInputRow(cat, isCredit)).join("")}
@@ -41,6 +42,10 @@ var Budgets = {
                 <td>${cat}</td>
                 <td><div class="input-field inline">
                     <input id="${StringUtils.normalizeStringForHtml(cat)}_inline" type="number" class="validate ${(isCredit) ? 'credit-input' : 'debit-input'} input" min="0.00" value="0.00" step="0.01" required>
+                    <label for="${StringUtils.normalizeStringForHtml(cat)}_inline" class="active">Valor (€)</label>
+                </div></td>
+                <td><div class="input-field inline">
+                    <input disabled id="${StringUtils.normalizeStringForHtml(cat)}_inline" type="number" class="validate ${(isCredit) ? 'credit-input' : 'debit-input'} input" min="0.00" value="0.00" step="0.01" required>
                     <label for="${StringUtils.normalizeStringForHtml(cat)}_inline" class="active">Valor (€)</label>
                 </div></td>
             </tr>

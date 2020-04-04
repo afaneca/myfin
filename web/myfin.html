@@ -55,31 +55,22 @@
                 <li><a id="menu-item-accounts" class="menu-item"
                         onClick="configs.goToPage('accounts');MenuUtils.changeActiveMenu('accounts')"
                         href="#!accounts"><i class="material-icons left">account_balance</i>Contas</a></li>
+                <li><a id="menu-item-categories" class="menu-item"
+                        onClick="configs.goToPage('categories');MenuUtils.changeActiveMenu('categories')"
+                        href="#!categories"><i class="material-icons left">folder_shared</i>Categorias</a></li>
                 <li><a id="menu-item-entities" class="menu-item"
                         onClick="configs.goToPage('entities');MenuUtils.changeActiveMenu('entities')"
                         href="#!entities"><i class="material-icons left">business</i>Entidades</a></li>
-                <li><a id="menu-item-budgets" class="menu-item dropdown-trigger" data-target="dropdown-budgets"
-                        href="#!"><i class="material-icons left">folder_shared</i>Orçamentos<i
-                            class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a id="menu-item-budgets" class="menu-item"
+                        onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
+                            class="material-icons left">folder_shared</i>Orçamentos</a></li>
                 <li><a id="menu-item-accounts" class="menu-item medium-gray-color" onClick="" href=""><i
                             class="material-icons left">equalizer</i>Investimentos</a></li>
+                <li><a id="menu-item-budgets" class="menu-item"
+                        onClick="configs.goToPage('stats');MenuUtils.changeActiveMenu('stats')" href="#!stats"><i
+                            class="material-icons left">folder_shared</i>Estatísticas</a></li>
             </ul>
         </nav>
-
-        <ul id="dropdown-budgets" class="dropdown-content">
-            <li><a id="menu-item-budgets" class="menu-item"
-                    onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
-                        class="material-icons left">folder_shared</i>Ver Orçamentos</a></li>
-            <li class="divider"></li>
-            <li><a id="menu-item-budgets" class="menu-item"
-                    onClick="configs.goToPage('categories');MenuUtils.changeActiveMenu('budgets')"
-                    href="#!categories"><i class="material-icons left">folder_shared</i>Categorias</a></li>
-
-            <li><a id="menu-item-budgets" class="menu-item"
-                    onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
-                        class="material-icons left">folder_shared</i>Estatísticas</a></li>
-        </ul>
-
     </header>
     <main>
         <!-- Loader -->
