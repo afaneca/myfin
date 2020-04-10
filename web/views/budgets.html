@@ -1,3 +1,5 @@
+<!-- MODAL -->
+<!-- Modal Structure -->
 <div id="page-wrapper">
     <div class="card-panel">
         <span class="blue-text text-darken-2">Orçamentos</span>
@@ -6,13 +8,27 @@
                 onclick="configs.goToPage('addBudget',{'new': true, 'open' : true}, true);" style="margin: 10px;"><i
                     class="material-icons left">add_circle</i>Adicionar Orçamento</a>
         </div>
-
+        <p style="float:right;">
+            <label>
+                <input type="checkbox" id="show_only_open_cb" />
+                <span>Só Abertos</span>
+            </label>
+        </p>
         <div id="table-wrapper">
 
         </div>
     </div>
 </div>
 
+<div id="modal-budgets" class="modal">
+    <div class="modal-content"></div>
+    <div class="modal-footer"></div>
+</div>
+
 <script>
+    $(document).ready(function () {
+        $('.modal').modal();
+        Budgets.init();
+    });
 
 </script>

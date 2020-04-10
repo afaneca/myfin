@@ -13,7 +13,8 @@ class Input
         $EMAIL = 7,
         $MAC = 8,
         $BOOLEAN = 9,
-        $REGEXP = 10;
+        $REGEXP = 10,
+        $ARRAY = 11;
 
     public static function validate($var, $type = 0, $errorCode = 0, $entityCheck = null, $columnName = null)
     {
@@ -53,6 +54,9 @@ class Input
                 break;
             case self::$BOOLEAN:
                 $result = filter_var($var, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                break;
+            case self::$ARRAY:
+                $result = $var;
                 break;
             default:
                 throw new BadValidationTypeException();

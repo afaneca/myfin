@@ -55,46 +55,27 @@
             </div>
         </div>
         <center>
-            <a id="conclusion-btn" class="waves-effect waves-light btn right-align btn-large" style="margin: 10px;"><i
-                    class="material-icons left">add_circle</i><span id="conclusion-btn-text">Adicionar Orçamento</span></a>
-                    <span id="conclusion-close-btn" class="waves-effect waves-light btn right-align btn-large orange" style="margin: 10px;display:none;"><i
-                            class="material-icons left">archive</i><span id="conclusion-close-btn-text">Fechar Orçamento</span></span>
+            <a id="conclusion-btn" onClick="AddBudgets.onConclusionClicked()" class="waves-effect waves-light btn right-align btn-large" style="margin: 10px;"><i
+                    class="material-icons left">add_circle</i><span id="conclusion-btn-text">Adicionar
+                    Orçamento</span></a>
+            <span id="conclusion-close-btn" onClick="AddBudgets.onBudgetCloseClicked()" class="waves-effect waves-light btn right-align btn-large orange"
+                style="margin: 10px;display:none;"><i class="material-icons left">archive</i><span
+                    id="conclusion-close-btn-text">Fechar Orçamento</span></span>
         </center>
 
     </div>
 </div>
 
 <script>
-    PickerUtils.setupMonthPicker("#budgets-monthpicker", () => {
+    /* PickerUtils.setupMonthPicker("#budgets-monthpicker", () => {
         $("#budgets-monthpicker").val();
-    })
-
-    var debitCategories = [
-        "Compras",
-        "Utilitários",
-        "Carros",
-        "Portagens",
-        "Animais",
-        "Presentes",
-        "Outros"
-    ]
-
-    var creditCategories = [
-        "Salário Tony",
-        "Salário Xana",
-        "Freelancing Tony",
-        "Outros"
-    ]
-
-    Budgets.setupBudgetInputs("#new-budget-debit-inputs", debitCategories, false)
-
-    Budgets.setupBudgetInputs("#new-budget-credit-inputs", creditCategories, true)
-
-    Budgets.setupInputListenersAndUpdateSummary("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
+    }) */
 
 
     var isNew = (configs.getUrlArgs()["new"]) ? (configs.getUrlArgs()["new"] === 'true') : false;
     var isOpen = (configs.getUrlArgs()["open"]) ? (configs.getUrlArgs()["open"] === 'true') : false;
-    Budgets.init(isOpen, isNew)
+    var budgetID = configs.getUrlArgs()["id"];
+
+    AddBudgets.init(isOpen, isNew, budgetID)
 
 </script>
