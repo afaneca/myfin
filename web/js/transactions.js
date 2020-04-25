@@ -288,7 +288,7 @@ var Transactions = {
             }
     },
     showEditTransactionModal: (trxID, selectedAmount, selectedDateTimestamp, selectedEntityID, selectedCategoryID, selectedAccountFromID, selectedAccountToID, selectedTypeID, selectedDescription) => {
-
+        
         LoadingManager.showLoading()
         TransactionServices.getAddTransactionStep0(
             (response) => {
@@ -365,7 +365,7 @@ var Transactions = {
                 $('select.select-trxs-types').select2({ dropdownParent: "#modal-transactions" });
                 $('select.select-trxs-categories').select2({ dropdownParent: "#modal-transactions" });
                 $(".datepicker").datepicker({
-                    defaultDate: new Date(DateUtils.convertUnixTimestampToDateString(selectedDateTimestamp)),
+                    defaultDate: new Date(DateUtils.convertUnixTimestampToDateFormat(selectedDateTimestamp)),
                     setDefaultDate: true,
                     format: "dd/mm/yyyy"
                 });

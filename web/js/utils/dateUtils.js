@@ -22,7 +22,7 @@ var DateUtils = {
         return formattedDate;
     },
     /**
-     * Returns in DD/MM/YYYY format (ex: 03/04/2020)
+     * Returns in MM/DD/YYYY format (ex: 04/03/2020)
      */
     convertUnixTimestampToDateFormat: (UNIX_timestamp) => {
         const a = new Date(UNIX_timestamp * 1000);
@@ -36,8 +36,8 @@ var DateUtils = {
         const sec = a.getSeconds();
 
 
-        const formattedDate = `${date}\/${monthNumber + 2}\/${year}`
-        
+        const formattedDate = `${monthNumber + 2}\/${date}\/${year}`
+
         return formattedDate;
     },
     /* convertDateToUnixTimestamp: (dateStr) => {
