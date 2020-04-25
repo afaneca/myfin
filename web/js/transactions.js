@@ -191,11 +191,13 @@ var Transactions = {
                 // EXPENSE
                 accountFromSelect.prop("disabled", false);
                 accountToSelect.prop("disabled", true);
+                accountToSelect.val("").trigger('change');
                 break;
             case "I":
                 // INCOME
                 accountFromSelect.prop("disabled", true);
                 accountToSelect.prop("disabled", false);
+                accountFromSelect.val("").trigger('change');
                 break;
             case "T":
                 // TRANSFER
