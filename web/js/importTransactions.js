@@ -328,7 +328,7 @@ var ImportTransactions = {
             <td><center>${ImportTransactions.renderEntitiesSelect(trx.selectedEntityID)}</center></td>
             <td><center>${ImportTransactions.renderCategoriesSelect(trx.selectedCategoryID)}</center></td>
             <td>
-                <center>${ImportTransactions.renderAccountsSelect(trx.selectedAccountToID)} ⮕ ${ImportTransactions.renderAccountsSelect(trx.selectedAccountFromID)}</center>
+                <center>${ImportTransactions.renderAccountsSelect(trx.selectedAccountFromID)} ⮕ ${ImportTransactions.renderAccountsSelect(trx.selectedAccountToID)}</center>
             </td>
                        
         </tr>
@@ -369,7 +369,7 @@ var ImportTransactions = {
     renderAccountsSelect: (selectedAccountID) => {
         return `
             <select style="width:45%" class="select2 accounts-select2">
-                <option value="" selected>Conta Externa</option>
+                <option value="" selected>${EXTERNAL_ACCOUNT_LABEL}</option>
                 ${accountsList.map(account => ImportTransactions.renderAccountsSelectOptions2(account.account_id, account.name, selectedAccountID))}
             </select>
         `

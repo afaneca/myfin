@@ -257,6 +257,8 @@ class Transactions
             die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
 
+
+
             $trxObj = TransactionModel::getWhere(
                 [
                     "transaction_id" => $trxID
@@ -264,6 +266,7 @@ class Transactions
                 ["amount", "date_timestamp", "type", "accounts_account_from_id", "accounts_account_to_id"]
             )[0];
 
+            $oldAmount = $trxObj["amount"];
             $oldTimestamp = $trxObj["date_timestamp"];
             $oldType = $trxObj["type"];
 
@@ -280,22 +283,43 @@ class Transactions
             // DELETE OLD BALANCE CHANGES
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
+                    $balanceBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
                     BalanceModel::delete(
                         [
                             "date_timestamp" => $oldTimestamp,
                             "accounts_account_id" => $oldAccountTo
                         ]
                     );
+
+                    $balanceAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
+
+                    if ($balanceBeforeRemoval == $balanceAfterRemoval) {
+                        // if the balance is still the same, it means there have been balance changes after this trx was first added
+                        // because of that, we need to readjust the balance accordingly
+                        BalanceModel::changeBalance($userID, $oldAccountTo, -$oldAmount, time(), false, false);
+                    }
+
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
+                    $balanceBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
                     BalanceModel::delete(
                         [
                             "date_timestamp" => $oldTimestamp,
                             "accounts_account_id" => $oldAccountFrom
                         ]
                     );
+                    $balanceAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
+
+                    if ($balanceBeforeRemoval == $balanceAfterRemoval) {
+                        // if the balance is still the same, it means there have been balance changes after this trx was first added
+                        // because of that, we need to readjust the balance accordingly
+                        BalanceModel::changeBalance($userID, $oldAccountFrom, $oldAmount, time(), false, false);
+                    }
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
+                    $balanceFromBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
+                    $balanceToBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
+
                     BalanceModel::delete(
                         [
                             "date_timestamp" => $oldTimestamp,
@@ -308,6 +332,22 @@ class Transactions
                             "accounts_account_id" => $oldAccountFrom
                         ]
                     );
+
+
+                    $balanceFromAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
+                    $balanceToAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
+
+                    if ($balanceFromBeforeRemoval == $balanceFromAfterRemoval) {
+                        // if the balance is still the same, it means there have been balance changes after this trx was first added
+                        // because of that, we need to readjust the balance accordingly
+                        BalanceModel::changeBalance($userID, $oldAccountFrom, $oldAmount, time(), false, false);
+                    }
+
+                    if ($balanceToBeforeRemoval == $balanceToAfterRemoval) {
+                        // if the balance is still the same, it means there have been balance changes after this trx was first added
+                        // because of that, we need to readjust the balance accordingly
+                        BalanceModel::changeBalance($userID, $oldAccountTo, -$oldAmount, time(), false, false);
+                    }
                     break;
             }
 
@@ -390,6 +430,8 @@ class Transactions
             ["account_id", "name", "type", "description"]
 
             ); */
+            $userID = UserModel::getUserIdByName($authusername, false);
+
             $trxObj = TransactionModel::getWhere(
                 [
                     "transaction_id" => $trxID
@@ -397,6 +439,7 @@ class Transactions
                 ["amount", "date_timestamp", "type", "accounts_account_from_id", "accounts_account_to_id"]
             )[0];
 
+            $oldAmount = $trxObj["amount"];
             $oldTimestamp = $trxObj["date_timestamp"];
             $oldType = $trxObj["type"];
 
@@ -422,22 +465,43 @@ class Transactions
             // DELETE OLD BALANCE CHANGES
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
+                    $balanceBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
                     BalanceModel::delete(
                         [
                             "date_timestamp" => $oldTimestamp,
                             "accounts_account_id" => $oldAccountTo
                         ]
                     );
+
+                    $balanceAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
+
+                    if ($balanceBeforeRemoval == $balanceAfterRemoval) {
+                        // if the balance is still the same, it means there have been balance changes after this trx was first added
+                        // because of that, we need to readjust the balance accordingly
+                        BalanceModel::changeBalance($userID, $oldAccountTo, -$oldAmount, time(), false, false);
+                    }
+
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
+                    $balanceBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
                     BalanceModel::delete(
                         [
                             "date_timestamp" => $oldTimestamp,
                             "accounts_account_id" => $oldAccountFrom
                         ]
                     );
+                    $balanceAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
+
+                    if ($balanceBeforeRemoval == $balanceAfterRemoval) {
+                        // if the balance is still the same, it means there have been balance changes after this trx was first added
+                        // because of that, we need to readjust the balance accordingly
+                        BalanceModel::changeBalance($userID, $oldAccountFrom, $oldAmount, time(), false, false);
+                    }
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
+                    $balanceFromBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
+                    $balanceToBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
+
                     BalanceModel::delete(
                         [
                             "date_timestamp" => $oldTimestamp,
@@ -450,12 +514,26 @@ class Transactions
                             "accounts_account_id" => $oldAccountFrom
                         ]
                     );
+
+
+                    $balanceFromAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
+                    $balanceToAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
+
+                    if ($balanceFromBeforeRemoval == $balanceFromAfterRemoval) {
+                        // if the balance is still the same, it means there have been balance changes after this trx was first added
+                        // because of that, we need to readjust the balance accordingly
+                        BalanceModel::changeBalance($userID, $oldAccountFrom, $oldAmount, time(), false, false);
+                    }
+
+                    if ($balanceToBeforeRemoval == $balanceToAfterRemoval) {
+                        // if the balance is still the same, it means there have been balance changes after this trx was first added
+                        // because of that, we need to readjust the balance accordingly
+                        BalanceModel::changeBalance($userID, $oldAccountTo, -$oldAmount, time(), false, false);
+                    }
                     break;
             }
 
             // ADD THE NEW
-
-            $userID = UserModel::getUserIdByName($authusername, false);
 
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
@@ -569,8 +647,8 @@ class Transactions
                     "type" => $trx["type"],
                     "selectedCategoryID" => null,
                     "selectedEntityID" => null,
-                    "selectedAccountFromID" => ($trx["type"] === DEFAULT_TYPE_INCOME_TAG) ? null : $accountID,
-                    "selectedAccountToID" => ($trx["type"] === DEFAULT_TYPE_INCOME_TAG) ? $accountID : null
+                    "selectedAccountFromID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? null : $accountID,
+                    "selectedAccountToID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? $accountID : null
                 ];
                 /*  array_push($outgoingArr["fillData"], [
                     "date" => $trx["date"],

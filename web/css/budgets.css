@@ -3,6 +3,6 @@
     font-weight: bold;
 }
 
-.select2-selection__rendered[title="Conta Externa"] {
+.select2-selection__rendered[title="** Conta Externa **"] {
     color: gray !important;
 }
