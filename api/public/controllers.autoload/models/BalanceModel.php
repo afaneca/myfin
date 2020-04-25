@@ -18,14 +18,16 @@ class BalanceModel extends Entity
         "accounts_account_id",
     ];
 
-    public static function changeBalance($userID, $account_id, $offsetAmount, $dateTimestamp, $transactional = false)
+    public static function changeBalance($userID, $account_id, $offsetAmount, $dateTimestamp, $useTimestamp = false, $transactional = false)
     {
 
         $currentBalance = BalanceModel::getCurrentBalance($userID, $account_id, $transactional)[0]["amount"];
 
+        $timestamp = ($useTimestamp == true) ? $dateTimestamp : time();
+
         BalanceModel::insert(
             [
-                "date_timestamp" => $dateTimestamp,
+                "date_timestamp" =>  $timestamp/* ($dateTimestamp + (time() - strtotime("today"))) */,
                 "amount" => ($currentBalance + $offsetAmount),
                 "accounts_account_id" => intval($account_id)
             ],

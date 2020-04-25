@@ -1,7 +1,7 @@
 "use strict";
 
 var StringUtils = {
-    formatStringtoCurrency: (str) => {
+    formatStringToCurrency: (str) => {
         return parseFloat(str).toFixed(2) + "€"
     },
     normalizeStringForHtml: (str) => {
@@ -12,6 +12,10 @@ var StringUtils = {
     },
     removeLineBreaksFromString: (ogStr) => {
         return ogStr.replace(/[\r\n]+/gm, "")
+    },
+    convertStringToFloat: (str) => {
+        if (!str) return str
+        return parseFloat(str.replace(",", "."))
     }
 }
 

@@ -54,7 +54,7 @@ class AccountModel extends Entity
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT a.account_id, a.name, a.type, a.description, a.status, a.exclude_from_budgets, b.amount as 'balance', b.date_timestamp, a.users_user_id " .
+        $sql = "SELECT a.account_id, a.name, a.type, a.description, a.status, a.exclude_from_budgets, (b.amount / 100) as 'balance', b.date_timestamp, a.users_user_id " .
             "FROM accounts a " .
             "LEFT JOIN (SELECT c.accounts_account_id, d.amount, c.date_timestamp " .
             "FROM (SELECT accounts_account_id, MAX(date_timestamp) date_timestamp " .

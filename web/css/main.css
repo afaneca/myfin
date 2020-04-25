@@ -10,6 +10,8 @@
     --dark-grey: #262626;
     --light-grey: #f3f3f3;
     --medium-grey: #938f8f;
+    --main-blue-background: #141f31;
+    --sidebar_width_percentage: 12%;
 }
 
 .modal {
@@ -30,18 +32,28 @@
     width: 100%;
 }
 
+.card-panel{
+    background: var(--light-grey);
+}
+
 .top-nav {
     float: right;
-    width: 85%;
-    background: white;
+    width: calc(100% - (var(--sidebar_width_percentage)));
+    background: transparent;
     margin-bottom: 20px;
+    box-shadow: none !important;
+}
+
+nav ul a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #00bcd4;
 }
 
 .side-nav {
     position: fixed;
     /* background-color: red; */
     height: 100%;
-    width: 15%;
+    width: var(--sidebar_width_percentage);
     float: left;
     margin-top: 0px;
 }
@@ -51,7 +63,9 @@
 }
 
 .side-nav-menu-active {
-    background: #1a1616;
+    background: #00bcd4;
+    background: linear-gradient(to top, #0083B0, #00B4DB);
+    background: -webkit-linear-gradient(to top, #0083B0, #00B4DB);
 }
 
 .side-nav-menu-inactive {
@@ -67,6 +81,16 @@
     font-size: 18px !important;
 }
 
+.dashboard-btn{
+    min-height:50px;
+    cursor:pointer;
+    color:white;
+}
+
+.dashboard-btn:hover{
+    color:black;
+}
+
 #logo-text {
     padding-left: 10px;
     font-size: 180%;
@@ -75,13 +99,13 @@
 #main-content {
     padding: 10px;
     float: right;
-    width: 85%;
+    width: calc(100% - (var(--sidebar_width_percentage)));
 }
 
 .main-progress-bar {
     /* padding: 10px; */
     float: right;
-    width: 85%;
+    width: calc(100% - (var(--sidebar_width_percentage)));
 }
 
 .progress .indeterminate {
@@ -93,6 +117,10 @@
 }
 
 /* CONSTANTS */
+
+.main-blue-background-bg {
+    background: var(--main-blue-background);
+}
 
 .dark-gray-bg {
     background: var(--dark-grey);
@@ -131,9 +159,53 @@
     background: linear-gradient(45deg, #0288d1, #26c6da) !important;
 }
 
+.blue-gradient-bg:hover {
+    background: -webkit-linear-gradient(120deg, #0288d1, #26c6da) !important;
+    background: linear-gradient(120deg, #0288d1, #26c6da) !important;
+}
+
+.cool-blues-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #2193b0, #6dd5ed) !important;
+    background: linear-gradient(45deg, #2193b0, #6dd5ed) !important;
+}
+
+.dark-ocean-gradient-bg {
+    background: #373b44;
+    background: -webkit-linear-gradient(to bottom, #373b44, #4286f4);
+    background: linear-gradient(to bottom, #373b44, #4286f4);
+}
+
+.malibu-beach-gradient-bg {
+    background-image: linear-gradient(to top, #4facfe 0%, #00f2fe 100%);
+    background: -webkit-linear-gradient(to top, #4facfe 0%, #00f2fe 100%);
+}
+
+.blue-raspberry-gradient-bg {
+    background: #00B4DB;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom #0083B0, #00B4DB);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #0083B0, #00B4DB);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.royal-gradient-bg {
+    background: #141E30;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #243B55, #141E30);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #243B55, #141E30);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
 .red-gradient-bg {
     background: -webkit-linear-gradient(45deg, #ff5252, #f48fb1)!important;
     background: linear-gradient(45deg, #ff5252, #f48fb1)!important;
+}
+
+.red-gradient-bg:hover {
+    background: -webkit-linear-gradient(120deg, #ff5252, #f48fb1)!important;
+    background: linear-gradient(120deg, #ff5252, #f48fb1)!important;
 }
 
 .orange-gradient-bg {
@@ -141,7 +213,38 @@
     background: linear-gradient(45deg, #ff6f00, #ffca28)!important;
 }
 
+.orange-gradient-bg:hover {
+    background: -webkit-linear-gradient(120deg, #ff6f00, #ffca28)!important;
+    background: linear-gradient(120deg, #ff6f00, #ffca28)!important;
+}
+
 .green-gradient-bg {
     background: -webkit-linear-gradient(45deg, #43a047, #1de9b6)!important;
     background: linear-gradient(45deg, #43a047, #1de9b6)!important;
+}
+
+.green-gradient-bg:hover {
+    background: -webkit-linear-gradient(120deg, #43a047, #1de9b6)!important;
+    background: linear-gradient(120deg, #43a047, #1de9b6)!important;
+}
+
+.moonlit-asteroid-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #0F2027, #203A43, #2C5364)!important;
+    background: linear-gradient(45deg, #0F2027, #203A43, #2C5364) !important;
+}
+
+/* RESET-CHECKBOX - to remove materializecss styling from checkbox inputs */
+
+[type="checkbox"].reset-checkbox, [type="checkbox"].reset-checkbox:checked, [type="checkbox"].reset-checkbox:not(checked) {
+    opacity: 1 !important;
+    position: relative !important;
+    pointer-events: auto;
+}
+
+[type="checkbox"].reset-checkbox+span::before, [type="checkbox"].reset-checkbox+span::after, [type="checkbox"].reset-checkbox:checked+span::before, [type="checkbox"].reset-checkbox:checked+span::after {
+    display: none !important;
+}
+
+[type="checkbox"].reset-checkbox+span:not(.lever) {
+    padding-left: 10px !important;
 }

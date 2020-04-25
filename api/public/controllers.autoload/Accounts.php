@@ -72,7 +72,7 @@ class Accounts
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 5);
             $status = Input::validate($request->getParsedBody()['status'], Input::$STRING, 6);
             $excludeFromBudgets = (int) Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 7);
-            $currentBalance = Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8);
+            $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8));
 
             if (
                 $type !== "CHEAC" && $type !== "SAVAC"
@@ -158,9 +158,19 @@ class Accounts
             die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
 
+            TransactionModel::delete([
+                "accounts_account_from_id" => $accountID
+            ]);
+
+            TransactionModel::delete([
+                "accounts_account_to_id" => $accountID
+            ]);
+
             BalanceModel::delete([
                 "accounts_account_id" => $accountID
             ], false);
+
+
 
             AccountModel::delete([
                 "account_id" => $accountID,
@@ -197,7 +207,7 @@ class Accounts
             $newDescription = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 6);
             $newStatus = Input::validate($request->getParsedBody()['new_status'], Input::$STRING, 7);
             $excludeFromBudgets = (int) Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 8);
-            $currentBalance = Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9);
+            $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9));
 
             if (
                 $newType !== "CHEAC" && $newType !== "SAVAC"
@@ -215,6 +225,8 @@ class Accounts
             /* Execute Operations */
             /* $db = new EnsoDB(true);
 
+                false
+            );
             $db->getDB()->beginTransaction(); */
 
             /* echo "1";

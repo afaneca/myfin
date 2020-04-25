@@ -1,7 +1,7 @@
 "use strict";
 
 var tableUtils = {
-    setupStaticTable: (tableID) => {
+    setupStaticTable: (tableID, onDrawCallback) => {
         $(tableID).DataTable({
             "order": [[0, "desc"]], 
             "lengthChange": false,
@@ -16,11 +16,11 @@ var tableUtils = {
                 "paginate": {
                     "next": "Página Seguinte",
                     "previous": "Página Anterior",
-                },
-            }
+                }},
+                drawCallback: function() {onDrawCallback},
         })
     },
-    setupStaticTableWithCustomColumnWidths: (tableID, customColumnWidths) => {
+    setupStaticTableWithCustomColumnWidths: (tableID, customColumnWidths, onDrawCallback) => {
         $(tableID).DataTable({
             "order": [[0, "desc"]],
             "lengthChange": false,
@@ -36,9 +36,9 @@ var tableUtils = {
                 "paginate": {
                     "next": "Página Seguinte",
                     "previous": "Página Anterior",
-                },
-
-            }
+                }
+            },
+            drawCallback: function () { onDrawCallback },
         })
     }
 }

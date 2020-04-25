@@ -31,7 +31,6 @@ var Transactions = {
                 <th>Descrição</th>
                 <th>Entidade</th>
                 <th>Categoria</th>
-                <th>Conta</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -46,11 +45,10 @@ var Transactions = {
             <tr data-id='$trx.transaction_id'>
                 <td>${DateUtils.convertUnixTimestampToDateString(trx.date_timestamp)}</td>
                 <td>${Transactions.formatTypeToString(trx.type, trx.account_from_name, trx.account_to_name)}</td>
-                <td>${StringUtils.formatStringtoCurrency(trx.amount)}</td>
+                <td>${StringUtils.formatStringToCurrency(trx.amount)}</td>
                 <td>${trx.description}</td>
                 <td>${trx.entity_name}</td>
                 <td>${trx.category_name}</td>
-                <td>${trx.account_from_name}</td>
                 <td>
                     <i onClick="Transactions.showEditTransactionModal(${trx.transaction_id}, ${trx.amount}, ${trx.date_timestamp}, ${trx.entity_id}, ${trx.categories_category_id}, ${trx.accounts_account_from_id}, ${trx.accounts_account_to_id}, '${trx.type}', '${StringUtils.removeLineBreaksFromString(trx.description)}')" class="material-icons table-action-icons">create</i>
                     <i onClick="Transactions.showRemoveTransactionModal(${trx.transaction_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
@@ -61,16 +59,25 @@ var Transactions = {
     formatTypeToString: (type, acc_from, acc_to) => {
         //'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'
         let str = type;
+
+        if (!acc_from || acc_from == "") acc_from = `<span style="color:gray">Conta Externa</span>`
+        if (!acc_to || acc_to == "") acc_to = `<span style="color:gray">Conta Externa</span>`
+
+
         switch (type) {
-            case 'I': return "<span class='badge green lighten-5 green-text text-accent-4'>Receita</span>"
+            case 'I': return `<span class='badge green lighten-5 green-text text-accent-6'>(${acc_from} ⮕ ${acc_to})</span></span>`
                 break;
-            case 'E': return "<span class='badge pink lighten-5 pink-text text-accent-2'>Despesa</span>"
+            case 'E': return `<span class='badge pink lighten-5 pink-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
                 break;
-            case 'T': return `<span class='badge brown darken-2 white-text text-accent-2'>Transferência (${acc_from} ⮕ ${acc_to})</span>`
+            case 'T': return `<span class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
                 break;
         }
 
-        return str;
+
+
+        return `<span class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
+
+        /* return str; */
     },
     showAddTransactionModal: () => {
         LoadingManager.showLoading()

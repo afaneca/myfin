@@ -16,6 +16,17 @@ class Input
         $REGEXP = 10,
         $ARRAY = 11;
 
+
+    public static function convertFloatToInteger($floatVal)
+    {
+        return $floatVal * 100;
+    }
+
+    public static function convertIntegerToFloat($intVal)
+    {
+        return $intVal / 100;
+    }
+
     public static function validate($var, $type = 0, $errorCode = 0, $entityCheck = null, $columnName = null)
     {
         $result = null;

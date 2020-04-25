@@ -6,6 +6,8 @@ var Accounts = {
     },
     getAccounts: () => {
         AccountServices.getAllAccounts((response) => {
+            CookieUtils.setUserAccounts(response)
+            
             Accounts.initTable(response)
         },
             (error) => {
@@ -40,7 +42,7 @@ var Accounts = {
             <tr data-id='${account.account_id}'>
                 <td>${account.name}</td>
                 <td>${StringUtils.getAccountTypeName(account.type)}</td>
-                <td>${StringUtils.formatStringtoCurrency(account.balance)}</td>
+                <td>${StringUtils.formatStringToCurrency(account.balance)}</td>
                 <td><span class="${(account.status === 'Ativa') ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${account.status}</span></td>
                 <td>
                     <i onClick="Accounts.showEditAccountModal('${account.name}', '${account.description}', '${account.type}', '${account.status}', '${account.balance}', '${account.exclude_from_budgets}', ${account.account_id})" class="material-icons table-action-icons">create</i>
@@ -254,7 +256,7 @@ var Accounts = {
         const type = $("select#account_type_select").val()
         const status = $("select#account_status_select").val()
         const exclude_from_budgets = $("#exclude_from_budgets").is(":checked")
-        
+
         if (!name || name === "" || !type || type === ""
             || !description || description === "" || !status || status === ""
             || !current_balance || current_balance === "") {

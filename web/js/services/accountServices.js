@@ -1,4 +1,4 @@
-"use Strict";
+"use strict";
 
 var AccountServices = {
     getAllAccounts: (successCallback, errorCallback) => {

@@ -129,7 +129,7 @@ class Transactions
             $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
-            $amount = Input::validate($request->getParsedBody()['amount'], Input::$FLOAT, 2);
+            $amount = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['amount'], Input::$FLOAT, 2));
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 3);
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 4);
 
@@ -331,7 +331,7 @@ class Transactions
             $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
-            $amount = Input::validate($request->getParsedBody()['new_amount'], Input::$FLOAT, 2);
+            $amount = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['new_amount'], Input::$FLOAT, 2));
             $type = Input::validate($request->getParsedBody()['new_type'], Input::$STRICT_STRING, 3);
             $description = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 4);
 
@@ -482,6 +482,207 @@ class Transactions
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function importTransactionsStep0(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            //$outgoingArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
+            $outgoingArr = AccountModel::getAllAccountsForUserWithAmounts($userID);
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outgoingArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    /**
+     * Gets the imported transactions in this format: 
+     * {
+     *  date, description, amount, type
+     * }
+     */
+    public static function importTransactionsStep1(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            $accountID = Input::validate($request->getParsedBody()['account_id'], Input::$INT);
+            $trxList = json_decode(Input::validate($request->getParsedBody()['trx_list'], Input::$ARRAY, 2), true);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+
+            $outgoingArr = [];
+            /**
+             * fillData: trx[] => [date, description, amount, type, selectedCategoryID, selectedEntityID, accountFromID, accountToID],
+             * categories: [],
+             * entities: [],
+             * accounts: [],
+             */
+            $outgoingArr["fillData"] = [];
+            foreach ($trxList as $trx) {
+                $outgoingArr["fillData"][] = [
+                    "date" => $trx["date"],
+                    "description" => $trx["description"],
+                    "amount" => $trx["amount"],
+                    "type" => $trx["type"],
+                    "selectedCategoryID" => null,
+                    "selectedEntityID" => null,
+                    "selectedAccountFromID" => ($trx["type"] === DEFAULT_TYPE_INCOME_TAG) ? null : $accountID,
+                    "selectedAccountToID" => ($trx["type"] === DEFAULT_TYPE_INCOME_TAG) ? $accountID : null
+                ];
+                /*  array_push($outgoingArr["fillData"], [
+                    "date" => $trx["date"],
+                    "description" => $trx["description"],
+                    "amount" => $trx["amount"],
+                    "type" => $trx["type"],
+                    "selectedCategoryID" => null,
+                    "selectedEntityID" => null,
+                    "accountFromID" => null,
+                    "accountToID" => null
+                ]); */
+            }
+
+            $outgoingArr["categories"] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name"]);
+            $outgoingArr["entities"] = EntityModel::getWhere(["users_user_id" => $userID], ["entity_id", "name"]);
+            $outgoingArr["accounts"] = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outgoingArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    /**
+     * Imports transactions in bulk
+     */
+    public static function importTransactionsStep2(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            $trxList = json_decode(Input::validate($request->getParsedBody()['trx_list'], Input::$ARRAY, 2), true);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+            $importedTrxsCnt = 0;
+
+            foreach ($trxList as $trx) {
+                $date_timestamp = $trx["date_timestamp"];
+                $amount = Input::convertFloatToInteger($trx["amount"]);
+                $type = $trx["type"];
+                $description = $trx["description"];
+                $entityID = $trx["entity_id"];
+                $accountFrom = (isset($trx["account_from_id"])) ? $trx["account_from_id"] : null;
+                $accountTo = (isset($trx["account_to_id"])) ? $trx["account_to_id"] : null;
+                $categoryID = $trx["category_id"];
+
+                if (!$date_timestamp || !$amount || !$type || (!$accountFrom && !$accountTo)) {
+                    continue;
+                }
+                $importedTrxsCnt++;
+
+                TransactionModel::insert([
+                    "date_timestamp" => $date_timestamp, // in order to avoid diff trxs with same timestamp
+                    "amount" => $amount,
+                    "type" => $type,
+                    "description" => $description,
+                    "entities_entity_id" => $entityID,
+                    "accounts_account_from_id" => $accountFrom,
+                    "accounts_account_to_id" => $accountTo,
+                    "categories_category_id" => $categoryID
+                ]);
+
+
+                switch ($type) {
+                    case DEFAULT_TYPE_INCOME_TAG:
+                        BalanceModel::changeBalance($userID, $accountTo, $amount, time() + $importedTrxsCnt, true, false);
+                        break;
+                    case DEFAULT_TYPE_EXPENSE_TAG:
+                        BalanceModel::changeBalance($userID, $accountFrom, -$amount, time() + $importedTrxsCnt, true, false);
+                        break;
+                    case DEFAULT_TYPE_TRANSFER_TAG:
+                        BalanceModel::changeBalance($userID, $accountFrom, -$amount, time() + $importedTrxsCnt, true, false);
+                        BalanceModel::changeBalance($userID, $accountTo, $amount, time() + $importedTrxsCnt, true, false);
+                        break;
+                }
+            }
+
+
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, "$importedTrxsCnt transactions successfully imported!");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/trxs/', 'Transactions::getAllTransactionsForUser');
@@ -489,3 +690,6 @@ $app->post('/trxs/step0', 'Transactions::addTransactionStep0');
 $app->post('/trxs/step1', 'Transactions::addTransaction');
 $app->delete('/trxs/', 'Transactions::removeTransaction');
 $app->put('/trxs/', 'Transactions::editTransaction');
+$app->post('/trxs/import/step0', 'Transactions::importTransactionsStep0');
+$app->post('/trxs/import/step1', 'Transactions::importTransactionsStep1');
+$app->post('/trxs/import/step2', 'Transactions::importTransactionsStep2');

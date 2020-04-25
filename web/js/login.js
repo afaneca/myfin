@@ -1,4 +1,6 @@
+
 "use strict";
+
 
 const SIGN_UP_HTML = "Ainda não está registado?"
 const SIGN_IN_HTML = "Já está registado?"
@@ -183,6 +185,8 @@ function performLogin(username, password) {
             Cookies.set("sessionkey", response["sessionkey"]);
             Cookies.set("username", response["username"]);
             Cookies.set("trustlimit", response["trustlimit"]);
+            CookieUtils.setUserAccounts(response["accounts"])
+
             configs.switchApp("myfin");
             /* if (!misc.checkIfUserHasAction("canAccessBackoffice")) {
               M.toast({

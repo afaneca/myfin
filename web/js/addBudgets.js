@@ -131,9 +131,9 @@ var AddBudgets = {
 
         balance = incomeAcc - expensesAcc
 
-        $(expensesID).text(StringUtils.formatStringtoCurrency(expensesAcc))
-        $(incomeID).text(StringUtils.formatStringtoCurrency(incomeAcc))
-        $(balanceID).text(StringUtils.formatStringtoCurrency(balance))
+        $(expensesID).text(StringUtils.formatStringToCurrency(expensesAcc))
+        $(incomeID).text(StringUtils.formatStringToCurrency(incomeAcc))
+        $(balanceID).text(StringUtils.formatStringToCurrency(balance))
     },
     setMonthPickerValue: (month, year) => {
         PickerUtils.setupMonthPickerWithDefaultDate("#budgets-monthpicker", month, year, () => {
@@ -141,7 +141,7 @@ var AddBudgets = {
         })
     },
     setInitialBalance: value => {
-        $("span#estimated_initial_balance_value").text(StringUtils.formatStringtoCurrency(value))
+        $("span#estimated_initial_balance_value").text(StringUtils.formatStringToCurrency(value))
     },
     setObservations: value => {
         $("textarea#budget_observations").text(value)

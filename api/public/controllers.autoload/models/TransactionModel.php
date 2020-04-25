@@ -31,7 +31,7 @@ class TransactionModel extends Entity
             "ON accounts.account_id = transactions.accounts_account_from_id " .
             "WHERE users_user_id = :userID "; */
 
-        $sql = "SELECT transaction_id, transactions.date_timestamp, transactions.amount, transactions.type, transactions.description, entities.entity_id, entities.name as entity_name, categories_category_id, categories.name as category_name, accounts_account_from_id, acc_to.name as account_to_name, accounts_account_to_id, acc_from.name as account_from_name " .
+        $sql = "SELECT transaction_id, transactions.date_timestamp, (transactions.amount / 100) as amount, transactions.type, transactions.description, entities.entity_id, entities.name as entity_name, categories_category_id, categories.name as category_name, accounts_account_from_id, acc_to.name as account_to_name, accounts_account_to_id, acc_from.name as account_from_name " .
             "FROM transactions " .
             "LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id " .
             "LEFT JOIN categories ON categories.category_id = transactions.categories_category_id " .

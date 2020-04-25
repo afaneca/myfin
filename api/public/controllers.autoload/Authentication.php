@@ -36,10 +36,13 @@ class Authentication
 
             $trustlimit = UserModel::getWhere(["username" => $username], ["trustlimit"])[0]["trustlimit"];
 
+            $userID = UserModel::getUserIdByName($username, true);
+            $accountsArr = AccountModel::getWhere(["users_user_id" => $userID]);
+
             $db->getDB()->commit();
             //EnsoLogsModel::addEnsoLog($username, "Logged in.", EnsoLogsModel::$INFORMATIONAL, 'Authentication');
 
-            return sendResponse($response, EnsoShared::$REST_OK, ["sessionkey" => $auth_key, "username" => $username, "trustlimit" => $trustlimit]);
+            return sendResponse($response, EnsoShared::$REST_OK, ["sessionkey" => $auth_key, "username" => $username, "trustlimit" => $trustlimit, "accounts" => $accountsArr]);
         } catch (InputException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, "");
         } catch (AuthenticationException $e) {
