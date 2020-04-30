@@ -61,7 +61,7 @@ var Categories = {
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
                 <td>
-                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${cats.description}', '${cats.type}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${StringUtils.normalizeStringForHtml(cats.description)}', '${cats.type}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
                     <i onClick="Categories.showRemoveCategoryModal('${cats.name}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
