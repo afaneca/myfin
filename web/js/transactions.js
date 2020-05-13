@@ -67,14 +67,16 @@ var Transactions = {
 
 
         switch (type) {
-            case 'I': return `<span class='badge green lighten-5 green-text text-accent-6'>(${acc_from} ⮕ ${acc_to})</span></span>`
+            case 'I':
+                return `<span class='badge green lighten-5 green-text text-accent-6'>(${acc_from} ⮕ ${acc_to})</span></span>`
                 break;
-            case 'E': return `<span class='badge pink lighten-5 pink-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
+            case 'E':
+                return `<span class='badge pink lighten-5 pink-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
                 break;
-            case 'T': return `<span class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
+            case 'T':
+                return `<span class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
                 break;
         }
-
 
 
         return `<span class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
@@ -150,11 +152,11 @@ var Transactions = {
                     <a onClick="Transactions.addTransaction()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
                 $("#modal-transactions .modal-content").html(txt);
                 $("#modal-transactions .modal-footer").html(actionLinks);
-                $('select.select-trxs-entities').select2({ dropdownParent: "#modal-transactions" });
-                $('select.select-trxs-account_to').select2({ dropdownParent: "#modal-transactions" });
-                $('select.select-trxs-account_from').select2({ dropdownParent: "#modal-transactions" });
-                $('select.select-trxs-types').select2({ dropdownParent: "#modal-transactions" });
-                $('select.select-trxs-categories').select2({ dropdownParent: "#modal-transactions" });
+                $('select.select-trxs-entities').select2({dropdownParent: "#modal-transactions"});
+                $('select.select-trxs-account_to').select2({dropdownParent: "#modal-transactions"});
+                $('select.select-trxs-account_from').select2({dropdownParent: "#modal-transactions"});
+                $('select.select-trxs-types').select2({dropdownParent: "#modal-transactions"});
+                $('select.select-trxs-categories').select2({dropdownParent: "#modal-transactions"});
                 $(".datepicker").datepicker({
                     defaultDate: new Date(),
                     setDefaultDate: true,
@@ -246,16 +248,17 @@ var Transactions = {
             return
         }
 
-
-
+        LoadingManager.showLoading()
         TransactionServices.addTransaction(amount, type, description, entID, account_from_id, account_to_id, catID, date_timestamp,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Transação adicionada com sucesso!")
                 configs.goToPage("transactions", null, true)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     },
@@ -278,19 +281,22 @@ var Transactions = {
     removeTransaction: (trxID) => {
         if (!trxID) return;
 
+        LoadingManager.showLoading()
         TransactionServices.removeTransaction(trxID,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Transação adicionada com sucesso!")
                 configs.goToPage("transactions", null, true)
             }),
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
     showEditTransactionModal: (trxID, selectedAmount, selectedDateTimestamp, selectedEntityID, selectedCategoryID, selectedAccountFromID, selectedAccountToID, selectedTypeID, selectedDescription) => {
-        
+
         LoadingManager.showLoading()
         TransactionServices.getAddTransactionStep0(
             (response) => {
@@ -361,11 +367,11 @@ var Transactions = {
                 $("#modal-transactions .modal-content").html(txt);
                 $("#modal-transactions .modal-footer").html(actionLinks);
 
-                $('select.select-trxs-entities').select2({ dropdownParent: "#modal-transactions" });
-                $('select.select-trxs-account_to').select2({ dropdownParent: "#modal-transactions" });
-                $('select.select-trxs-account_from').select2({ dropdownParent: "#modal-transactions" });
-                $('select.select-trxs-types').select2({ dropdownParent: "#modal-transactions" });
-                $('select.select-trxs-categories').select2({ dropdownParent: "#modal-transactions" });
+                $('select.select-trxs-entities').select2({dropdownParent: "#modal-transactions"});
+                $('select.select-trxs-account_to').select2({dropdownParent: "#modal-transactions"});
+                $('select.select-trxs-account_from').select2({dropdownParent: "#modal-transactions"});
+                $('select.select-trxs-types').select2({dropdownParent: "#modal-transactions"});
+                $('select.select-trxs-categories').select2({dropdownParent: "#modal-transactions"});
                 $(".datepicker").datepicker({
                     defaultDate: new Date(DateUtils.convertUnixTimestampToDateFormat(selectedDateTimestamp)),
                     setDefaultDate: true,
@@ -418,14 +424,17 @@ var Transactions = {
             return
         }
 
+        LoadingManager.showLoading()
         TransactionServices.editTransaction(trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp,
             () => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Transação atualizada com sucesso!")
                 configs.goToPage("transactions", null, true)
             },
             () => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     }
