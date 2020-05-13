@@ -2,9 +2,11 @@
 
 var Categories = {
     getCategories: (type = undefined) => {
+        LoadingManager.showLoading()
         CategoryServices.getAllCategories(type,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 let debitList = []
                 let creditList = []
 
@@ -14,7 +16,7 @@ var Categories = {
             },
             (response) => {
                 // FAILURE
-
+                LoadingManager.hideLoading()
             })
     },
     initTables: (debitCatsList, creditCatsList) => {
@@ -113,14 +115,17 @@ var Categories = {
             return
         }
 
+        LoadingManager.showLoading()
         CategoryServices.addCategory(catName, catDescription, catType,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Categoria adicionada com sucesso!")
                 configs.goToPage("categories", null, true)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     },
@@ -145,14 +150,17 @@ var Categories = {
     removeCategory: (catID) => {
         if (!catID) return;
 
+        LoadingManager.showLoading()
         CategoryServices.removeCategory(catID,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Categoria removida com sucesso!")
                 configs.goToPage("categories", null, true)
             }),
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
@@ -210,14 +218,17 @@ var Categories = {
             return
         }
 
+        LoadingManager.showLoading()
         CategoryServices.editCategory(catID, catName, catDescription, catType,
             () => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Categoria atualizada com sucesso!")
                 configs.goToPage("categories", null, true)
             },
             () => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     }
