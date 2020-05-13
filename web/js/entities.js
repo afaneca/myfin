@@ -2,13 +2,16 @@
 
 var Entities = {
     getEntities: () => {
+        LoadingManager.showLoading()
         EntityServices.getAllEntities(
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 Entities.initTables(response)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
 
             })
     },
@@ -74,14 +77,17 @@ var Entities = {
             return
         }
 
+        LoadingManager.showLoading()
         EntityServices.addEntity(entName,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Entidade adicionada com sucesso!")
                 configs.goToPage("entities", null, true)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     },
@@ -104,14 +110,17 @@ var Entities = {
     removeEntity: (entityID) => {
         if (!entityID) return;
 
+        LoadingManager.showLoading()
         EntityServices.removeEntity(entityID,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Entidade adicionada com sucesso!")
                 configs.goToPage("entities", null, true)
             }),
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
@@ -148,14 +157,17 @@ var Entities = {
             return
         }
 
+        LoadingManager.showLoading()
         EntityServices.editEntity(entID, entName,
             () => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Entidade atualizada com sucesso!")
                 configs.goToPage("entities", null, true)
             },
             () => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     }
