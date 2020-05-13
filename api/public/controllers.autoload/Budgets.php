@@ -20,7 +20,7 @@ class Budgets
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
@@ -96,7 +96,7 @@ class Budgets
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
@@ -118,7 +118,6 @@ class Budgets
 
             $list = BudgetModel::getWhere(["users_user_id" => $userID, "budget_id" => $budgetID], ["initial_balance", "observations", "month", "year"])[0];
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
-
 
 
             /* $db->getDB()->commit(); */
@@ -146,7 +145,7 @@ class Budgets
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
@@ -157,7 +156,6 @@ class Budgets
 
             /* Execute Operations */
             $userID = UserModel::getUserIdByName($authusername, false);
-
 
 
             $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type"]);
@@ -183,7 +181,7 @@ class Budgets
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -194,8 +192,6 @@ class Budgets
             $year = Input::validate($request->getParsedBody()['year'], Input::$INT, 4);
             $observations = Input::validate($request->getParsedBody()['observations'], Input::$STRING, 5);
             $catValuesArr = json_decode(Input::validate($request->getParsedBody()['cat_values_arr'], Input::$ARRAY, 6), true);
-
-
 
 
             /* Auth - token validation */
@@ -250,7 +246,7 @@ class Budgets
             $budgetID = Input::validate($request->getParsedBody()['budget_id'], Input::$INT, 2);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
             } else {
                 $mobile = false;
             }
@@ -264,7 +260,6 @@ class Budgets
 
             BudgetHasCategoriesModel::delete(["budgets_budget_id" => $budgetID, "budgets_users_user_id" => $userID]);
             BudgetModel::delete(["budget_id" => $budgetID, "users_user_id" => $userID]);
-
 
 
             return sendResponse($response, EnsoShared::$REST_OK, "Budget successfully removed.");
@@ -284,7 +279,7 @@ class Budgets
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -295,9 +290,6 @@ class Budgets
             $year = Input::validate($request->getParsedBody()['year'], Input::$INT, 5);
             $observations = Input::validate($request->getParsedBody()['observations'], Input::$STRING, 6);
             $catValuesArr = json_decode(Input::validate($request->getParsedBody()['cat_values_arr'], Input::$ARRAY, 7), true);
-
-
-
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
@@ -312,7 +304,7 @@ class Budgets
 
             $userID = UserModel::getUserIdByName($authusername, false);
 
-            // ADD BUDGET
+            // EDIT BUDGET
             BudgetModel::editWhere(
                 ["budget_id" => $budgetID],
                 [
@@ -327,7 +319,7 @@ class Budgets
             // ADD CAT VALUES TO BUDGET CATEGORIES
             foreach ($catValuesArr as $item) {
                 $catID = $item['category_id'];
-                $plannedValue = $item['planned_value'];
+                $plannedValue = Input::convertFloatToInteger($item['planned_value']);
 
                 BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValue);
             }
@@ -351,16 +343,14 @@ class Budgets
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
 
             /* month year observations is_open users_user_id cat_values_arr */
             $budgetID = Input::validate($request->getParsedBody()['budget_id'], Input::$INT, 3);
-            $isOpen = (int) Input::validate($request->getParsedBody()['is_open'], Input::$BOOLEAN, 4);
-
-
+            $isOpen = (int)Input::validate($request->getParsedBody()['is_open'], Input::$BOOLEAN, 4);
 
 
             /* Auth - token validation */

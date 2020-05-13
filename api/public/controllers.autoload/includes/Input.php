@@ -19,12 +19,12 @@ class Input
 
     public static function convertFloatToInteger($floatVal)
     {
-        return $floatVal * 100;
+        return intval($floatVal * 100);
     }
 
     public static function convertIntegerToFloat($intVal)
     {
-        return $intVal / 100;
+        return floatval($intVal / 100);
     }
 
     public static function validate($var, $type = 0, $errorCode = 0, $entityCheck = null, $columnName = null)

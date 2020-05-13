@@ -16,8 +16,6 @@ class BudgetModel extends Entity
     ];
 
 
-
-
     public static function getBudgetsForUser($userID, $isOpen, $transactional = false)
     {
 
@@ -68,7 +66,7 @@ class BudgetHasCategoriesModel extends Entity
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT users_user_id, category_id, name, type, description, budgets_budget_id, planned_amount, current_amount " .
+        $sql = "SELECT users_user_id, category_id, name, type, description, budgets_budget_id, truncate((coalesce(planned_amount, 0) / 100), 2) as planned_amount, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
             "FROM " .
             "(SELECT * FROM budgets_has_categories WHERE budgets_users_user_id = :userID AND (budgets_budget_id = :budgetID)) b " .
             "RIGHT JOIN categories ON categories.category_id = b.categories_category_id ";
@@ -100,7 +98,7 @@ class BudgetHasCategoriesModel extends Entity
         $values[':userID'] = $userID;
         $values[':budgetID'] = $budgetID;
         $values[':catID'] = $catID;
-        $values[':pamount'] = doubleval($plannedAmount);
+        $values[':pamount'] = $plannedAmount;
 
 
         try {
