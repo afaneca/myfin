@@ -5,12 +5,15 @@ var Accounts = {
         Accounts.getAccounts()
     },
     getAccounts: () => {
+        LoadingManager.showLoading()
         AccountServices.getAllAccounts((response) => {
-            CookieUtils.setUserAccounts(response)
-            
-            Accounts.initTable(response)
-        },
+                LoadingManager.hideLoading()
+                CookieUtils.setUserAccounts(response)
+
+                Accounts.initTable(response)
+            },
             (error) => {
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     },
@@ -139,14 +142,17 @@ var Accounts = {
             return
         }
 
+        LoadingManager.showLoading()
         AccountServices.addAccount(name, description, type, exclude_from_budgets, status, current_balance,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Conta adicionada com sucesso!")
                 configs.goToPage("accounts", null, true)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
 
@@ -171,14 +177,17 @@ var Accounts = {
     removeAccount: (accID) => {
         if (!accID) return;
 
+        LoadingManager.showLoading()
         AccountServices.removeAccount(accID,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Conta removida com sucesso!")
                 configs.goToPage("accounts", null, true)
             }),
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
@@ -263,15 +272,17 @@ var Accounts = {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
         }
-
+        LoadingManager.showLoading()
         AccountServices.editAccount(accID, name, description, type, exclude_from_budgets, status, current_balance,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Conta atualizada com sucesso!")
                 configs.goToPage("accounts", null, true)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     }
