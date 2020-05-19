@@ -11,48 +11,51 @@
 </head>
 
 <body onload="checkCredentials()">
-    <div id="login-bg"></div>
-    <div id="login-wrap">
-        <div class="login-box enso-border">
-            <center><img class="logo login-logo-img" src="./img/logo.png" onmouseover="this.src='./img/logo2.png';"
-                    onmouseout="this.src='./img/logo.png';" /></center>
-            <form class="login-form">
-                <input autocomplete="on" id="email-input" type="email" placeholder="email" style="visibility: hidden;"
-                    class="validate enso-border login-input" />
-                <input autocomplete="on" id="login-input" type="text" placeholder="username"
-                    class="validate enso-border login-input" />
-                <input autocomplete="off" id="pw-input" type="password" placeholder="password"
-                    class="validate enso-border login-input" />
-                <button class="waves-effect waves-light btn login-btn enso-blue-bg enso-border" id="btn-login"
-                    type="submit">login</button>
-            </form>
-            <div style="margin-top: 31px;border-top: 1px solid #eeeeee;">
-                <p><span id="change-login-type">Ainda não está registado?</span> <a style="cursor: pointer;"
-                        onclick="signUpLinkWasClicked()">Clique aqui</a>.</p>
-            </div>
+<div id="login-bg"></div>
+<div id="login-wrap">
+    <div class="login-box enso-border">
+        <center><img class="logo login-logo-img" src="./img/logo.png" onmouseover="this.src='./img/logo2.png';"
+                     onmouseout="this.src='./img/logo.png';"/></center>
+        <form class="login-form">
+            <input autocomplete="on" id="email-input" type="email" placeholder="email" style="visibility: hidden;"
+                   class="validate enso-border login-input"/>
+            <input autocomplete="on" id="login-input" type="text" placeholder="username"
+                   class="validate enso-border login-input"/>
+            <input autocomplete="off" id="pw-input" type="password" placeholder="password"
+                   class="validate enso-border login-input"/>
+            <button class="waves-effect waves-light btn login-btn enso-blue-bg enso-border" id="btn-login"
+                    type="submit">login
+            </button>
+        </form>
+        <div style="margin-top: 31px;border-top: 1px solid #eeeeee;">
+            <p><span id="change-login-type">Ainda não está registado?</span> <a style="cursor: pointer;"
+                                                                                onclick="signUpLinkWasClicked()">Clique
+                aqui</a>.</p>
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    
-    <script src="./js/utils/cookieUtils.js"></script>
-    <script src="./js/configs.js"></script>
-    <script src="./js/consts.js"></script>
-    <script src="./js/ensoshared_js_lib/ensoshared.js"></script>
-    <script src="./js/login.js"></script>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-    <!-- Compiled and minified JavaScript -->
-    <!-- <script src="./js/js.cookie.js" type="text/javascript"></script>
-    <script src="./js/external/jquery-3.3.1.min.js"></script>
-    <script src="./js/external/materialize.min.js"></script>
-    <script src="./js/ensoshared_js_lib/ensoshared.js"></script>
-    <script src="./js/enso_conf.js"></script>
-    <script src="./js/consts.js"></script>
-    <script src="./js/misc.js"></script>
-    <script src="./js/actions/UserActions.js"></script>
-    -->
+<script src="./js/utils/cookieUtils.js"></script>
+<script src="./js/configs.js"></script>
+<script src="./js/consts.js"></script>
+<script src="./js/ensoshared_js_lib/ensoshared.js"></script>
+<script src="./js/utils/loadingManager.js"></script>
+<script src="./js/login.js"></script>
+
+<!-- Compiled and minified JavaScript -->
+<!-- <script src="./js/js.cookie.js" type="text/javascript"></script>
+<script src="./js/external/jquery-3.3.1.min.js"></script>
+<script src="./js/external/materialize.min.js"></script>
+<script src="./js/ensoshared_js_lib/ensoshared.js"></script>
+<script src="./js/enso_conf.js"></script>
+<script src="./js/consts.js"></script>
+<script src="./js/misc.js"></script>
+<script src="./js/actions/UserActions.js"></script>
+-->
 </body>
 
 </html>

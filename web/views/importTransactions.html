@@ -2,15 +2,18 @@
     <div class="card-panel">
         <span class="blue-text text-darken-2">Importar Transações</span><br>
 
-        <a disabled onClick="ImportTransactions.importFromFileWasClicked()" class="waves-effect waves-light btn right-align blue-gradient-bg"
-            onclick="Transactions.showImportTransactionsModal()" style="margin: 10px;"><i
+        <a disabled onClick="ImportTransactions.importFromFileWasClicked()"
+           class="waves-effect waves-light btn right-align blue-gradient-bg"
+           onclick="Transactions.showImportTransactionsModal()" style="margin: 10px;"><i
                 class="material-icons left">add_circle</i>Importar de .csv</a>
-        <a onClick="ImportTransactions.importFromClipboardWasClicked()" class="waves-effect waves-light btn right-align blue-gradient-bg"
-            onclick="Transactions.showImportTransactionsModal()" style="margin: 10px;"><i
+        <a onClick="ImportTransactions.importFromClipboardWasClicked()"
+           class="waves-effect waves-light btn right-align blue-gradient-bg"
+           onclick="Transactions.showImportTransactionsModal()" style="margin: 10px;"><i
                 class="material-icons left">add_circle</i>Importar do clipboard</a>
 
-        <a onClick="ImportTransactions.continueImportWasClicked()" class="waves-effect waves-light btn right-align orange-gradient-bg"
-            onclick="Transactions.showImportTransactionsModal()" style="margin: 10px;float:right;"><i
+        <a  id="continue_import_btn" disabled onClick="ImportTransactions.continueImportWasClicked()"
+           class="waves-effect waves-light btn right-align orange-gradient-bg"
+           style="margin: 10px;float:right;"><i
                 class="material-icons left">chevron_right</i>Continuar Importação</a>
         <div id="account-select"></div>
         <p id="import_notes">Selecione uma coluna para cada campo: <b>Data</b>, <b>Descrição</b>, <b>Montante</b> (ou

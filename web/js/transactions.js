@@ -25,7 +25,6 @@ var Transactions = {
             <table id="transactions-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>#</th>
                 <th>Data</th>
                 <th>Tipo</th>
                 <th>Valor</th>
@@ -44,7 +43,6 @@ var Transactions = {
     renderRow: trx => {
         return `
             <tr data-id='$trx.transaction_id'>
-                <td>${trx.transaction_id}</td>
                 <td>${DateUtils.convertUnixTimestampToDateString(trx.date_timestamp)}</td>
                 <td>${Transactions.formatTypeToString(trx.type, trx.account_from_name, trx.account_to_name)}</td>
                 <td>${StringUtils.formatStringToCurrency(trx.amount)}</td>

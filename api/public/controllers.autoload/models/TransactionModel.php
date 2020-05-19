@@ -40,7 +40,8 @@ class TransactionModel extends Entity
             "LEFT JOIN accounts acc_from ON acc_from.account_id = transactions.accounts_account_from_id " .
             "WHERE acc_to.users_user_id = :userID " .
             "OR acc_from.users_user_id = :userID " .
-            "GROUP BY transaction_id";
+            "GROUP BY transaction_id " .
+            "ORDER BY transactions.date_timestamp DESC";
 
         $values = array();
         $values[':userID'] = $id_user;

@@ -76,6 +76,13 @@ class Budgets
             else
                 $budgetsArr = BudgetModel::getWhere(["users_user_id" => $userID]);
 
+            // orders the list ASC by year, then month
+            usort($budgetsArr, function ($a, $b) {
+                $rdiff = $a['year'] - $b['year'];
+                if ($rdiff) return $rdiff;
+                return $a['month'] - $b['month'];
+            });
+
 
             /* $db->getDB()->commit(); */
 

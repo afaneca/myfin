@@ -27,10 +27,9 @@ use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 require_once 'consts.php';
 
 
-
 class Users
 {
-    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     /* 
     $app->group('/users/{id:[0-9]+}', function (RouteCollectorProxy $group) {
@@ -53,7 +52,6 @@ class Users
         $age = $request->getParsedBody()['idade']; // body
 
 
-
         return sendResponse($response, EnsoShared::$REST_OK, "$age , $name , $userID");
     }
 
@@ -64,7 +62,7 @@ class Users
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }

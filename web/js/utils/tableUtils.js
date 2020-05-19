@@ -1,10 +1,11 @@
 "use strict";
 
 var tableUtils = {
-    setupStaticTable: (tableID, onDrawCallback) => {
+    setupStaticTable: (tableID, onDrawCallback, ordering = false) => {
         $(tableID).DataTable({
-            "order": [[0, "desc"]], 
-            "lengthChange": false,
+            /*"order": [[0, "desc"]], */
+            "ordering": ordering,
+            "lengthChange": true,
             "pageLength": 50,
             "language": {
                 "lengthMenu": "A mostrar _MENU_ registos por página",
@@ -16,13 +17,17 @@ var tableUtils = {
                 "paginate": {
                     "next": "Página Seguinte",
                     "previous": "Página Anterior",
-                }},
-                drawCallback: function() {onDrawCallback},
+                }
+            },
+            drawCallback: function () {
+                onDrawCallback
+            },
         })
     },
-    setupStaticTableWithCustomColumnWidths: (tableID, customColumnWidths, onDrawCallback) => {
+    setupStaticTableWithCustomColumnWidths: (tableID, customColumnWidths, onDrawCallback, ordering = false) => {
         $(tableID).DataTable({
-            "order": [[0, "desc"]],
+            /*"order": [[0, "desc"]],*/
+            "ordering": ordering,
             "lengthChange": false,
             "pageLength": 50,
             "columnDefs": customColumnWidths,
@@ -38,7 +43,9 @@ var tableUtils = {
                     "previous": "Página Anterior",
                 }
             },
-            drawCallback: function () { onDrawCallback },
+            drawCallback: function () {
+                onDrawCallback
+            },
         })
     }
 }

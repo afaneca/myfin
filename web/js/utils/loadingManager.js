@@ -1,6 +1,6 @@
 "use strict";
 
-var LoadingManager = {
+const LoadingManager = {
     showLoading: () => {
         $(".loader").addClass("is-active")
     },

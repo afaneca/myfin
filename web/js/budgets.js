@@ -28,14 +28,13 @@ var Budgets = {
     },
     initTable: (resp) => {
         $("#table-wrapper").html(Budgets.renderTable(resp))
-        tableUtils.setupStaticTableWithCustomColumnWidths("#budgets-table", [{ "width": "5%", "targets": 0 }]);
+        tableUtils.setupStaticTableWithCustomColumnWidths("#budgets-table", [{"width": "5%", "targets": 0}]);
     },
     renderTable: (budgetsList) => {
         return `
             <table id="budgets-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>#</th>
                 <th>Mês</th>
                 <th>Observações</th>
                 <th>Estado</th>
@@ -51,7 +50,6 @@ var Budgets = {
     renderBudgetsRow: (budget) => {
         return `
             <tr data-id='${budget.budget_id}'>
-                <td>${budget.budget_id}</td>
                 <td>${budget.month}/${budget.year}</td>
                 <td>${budget.observations}</td>
                 <td><span class="${(budget.is_open == 1) ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${(budget.is_open == 1) ? "Aberto" : "Fechado"}</span></td>
@@ -63,7 +61,7 @@ var Budgets = {
         `
     },
     goToBudget: (budgetID, isOpen) => {
-        configs.goToPage('addBudget', { 'new': false, 'open': (isOpen == 1) ? true : false, 'id': budgetID }, true);
+        configs.goToPage('addBudget', {'new': false, 'open': (isOpen == 1) ? true : false, 'id': budgetID}, true);
     },
     showRemoveBudgetModal: (budgetID, month, year) => {
         $("#modal-budgets").modal("open")

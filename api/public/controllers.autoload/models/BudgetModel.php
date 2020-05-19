@@ -16,21 +16,24 @@ class BudgetModel extends Entity
     ];
 
 
-    public static function getBudgetsForUser($userID, $isOpen, $transactional = false)
+    /*public static function getBudgetsForUser($userID, $isOpen, $transactional = false)
     {
 
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT budget_id, month, year, observations,  is_open, initial_balance, budgets.users_user_id, categories_category_id, categories.name, planned_amount, current_amount " .
+        $sql = "SELECT month, year, budget_id,  observations,  is_open, initial_balance, budgets.users_user_id, categories_category_id, categories.name, planned_amount, current_amount " .
             "FROM myfin.budgets " .
             "LEFT JOIN budgets_has_categories " .
             "ON budgets_has_categories.budgets_users_user_id = budgets.users_user_id " .
             "LEFT JOIN categories " .
-            "ON categories.category_id = budgets_has_categories.categories_category_id ";
+            "ON categories.category_id = budgets_has_categories.categories_category_id " .
+            "WHERE budgets.users_user_id = :userID ";
+
 
         if ($isOpen !== null)
-            $sql .= "WHERE is_open = $isOpen ";
+            $sql .= "AND is_open = $isOpen ";
 
+        $sql .= "ORDER BY year ASC, month ASC ";
         $values = array();
         $values[':userID'] = $userID;
 
@@ -42,7 +45,7 @@ class BudgetModel extends Entity
         } catch (Exception $e) {
             return $e;
         }
-    }
+    }*/
 }
 
 

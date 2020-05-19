@@ -34,6 +34,8 @@ var ImportTransactions = {
                         // SUCCESS
                         CookieUtils.setUserAccounts(resp)
                         ImportTransactions.renderAccountSelect(resp)
+                        $("#continue_import_btn").removeAttr('disabled')
+                        console.log("fads")
                     }, (err) => {
                         // FAILURE
                         DialogUtils.showErrorMessage("Aconteceu algo de errado. Por favor, tente novamente.")
@@ -73,8 +75,8 @@ var ImportTransactions = {
                 //console.log(text)
                 ImportTransactions.createHTMLTableFromData(text)
             }).catch(err => {
-                console.log("ERRO ERRO ERRO")
-            })
+            console.log("ERRO ERRO ERRO")
+        })
     },
     createHTMLTableFromData: (data) => {
         var rows = data.split("\n");
@@ -196,7 +198,8 @@ var ImportTransactions = {
         if (!dateColumn || !descriptionColumn || (!amountColumn && !creditColumn && !debitColumn)) {
             DialogUtils.showErrorMessage("Por favor, selecione todos os campos necessários!")
             return;
-        } if (!selectedAccountID) {
+        }
+        if (!selectedAccountID) {
             DialogUtils.showErrorMessage("Por favor, selecione uma conta para associar às transações.")
             return;
         }
@@ -241,7 +244,7 @@ var ImportTransactions = {
             type = MYFIN.TRX_TYPES.EXPENSE
         }
 
-        return { amount: Math.abs(amount), type: type }
+        return {amount: Math.abs(amount), type: type}
     },
     doImportTransactionsStep1: (trxList) => {
         LoadingManager.showLoading()
@@ -287,13 +290,13 @@ var ImportTransactions = {
             "order": [[0, "desc"]],
             "lengthChange": false,
             "columnDefs":
-                [{ "width": "5%", "targets": 0 },
-                { "width": "5%", "targets": 1 },
-                { "width": "10%", "targets": 2 },
-                { "width": "30%", "targets": 3 },
-                { "width": "2.5%", "targets": 4 },
-                { "width": "2.5%", "targets": 5 },
-                { "width": "45%", "targets": 6 }],
+                [{"width": "5%", "targets": 0},
+                    {"width": "5%", "targets": 1},
+                    {"width": "10%", "targets": 2},
+                    {"width": "30%", "targets": 3},
+                    {"width": "2.5%", "targets": 4},
+                    {"width": "2.5%", "targets": 5},
+                    {"width": "45%", "targets": 6}],
             "pageLength": 50,
             "language": {
                 "lengthMenu": "A mostrar _MENU_ registos por página",
