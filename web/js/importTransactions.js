@@ -35,7 +35,6 @@ var ImportTransactions = {
                         CookieUtils.setUserAccounts(resp)
                         ImportTransactions.renderAccountSelect(resp)
                         $("#continue_import_btn").removeAttr('disabled')
-                        console.log("fads")
                     }, (err) => {
                         // FAILURE
                         DialogUtils.showErrorMessage("Aconteceu algo de errado. Por favor, tente novamente.")

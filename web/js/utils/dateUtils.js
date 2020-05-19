@@ -44,7 +44,7 @@ var DateUtils = {
         return moment(dateStr, "DD-MM-YYYY").unix()
     }, */
     convertDateToUnixTimestamp: (dateStr, dateFormat = "DD/MM/YYYY") => {
-        return moment(dateStr + " 09:00", dateFormat + " HH:mm").unix().valueOf()
+        return moment(dateStr + " 09:00", dateFormat + " HH:mm").tz('UTC').unix().valueOf()
     }
 }
 //# sourceURL=js/utils/stringUtils.js

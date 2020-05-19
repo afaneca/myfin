@@ -112,4 +112,66 @@ class BudgetHasCategoriesModel extends Entity
             return $e;
         }
     }
+
+
+    /*
+   * MYSQL SNIPPET: get balance (income - expense) of a category
+      SELECT sum(if(type = "I", amount, -amount)) as 'category_balance'
+      FROM transactions
+      WHERE date_timestamp between 1 AND 1580806801
+      AND categories_category_id IS :cat_id
+
+     * OTHER MYSQL SNIPPET: get income of a category
+       SELECT sum(if(type = "I", amount, 0)) as 'category_balance'
+       FROM transactions
+       WHERE date_timestamp between 1 AND 1580806801
+       AND categories_category_id IS :cat_id
+   */
+
+    public static function getAmountForCategoryInMonth($category_id, $month, $year, $type, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT sum(if(type = '$type', amount, 0)) as 'category_balance' " .
+            "FROM transactions " .
+            "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
+            "AND categories_category_id = :cat_id ";
+
+        $tz = new DateTimeZone('UTC');
+        $beginTimestamp = new DateTime("$year-$month-01", $tz);
+        $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t'), $tz);
+
+        $values = array();
+        $values[':cat_id'] = $category_id;
+        $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
+        $values[':endTimestamp'] = $endTimestamp->getTimestamp();
+
+        /*  print_r($beginTimestamp);
+         echo "\n";
+         print_r($endTimestamp);
+         echo "\n";
+         print_r($beginTimestamp->getTimestamp());
+         echo "\n";
+         print_r($endTimestamp->getTimestamp());
+         echo "\n";
+
+        $date1 = new DateTime();
+         $date2 = new DateTime();
+
+         $date1->setTimestamp($beginTimestamp->getTimestamp());
+         $date2->setTimestamp($endTimestamp->getTimestamp());
+
+         print_r($date1);
+         echo "\n";
+         print_r($date2);*/
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
 }

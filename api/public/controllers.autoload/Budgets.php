@@ -13,6 +13,7 @@ class Budgets
 {
     const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
+
     public static function getAllBudgetsForUser(Request $request, Response $response, $args)
     {
         try {
@@ -123,9 +124,24 @@ class Budgets
 
             $userID = UserModel::getUserIdByName($authusername, false);
 
+
             $list = BudgetModel::getWhere(["users_user_id" => $userID, "budget_id" => $budgetID], ["initial_balance", "observations", "month", "year"])[0];
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
 
+            foreach ($list["categories"] as &$category) {
+                $monthToUse = $list["month"];
+                $yearToUser = $list["year"];
+
+                // TODO: map 'D' & 'C' in categories to 'I' & 'E'
+                $type = ($category["type"] == 'D') ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
+
+                /* echo $monthToUse . "\n";
+                 echo $yearToUser . "\n";
+                 echo $type . "\n";
+                 die();*/
+                $current_amount = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser, $type)[0]["category_balance"];
+                $category["current_amount"] = Input::convertIntegerToFloat($current_amount);
+            }
 
             /* $db->getDB()->commit(); */
 
