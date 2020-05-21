@@ -67,26 +67,10 @@ var AddBudgets = {
             LoadingManager.hideLoading()
             DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
         })
-
-        /*var bar = new ProgressBar.Line("#container1", {
-             strokeWidth: 4,
-             easing: 'easeInOut',
-             duration: 1400,
-             color: '#FFEA82',
-             trailColor: '#eee',
-             trailWidth: 1,
-             svgStyle: {width: '100%', height: '100%'},
-             from: {color: '#FFEA82'},
-             to: {color: '#ED6A5A'},
-             step: (state, bar) => {
-                 bar.path.setAttribute('stroke', state.color);
-             }
-         });
-         bar.animate(0.5);  // Number from 0.0 to 1.0*/
     },
     setupBudgetInputs: (selectorID, categoriesArr, isCredit) => {
         $(selectorID).html(AddBudgets.buildBudgetInputs(categoriesArr, isCredit))
-        ProgressBarUtils.setupProgressBar("cat_progressbar_1", 13)
+        //ProgressBarUtils.setupProgressBar(".cat_progressbar_1", 13)
     },
     buildBudgetInputs: (categoriesArr, isCredit) => {
         return `
@@ -117,9 +101,7 @@ var AddBudgets = {
             </tr>
             <tr>
                 <td colspan="3">
-                    <div id="myProgress">
-                        <div class="afaneca_progressbar cat_progressbar_${cat.category_id}">90%</div>
-                    </div>
+                    <progress class="faneca-progressbar cat_progressbar_${cat.category_id}" value="${ProgressbarUtils.getCorrectPercentageValue(parseFloat(cat.current_amount), parseFloat(cat.planned_amount))}" max="100"></progress>
                  </td>
             </tr>
         `

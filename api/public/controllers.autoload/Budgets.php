@@ -242,8 +242,9 @@ class Budgets
 
             // ADD CAT VALUES TO BUDGET CATEGORIES
             foreach ($catValuesArr as $item) {
+
                 $catID = $item['category_id'];
-                $plannedValue = $item['planned_value'];
+                $plannedValue = Input::convertFloatToInteger(floatval($item['planned_value']));
 
                 BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValue);
             }
@@ -342,7 +343,7 @@ class Budgets
             // ADD CAT VALUES TO BUDGET CATEGORIES
             foreach ($catValuesArr as $item) {
                 $catID = $item['category_id'];
-                $plannedValue = Input::convertFloatToInteger($item['planned_value']);
+                $plannedValue = Input::convertFloatToInteger(floatval($item['planned_value']));
 
                 BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValue);
             }
