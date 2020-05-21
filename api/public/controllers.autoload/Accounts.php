@@ -16,7 +16,7 @@ class Accounts
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
             } else {
                 $mobile = false;
             }
@@ -62,7 +62,7 @@ class Accounts
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -71,7 +71,7 @@ class Accounts
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRING, 4);
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 5);
             $status = Input::validate($request->getParsedBody()['status'], Input::$STRING, 6);
-            $excludeFromBudgets = (int) Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 7);
+            $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 7);
             $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8));
 
             if (
@@ -104,18 +104,19 @@ class Accounts
                 "exclude_from_budgets" => $excludeFromBudgets,
                 "status" => $status,
                 "users_user_id" => $userID,
+                "current_balance" => $currentBalance,
+                "created_timestamp" => time()
             ], false);
 
 
-
-            BalanceModel::insert(
-                [
-                    "date_timestamp" => time(),
-                    "amount" => $currentBalance,
-                    "accounts_account_id" => intval($accountID)
-                ],
-                false
-            );
+            /*  BalanceModel::insert(
+                  [
+                      "date_timestamp" => time(),
+                      "amount" => $currentBalance,
+                      "accounts_account_id" => intval($accountID)
+                  ],
+                  false
+              );*/
             /* $db->getDB()->commit(); */
 
             return sendResponse($response, EnsoShared::$REST_OK, "New account added!");
@@ -137,7 +138,7 @@ class Accounts
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -166,10 +167,9 @@ class Accounts
                 "accounts_account_to_id" => $accountID
             ]);
 
-            BalanceModel::delete([
+            /*BalanceModel::delete([
                 "accounts_account_id" => $accountID
-            ], false);
-
+            ], false);*/
 
 
             AccountModel::delete([
@@ -196,7 +196,7 @@ class Accounts
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -206,7 +206,7 @@ class Accounts
             $newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING, 5);
             $newDescription = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 6);
             $newStatus = Input::validate($request->getParsedBody()['new_status'], Input::$STRING, 7);
-            $excludeFromBudgets = (int) Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 8);
+            $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 8);
             $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9));
 
             if (
@@ -243,16 +243,18 @@ class Accounts
                     "type" => $newType,
                     "description" => $newDescription,
                     "exclude_from_budgets" => $excludeFromBudgets,
-                    "status" => $newStatus
+                    "status" => $newStatus,
+                    "current_balance" => $currentBalance,
+                    "updated_timestamp" => time()
                 ],
                 false
             );
 
-            BalanceModel::insert([
+            /*BalanceModel::insert([
                 "accounts_account_id" => $accountID,
                 "date_timestamp" => time(),
                 "amount" => $currentBalance
-            ]);
+            ]);*/
 
             /* $db->getDB()->commit(); */
 

@@ -16,7 +16,7 @@ class Transactions
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
             } else {
                 $mobile = false;
             }
@@ -62,11 +62,10 @@ class Transactions
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 9);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 9);
             } else {
                 $mobile = false;
             }
-
 
 
             /* Auth - token validation */
@@ -91,7 +90,7 @@ class Transactions
             $outgoingArr['entities'] = EntityModel::getWhere(["users_user_id" => $userID], ["entity_id", "name"]);
 
             /* Categories */
-            $outgoingArr['categories'] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name",  "description"]);
+            $outgoingArr['categories'] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "description"]);
 
             /* Type */
             $outgoingArr['type'] = array(
@@ -160,13 +159,11 @@ class Transactions
             }
 
 
-
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 10);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 10);
             } else {
                 $mobile = false;
             }
-
 
 
             /* Auth - token validation */
@@ -204,17 +201,16 @@ class Transactions
 
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
-                    BalanceModel::changeBalance($userID, $accountTo, $amount, $date_timestamp, false);
+                    AccountModel::changeBalance($accountTo, $amount, false);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    BalanceModel::changeBalance($userID, $accountFrom, -$amount, $date_timestamp, false);
+                    AccountModel::changeBalance($accountFrom, -$amount, false);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    BalanceModel::changeBalance($userID, $accountFrom, -$amount, $date_timestamp, false);
-                    BalanceModel::changeBalance($userID, $accountTo, $amount, $date_timestamp, false);
+                    AccountModel::changeBalance($accountFrom, -$amount, false);
+                    AccountModel::changeBalance($accountTo, $amount, false);
                     break;
             }
-
 
 
             /* $db->getDB()->commit(); */
@@ -236,7 +232,7 @@ class Transactions
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -256,7 +252,6 @@ class Transactions
             /* echo "1";
             die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
-
 
 
             $trxObj = TransactionModel::getWhere(
@@ -280,77 +275,21 @@ class Transactions
                 "transaction_id" => $trxID
             ]);
 
-            // DELETE OLD BALANCE CHANGES
+            // Remove the effect of $oldAmount
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
-                    $balanceBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
-                    BalanceModel::delete(
-                        [
-                            "date_timestamp" => $oldTimestamp,
-                            "accounts_account_id" => $oldAccountTo
-                        ]
-                    );
-
-                    $balanceAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
-
-                    if ($balanceBeforeRemoval == $balanceAfterRemoval) {
-                        // if the balance is still the same, it means there have been balance changes after this trx was first added
-                        // because of that, we need to readjust the balance accordingly
-                        BalanceModel::changeBalance($userID, $oldAccountTo, -$oldAmount, time(), false, false);
-                    }
-
+                    // Decrement $oldAmount to level it out
+                    AccountModel::changeBalance($oldAccountTo, -$oldAmount, false);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    $balanceBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
-                    BalanceModel::delete(
-                        [
-                            "date_timestamp" => $oldTimestamp,
-                            "accounts_account_id" => $oldAccountFrom
-                        ]
-                    );
-                    $balanceAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
-
-                    if ($balanceBeforeRemoval == $balanceAfterRemoval) {
-                        // if the balance is still the same, it means there have been balance changes after this trx was first added
-                        // because of that, we need to readjust the balance accordingly
-                        BalanceModel::changeBalance($userID, $oldAccountFrom, $oldAmount, time(), false, false);
-                    }
+                    // Increment $oldAmount to level it out, by reimbursing the amount
+                    AccountModel::changeBalance($oldAccountFrom, $oldAmount, false);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    $balanceFromBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
-                    $balanceToBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
-
-                    BalanceModel::delete(
-                        [
-                            "date_timestamp" => $oldTimestamp,
-                            "accounts_account_id" => $oldAccountTo
-                        ]
-                    );
-                    BalanceModel::delete(
-                        [
-                            "date_timestamp" => $oldTimestamp,
-                            "accounts_account_id" => $oldAccountFrom
-                        ]
-                    );
-
-
-                    $balanceFromAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
-                    $balanceToAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
-
-                    if ($balanceFromBeforeRemoval == $balanceFromAfterRemoval) {
-                        // if the balance is still the same, it means there have been balance changes after this trx was first added
-                        // because of that, we need to readjust the balance accordingly
-                        BalanceModel::changeBalance($userID, $oldAccountFrom, $oldAmount, time(), false, false);
-                    }
-
-                    if ($balanceToBeforeRemoval == $balanceToAfterRemoval) {
-                        // if the balance is still the same, it means there have been balance changes after this trx was first added
-                        // because of that, we need to readjust the balance accordingly
-                        BalanceModel::changeBalance($userID, $oldAccountTo, -$oldAmount, time(), false, false);
-                    }
+                    AccountModel::changeBalance($oldAccountFrom, $oldAmount, false);
+                    AccountModel::changeBalance($oldAccountTo, -$oldAmount, false);
                     break;
             }
-
 
             /* $db->getDB()->commit(); */
 
@@ -402,9 +341,8 @@ class Transactions
             }
 
 
-
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 10);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 10);
             } else {
                 $mobile = false;
             }
@@ -462,92 +400,37 @@ class Transactions
                 "categories_category_id" => $categoryID
             ]);
 
-            // DELETE OLD BALANCE CHANGES
+            // Remove the effect of $oldAmount
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
-                    $balanceBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
-                    BalanceModel::delete(
-                        [
-                            "date_timestamp" => $oldTimestamp,
-                            "accounts_account_id" => $oldAccountTo
-                        ]
-                    );
-
-                    $balanceAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
-
-                    if ($balanceBeforeRemoval == $balanceAfterRemoval) {
-                        // if the balance is still the same, it means there have been balance changes after this trx was first added
-                        // because of that, we need to readjust the balance accordingly
-                        BalanceModel::changeBalance($userID, $oldAccountTo, -$oldAmount, time(), false, false);
-                    }
-
+                    // Decrement $oldAmount to level it out
+                    AccountModel::changeBalance($oldAccountTo, -$oldAmount, false);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    $balanceBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
-                    BalanceModel::delete(
-                        [
-                            "date_timestamp" => $oldTimestamp,
-                            "accounts_account_id" => $oldAccountFrom
-                        ]
-                    );
-                    $balanceAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
-
-                    if ($balanceBeforeRemoval == $balanceAfterRemoval) {
-                        // if the balance is still the same, it means there have been balance changes after this trx was first added
-                        // because of that, we need to readjust the balance accordingly
-                        BalanceModel::changeBalance($userID, $oldAccountFrom, $oldAmount, time(), false, false);
-                    }
+                    // Increment $oldAmount to level it out, by reimbursing the amount
+                    AccountModel::changeBalance($oldAccountFrom, $oldAmount, false);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    $balanceFromBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
-                    $balanceToBeforeRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
-
-                    BalanceModel::delete(
-                        [
-                            "date_timestamp" => $oldTimestamp,
-                            "accounts_account_id" => $oldAccountTo
-                        ]
-                    );
-                    BalanceModel::delete(
-                        [
-                            "date_timestamp" => $oldTimestamp,
-                            "accounts_account_id" => $oldAccountFrom
-                        ]
-                    );
-
-
-                    $balanceFromAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountFrom);
-                    $balanceToAfterRemoval = BalanceModel::getCurrentBalance($userID, $oldAccountTo);
-
-                    if ($balanceFromBeforeRemoval == $balanceFromAfterRemoval) {
-                        // if the balance is still the same, it means there have been balance changes after this trx was first added
-                        // because of that, we need to readjust the balance accordingly
-                        BalanceModel::changeBalance($userID, $oldAccountFrom, $oldAmount, time(), false, false);
-                    }
-
-                    if ($balanceToBeforeRemoval == $balanceToAfterRemoval) {
-                        // if the balance is still the same, it means there have been balance changes after this trx was first added
-                        // because of that, we need to readjust the balance accordingly
-                        BalanceModel::changeBalance($userID, $oldAccountTo, -$oldAmount, time(), false, false);
-                    }
+                    AccountModel::changeBalance($oldAccountFrom, $oldAmount, false);
+                    AccountModel::changeBalance($oldAccountTo, -$oldAmount, false);
                     break;
             }
 
-            // ADD THE NEW
-
+            // Add the effect of the new $amount
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
-                    BalanceModel::changeBalance($userID, $accountTo, $amount, $date_timestamp, false);
+                    // Decrement $oldAmount to level it out
+                    AccountModel::changeBalance($accountTo, $amount, false);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    BalanceModel::changeBalance($userID, $accountFrom, -$amount, $date_timestamp, false);
+                    // Increment $oldAmount to level it out, by reimbursing the amount
+                    AccountModel::changeBalance($accountFrom, -$amount, false);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    BalanceModel::changeBalance($userID, $accountFrom, -$amount, $date_timestamp, false);
-                    BalanceModel::changeBalance($userID, $accountTo, $amount, $date_timestamp, false);
+                    AccountModel::changeBalance($accountFrom, -$amount, false);
+                    AccountModel::changeBalance($accountTo, +$amount, false);
                     break;
             }
-
 
             /* $db->getDB()->commit(); */
 
@@ -568,18 +451,16 @@ class Transactions
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
             } else {
                 $mobile = false;
             }
-
 
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
             }
-
 
 
             $userID = UserModel::getUserIdByName($authusername, false);
@@ -599,7 +480,7 @@ class Transactions
     }
 
     /**
-     * Gets the imported transactions in this format: 
+     * Gets the imported transactions in this format:
      * {
      *  date, description, amount, type
      * }
@@ -614,18 +495,16 @@ class Transactions
             $trxList = json_decode(Input::validate($request->getParsedBody()['trx_list'], Input::$ARRAY, 2), true);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
             } else {
                 $mobile = false;
             }
-
 
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
             }
-
 
 
             $userID = UserModel::getUserIdByName($authusername, false);
@@ -690,18 +569,16 @@ class Transactions
             $trxList = json_decode(Input::validate($request->getParsedBody()['trx_list'], Input::$ARRAY, 2), true);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
             } else {
                 $mobile = false;
             }
-
 
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
             }
-
 
 
             $userID = UserModel::getUserIdByName($authusername, false);
@@ -736,18 +613,17 @@ class Transactions
 
                 switch ($type) {
                     case DEFAULT_TYPE_INCOME_TAG:
-                        BalanceModel::changeBalance($userID, $accountTo, $amount, time() + $importedTrxsCnt, true, false);
+                        AccountModel::changeBalance($accountTo, $amount, true);
                         break;
                     case DEFAULT_TYPE_EXPENSE_TAG:
-                        BalanceModel::changeBalance($userID, $accountFrom, -$amount, time() + $importedTrxsCnt, true, false);
+                        AccountModel::changeBalance($accountFrom, -$amount, true);
                         break;
                     case DEFAULT_TYPE_TRANSFER_TAG:
-                        BalanceModel::changeBalance($userID, $accountFrom, -$amount, time() + $importedTrxsCnt, true, false);
-                        BalanceModel::changeBalance($userID, $accountTo, $amount, time() + $importedTrxsCnt, true, false);
+                        AccountModel::changeBalance($accountFrom, -$amount, true);
+                        AccountModel::changeBalance($accountTo, $amount, true);
                         break;
                 }
             }
-
 
 
             /* $db->getDB()->commit(); */

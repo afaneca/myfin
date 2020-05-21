@@ -19,6 +19,9 @@ class AccountModel extends Entity
         "exclude_from_budgets",
         "status",
         "users_user_id",
+        "current_balance",
+        "created_timestamp",
+        "updated_timestamp"
     ];
 
     /*
@@ -50,7 +53,51 @@ class AccountModel extends Entity
     ON a.account_id = b.accounts_account_id
     where users_user_id = 1
      */
+
     public static function getAllAccountsForUserWithAmounts($id_user, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+        $sql = "SELECT a.account_id, a.name, a.type, a.description, a.status, a.exclude_from_budgets, (a.current_balance / 100) as 'balance', a.users_user_id " .
+            "FROM accounts a " .
+            "WHERE users_user_id = :userID";
+
+        $values = array();
+        $values[':userID'] = $id_user;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    public static function changeBalance($id_account, $offsetAmount, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "UPDATE accounts " .
+            "SET current_balance = current_balance + :offsetAmount, " .
+            "updated_timestamp = :timestamp " .
+            "WHERE account_id = :accID";
+
+        $values = array();
+        $values[':accID'] = $id_account;
+        $values[':offsetAmount'] = $offsetAmount;
+        $values[':timestamp'] = time();
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+
+    public static function DEPRECATED_getAllAccountsForUserWithAmounts($id_user, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
