@@ -67,9 +67,26 @@ var AddBudgets = {
             LoadingManager.hideLoading()
             DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
         })
+
+        /*var bar = new ProgressBar.Line("#container1", {
+             strokeWidth: 4,
+             easing: 'easeInOut',
+             duration: 1400,
+             color: '#FFEA82',
+             trailColor: '#eee',
+             trailWidth: 1,
+             svgStyle: {width: '100%', height: '100%'},
+             from: {color: '#FFEA82'},
+             to: {color: '#ED6A5A'},
+             step: (state, bar) => {
+                 bar.path.setAttribute('stroke', state.color);
+             }
+         });
+         bar.animate(0.5);  // Number from 0.0 to 1.0*/
     },
     setupBudgetInputs: (selectorID, categoriesArr, isCredit) => {
         $(selectorID).html(AddBudgets.buildBudgetInputs(categoriesArr, isCredit))
+        ProgressBarUtils.setupProgressBar("cat_progressbar_1", 13)
     },
     buildBudgetInputs: (categoriesArr, isCredit) => {
         return `
@@ -98,7 +115,13 @@ var AddBudgets = {
                     <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline" class="active">Valor (€)</label>
                 </div></td>
             </tr>
-            
+            <tr>
+                <td colspan="3">
+                    <div id="myProgress">
+                        <div class="afaneca_progressbar cat_progressbar_${cat.category_id}">90%</div>
+                    </div>
+                 </td>
+            </tr>
         `
         /* <div class="row">
             ${cat}:
@@ -166,7 +189,7 @@ var AddBudgets = {
                 (resp) => {
                     // SUCCESS
                     LoadingManager.hideLoading()
-                    configs.goToPage('addBudget', { 'new': false, 'open': true, 'id': resp["budget_id"] }, true);
+                    configs.goToPage('addBudget', {'new': false, 'open': true, 'id': resp["budget_id"]}, true);
                 }, (err) => {
                     // FAILURE
                     LoadingManager.hideLoading()
@@ -177,7 +200,7 @@ var AddBudgets = {
                 (resp) => {
                     // SUCCESS
                     LoadingManager.hideLoading()
-                    configs.goToPage('addBudget', { 'new': false, 'open': true, 'id': currentBudgetID }, true);
+                    configs.goToPage('addBudget', {'new': false, 'open': true, 'id': currentBudgetID}, true);
                 }, (err) => {
                     // FAILURE
                     LoadingManager.hideLoading()
@@ -205,16 +228,16 @@ var AddBudgets = {
         return catValsArr
     },
     onBudgetCloseClicked: () => {
-         BudgetServices.editBudgetStatus(currentBudgetID, !isOpen,
-                (resp) => {
-                    // SUCCESS
-                    LoadingManager.hideLoading()
-                    configs.goToPage('addBudget', { 'new': false, 'open': !isOpen, 'id': currentBudgetID }, true);
-                }, (err) => {
-                    // FAILURE
-                    LoadingManager.hideLoading()
-                    DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
-                })
+        BudgetServices.editBudgetStatus(currentBudgetID, !isOpen,
+            (resp) => {
+                // SUCCESS
+                LoadingManager.hideLoading()
+                configs.goToPage('addBudget', {'new': false, 'open': !isOpen, 'id': currentBudgetID}, true);
+            }, (err) => {
+                // FAILURE
+                LoadingManager.hideLoading()
+                DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+            })
     }
 }
 

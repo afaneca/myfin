@@ -248,3 +248,18 @@ nav ul a:hover {
 [type="checkbox"].reset-checkbox+span:not(.lever) {
     padding-left: 10px !important;
 }
+
+.progressbar-js-container {
+    margin: 20px;
+    width: 400px;
+    height: 8px;
+}
+
+.afaneca_progressbar {
+    width: 90%;
+    height: 30px;
+    background-color: #4CAF50;
+    text-align: center; /* To center it horizontally (if you want) */
+    line-height: 30px; /* To center it vertically */
+    color: white;
+}
