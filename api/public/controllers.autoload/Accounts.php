@@ -109,6 +109,11 @@ class Accounts
             ], false);
 
 
+            $currentMonth = date("n");
+            $currentYear = date("Y");
+
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth, $currentYear, false);
+
             /*  BalanceModel::insert(
                   [
                       "date_timestamp" => time(),
@@ -171,6 +176,7 @@ class Accounts
                 "accounts_account_id" => $accountID
             ], false);*/
 
+            AccountModel::removeBalanceSnapshotsForAccount($accountID, false);
 
             AccountModel::delete([
                 "account_id" => $accountID,
@@ -249,6 +255,11 @@ class Accounts
                 ],
                 false
             );
+
+            $currentMonth = date("n");
+            $currentYear = date("Y");
+
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth, $currentYear, false);
 
             /*BalanceModel::insert([
                 "accounts_account_id" => $accountID,
