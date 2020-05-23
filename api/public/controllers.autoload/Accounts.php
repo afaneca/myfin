@@ -7,7 +7,7 @@ require_once 'consts.php';
 
 class Accounts
 {
-    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     public static function getAllAccountsForUser(Request $request, Response $response, $args)
     {
@@ -280,9 +280,55 @@ class Accounts
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function getUserAccountsBalanceSnapshot(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+            } else {
+                $mobile = false;
+            }
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+                false
+            );
+            $db->getDB()->beginTransaction(); */
+
+            /* echo "1";
+            die(); */
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            $outArr = AccountModel::getBalancesSnapshotForUser($userID, false);
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (BadValidationTypeException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->__toString());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/accounts/', 'Accounts::getAllAccountsForUser');
 $app->post('/accounts/', 'Accounts::addAccount');
 $app->delete('/accounts/', 'Accounts::removeAccount');
 $app->put('/accounts/', 'Accounts::editAccount');
+
+$app->get('/accounts/stats/balance-snapshots/', 'Accounts::getUserAccountsBalanceSnapshot');

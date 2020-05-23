@@ -91,15 +91,16 @@ class AccountModel extends Entity
             $db->prepare($sql);
             $db->execute($values);
             $db->fetchAll();
-
-            $currentMonth = date("n");
-            $currentYear = date("Y");
-            AccountModel::addBalanceSnapshot($id_account, $currentMonth, $currentYear, $transactional);
-
         } catch (Exception $e) {
             return $e;
+        } finally {
+            $currentMonth = date("n");
+            $currentYear = date("Y");
+
+            AccountModel::addBalanceSnapshot($id_account, $currentMonth, $currentYear, $transactional);
         }
     }
+
 
     public static function addBalanceSnapshot($id_account, $month, $year, $transactional = false)
     {
@@ -124,7 +125,8 @@ class AccountModel extends Entity
         }
     }
 
-    public static function removeBalanceSnapshotsForAccount($id_account, $transactional = false)
+    public
+    static function removeBalanceSnapshotsForAccount($id_account, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
@@ -144,14 +146,16 @@ class AccountModel extends Entity
         }
     }
 
-    public static function getBalancesSnapshotForUser($userID, $transactional = false)
+    public
+    static function getBalancesSnapshotForUser($userID, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT account_id, month, year, truncate((coalesce(balance, 0) / 100), 2), users_user_id " .
+        $sql = "SELECT account_id, month, year, truncate((coalesce(balance, 0) / 100), 2) as 'balance', users_user_id " .
             "FROM balances_snapshot " .
             "LEFT JOIN accounts ON accounts.account_id = balances_snapshot.accounts_account_id " .
-            "WHERE users_user_id = :userID";
+            "WHERE users_user_id = :userID " .
+            "ORDER BY year ASC, month ASC";
 
         $values = array();
         $values[':userID'] = $userID;
