@@ -7,7 +7,7 @@ require_once 'consts.php';
 
 class Transactions
 {
-    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     public static function getAllTransactionsForUser(Request $request, Response $response, $args)
     {
@@ -201,14 +201,14 @@ class Transactions
 
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
-                    AccountModel::changeBalance($accountTo, $amount, false);
+                    AccountModel::changeBalance($userID, $accountTo, $amount, false);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    AccountModel::changeBalance($accountFrom, -$amount, false);
+                    AccountModel::changeBalance($userID, $accountFrom, -$amount, false);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($accountFrom, -$amount, false);
-                    AccountModel::changeBalance($accountTo, $amount, false);
+                    AccountModel::changeBalance($userID, $accountFrom, -$amount, false);
+                    AccountModel::changeBalance($userID, $accountTo, $amount, false);
                     break;
             }
 
@@ -279,15 +279,15 @@ class Transactions
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($oldAccountTo, -$oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, false);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($oldAccountFrom, $oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, false);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($oldAccountFrom, $oldAmount, false);
-                    AccountModel::changeBalance($oldAccountTo, -$oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, false);
                     break;
             }
 
@@ -404,15 +404,15 @@ class Transactions
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($oldAccountTo, -$oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, false);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($oldAccountFrom, $oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, false);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($oldAccountFrom, $oldAmount, false);
-                    AccountModel::changeBalance($oldAccountTo, -$oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, false);
                     break;
             }
 
@@ -420,15 +420,15 @@ class Transactions
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($accountTo, $amount, false);
+                    AccountModel::changeBalance($userID, $accountTo, $amount, false);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($accountFrom, -$amount, false);
+                    AccountModel::changeBalance($userID, $accountFrom, -$amount, false);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($accountFrom, -$amount, false);
-                    AccountModel::changeBalance($accountTo, +$amount, false);
+                    AccountModel::changeBalance($userID, $accountFrom, -$amount, false);
+                    AccountModel::changeBalance($userID, $accountTo, +$amount, false);
                     break;
             }
 
@@ -613,14 +613,14 @@ class Transactions
 
                 switch ($type) {
                     case DEFAULT_TYPE_INCOME_TAG:
-                        AccountModel::changeBalance($accountTo, $amount, true);
+                        AccountModel::changeBalance($userID, $accountTo, $amount, true);
                         break;
                     case DEFAULT_TYPE_EXPENSE_TAG:
-                        AccountModel::changeBalance($accountFrom, -$amount, true);
+                        AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
                         break;
                     case DEFAULT_TYPE_TRANSFER_TAG:
-                        AccountModel::changeBalance($accountFrom, -$amount, true);
-                        AccountModel::changeBalance($accountTo, $amount, true);
+                        AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
+                        AccountModel::changeBalance($userID, $accountTo, $amount, true);
                         break;
                 }
             }

@@ -73,7 +73,7 @@ class AccountModel extends Entity
         }
     }
 
-    public static function changeBalance($id_account, $offsetAmount, $transactional = false)
+    public static function changeBalance($id_user, $id_account, $offsetAmount, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
@@ -97,10 +97,29 @@ class AccountModel extends Entity
             $currentMonth = date("n");
             $currentYear = date("Y");
 
-            AccountModel::addBalanceSnapshot($id_account, $currentMonth, $currentYear, $transactional);
+            //AccountModel::addBalanceSnapshot($id_account, $currentMonth, $currentYear, $transactional);
+            AccountModel::addBalanceSnapshotToAllAccounts($id_user, $currentMonth, $currentYear, $transactional);
         }
     }
 
+
+    public static function addBalanceSnapshotToAllAccounts($id_user, $month, $year, $transactional = false)
+    {
+
+        $accsArr = AccountModel::getWhere(["users_user_id"], ["account_id"]);
+
+        foreach ($accsArr as $acc) {
+            AccountModel::addBalanceSnapshot($acc["account_id"], $month, $year);
+            if ($month < 12) {
+                $month2 = $month + 1;
+                $year2 = $year;
+            } else {
+                $year2 = $year + 1;
+                $month2 = 1;
+            }
+            AccountModel::addBalanceSnapshot($acc["account_id"], $month2, $year2);
+        }
+    }
 
     public static function addBalanceSnapshot($id_account, $month, $year, $transactional = false)
     {
