@@ -116,6 +116,55 @@ var chartUtils = {
             options: customOptions
         });
     },
+    setupDebtDistributionPieChart: (elementID, chartData, chartLabels, chartTitle) => {
+        var ctx = document.getElementById(elementID).getContext('2d');
+
+        var customOptions = {
+            title: {
+                display: true,
+                text: chartTitle,
+                position: "top"
+            },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                        var dataset = data['datasets'][0]
+                        //debugger
+                        //var metaData = dataset["_meta"].find(x => x !== undefined);
+                        var totalAmount = (() => {
+                            return dataset.data.reduce((acc, item) => {
+                                return acc + Math.abs(parseFloat(item))
+                            }, 0)
+                        })()
+                        //debugger
+                        var percent = Math.abs(Math.round((dataset['data'][tooltipItem['index']] / totalAmount) * 100))
+                        return '(' + percent + '%)'
+                    }
+                }
+            }
+        }
+
+        var chartData = {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                backgroundColor: chartUtils.getPieChartColorsList()
+
+            }]
+        };
+
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: chartData,
+            options: customOptions
+        });
+    },
     setupSimpleLineChart: (elementID, chartData, chartLabels, chartTitle) => {
         var ctx = document.getElementById(elementID).getContext('2d');
 
