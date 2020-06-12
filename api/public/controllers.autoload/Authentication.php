@@ -1,13 +1,14 @@
 <?php
 require_once 'consts.php';
+
 class Authentication
 {
     const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
 
-    /** 
+    /**
      *   EXPECTED BEHAVIOUR: Attempts to perform login (returns Cod. 202 if it was successfull)
-     *   ARGUMENTS: - 'username' 
+     *   ARGUMENTS: - 'username'
      *              - 'password'
      *              - 'mobile' (OPTIONAL) - does the request come from a mobile device?
      *   REQUIRED ACTION(S): none
@@ -19,7 +20,7 @@ class Authentication
             $password = Input::validate($request->getParsedBody()["password"], Input::$STRING);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
@@ -37,7 +38,11 @@ class Authentication
             $trustlimit = UserModel::getWhere(["username" => $username], ["trustlimit"])[0]["trustlimit"];
 
             $userID = UserModel::getUserIdByName($username, true);
-            $accountsArr = AccountModel::getWhere(["users_user_id" => $userID]);
+            $accountsArr = AccountModel::getAllAccountsForUserWithAmounts($userID); //AccountModel::getWhere(["users_user_id" => $userID]);
+
+            /*foreach ($accountsArr as $acc) {
+                $acc["current_balance"] = Input::convertIntegerToFloat($acc["current_balance"]);
+            }*/
 
             $db->getDB()->commit();
             //EnsoLogsModel::addEnsoLog($username, "Logged in.", EnsoLogsModel::$INFORMATIONAL, 'Authentication');
@@ -53,9 +58,9 @@ class Authentication
         }
     }
 
-    /** 
-     *   EXPECTED BEHAVIOUR: Checks if sessionkey is valid. (Returns cod. 202 if so, plus an array of user data (sessionkey, username and all of its actions)). 
-     *   ARGUMENTS: - 'sessionkey' 
+    /**
+     *   EXPECTED BEHAVIOUR: Checks if sessionkey is valid. (Returns cod. 202 if so, plus an array of user data (sessionkey, username and all of its actions)).
+     *   ARGUMENTS: - 'sessionkey'
      *              - 'authusername' - username of the user making the request
      *              - 'mobile' (OPTIONAL) - does the request come from a mobile device?
      *   REQUIRED ACTION(S): none
@@ -67,25 +72,24 @@ class Authentication
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
 
 
             if ($request->getParsedBody() != null && array_key_exists('renewValidity', $request->getParsedBody())) {
-                $renewValidity = (int) Input::validate($request->getParsedBody()['renewValidity'], Input::$BOOLEAN);
+                $renewValidity = (int)Input::validate($request->getParsedBody()['renewValidity'], Input::$BOOLEAN);
             } else {
                 $renewValidity = true;
             }
-
 
 
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, $renewValidity, $mobile);
 
             $trustlimit = UserModel::getWhere(["username" => $authusername], ["trustlimit"])[0]["trustlimit"];
 
-            return sendResponse($response, EnsoShared::$REST_OK,  ["sessionkey" => $key, "username" => $authusername, "trustlimit" => $trustlimit]);
+            return sendResponse($response, EnsoShared::$REST_OK, ["sessionkey" => $key, "username" => $authusername, "trustlimit" => $trustlimit]);
         } catch (Exception $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, "3");
         }
