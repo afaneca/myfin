@@ -150,7 +150,7 @@ var chartUtils = {
             }
         }
 
-        var chartData = {
+        var chartDataVar = {
             labels: chartLabels,
             datasets: [{
                 data: chartData,
@@ -161,7 +161,7 @@ var chartUtils = {
 
         var myPieChart = new Chart(ctx, {
             type: 'pie',
-            data: chartData,
+            data: chartDataVar,
             options: customOptions
         });
     },

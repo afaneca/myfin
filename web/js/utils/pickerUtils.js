@@ -1,10 +1,10 @@
 "use strict";
 
 var PickerUtils = {
-    setupMonthPickerWithDefaultDate: (selectorID, defaultMonth, defaultYear, onSelectCallback) => {
+    setupMonthPickerWithDefaultDate: (selectorID, defaultMonth, defaultYear, onSelectCallback, minValue = "04/2015", maxValue = "07/2021") => {
         $(selectorID).Monthpicker({
-            minValue: "04/2015",
-            maxValue: "07/2021",
+            minValue: minValue,
+            maxValue: maxValue,
             defaultYear,
             defaultMonth,
             monthLabels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
