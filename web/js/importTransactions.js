@@ -153,6 +153,7 @@ var ImportTransactions = {
                         dateColumn = currentColumn
                     else {
                         DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
+                        IMPORT_STEP--
                         return;
                     }
 
@@ -162,6 +163,7 @@ var ImportTransactions = {
                         amountColumn = currentColumn
                     else {
                         DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
+                        IMPORT_STEP--
                         return;
                     }
                     break;
@@ -170,6 +172,7 @@ var ImportTransactions = {
                         descriptionColumn = currentColumn
                     else {
                         DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
+                        IMPORT_STEP--
                         return;
                     }
                     break;
@@ -178,6 +181,7 @@ var ImportTransactions = {
                         creditColumn = currentColumn
                     else {
                         DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
+                        IMPORT_STEP--
                         return;
                     }
                     break;
@@ -186,6 +190,7 @@ var ImportTransactions = {
                         debitColumn = currentColumn
                     else {
                         DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
+                        IMPORT_STEP--
                         return;
                     }
                     break;
@@ -196,10 +201,12 @@ var ImportTransactions = {
 
         if (!dateColumn || !descriptionColumn || (!amountColumn && !creditColumn && !debitColumn)) {
             DialogUtils.showErrorMessage("Por favor, selecione todos os campos necessários!")
+            IMPORT_STEP--
             return;
         }
         if (!selectedAccountID) {
             DialogUtils.showErrorMessage("Por favor, selecione uma conta para associar às transações.")
+            IMPORT_STEP--
             return;
         }
         trxAccountSelector.attr('disabled', 'disabled')
