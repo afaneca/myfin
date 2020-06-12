@@ -3,6 +3,7 @@
 var Dashboard = {
     init: () => {
 
+        Dashboard.setupLastTransactionsTable()
         Dashboard.setupDebtDistributionChart()
         Dashboard.setupInvestmentDistributionChart()
         Dashboard.setupIncomeDistributionChart()
@@ -15,6 +16,39 @@ var Dashboard = {
         },
             moment().month() + 1 + "/" + (moment().year() - 10), moment().month() + 1 + "/" + moment().year())
         var isShowing = false;
+    },
+    setupLastTransactionsTable: () => {
+        TransactionServices.getXTransactions(5,
+            (list) => {
+                // SUCCESS
+                Dashboard.setupLastMovementsTable(list)
+            }, (err) => {
+                // FAILURE
+            })
+    },
+    setupLastMovementsTable: list => {
+        $('#last_movements_table_wrapper').html(`
+         <table class="responsive-table">
+            <thead>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Montante</th>
+            </thead>
+            <tbody>
+                ${list.map(mov => Dashboard.renderLastMovementsRow(mov)).join("")}
+            </tbody>
+        </table>
+      
+      `)
+    },
+    renderLastMovementsRow: mov => {
+        return `
+            <tr data-id='${mov.transaction_id}'>
+                <td>${DateUtils.convertUnixTimestampToDateString(mov.date_timestamp)}</td>
+                <td>${mov.description}</td>
+                <td><span class="${(mov.type == 'I') ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${StringUtils.formatStringToCurrency(mov.amount)}</span></td>
+            </tr>
+        `
     },
     setupDebtDistributionChart: () => {
 

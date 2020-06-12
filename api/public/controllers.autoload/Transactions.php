@@ -21,6 +21,12 @@ class Transactions
                 $mobile = false;
             }
 
+            if ($request->getQueryParams() != null && array_key_exists('trx_limit', $request->getQueryParams())) {
+                $trxLimit = Input::validate($request->getQueryParams()['trx_limit'], Input::$INT, 4);
+            } else {
+                $trxLimit = DEFAULT_TRANSACTIONS_FETCH_LIMIT;
+            }
+
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
@@ -41,7 +47,7 @@ class Transactions
 
             ); */
 
-            $trxArr = TransactionModel::getAllTransactionsForUser($userID, false);
+            $trxArr = TransactionModel::getAllTransactionsForUser($userID, $trxLimit, false);
 
             /* $db->getDB()->commit(); */
 

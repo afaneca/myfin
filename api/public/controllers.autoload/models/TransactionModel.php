@@ -1,10 +1,10 @@
 <?php
 
 /**
- * TYPES: 
+ * TYPES:
  * I - Income
  * E - Expense
- * T - Transfer 
+ * T - Transfer
  */
 class TransactionModel extends Entity
 {
@@ -22,7 +22,7 @@ class TransactionModel extends Entity
         "categories_category_id" // I|E|T
     ];
 
-    public static function getAllTransactionsForUser($id_user, $transactional = false)
+    public static function getAllTransactionsForUser($id_user, $trxLimit, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
@@ -41,10 +41,12 @@ class TransactionModel extends Entity
             "WHERE acc_to.users_user_id = :userID " .
             "OR acc_from.users_user_id = :userID " .
             "GROUP BY transaction_id " .
-            "ORDER BY transactions.date_timestamp DESC";
+            "ORDER BY transactions.date_timestamp DESC " .
+            "LIMIT $trxLimit";
 
         $values = array();
         $values[':userID'] = $id_user;
+        /*$values[':trxLimit'] = $trxLimit;*/
 
         try {
             $db->prepare($sql);
