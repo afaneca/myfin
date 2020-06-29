@@ -70,7 +70,7 @@ var Categories = {
         `
     },
     showAddCategoryModal: () => {
-        $("#modal-categories").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova categoria</h4>
                 <div class="row">
@@ -99,8 +99,8 @@ var Categories = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Categories.addCategory()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-categories .modal-content").html(txt);
-        $("#modal-categories .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#category_type_select').formSelect();
     },
@@ -130,7 +130,7 @@ var Categories = {
             })
     },
     showRemoveCategoryModal: (catName, catID) => {
-        $("#modal-categories").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Remover categoria <b>${catName}</b></h4>
                 <div class="row">
@@ -142,8 +142,8 @@ var Categories = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
             <a onClick="Categories.removeCategory(${catID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
-        $("#modal-categories .modal-content").html(txt);
-        $("#modal-categories .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#category_type_select').formSelect();
     },
@@ -165,7 +165,7 @@ var Categories = {
             }
     },
     showEditCategoryModal: (catName, catDescription, catType, catID) => {
-        $("#modal-categories").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova categoria</h4>
                 <div class="row">
@@ -194,8 +194,8 @@ var Categories = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Categories.editCategory(${catID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-categories .modal-content").html(txt);
-        $("#modal-categories .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#category_type_select').formSelect();
 

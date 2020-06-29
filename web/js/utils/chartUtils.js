@@ -1,5 +1,6 @@
 "use strict";
 
+
 var chartUtils = {
     setupAngularChart: (elementID, chartData, customText, customLabels) => {
 
@@ -69,7 +70,7 @@ var chartUtils = {
             elements: {
                 center: {
                     text: customText,
-                    color: '#000', // Default is #000000
+                    color: '#000000', // Default is #000000
                     fontStyle: 'Arial', // Default is Arial
                     sidePadding: 10 // Defualt is 20 (as a percentage)
                 }
@@ -115,6 +116,8 @@ var chartUtils = {
             data: chartData,
             options: customOptions
         });
+
+        return myPieChart
     },
     setupDebtDistributionPieChart: (elementID, chartData, chartLabels, chartTitle) => {
         var ctx = document.getElementById(elementID).getContext('2d');
@@ -164,6 +167,8 @@ var chartUtils = {
             data: chartDataVar,
             options: customOptions
         });
+
+        return myPieChart
     },
     setupSimpleLineChart: (elementID, chartData, chartLabels, chartTitle) => {
         var ctx = document.getElementById(elementID).getContext('2d');
@@ -198,6 +203,8 @@ var chartUtils = {
             data: data,
             options: customOptions
         });
+
+        return myLineChart
     },
     getPieChartColorsList: () => {
         return ArrayUtils.shuffle([
@@ -222,5 +229,19 @@ var chartUtils = {
             '#607D8B',
             /* '#000000' */
         ]);
-    }
+    },
+    addData: (chart, label, data) => {
+        chart.data.labels.push(label);
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data.push(data);
+        });
+        chart.update();
+    },
+    removeData: (chart) => {
+        chart.data.labels = []
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data = []
+        });
+        chart.update();
+    },
 }

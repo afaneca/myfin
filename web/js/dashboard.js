@@ -1,12 +1,10 @@
 "use strict";
 
+var CHART_INCOME_DISTRIBUTION
+var CHART_EXPENSES_DISTRIBUTION
+
 var Dashboard = {
     init: () => {
-
-        Dashboard.setupLastTransactionsTable()
-        Dashboard.setupDebtDistributionChart()
-        Dashboard.setupInvestmentDistributionChart()
-        Dashboard.setupIncomeDistributionChart()
 
         PickerUtils.setupMonthPickerWithDefaultDate("#dashboard-monthpicker", moment().month() + 1, moment().year(), () => {
             const selectedMonth = $("#dashboard-monthpicker").val();
@@ -15,6 +13,13 @@ var Dashboard = {
             Dashboard.refreshDashboard(selectedMonth)
         },
             moment().month() + 1 + "/" + (moment().year() - 10), moment().month() + 1 + "/" + moment().year())
+
+        Dashboard.setupLastTransactionsTable()
+        Dashboard.setupDebtDistributionChart()
+        Dashboard.setupInvestmentDistributionChart()
+        Dashboard.setupIncomeExpensesDistributionChart()
+
+
         var isShowing = false;
     },
     setupLastTransactionsTable: () => {
@@ -88,21 +93,58 @@ var Dashboard = {
 
         chartUtils.setupDebtDistributionPieChart("chart_pie_investing_portfolio", dataset, labels, "Portefólio de Investimento");
     },
-    setupIncomeDistributionChart: () => {
-        var dataset = [10, 20, 30, 20, 20];
+    setupIncomeExpensesDistributionChart: () => {
+        let datasetDebit = []
+        let labelsDebit = []
+        let datasetCredit = []
+        let labelsCredit = []
 
-        var labels = [
-            'Red',
-            'Yellow',
-            'Blue',
-            'fdsad',
-            'fdsa',
-        ];
+        const selectedMonth = $("#dashboard-monthpicker").val();
 
-        chartUtils.setupPieChart("chart_pie_income_distribution", dataset, labels, "Distribuição de Receita");
+        const month = parseInt(selectedMonth.split("/")[0]);
+        const year = parseInt(selectedMonth.split("/")[1]);
+
+        LoadingManager.showLoading()
+        StatServices.getDashboardExpensesIncomeDistributionStats(month, year,
+            (resp) => {
+                // SUCCESS
+                const creditCategories = resp.categories.filter((cat) => {
+                    return cat.type === "C"
+                })
+                const deditCategories = resp.categories.filter((cat) => {
+                    return cat.type === "D"
+                })
+
+                creditCategories.forEach((cat) => {
+                    datasetCredit.push(cat.current_amount)
+                    labelsCredit.push(cat.name)
+                })
+
+                deditCategories.forEach((cat) => {
+                    datasetDebit.push(cat.current_amount)
+                    labelsDebit.push(cat.name)
+                })
+
+                CHART_INCOME_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_income_distribution", datasetCredit, labelsCredit, "Distribuição de Receita");
+                CHART_EXPENSES_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_spending_distribution", datasetDebit, labelsDebit, "Distribuição de Despesa");
+
+
+                LoadingManager.hideLoading()
+            }, (err) => {
+                // FAILURE
+                /*chartUtils.setupPieChart("chart_pie_income_distribution", ["Sem dados"], [100], "Distribuição de Receita");
+                chartUtils.setupPieChart("chart_pie_spending_distribution", ["Sem dados"], [0], "Distribuição de Despesa");*/
+                LoadingManager.hideLoading()
+                chartUtils.removeData(CHART_INCOME_DISTRIBUTION)
+                chartUtils.removeData(CHART_EXPENSES_DISTRIBUTION)
+            })
     },
     refreshDashboard: (newMonth) => {
         // TODO DASHBOARD: setup refresh of data
+        Dashboard.setupLastTransactionsTable()
+        Dashboard.setupDebtDistributionChart()
+        Dashboard.setupInvestmentDistributionChart()
+        Dashboard.setupIncomeExpensesDistributionChart()
     }
 }
 

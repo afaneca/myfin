@@ -91,7 +91,7 @@ var Transactions = {
                 const typesArr = response["type"]
                 const accountsArr = response["accounts"]
 
-                $("#modal-transactions").modal("open")
+                $("#modal-global").modal("open")
                 let txt = `
                 <h4>Adicionar nova transação</h4>
                 
@@ -148,13 +148,13 @@ var Transactions = {
 
                 let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
                     <a onClick="Transactions.addTransaction()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-                $("#modal-transactions .modal-content").html(txt);
-                $("#modal-transactions .modal-footer").html(actionLinks);
-                $('select.select-trxs-entities').select2({dropdownParent: "#modal-transactions"});
-                $('select.select-trxs-account_to').select2({dropdownParent: "#modal-transactions"});
-                $('select.select-trxs-account_from').select2({dropdownParent: "#modal-transactions"});
-                $('select.select-trxs-types').select2({dropdownParent: "#modal-transactions"});
-                $('select.select-trxs-categories').select2({dropdownParent: "#modal-transactions"});
+                $("#modal-global .modal-content").html(txt);
+                $("#modal-global .modal-footer").html(actionLinks);
+                $('select.select-trxs-entities').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-account_to').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-account_from').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-types').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-categories').select2({dropdownParent: "#modal-global"});
                 $(".datepicker").datepicker({
                     defaultDate: new Date(),
                     setDefaultDate: true,
@@ -261,7 +261,7 @@ var Transactions = {
             })
     },
     showRemoveTransactionModal: (trxID) => {
-        $("#modal-transactions").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Remover transação #<b>${trxID}</b></h4>
                 <div class="row">
@@ -273,8 +273,8 @@ var Transactions = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
             <a onClick="Transactions.removeTransaction(${trxID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
-        $("#modal-transactions .modal-content").html(txt);
-        $("#modal-transactions .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
     removeTransaction: (trxID) => {
         if (!trxID) return;
@@ -304,7 +304,7 @@ var Transactions = {
                 const typesArr = response["type"]
                 const accountsArr = response["accounts"]
 
-                $("#modal-transactions").modal("open")
+                $("#modal-global").modal("open")
                 let txt = `
                 <h4>Editar transação <b>#${trxID}</b></h4>
                 
@@ -362,14 +362,14 @@ var Transactions = {
                 let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
                     <a onClick="Transactions.editTransaction(${trxID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
 
-                $("#modal-transactions .modal-content").html(txt);
-                $("#modal-transactions .modal-footer").html(actionLinks);
+                $("#modal-global .modal-content").html(txt);
+                $("#modal-global .modal-footer").html(actionLinks);
 
-                $('select.select-trxs-entities').select2({dropdownParent: "#modal-transactions"});
-                $('select.select-trxs-account_to').select2({dropdownParent: "#modal-transactions"});
-                $('select.select-trxs-account_from').select2({dropdownParent: "#modal-transactions"});
-                $('select.select-trxs-types').select2({dropdownParent: "#modal-transactions"});
-                $('select.select-trxs-categories').select2({dropdownParent: "#modal-transactions"});
+                $('select.select-trxs-entities').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-account_to').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-account_from').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-types').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-categories').select2({dropdownParent: "#modal-global"});
                 $(".datepicker").datepicker({
                     defaultDate: new Date(DateUtils.convertUnixTimestampToDateFormat(selectedDateTimestamp)),
                     setDefaultDate: true,

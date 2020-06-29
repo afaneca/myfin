@@ -64,7 +64,7 @@ var Budgets = {
         configs.goToPage('addBudget', {'new': false, 'open': (isOpen == 1) ? true : false, 'id': budgetID}, true);
     },
     showRemoveBudgetModal: (budgetID, month, year) => {
-        $("#modal-budgets").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Remover orçamento de <b>${month}/${year}</b></h4>
                 <div class="row">
@@ -76,8 +76,8 @@ var Budgets = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
             <a onClick="Budgets.removeBudget(${budgetID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
-        $("#modal-budgets .modal-content").html(txt);
-        $("#modal-budgets .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
     removeBudget: (budgetID) => {
         LoadingManager.showLoading()

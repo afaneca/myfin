@@ -11,17 +11,11 @@
     </div>
 </div>
 
-<!-- MODAL -->
-<!-- Modal Structure -->
-<div id="modal-accounts" class="modal">
-    <div class="modal-content"></div>
-    <div class="modal-footer"></div>
-</div>
 
 
 <script>
     $(document).ready(function () {
-        $('.modal').modal();
+        DialogUtils.initStandardModal()
 
         /* var accountsArr = [{
             id: 0,

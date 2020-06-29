@@ -433,8 +433,8 @@ var ImportTransactions = {
         }
     },
     showImportStep2ConfirmationModal: () => {
-        $('#modal-import-transactions').modal();
-        $("#modal-import-transactions").modal("open")
+        DialogUtils.initStandardModal()
+        $("#modal-global").modal("open")
         let newBalanceCalc = ImportTransactions.calculateNewBalance()
         let trxCnt = importedObjData.data.length
         let accountName = CookieUtils.getUserAccount(selectedAccountID).name
@@ -447,8 +447,8 @@ var ImportTransactions = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="ImportTransactions.doStep2()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Importar</a>`;
-        $("#modal-import-transactions .modal-content").html(txt);
-        $("#modal-import-transactions .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
     calculateNewBalance: () => {
         const account = CookieUtils.getUserAccount(selectedAccountID)

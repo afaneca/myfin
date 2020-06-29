@@ -56,7 +56,7 @@ var Accounts = {
     },
     addNewAccount: () => {
 
-        $("#modal-accounts").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova conta</h4>
                 <div class="row">
@@ -115,8 +115,8 @@ var Accounts = {
         */
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Accounts.addAccount()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-accounts .modal-content").html(txt);
-        $("#modal-accounts .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#account_type_select').formSelect();
         $('#account_status_select').formSelect();
@@ -159,7 +159,7 @@ var Accounts = {
 
     },
     showRemoveAccountModal: (accName, accID) => {
-        $("#modal-accounts").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Remover Conta <b>${accName}</b></h4>
                 <div class="row">
@@ -171,8 +171,8 @@ var Accounts = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
             <a onClick="Accounts.removeAccount(${accID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
-        $("#modal-accounts .modal-content").html(txt);
-        $("#modal-accounts .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
     removeAccount: (accID) => {
         if (!accID) return;
@@ -192,7 +192,7 @@ var Accounts = {
             }
     },
     showEditAccountModal: (accName, accDescription, accType, accStatus, current_balance, exclude_from_budgets, accID) => {
-        $("#modal-accounts").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Editar a conta <b>${accName}</b></h4>
                 <div class="row">
@@ -244,8 +244,8 @@ var Accounts = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Accounts.editAccount(${accID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Editar</a>`;
-        $("#modal-accounts .modal-content").html(txt);
-        $("#modal-accounts .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#account_type_select').formSelect();
         $('#account_status_select').formSelect();

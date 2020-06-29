@@ -20,14 +20,10 @@
     </div>
 </div>
 
-<div id="modal-budgets" class="modal">
-    <div class="modal-content"></div>
-    <div class="modal-footer"></div>
-</div>
 
 <script>
     $(document).ready(function () {
-        $('.modal').modal();
+        DialogUtils.initStandardModal()
         Budgets.init();
     });
 

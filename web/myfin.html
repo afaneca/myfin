@@ -32,7 +32,8 @@
     <link rel="stylesheet" href="./css/progressbar.css"/>
 </head>
 
-<body onLoad="checkPreAuth(); checkPreAuthWithInterval();" class="main-blue-background-bg fill-height"
+<body onLoad="checkPreAuth(); checkPreAuthWithInterval(); TopNav.setupTopNavSummaryAmounts()"
+      class="main-blue-background-bg fill-height"
       style="overflow: visible !important;">
 <header>
     <nav class="top-nav">
@@ -40,7 +41,19 @@
             <!--<div class="col s2 card-panel">
                 <input id="dashboard-monthpicker" type="text" placeholder="Escolha um mês"/>
             </div>-->
-            <div class="col s12">
+            <div class="col s4">
+                <div class="row top-summary-wrapper">
+                    <div class="col top-summary-col"><span class="top-summary-label">Corrente/Poupanças:</span><br><span
+                            class="top-summary-key" id="top-summary-col-current-savings-value">0€</span></div>
+                    <div class="col top-summary-col"><span class="top-summary-label">Investimentos:</span><br><span
+                            class="top-summary-key" id="top-summary-col-investments-value">0€</span></div>
+                    <div class="col top-summary-col"><span class="top-summary-label">Créditos:</span><br><span
+                            class="top-summary-key" id="top-summary-col-credits-value">0€</span></div>
+                    <div class="col top-summary-col"><span class="top-summary-label">Património:</span><br><span
+                            class="top-summary-key" id="top-summary-col-patrimony-value">0€</span></div>
+                </div>
+            </div>
+            <div class="col s8">
                 <ul class="right hide-on-med-and-down">
                     <li class="green-gradient-bg"><a href="#"><i class="large material-icons">account_circle</i></a>
                     </li>
@@ -109,6 +122,10 @@
     </div>
 </footer>
 
+<div id="modal-global" class="modal">
+    <div class="modal-content"></div>
+    <div class="modal-footer"></div>
+</div>
 
 <!-- Compiled and minified JavaScript -->
 <script src="./js/external/js.cookie.js" type="text/javascript"></script>
@@ -125,6 +142,7 @@
 <script src="./js/ensoshared_js_lib/ensoshared.js" type="text/javascript"></script>
 <script src="./js/consts.js"></script>
 <script src="./js/configs.js" type="text/javascript"></script>
+<script src="./js/topNav.js" type="text/javascript"></script>
 
 <script src="./js/utils/cookieUtils.js"></script>
 <script src="./js/utils/validationUtils.js"></script>

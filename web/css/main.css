@@ -263,3 +263,21 @@ nav ul a:hover {
     line-height: 30px; /* To center it vertically */
     color: white;
 }
+
+.top-summary-wrapper{
+    line-height: 24px;
+    padding: 5px;
+}
+
+.top-summary-col {
+
+}
+
+.top-summary-label {
+    font-weight: bold;
+    font-size: x-small;
+}
+
+.top-summary-key {
+    font-size: small;
+}

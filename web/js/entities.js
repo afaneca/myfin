@@ -48,7 +48,7 @@ var Entities = {
         `
     },
     showAddEntityModal: () => {
-        $("#modal-entities").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova entidade</h4>
                 <div class="row">
@@ -66,8 +66,8 @@ var Entities = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Entities.addEntity()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-entities .modal-content").html(txt);
-        $("#modal-entities .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
     addEntity: () => {
         const entName = $("input#entity_name").val()
@@ -92,7 +92,7 @@ var Entities = {
             })
     },
     showRemoveEntityModal: (entityName, entityID) => {
-        $("#modal-entities").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Remover entidade <b>${entityName}</b></h4>
                 <div class="row">
@@ -104,8 +104,8 @@ var Entities = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
             <a onClick="Entities.removeEntity(${entityID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
-        $("#modal-entities .modal-content").html(txt);
-        $("#modal-entities .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
     removeEntity: (entityID) => {
         if (!entityID) return;
@@ -125,7 +125,7 @@ var Entities = {
             }
     },
     showEditEntityModal: (entName, entID) => {
-        $("#modal-entities").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova entidade</h4>
                 <div class="row">
@@ -143,8 +143,8 @@ var Entities = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Entities.editEntity(${entID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-entities .modal-content").html(txt);
-        $("#modal-entities .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         // AUTO-FILL INPUTS
         $("input#entity_name").val(entName)
