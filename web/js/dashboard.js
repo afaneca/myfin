@@ -135,8 +135,10 @@ var Dashboard = {
                 /*chartUtils.setupPieChart("chart_pie_income_distribution", ["Sem dados"], [100], "Distribuição de Receita");
                 chartUtils.setupPieChart("chart_pie_spending_distribution", ["Sem dados"], [0], "Distribuição de Despesa");*/
                 LoadingManager.hideLoading()
-                chartUtils.removeData(CHART_INCOME_DISTRIBUTION)
-                chartUtils.removeData(CHART_EXPENSES_DISTRIBUTION)
+                if (CHART_INCOME_DISTRIBUTION)
+                    chartUtils.removeData(CHART_INCOME_DISTRIBUTION)
+                if (CHART_EXPENSES_DISTRIBUTION)
+                    chartUtils.removeData(CHART_EXPENSES_DISTRIBUTION)
             })
     },
     refreshDashboard: (newMonth) => {
