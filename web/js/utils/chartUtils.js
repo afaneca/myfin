@@ -90,6 +90,8 @@ var chartUtils = {
             data: customData,
             options: customOptions
         });
+
+        return myPieChart
     },
     setupPieChart: (elementID, chartData, chartLabels, chartTitle) => {
         var ctx = document.getElementById(elementID).getContext('2d');

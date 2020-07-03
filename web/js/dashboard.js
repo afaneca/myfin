@@ -2,6 +2,7 @@
 
 var CHART_INCOME_DISTRIBUTION
 var CHART_EXPENSES_DISTRIBUTION
+var CHART_MONTHLY_OVERVIEW
 
 var Dashboard = {
     init: () => {
@@ -21,6 +22,27 @@ var Dashboard = {
 
 
         var isShowing = false;
+    },
+    setupMonthlyOverviewChart: (budgetedAmount, realAmount) => {
+        if (!budgetedAmount) budgetedAmount = 0
+        if (!realAmount) realAmount = 0
+
+        $("#chart-monthly-overview-real-amount").text(StringUtils.formatStringToCurrency(Math.abs(realAmount)))
+        $("#chart-monthly-overview-budgeted-amount").text(StringUtils.formatStringToCurrency(Math.abs(budgetedAmount)))
+
+        let maxValue = Math.abs(budgetedAmount) - Math.abs(realAmount)
+        if (maxValue < 0) maxValue = 0
+
+        var data = [Math.abs(realAmount), maxValue];
+        var customLabels = [
+            'Atual',
+            'Restante'
+        ];
+
+        if (CHART_MONTHLY_OVERVIEW)
+            chartUtils.removeData(CHART_MONTHLY_OVERVIEW)
+        CHART_MONTHLY_OVERVIEW = chartUtils.setupAngularChart('chart-angular-target-goals', data, null, customLabels);
+
     },
     setupLastTransactionsTable: () => {
         TransactionServices.getXTransactions(5,
@@ -118,12 +140,18 @@ var Dashboard = {
                 creditCategories.forEach((cat) => {
                     datasetCredit.push(cat.current_amount)
                     labelsCredit.push(cat.name)
+
                 })
 
+                let totalExpensesRealAmount = 0
+                let totalExpensesBudgetedAmount = 0
                 deditCategories.forEach((cat) => {
                     datasetDebit.push(cat.current_amount)
                     labelsDebit.push(cat.name)
+                    totalExpensesRealAmount += parseFloat(cat.current_amount)
+                    totalExpensesBudgetedAmount += parseFloat(cat.planned_amount)
                 })
+                Dashboard.setupMonthlyOverviewChart(totalExpensesBudgetedAmount, totalExpensesRealAmount)
 
                 CHART_INCOME_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_income_distribution", datasetCredit, labelsCredit, "Distribuição de Receita");
                 CHART_EXPENSES_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_spending_distribution", datasetDebit, labelsDebit, "Distribuição de Despesa");
@@ -139,6 +167,8 @@ var Dashboard = {
                     chartUtils.removeData(CHART_INCOME_DISTRIBUTION)
                 if (CHART_EXPENSES_DISTRIBUTION)
                     chartUtils.removeData(CHART_EXPENSES_DISTRIBUTION)
+
+                Dashboard.setupMonthlyOverviewChart(0, 0)
             })
     },
     refreshDashboard: (newMonth) => {

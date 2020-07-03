@@ -49,17 +49,8 @@
                 <span class="blue-text text-darken-2">
                     <div>
                         <canvas id="chart-angular-target-goals" width="600" height="400"></canvas>
-                        <center style="margin-top: -10px;"><span style="font-size:150%">1500€</span>/2000</center>
+                        <center style="margin-top: -10px;"><span id="chart-monthly-overview-real-amount" style="font-size:150%">1500€</span>/<span id="chart-monthly-overview-budgeted-amount">2000</span></center>
                     </div>
-
-                    <script>
-                        var data = [1500, 2000 - 1500];
-                        var customLabels = [
-                            'Atual',
-                            'Restante'
-                        ];
-                        chartUtils.setupAngularChart('chart-angular-target-goals', data, null, customLabels);
-                    </script>
                 </span>
             </div>
         </div>
