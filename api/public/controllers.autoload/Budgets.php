@@ -140,7 +140,7 @@ class Budgets
                  echo $type . "\n";
                  die();*/
                 $current_amount = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser, $type)[0]["category_balance"];
-                $category["current_amount"] = Input::convertIntegerToFloat($current_amount);
+                $category["current_amount"] = abs(Input::convertIntegerToFloat($current_amount));
             }
 
             /* $db->getDB()->commit(); */
