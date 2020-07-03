@@ -30,9 +30,12 @@
 #side-nav-logo-wrapper {
     height: 65px;
     width: 100%;
+    margin-bottom: 25px;
 }
 
-.card-panel{
+
+
+.card-panel {
     background: var(--light-grey);
 }
 
@@ -81,14 +84,14 @@ nav ul a:hover {
     font-size: 18px !important;
 }
 
-.dashboard-btn{
-    min-height:50px;
-    cursor:pointer;
-    color:white;
+.dashboard-btn {
+    min-height: 50px;
+    cursor: pointer;
+    color: white;
 }
 
-.dashboard-btn:hover{
-    color:black;
+.dashboard-btn:hover {
+    color: black;
 }
 
 #logo-text {
@@ -100,6 +103,17 @@ nav ul a:hover {
     padding: 10px;
     float: right;
     width: calc(100% - (var(--sidebar_width_percentage)));
+}
+
+#side-nav-logo-img {
+    width: 110px;
+    margin: 17px;
+}
+
+@media only screen and (max-width: 1100px) {
+    #side-nav-logo-img {
+        width: 70%;
+    }
 }
 
 .main-progress-bar {
@@ -199,37 +213,37 @@ nav ul a:hover {
 }
 
 .red-gradient-bg {
-    background: -webkit-linear-gradient(45deg, #ff5252, #f48fb1)!important;
-    background: linear-gradient(45deg, #ff5252, #f48fb1)!important;
+    background: -webkit-linear-gradient(45deg, #ff5252, #f48fb1) !important;
+    background: linear-gradient(45deg, #ff5252, #f48fb1) !important;
 }
 
 .red-gradient-bg:hover {
-    background: -webkit-linear-gradient(120deg, #ff5252, #f48fb1)!important;
-    background: linear-gradient(120deg, #ff5252, #f48fb1)!important;
+    background: -webkit-linear-gradient(120deg, #ff5252, #f48fb1) !important;
+    background: linear-gradient(120deg, #ff5252, #f48fb1) !important;
 }
 
 .orange-gradient-bg {
-    background: -webkit-linear-gradient(45deg, #ff6f00, #ffca28)!important;
-    background: linear-gradient(45deg, #ff6f00, #ffca28)!important;
+    background: -webkit-linear-gradient(45deg, #ff6f00, #ffca28) !important;
+    background: linear-gradient(45deg, #ff6f00, #ffca28) !important;
 }
 
 .orange-gradient-bg:hover {
-    background: -webkit-linear-gradient(120deg, #ff6f00, #ffca28)!important;
-    background: linear-gradient(120deg, #ff6f00, #ffca28)!important;
+    background: -webkit-linear-gradient(120deg, #ff6f00, #ffca28) !important;
+    background: linear-gradient(120deg, #ff6f00, #ffca28) !important;
 }
 
 .green-gradient-bg {
-    background: -webkit-linear-gradient(45deg, #43a047, #1de9b6)!important;
-    background: linear-gradient(45deg, #43a047, #1de9b6)!important;
+    background: -webkit-linear-gradient(45deg, #43a047, #1de9b6) !important;
+    background: linear-gradient(45deg, #43a047, #1de9b6) !important;
 }
 
 .green-gradient-bg:hover {
-    background: -webkit-linear-gradient(120deg, #43a047, #1de9b6)!important;
-    background: linear-gradient(120deg, #43a047, #1de9b6)!important;
+    background: -webkit-linear-gradient(120deg, #43a047, #1de9b6) !important;
+    background: linear-gradient(120deg, #43a047, #1de9b6) !important;
 }
 
 .moonlit-asteroid-gradient-bg {
-    background: -webkit-linear-gradient(45deg, #0F2027, #203A43, #2C5364)!important;
+    background: -webkit-linear-gradient(45deg, #0F2027, #203A43, #2C5364) !important;
     background: linear-gradient(45deg, #0F2027, #203A43, #2C5364) !important;
 }
 
@@ -241,11 +255,11 @@ nav ul a:hover {
     pointer-events: auto;
 }
 
-[type="checkbox"].reset-checkbox+span::before, [type="checkbox"].reset-checkbox+span::after, [type="checkbox"].reset-checkbox:checked+span::before, [type="checkbox"].reset-checkbox:checked+span::after {
+[type="checkbox"].reset-checkbox + span::before, [type="checkbox"].reset-checkbox + span::after, [type="checkbox"].reset-checkbox:checked + span::before, [type="checkbox"].reset-checkbox:checked + span::after {
     display: none !important;
 }
 
-[type="checkbox"].reset-checkbox+span:not(.lever) {
+[type="checkbox"].reset-checkbox + span:not(.lever) {
     padding-left: 10px !important;
 }
 
@@ -264,7 +278,7 @@ nav ul a:hover {
     color: white;
 }
 
-.top-summary-wrapper{
+.top-summary-wrapper {
     line-height: 24px;
     padding: 5px;
 }
