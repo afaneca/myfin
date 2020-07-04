@@ -11,7 +11,7 @@ require_once 'consts.php';
 
 class Budgets
 {
-    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
 
     public static function getAllBudgetsForUser(Request $request, Response $response, $args)
@@ -125,7 +125,12 @@ class Budgets
             $userID = UserModel::getUserIdByName($authusername, false);
 
 
-            $list = BudgetModel::getWhere(["users_user_id" => $userID, "budget_id" => $budgetID], ["initial_balance", "observations", "month", "year"])[0];
+            $list = BudgetModel::getWhere(["users_user_id" => $userID, "budget_id" => $budgetID], ["observations", "month", "year"])[0];
+
+            $month = intval($list["month"]);
+            $year = intval($list["year"]);
+
+            $list["initial_balance"] = AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, false);
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
 
             foreach ($list["categories"] as &$category) {
@@ -184,7 +189,7 @@ class Budgets
             $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type"]);
 
             $list['categories'] = $catsArr;
-            $list['initial_balance'] = "1010.20";
+            $list['initial_balance'] = "-";
 
             return sendResponse($response, EnsoShared::$REST_OK, $list);
         } catch (BadInputValidationException $e) {

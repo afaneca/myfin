@@ -5,7 +5,7 @@
                 class="material-icons left">add_circle</i>Clonar mês anterior</a>
         <div class="row" style="margin-top:25px">
             <div class="col s2">
-                <input id="budgets-monthpicker" type="text" placeholder="Escolha um mês" />
+                <input id="budgets-monthpicker" type="text" placeholder="Escolha um mês"/>
             </div>
             <div class="col s9 offset-s1">
                 <textarea id="budget_observations" placeholder="Obervações..." class="materialize-textarea"></textarea>
@@ -19,19 +19,25 @@
                     <div class="card-content white-text">
                         <div class="row">
                             <div class="col s4 center-align">Despesa Estimada<br><span id="estimated_expenses_value"
-                                    class="new-budget-summary-card-values">0.00</span></div>
+                                                                                       class="new-budget-summary-card-values">0.00</span>
+                            </div>
                             <div class="col s4 center-align">Balanço Estimado<br><span id="estimated_balance_value"
-                                    class="new-budget-summary-card-values">0.00</span></div>
+                                                                                       class="new-budget-summary-card-values">0.00</span>
+                            </div>
                             <div class="col s4 center-align">Renda Estimada<br><span id="estimated_income_value"
-                                    class="new-budget-summary-card-values">0.00</span></div>
+                                                                                     class="new-budget-summary-card-values">0.00</span>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col s4 center-align">Saldo Inicial<br><span id="estimated_initial_balance_value"
-                                    class="new-budget-summary-card-values">1569.00</span></div>
+                                                                                    class="new-budget-summary-card-values">1569.00</span>
+                            </div>
                             <div class="col s4 center-align">Estado<br><span id="estimated_state_value"
-                                    class="new-budget-summary-card-values">Aberto</span></div>
+                                                                             class="new-budget-summary-card-values">Aberto</span>
+                            </div>
                             <div class="col s4 center-align">Saldo Final<br><span id="estimated_closing_balance_value"
-                                    class="new-budget-summary-card-values">2241.00 (20%)</span></div>
+                                                                                  class="new-budget-summary-card-values"><span
+                                    id="estimated_closing_balance_value_amount">0.00</span> (<span id="estimated_closing_balance_value_percentage">0</span>%)</span></div>
 
                         </div>
                     </div>
@@ -46,20 +52,22 @@
         </div>
         <div class="row">
             <div class="col s6">
-                <h4 class="green-main-color">Débito</h4>
+                <h4 class="green-main-color">Débito</span></h4>
                 <div id="new-budget-debit-inputs"></div>
             </div>
             <div class="col s6">
-                <h4 class="green-main-color">Crédito</h4>
+                <h4 class="green-main-color">Crédito</span></h4>
                 <div id="new-budget-credit-inputs"></div>
             </div>
         </div>
         <center>
-            <a id="conclusion-btn" onClick="AddBudgets.onConclusionClicked()" class="waves-effect waves-light btn right-align btn-large green-gradient-bg" style="margin: 10px;"><i
+            <a id="conclusion-btn" onClick="AddBudgets.onConclusionClicked()"
+               class="waves-effect waves-light btn right-align btn-large green-gradient-bg" style="margin: 10px;"><i
                     class="material-icons left">add_circle</i><span id="conclusion-btn-text">Adicionar
                     Orçamento</span></a>
-            <span id="conclusion-close-btn" onClick="AddBudgets.onBudgetCloseClicked()" class="waves-effect waves-light btn right-align btn-large orange orange-gradient-bg"
-                style="margin: 10px;display:none;"><i class="material-icons left">archive</i><span
+            <span id="conclusion-close-btn" onClick="AddBudgets.onBudgetCloseClicked()"
+                  class="waves-effect waves-light btn right-align btn-large orange orange-gradient-bg"
+                  style="margin: 10px;display:none;"><i class="material-icons left">archive</i><span
                     id="conclusion-close-btn-text">Fechar Orçamento</span></span>
         </center>
 

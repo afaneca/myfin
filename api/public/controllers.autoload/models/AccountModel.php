@@ -187,4 +187,30 @@ class AccountModel extends Entity
             return $e;
         }
     }
+
+    public
+    static function getBalancesSnapshotForMonthForUser($userID, $month, $year, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT sum(balance) as 'totalBalance' " .
+            "FROM(SELECT account_id, month, year, truncate((coalesce(balance, 0) / 100), 2) as 'balance', users_user_id " .
+            "FROM balances_snapshot " .
+            "LEFT JOIN accounts ON accounts.account_id = balances_snapshot.accounts_account_id " .
+            "WHERE users_user_id = :userID AND month = :month AND year = :year " .
+            "ORDER BY year ASC, month ASC) accs;";
+
+        $values = array();
+        $values[':userID'] = $userID;
+        $values[':month'] = $month;
+        $values[':year'] = $year;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetch(PDO::FETCH_COLUMN);
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 }

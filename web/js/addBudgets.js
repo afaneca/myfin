@@ -1,6 +1,7 @@
 "use strict";
 
 let currentBudgetID;
+let BUDGET_INITIAL_BALANCE;
 
 var AddBudgets = {
     init: (isOpen, isNew, budgetID) => {
@@ -32,12 +33,12 @@ var AddBudgets = {
             const debitCategories = resp['categories'].filter((cat) => cat.type === 'D');
             const creditCategories = resp['categories'].filter((cat) => cat.type === 'C');
             const observations = resp['observations']
-            const initialBalance = resp['initial_balance']
+            BUDGET_INITIAL_BALANCE = resp['initial_balance']
             const month = resp['month']
             const year = resp['year']
 
             AddBudgets.setMonthPickerValue(month, year)
-            AddBudgets.setInitialBalance(initialBalance)
+            AddBudgets.setInitialBalance(BUDGET_INITIAL_BALANCE)
             AddBudgets.setObservations(observations)
             AddBudgets.setupBudgetInputs("#new-budget-debit-inputs", debitCategories, false)
             AddBudgets.setupBudgetInputs("#new-budget-credit-inputs", creditCategories, true)
@@ -136,9 +137,15 @@ var AddBudgets = {
 
         balance = incomeAcc - expensesAcc
 
+
         $(expensesID).text(StringUtils.formatStringToCurrency(expensesAcc))
         $(incomeID).text(StringUtils.formatStringToCurrency(incomeAcc))
         $(balanceID).text(StringUtils.formatStringToCurrency(balance))
+        $("#estimated_closing_balance_value_amount").text(StringUtils.formatStringToCurrency((parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
+        $("#estimated_closing_balance_value_percentage").text(AddBudgets.calculatePercentageIncrease(BUDGET_INITIAL_BALANCE, (parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
+    },
+    calculatePercentageIncrease: (val1, val2) => {
+        return (((parseFloat(val2) - parseFloat(val1)) / parseFloat(val1)) * 100).toFixed(2)
     },
     setMonthPickerValue: (month, year) => {
         PickerUtils.setupMonthPickerWithDefaultDate("#budgets-monthpicker", month, year, () => {
