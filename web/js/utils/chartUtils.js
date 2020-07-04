@@ -292,6 +292,10 @@ var chartUtils = {
         darkRedGradient.addColorStop(0, "#ED213A");
         darkRedGradient.addColorStop(1, "#93291E");
 
+        var yellowGradient = ctx.createLinearGradient(500, 0, 100, 0);
+        yellowGradient.addColorStop(0, "#FFE884");
+        yellowGradient.addColorStop(1, "#FFF493");
+
         return ArrayUtils.shuffle([
             redGradient,
             greenGradient,
@@ -304,6 +308,7 @@ var chartUtils = {
             brownGradient,
             lightGreenGradient,
             darkRedGradient,
+            yellowGradient,
         ]);
     },
     addData: (chart, label, data) => {
