@@ -41,7 +41,10 @@ var Dashboard = {
 
         if (CHART_MONTHLY_OVERVIEW)
             chartUtils.removeData(CHART_MONTHLY_OVERVIEW)
-        CHART_MONTHLY_OVERVIEW = chartUtils.setupAngularChart('chart-angular-target-goals', data, null, customLabels);
+
+        let realToBudgetedRatio = ((realAmount * 100) / budgetedAmount) / 100
+
+        CHART_MONTHLY_OVERVIEW = chartUtils.setupAngularChart('chart-angular-target-goals', data, null, customLabels, realToBudgetedRatio);
 
     },
     setupLastTransactionsTable: () => {
@@ -153,6 +156,11 @@ var Dashboard = {
                 })
                 Dashboard.setupMonthlyOverviewChart(totalExpensesBudgetedAmount, totalExpensesRealAmount)
 
+                if (CHART_INCOME_DISTRIBUTION)
+                    chartUtils.removeData(CHART_INCOME_DISTRIBUTION)
+                if (CHART_EXPENSES_DISTRIBUTION)
+                    chartUtils.removeData(CHART_EXPENSES_DISTRIBUTION)
+
                 CHART_INCOME_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_income_distribution", datasetCredit, labelsCredit, "Distribuição de Receita");
                 CHART_EXPENSES_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_spending_distribution", datasetDebit, labelsDebit, "Distribuição de Despesa");
 
@@ -167,6 +175,9 @@ var Dashboard = {
                     chartUtils.removeData(CHART_INCOME_DISTRIBUTION)
                 if (CHART_EXPENSES_DISTRIBUTION)
                     chartUtils.removeData(CHART_EXPENSES_DISTRIBUTION)
+
+                CHART_INCOME_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_income_distribution", [], [], "Distribuição de Receita");
+                CHART_EXPENSES_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_spending_distribution", [], [], "Distribuição de Despesa");
 
                 Dashboard.setupMonthlyOverviewChart(0, 0)
             })
