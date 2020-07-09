@@ -49,7 +49,7 @@ class Stats
             $userID = UserModel::getUserIdByName($authusername, false);
 
 
-            $budgetID = BudgetModel::getWhere(["month" => $month, "year" => $year])[0]["budget_id"];
+            $budgetID = BudgetModel::getWhere(["month" => $month, "year" => $year, "users_user_id" => $userID])[0]["budget_id"];
 
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
 
