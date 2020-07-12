@@ -7,7 +7,7 @@ require_once 'consts.php';
 
 class Accounts
 {
-    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     public static function getAllAccountsForUser(Request $request, Response $response, $args)
     {
@@ -111,6 +111,7 @@ class Accounts
 
             $currentMonth = date("n");
             $currentYear = date("Y");
+
 
             AccountModel::addBalanceSnapshot($accountID, $currentMonth, $currentYear, false);
             if ($currentMonth < 12) {
@@ -276,6 +277,15 @@ class Accounts
                 $currentMonth2 = 1;
             }
             AccountModel::addBalanceSnapshot($accountID, $currentMonth2, $currentYear2, false);
+
+            if ($currentMonth < 12) {
+                $currentMonth3 = $currentMonth2 + 1;
+                $currentYear3 = $currentYear2;
+            } else {
+                $currentYear3 = $currentYear2 + 1;
+                $currentMonth3 = 1;
+            }
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth3, $currentYear3, false);
 
             /*BalanceModel::insert([
                 "accounts_account_id" => $accountID,
