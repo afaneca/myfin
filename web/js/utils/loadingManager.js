@@ -1,13 +1,19 @@
 "use strict";
 
-var loadingManager = {
-    showLoading: (loadingID) => {
-        if(!loadingID){
+const LoadingManager = {
+    showLoading: () => {
+        $(".loader").addClass("is-active")
+    },
+    hideLoading: () => {
+        $(".loader").removeClass("is-active")
+    },
+    _showLoading: (loadingID) => {
+        if (!loadingID) {
             loadingID = "#main-loading-wrapper"
         }
         $(loadingID).show()
     },
-    hideLoading: (loadingID) => {
+    _hideLoading: (loadingID) => {
         if (!loadingID) {
             loadingID = "#main-loading-wrapper"
         }

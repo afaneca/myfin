@@ -1,86 +1,98 @@
 "use strict";
 
+let showOnlyOpen = false;
+
 var Budgets = {
-    init: (isOpen, isNew) => {
-        if (isOpen == true) {
-            $("#conclusion-close-btn").show()
-            $("#conclusion-close-btn-text").text("Fechar Orçamento")
-        } else {
-            $("#conclusion-close-btn").hide()
-            $("#conclusion-close-btn").show()
-            $("#conclusion-close-btn-text").text("Reabrir Orçamento")
-        }
+    init: () => {
 
-        if (isNew == true) {
-            $("#conclusion-btn-text").text("Adicionar Orçamento")
-        } else {
-            $("#conclusion-btn-text").text("Atualizar Orçamento")
-        }
+        $("input#show_only_open_cb").change(() => {
+            showOnlyOpen = $('input#show_only_open_cb').val($(this).is(':checked'))[0].checked
+            Budgets.getAllBudgets((showOnlyOpen === true) ? 'O' : null)
+        });
 
-
+        Budgets.getAllBudgets(null);
     },
-    setupBudgetInputs: (selectorID, categoriesArr, isCredit) => {
-        $(selectorID).html(Budgets.buildBudgetInputs(categoriesArr, isCredit))
+    getAllBudgets: (status) => {
+        LoadingManager.showLoading()
+
+        BudgetServices.getAllBudgets(status,
+            (resp) => {
+                // SUCCESS
+                LoadingManager.hideLoading()
+                Budgets.initTable(resp)
+            }, (err) => {
+                // ERROR
+                LoadingManager.hideLoading()
+                DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+            })
     },
-    buildBudgetInputs: (categoriesArr, isCredit) => {
+    initTable: (resp) => {
+        $("#table-wrapper").html(Budgets.renderTable(resp))
+        tableUtils.setupStaticTableWithCustomColumnWidths("#budgets-table", [{"width": "5%", "targets": 0}]);
+    },
+    renderTable: (budgetsList) => {
         return `
-        <table class="responsive-table">
-            <thead>
-                <th>Tipo</th>
-                <th>Valor Previsto</th>
-            </thead>
-            <tbody>
-                ${categoriesArr.map(cat => Budgets.renderInputRow(cat, isCredit)).join("")}
-            </tbody>
+            <table id="budgets-table" class="display browser-defaults" style="width:100%">
+        <thead>
+            <tr>
+                <th>Mês</th>
+                <th>Observações</th>
+                <th>Estado</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+        ${budgetsList.map(budget => Budgets.renderBudgetsRow(budget)).join("")}
+        </tbody>
         </table>
         `
     },
-    renderInputRow: (cat, isCredit) => {
+    renderBudgetsRow: (budget) => {
         return `
-            <tr>
-                <td>${cat}</td>
-                <td><div class="input-field inline">
-                    <input id="${StringUtils.normalizeStringForHtml(cat)}_inline" type="number" class="validate ${(isCredit) ? 'credit-input' : 'debit-input'} input" min="0.00" value="0.00" step="0.01" required>
-                    <label for="${StringUtils.normalizeStringForHtml(cat)}_inline" class="active">Valor (€)</label>
-                </div></td>
+            <tr data-id='${budget.budget_id}'>
+                <td>${budget.month}/${budget.year}</td>
+                <td>${budget.observations}</td>
+                <td><span class="${(budget.is_open == 1) ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${(budget.is_open == 1) ? "Aberto" : "Fechado"}</span></td>
+                <td>
+                    <i onClick="Budgets.goToBudget(${budget.budget_id}, ${budget.is_open})" class="material-icons table-action-icons">remove_red_eye</i>
+                    <i onClick="Budgets.showRemoveBudgetModal(${budget.budget_id}, ${budget.month}, ${budget.year})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
+                </td>
             </tr>
-            
         `
-        /* <div class="row">
-            ${cat}:
-                <div class="input-field inline">
-                    <input id="${cat}_inline" type="number" class="validate" min="0" value="0" step="0.01">
-                    <label for="${cat}_inline">Valor (€)</label>
+    },
+    goToBudget: (budgetID, isOpen) => {
+        configs.goToPage('addBudget', {'new': false, 'open': (isOpen == 1) ? true : false, 'id': budgetID}, true);
+    },
+    showRemoveBudgetModal: (budgetID, month, year) => {
+        $("#modal-global").modal("open")
+        let txt = `
+                <h4>Remover orçamento de <b>${month}/${year}</b></h4>
+                <div class="row">
+                    <p>Tem a certeza de que pretende remover este orçamento?</p>
+                    <b>Esta ação é irreversível!</b>
+
                 </div>
-        </div> */
+                `;
+
+        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
+            <a onClick="Budgets.removeBudget(${budgetID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
-    setupInputListenersAndUpdateSummary: (expensesID, incomeID, balanceID) => {
-        $('.input').change((input) => {
-            Budgets.updateSummaryValues(expensesID, incomeID, balanceID)
-        })
+    removeBudget: (budgetID) => {
+        LoadingManager.showLoading()
+        BudgetServices.removeBudget(budgetID,
+            (resp) => {
+                // SUCCESS
+                LoadingManager.hideLoading()
+                configs.goToPage("budgets", null, true)
+            },
+            (err) => {
+                // FAILURE
+                LoadingManager.hideLoading()
+                DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+            })
     },
-    updateSummaryValues: (expensesID, incomeID, balanceID) => {
-        let expensesAcc = 0.00;
-        let incomeAcc = 0.00;
-        let balance = 0.00;
-
-        $('.credit-input').each((i, input) => {
-            let inputValue = $('#' + input.id).val()
-            incomeAcc += parseFloat(inputValue)
-
-        })
-
-        $('.debit-input').each((i, input) => {
-            let inputValue = $('#' + input.id).val()
-            expensesAcc += parseFloat(inputValue)
-        })
-
-        balance = incomeAcc - expensesAcc
-
-        $(expensesID).text(StringUtils.formatStringtoCurrency(expensesAcc))
-        $(incomeID).text(StringUtils.formatStringtoCurrency(incomeAcc))
-        $(balanceID).text(StringUtils.formatStringtoCurrency(balance))
-    }
 }
 
 

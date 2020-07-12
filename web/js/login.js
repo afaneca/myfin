@@ -44,7 +44,6 @@ function showSignUp() {
     emailInputSelector.addClass("input_shown")
 
 
-
 }
 
 function showSignIn() {
@@ -104,9 +103,10 @@ function validateSession(renewValidity = undefined) {
 }
 
 
-
 function checkPreAuthWithInterval(interval = 300000) { // 300000 ms = 5 mins
-    setInterval(() => { checkPreAuth(undefined, false) }, interval);
+    setInterval(() => {
+        checkPreAuth(undefined, false)
+    }, interval);
 }
 
 function checkPreAuth(failFunction = undefined, renewValidity = undefined) {
@@ -124,10 +124,11 @@ function checkPreAuth(failFunction = undefined, renewValidity = undefined) {
 
 function addUser(username, email, password) {
     if (!email || !username || !password) {
-        M.toast({ html: "Não deixe campos em branco!" });
+        M.toast({html: "Não deixe campos em branco!"});
         return;
     }
     disableLoginBtn()
+    LoadingManager.showLoading()
     var pageUrl = REST_SERVER_PATH + "users/";
     $.ajax({
         async: true,
@@ -145,12 +146,14 @@ function addUser(username, email, password) {
         },
         url: pageUrl,
         success: (response) => {
-            M.toast({ html: "Utilizador adicionado com sucesso!" });
+            LoadingManager.hideLoading()
+            M.toast({html: "Utilizador adicionado com sucesso!"});
             signUpLinkWasClicked()
             enableLoginBtn()
         },
         error: (response) => {
-            M.toast({ html: "Ocorreu um erro. Tente novamente!" });
+            LoadingManager.hideLoading()
+            M.toast({html: "Ocorreu um erro. Tente novamente!"});
             enableLoginBtn()
         }
 
@@ -169,20 +172,24 @@ function performLogin(username, password) {
     var pageUrl = REST_SERVER_PATH + "auth/";
 
     disableLoginBtn()
+    LoadingManager.showLoading()
     $.ajax({
         async: true,
         type: "POST",
         dataType: "json",
         cache: false,
-        data: { username: $("#login-input").val(), password: $("#pw-input").val() },
+        data: {username: $("#login-input").val(), password: $("#pw-input").val()},
         url: pageUrl,
         success: function (response) {
             //console.log(response);
             enableLoginBtn()
+            LoadingManager.hideLoading()
             Cookies.set("actions", response["actions"]);
             Cookies.set("sessionkey", response["sessionkey"]);
             Cookies.set("username", response["username"]);
             Cookies.set("trustlimit", response["trustlimit"]);
+            CookieUtils.setUserAccounts(response["accounts"])
+
             configs.switchApp("myfin");
             /* if (!misc.checkIfUserHasAction("canAccessBackoffice")) {
               M.toast({
@@ -196,11 +203,12 @@ function performLogin(username, password) {
         },
         error: function (response) {
             enableLoginBtn()
+            LoadingManager.hideLoading()
             if (response.status == EnsoShared.ENSO_REST_NOT_AUTHORIZED) {
                 /* M.toast('Autenticação falhada.', 3000, 'rounded'); */
 
             }
-            M.toast({ html: "Username/password errados. Tente novamente!" });
+            M.toast({html: "Username/password errados. Tente novamente!"});
         }
     });
 }

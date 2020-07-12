@@ -1,7 +1,12 @@
 <div id="page-wrapper">
     <div class="row">
+        <div class="col s12 card-panel">
+            <input id="dashboard-monthpicker" type="text" placeholder="Escolha um mês"/>
+        </div>
+    </div>
+    <div class="row">
         <div class="col s3">
-            <div class="card-panel green-gradient-bg" style="min-height:50px">
+            <div class="card-panel green-gradient-bg dashboard-btn" onclick="configs.goToPage('transactions');">
                 <center>
                     <div class="card_quick_actions">
                         <span><i class="material-icons left">library_add</i>Nova Transação</span>
@@ -10,7 +15,7 @@
             </div>
         </div>
         <div class="col s3">
-            <div class="card-panel orange-gradient-bg" style="min-height:50px">
+            <div class="card-panel orange-gradient-bg dashboard-btn" onclick="configs.goToPage('addBudget',{'new': true, 'open' : true}, true);">
                 <center>
                     <div class="card_quick_actions">
                         <span><i class="material-icons left">assignment</i>Novo Orçamento</span>
@@ -19,7 +24,7 @@
             </div>
         </div>
         <div class="col s3">
-            <div class="card-panel blue-gradient-bg" style="min-height:50px">
+            <div class="card-panel blue-gradient-bg dashboard-btn" onclick="configs.goToPage('transactions');">
                 <center>
                     <div class="card_quick_actions">
                         <span><i class="material-icons left">library_books</i>Ver Movimentos</span>
@@ -28,7 +33,7 @@
             </div>
         </div>
         <div class="col s3">
-            <div class="card-panel red-gradient-bg" style="min-height:50px">
+            <div class="card-panel red-gradient-bg dashboard-btn" onclick="configs.goToPage('stats');">
                 <center>
                     <div class="card_quick_actions">
                         <span><i class="material-icons left">assessment</i>Ver Estatísticas</span>
@@ -44,47 +49,69 @@
                 <span class="blue-text text-darken-2">
                     <div>
                         <canvas id="chart-angular-target-goals" width="600" height="400"></canvas>
-                        <center style="margin-top: -10px;"><span style="font-size:150%">1500€</span>/2000</center>
+                        <center style="margin-top: -10px;"><span id="chart-monthly-overview-real-amount" style="font-size:150%">1500€</span>/<span id="chart-monthly-overview-budgeted-amount">2000</span></center>
                     </div>
-
-                    <script>
-                        var data = [1500, 2000 - 1500];
-                        var customLabels = [
-                            'Atual',
-                            'Restante'
-                        ];
-                        chartUtils.setupAngularChart('chart-angular-target-goals', data, null, customLabels);
-                    </script>
                 </span>
             </div>
         </div>
         <div class="col s8">
             <div class="card-panel">
-                <span class="blue-text text-darken-2">Dashboard</span>
+                <span class="blue-text text-darken-2">Movimentos Recentes</span> <span class="right-align"
+                                                                                       style="float:right;"><a
+                    href="#!transactions" onclick="configs.goToPage('transactions')">[Ver
+                Mais...]</a></span>
+                <div id="last_movements_table_wrapper">
+                    <table id="last_movements_table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Item Name</th>
+                            <th>Item Price</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr>
+                            <td>Alvin</td>
+                            <td>Eclair</td>
+                            <td>$0.87</td>
+                        </tr>
+                        <tr>
+                            <td>Alan</td>
+                            <td>Jellybean</td>
+                            <td>$3.76</td>
+                        </tr>
+                        <tr>
+                            <td>Jonathan</td>
+                            <td>Lollipop</td>
+                            <td>$7.00</td>
+                        </tr>
+                        <tr>
+                            <td>Jonathan</td>
+                            <td>Lollipop</td>
+                            <td>$7.00</td>
+                        </tr>
+                        <tr>
+                            <td>Jonathan</td>
+                            <td>Lollipop</td>
+                            <td>$7.00</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col s6">
-            <div class="card-panel" style="height:50px"></div>
+            <div class="card-panel">
+                <canvas id="chart_pie_income_distribution" width="600" height="400"></canvas>
+            </div>
         </div>
         <div class="col s6">
             <div class="card-panel">
                 <canvas id="chart_pie_spending_distribution" width="600" height="400"></canvas>
             </div>
-            <script>
-                var dataset = [10, 20, 30, 20, 20];
-
-                var labels = [
-                    'Red',
-                    'Yellow',
-                    'Blue',
-                    'fdsad',
-                    'fdsa',
-                ];
-
-                chartUtils.setupPieChart("chart_pie_spending_distribution", dataset, labels, "Distribuição de despesas");
-            </script>
         </div>
     </div>
     <div class="row">
@@ -92,32 +119,23 @@
             <div class="card-panel">
                 <canvas id="chart_pie_investing_portfolio" width="600" height="400"></canvas>
             </div>
-            <script>
-                var dataset2 = [73, 27];
+            <!--  <script>
+                  var dataset2 = [73, 27];
 
-                var labels2 = [
-                    'Conta Poupança (CGD)',
-                    'Crypto',
-                ];
+                  var labels2 = [
+                      'Conta Poupança (CGD)',
+                      'Crypto',
+                  ];
 
-                chartUtils.setupPieChart("chart_pie_investing_portfolio", dataset2, labels2, "Portefólio de Investimento");
-            </script>
+                  chartUtils.setupPieChart("chart_pie_investing_portfolio", dataset2, labels2, "Portefólio de Investimento");
+              </script>-->
         </div>
         <div class="col s6">
             <div class="card-panel">
                 <canvas id="chart_pie_debt_distribution" width="600" height="400"></canvas>
             </div>
             <script>
-                var dataset3 = [60, 40];
-
-                var labels3 = [
-                    'Crédito Automóvel (Peugeot)',
-                    'Crédito Formação (Tony)',
-                ];
-
-                chartUtils.setupPieChart("chart_pie_debt_distribution", dataset3, labels3, "Distribuição da Dívida");
-                var isShowing = false;
-
+                Dashboard.init()
             </script>
         </div>
 

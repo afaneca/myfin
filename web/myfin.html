@@ -1,19 +1,22 @@
 <html lang="pt">
 
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>My Fin</title>
 
     <!-- Compiled and minified CSS -->
     <!-- <link rel="stylesheet" href="./css/materialize.min.css" /> -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="./js/external/css-loader/dist/css-loader.css">
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="./js/external/monthpicker/monthpicker.css">
     <link href="https://unpkg.com/tabulator-tables@4.5.3/dist/css/tabulator.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
 
 
     <!-- <link href="./js/external/Select2/select2.css" rel="stylesheet" />
@@ -23,129 +26,165 @@
     <link href="./js/external/monthpicker/monthpicker.css" rel="stylesheet"> -->
     <!-- <link href="./js/external/fullcalendar/materialDesign.css" rel="stylesheet"> -->
     <!-- <link href="./js/external/fullcalendar/fullcalendar.print.min.css" rel="stylesheet"> -->
-    <link rel="stylesheet" href="./css/main.css" />
-    <link rel="stylesheet" href="./css/dashboard.css" />
-    <link rel="stylesheet" href="./css/budgets.css" />
+    <link rel="stylesheet" href="./css/main.css"/>
+    <link rel="stylesheet" href="./css/dashboard.css"/>
+    <link rel="stylesheet" href="./css/budgets.css"/>
+    <link rel="stylesheet" href="./css/progressbar.css"/>
 </head>
 
-<body onLoad="checkPreAuth(); checkPreAuthWithInterval();" class="light-gray-bg fill-height" style="overflow: visible;">
-    <header>
-        <nav class="top-nav">
-            <div class="nav-wrapper">
+<body onLoad="checkPreAuth(); checkPreAuthWithInterval(); TopNav.setupTopNavSummaryAmounts()"
+      class="main-blue-background-bg fill-height"
+      style="overflow: visible !important;">
+<header>
+    <nav class="top-nav">
+        <div class="nav-wrapper row">
+            <!--<div class="col s2 card-panel">
+                <input id="dashboard-monthpicker" type="text" placeholder="Escolha um mês"/>
+            </div>-->
+            <div class="col s4">
+                <div class="row top-summary-wrapper">
+                    <div class="col top-summary-col"><span class="top-summary-label">Corrente/Poupanças:</span><br><span
+                            class="top-summary-key" id="top-summary-col-current-savings-value">0€</span></div>
+                    <div class="col top-summary-col"><span class="top-summary-label">Investimentos:</span><br><span
+                            class="top-summary-key" id="top-summary-col-investments-value">0€</span></div>
+                    <div class="col top-summary-col"><span class="top-summary-label">Créditos:</span><br><span
+                            class="top-summary-key" id="top-summary-col-credits-value">0€</span></div>
+                    <div class="col top-summary-col"><span class="top-summary-label">Património:</span><br><span
+                            class="top-summary-key" id="top-summary-col-patrimony-value">0€</span></div>
+                </div>
+            </div>
+            <div class="col s8">
                 <ul class="right hide-on-med-and-down">
-                    <li class="red-gradient-bg"><a onClick="resetSession()" href="#">Log out</a></li>
+                    <li class="green-gradient-bg"><a href="#"><i class="large material-icons">account_circle</i></a>
+                    </li>
+                    <li class="red-gradient-bg"><a onClick="resetSession()" href="#"><i
+                            class="large material-icons">exit_to_app</i></a></li>
                 </ul>
             </div>
-        </nav>
-        <nav class="side-nav fixed dark-gray-bg">
-            <div id="side-nav-logo-wrapper" class="green-main-bg">
-                <span id="logo-text">MyFin</span>
-            </div>
-            <ul class="side-nav-menu">
-                <li><a id="menu-item-dashboard"
-                        onClick="configs.goToPage('dashboard');MenuUtils.changeActiveMenu('dashboard')"
-                        class="menu-item" href="#!dashboard"><i class="material-icons left">view_module</i>Dashboard</a>
-                </li>
-                <li><a id="menu-item-accounts" class="menu-item"
-                        onClick="configs.goToPage('accounts');MenuUtils.changeActiveMenu('accounts')"
-                        href="#!accounts"><i class="material-icons left">account_balance</i>Contas</a></li>
-                <li><a id="menu-item-accounts" class="menu-item"
-                        onClick="configs.goToPage('entities');MenuUtils.changeActiveMenu('entities')"
-                        href="#!entities"><i class="material-icons left">business</i>Entidades</a></li>
-                <li><a id="menu-item-budgets" class="menu-item dropdown-trigger" data-target="dropdown-budgets"
-                        href="#!"><i class="material-icons left">folder_shared</i>Orçamentos<i
-                            class="material-icons right">arrow_drop_down</i></a></li>
-                <li><a id="menu-item-accounts" class="menu-item medium-gray-color" onClick="" href=""><i
-                            class="material-icons left">equalizer</i>Investimentos</a></li>
-            </ul>
-        </nav>
 
-        <ul id="dropdown-budgets" class="dropdown-content">
+        </div>
+    </nav>
+    <nav class="side-nav fixed royal-gradient-bg">
+        <div id="side-nav-logo-wrapper">
+            <img id="side-nav-logo-img" src="../img/logo/logo_white_font_transparent_bg.png"
+                 onmouseover="this.src='../img/logo/logo_transparent_bg_v2.png';"
+                 onmouseout="this.src='../img/logo/logo_white_font_transparent_bg.png';"/>
+        </div>
+        <ul class="side-nav-menu">
+            <li><a id="menu-item-dashboard"
+                   onClick="configs.goToPage('dashboard');MenuUtils.changeActiveMenu('dashboard')"
+                   class="menu-item" href="#!dashboard"><i class="material-icons left">view_module</i>Dashboard</a>
+            </li>
+            <li><a id="menu-item-transactions" class="menu-item"
+                   onClick="configs.goToPage('transactions');MenuUtils.changeActiveMenu('transactions')"
+                   href="#!transactions"><i class="material-icons left">dvr</i>Transações</a></li>
+            <li><a id="menu-item-accounts" class="menu-item"
+                   onClick="configs.goToPage('accounts');MenuUtils.changeActiveMenu('accounts')"
+                   href="#!accounts"><i class="material-icons left">account_balance</i>Contas</a></li>
+            <li><a id="menu-item-categories" class="menu-item"
+                   onClick="configs.goToPage('categories');MenuUtils.changeActiveMenu('categories')"
+                   href="#!categories"><i class="material-icons left">folder_shared</i>Categorias</a></li>
+            <li><a id="menu-item-entities" class="menu-item"
+                   onClick="configs.goToPage('entities');MenuUtils.changeActiveMenu('entities')"
+                   href="#!entities"><i class="material-icons left">business</i>Entidades</a></li>
             <li><a id="menu-item-budgets" class="menu-item"
-                    onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
-                        class="material-icons left">folder_shared</i>Ver Orçamentos</a></li>
-            <li class="divider"></li>
-            <li><a id="menu-item-budgets" class="menu-item"
-                    onClick="configs.goToPage('categories');MenuUtils.changeActiveMenu('budgets')"
-                    href="#!categories"><i class="material-icons left">folder_shared</i>Categorias</a></li>
-
-            <li><a id="menu-item-budgets" class="menu-item"
-                    onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
-                        class="material-icons left">folder_shared</i>Estatísticas</a></li>
+                   onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
+                    class="material-icons left">folder_shared</i>Orçamentos</a></li>
+            <li><a id="menu-item-accounts" class="menu-item medium-gray-color" onClick="" href=""><i
+                    class="material-icons left">equalizer</i>Investimentos</a></li>
+            <li><a id="menu-item-stats" class="menu-item"
+                   onClick="configs.goToPage('stats');MenuUtils.changeActiveMenu('stats')" href="#!stats"><i
+                    class="material-icons left">folder_shared</i>Estatísticas</a></li>
         </ul>
-
-    </header>
-    <main>
-        <div id="main-loading-wrapper" style="display: none;" class="progress main-progress-bar">
-            <div class="indeterminate"></div>
+    </nav>
+</header>
+<main>
+    <!-- Loader -->
+    <div class="loader loader-default"></div>
+    <div id="main-loading-wrapper" style="display: none;" class="progress main-progress-bar">
+        <div class="indeterminate"></div>
+    </div>
+    <div class="fill-height" id="main-content"></div>
+</main>
+<footer class="page-footer transparent">
+    <!--
+    <div class="fixed-action-btn">
+      <a href="mailto:antoniofaneca@enso-origins.com" class="btn tooltipped btn-floating btn-large red pulse"
+        data-position="left" data-tooltip="Reportar Bug">
+        <i class="large material-icons">bug_report</i>
+      </a>
+    </div>
+  -->
+    <div class="footer-copyright transparent">
+        <div class="container center-align transparent">
+            <span class="black-text">©</span>
+            <span class="black-text" id="current-year">2020</span>
+            <span class="black-text">António Faneca</span>
         </div>
-        <div class="fill-height" id="main-content"></div>
-    </main>
-    <footer class="page-footer transparent">
-        <!--
-        <div class="fixed-action-btn">
-          <a href="mailto:antoniofaneca@enso-origins.com" class="btn tooltipped btn-floating btn-large red pulse"
-            data-position="left" data-tooltip="Reportar Bug">
-            <i class="large material-icons">bug_report</i>
-          </a>
-        </div>
-      -->
-        <div class="footer-copyright transparent">
-            <div class="container center-align transparent">
-                <span class="black-text">©</span>
-                <span class="black-text" id="current-year">2020</span>
-                <span class="black-text">António Faneca</span>
-            </div>
-        </div>
-    </footer>
+    </div>
+</footer>
 
+<div id="modal-global" class="modal">
+    <div class="modal-content"></div>
+    <div class="modal-footer"></div>
+</div>
 
+<!-- Compiled and minified JavaScript -->
+<script src="./js/external/js.cookie.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="./js/external/monthpicker/monthpicker.js"></script>
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.5.3/dist/js/tabulator.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="js/external/momentjs/moment-with-locales.js"></script>
+<script src="js/external/momentjs/moment-timezone.js"></script>
 
-    <!-- Compiled and minified JavaScript -->
-    <script src="./js/external/js.cookie.js" type="text/javascript"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script src="./js/external/monthpicker/monthpicker.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.5.3/dist/js/tabulator.min.js"></script>
+<script src="./js/ensoshared_js_lib/ensoshared.js" type="text/javascript"></script>
+<script src="./js/consts.js"></script>
+<script src="./js/configs.js" type="text/javascript"></script>
+<script src="./js/topNav.js" type="text/javascript"></script>
 
-    <script src="./js/ensoshared_js_lib/ensoshared.js" type="text/javascript"></script>
-    <script src="./js/consts.js"></script>
-    <script src="./js/configs.js" type="text/javascript"></script>
+<script src="./js/utils/cookieUtils.js"></script>
+<script src="./js/utils/validationUtils.js"></script>
+<script src="./js/utils/dialogUtils.js"></script>
+<script src="./js/utils/menuUtils.js"></script>
+<script src="./js/utils/pickerUtils.js"></script>
+<script src="./js/utils/tableUtils.js"></script>
+<script src="./js/utils/arrayUtils.js"></script>
+<script src="./js/utils/chartUtils.js"></script>
+<script src="./js/utils/stringUtils.js"></script>
+<script src="./js/utils/loadingManager.js"></script>
+<script src="./js/utils/dateUtils.js"></script>
+<script src="./js/utils/progressbarUtils.js"></script>
 
-    <script src="./js/utils/dialogUtils.js"></script>
-    <script src="./js/utils/menuUtils.js"></script>
-    <script src="./js/utils/pickerUtils.js"></script>
-    <script src="./js/utils/tableUtils.js"></script>
-    <script src="./js/utils/arrayUtils.js"></script>
-    <script src="./js/utils/chartUtils.js"></script>
-    <script src="./js/utils/stringUtils.js"></script>
-    <script src="./js/utils/loadingManager.js"></script>
+<script src="./js/services/categoryServices.js"></script>
+<script src="./js/services/budgetServices.js"></script>
+<script src="./js/services/entityServices.js"></script>
+<script src="./js/services/accountServices.js"></script>
+<script src="./js/services/transactionServices.js"></script>
+<script src="./js/services/importTransactionsServices.js"></script>
+<script src="./js/services/statServices.js"></script>
 
-    <script src="./js/services/categoryServices.js"></script>
-    <script src="./js/services/entityServices.js"></script>
-    <script src="./js/services/accountServices.js"></script>
+<script src="./js/login.js" type="text/javascript"></script>
+<script src="./js/accounts.js" type="text/javascript"></script>
+<script src="./js/categories.js"></script>
+<script src="./js/addBudgets.js"></script>
+<script src="./js/importTransactions.js"></script>
+<script src="./js/budgets.js"></script>
+<script src="./js/entities.js"></script>
+<script src="./js/transactions.js"></script>
+<script src="./js/stats.js"></script>
+<script src="./js/dashboard.js"></script>
 
-    <script src="./js/login.js" type="text/javascript"></script>
-    <script src="./js/accounts.js" type="text/javascript"></script>
-    <script src="./js/categories.js"></script>
-    <script src="./js/budgets.js"></script>
-    <script src="./js/entities.js"></script>
-
-    <script>
+<script>
+    $(document).ready(function () {
         configs.loadFirstView("dashboard");
-        /* if (misc.checkIfUserHasAction('canAccessBackoffice'))
-            ensoConf.loadFirstView("dashboard");
-        else
-            ensoConf.loadFirstView("schedules"); */
-    </script>
-    <script>
-        $(document).ready(function () {
-            $('.sidenav').sidenav();
-            $(".dropdown-trigger").dropdown();
-        });
-    </script>
+        $('.sidenav').sidenav();
+        $(".dropdown-trigger").dropdown();
+    });
+</script>
 </body>
 
 </html>

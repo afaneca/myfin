@@ -2,9 +2,11 @@
 
 var Categories = {
     getCategories: (type = undefined) => {
+        LoadingManager.showLoading()
         CategoryServices.getAllCategories(type,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 let debitList = []
                 let creditList = []
 
@@ -14,14 +16,14 @@ var Categories = {
             },
             (response) => {
                 // FAILURE
-
+                LoadingManager.hideLoading()
             })
     },
     initTables: (debitCatsList, creditCatsList) => {
         $("#table-debit-wrapper").html(Categories.renderDebitCategoriesTable(debitCatsList))
         $("#table-crebit-wrapper").html(Categories.renderCreditCategoriesTable(creditCatsList))
         tableUtils.setupStaticTable("#categories-table");
-        loadingManager.hideLoading()
+        LoadingManager.hideLoading()
     },
     renderDebitCategoriesTable: (catsList) => {
         return `
@@ -61,14 +63,14 @@ var Categories = {
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
                 <td>
-                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${cats.description}', '${cats.type}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${StringUtils.normalizeStringForHtml(cats.description)}', '${cats.type}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
                     <i onClick="Categories.showRemoveCategoryModal('${cats.name}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
         `
     },
     showAddCategoryModal: () => {
-        $("#modal-categories").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova categoria</h4>
                 <div class="row">
@@ -97,8 +99,8 @@ var Categories = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Categories.addCategory()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-categories .modal-content").html(txt);
-        $("#modal-categories .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#category_type_select').formSelect();
     },
@@ -113,19 +115,22 @@ var Categories = {
             return
         }
 
+        LoadingManager.showLoading()
         CategoryServices.addCategory(catName, catDescription, catType,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Categoria adicionada com sucesso!")
                 configs.goToPage("categories", null, true)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     },
     showRemoveCategoryModal: (catName, catID) => {
-        $("#modal-categories").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Remover categoria <b>${catName}</b></h4>
                 <div class="row">
@@ -137,27 +142,30 @@ var Categories = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
             <a onClick="Categories.removeCategory(${catID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
-        $("#modal-categories .modal-content").html(txt);
-        $("#modal-categories .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#category_type_select').formSelect();
     },
     removeCategory: (catID) => {
         if (!catID) return;
 
+        LoadingManager.showLoading()
         CategoryServices.removeCategory(catID,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Categoria removida com sucesso!")
                 configs.goToPage("categories", null, true)
             }),
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
     showEditCategoryModal: (catName, catDescription, catType, catID) => {
-        $("#modal-categories").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova categoria</h4>
                 <div class="row">
@@ -186,8 +194,8 @@ var Categories = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Categories.editCategory(${catID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-categories .modal-content").html(txt);
-        $("#modal-categories .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#category_type_select').formSelect();
 
@@ -210,14 +218,17 @@ var Categories = {
             return
         }
 
+        LoadingManager.showLoading()
         CategoryServices.editCategory(catID, catName, catDescription, catType,
             () => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Categoria atualizada com sucesso!")
                 configs.goToPage("categories", null, true)
             },
             () => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     }

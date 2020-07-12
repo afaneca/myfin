@@ -27,7 +27,6 @@ use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 require_once 'consts.php';
 
 
-
 class Users
 {
     const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
@@ -53,7 +52,6 @@ class Users
         $age = $request->getParsedBody()['idade']; // body
 
 
-
         return sendResponse($response, EnsoShared::$REST_OK, "$age , $name , $userID");
     }
 
@@ -64,7 +62,7 @@ class Users
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
@@ -79,7 +77,7 @@ class Users
             /* 1. autenticação - validação do token */
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
-           
+
             /* 4. executar operações */
             UserModel::insert(
                 [
@@ -98,9 +96,9 @@ class Users
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
         } catch (PermissionDeniedException $e) {
             EnsoLogsModel::addEnsoLog($authusername, "Tried add an User, operation failed due to lack of permissions.", EnsoLogsModel::$NOTICE, "Users");
-            return sendResponse($response, EnsoShared::$REST_FORBIDDEN, "");
+            return sendResponse($response, EnsoShared::$REST_FORBIDDEN, $e);
         } catch (AuthenticationException $e) {
-            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, "");
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getMessage());
         } catch (Exception $e) {
             EnsoLogsModel::addEnsoLog($authusername, "Tried to add an User, operation failed.", EnsoLogsModel::$ERROR, "Users");
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);

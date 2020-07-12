@@ -7,7 +7,7 @@ require_once 'consts.php';
 
 class Accounts
 {
-    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     public static function getAllAccountsForUser(Request $request, Response $response, $args)
     {
@@ -16,7 +16,7 @@ class Accounts
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
             } else {
                 $mobile = false;
             }
@@ -62,7 +62,7 @@ class Accounts
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -71,8 +71,8 @@ class Accounts
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRING, 4);
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 5);
             $status = Input::validate($request->getParsedBody()['status'], Input::$STRING, 6);
-            $excludeFromBudgets = (int) Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 7);
-            $currentBalance = Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8);
+            $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 7);
+            $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8));
 
             if (
                 $type !== "CHEAC" && $type !== "SAVAC"
@@ -104,18 +104,33 @@ class Accounts
                 "exclude_from_budgets" => $excludeFromBudgets,
                 "status" => $status,
                 "users_user_id" => $userID,
+                "current_balance" => $currentBalance,
+                "created_timestamp" => time()
             ], false);
 
 
+            $currentMonth = date("n");
+            $currentYear = date("Y");
 
-            BalanceModel::insert(
-                [
-                    "date_timestamp" => time(),
-                    "amount" => $currentBalance,
-                    "accounts_account_id" => intval($accountID)
-                ],
-                false
-            );
+
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth, $currentYear, false);
+            if ($currentMonth < 12) {
+                $currentMonth2 = $currentMonth + 1;
+                $currentYear2 = $currentYear;
+            } else {
+                $currentYear2 = $currentYear + 1;
+                $currentMonth2 = 1;
+            }
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth2, $currentYear2, false);
+
+            /*  BalanceModel::insert(
+                  [
+                      "date_timestamp" => time(),
+                      "amount" => $currentBalance,
+                      "accounts_account_id" => intval($accountID)
+                  ],
+                  false
+              );*/
             /* $db->getDB()->commit(); */
 
             return sendResponse($response, EnsoShared::$REST_OK, "New account added!");
@@ -137,7 +152,7 @@ class Accounts
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -158,9 +173,19 @@ class Accounts
             die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
 
-            BalanceModel::delete([
+            TransactionModel::delete([
+                "accounts_account_from_id" => $accountID
+            ]);
+
+            TransactionModel::delete([
+                "accounts_account_to_id" => $accountID
+            ]);
+
+            /*BalanceModel::delete([
                 "accounts_account_id" => $accountID
-            ], false);
+            ], false);*/
+
+            AccountModel::removeBalanceSnapshotsForAccount($accountID, false);
 
             AccountModel::delete([
                 "account_id" => $accountID,
@@ -186,7 +211,7 @@ class Accounts
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -196,8 +221,8 @@ class Accounts
             $newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING, 5);
             $newDescription = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 6);
             $newStatus = Input::validate($request->getParsedBody()['new_status'], Input::$STRING, 7);
-            $excludeFromBudgets = (int) Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 8);
-            $currentBalance = Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9);
+            $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 8);
+            $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9));
 
             if (
                 $newType !== "CHEAC" && $newType !== "SAVAC"
@@ -215,6 +240,8 @@ class Accounts
             /* Execute Operations */
             /* $db = new EnsoDB(true);
 
+                false
+            );
             $db->getDB()->beginTransaction(); */
 
             /* echo "1";
@@ -231,20 +258,88 @@ class Accounts
                     "type" => $newType,
                     "description" => $newDescription,
                     "exclude_from_budgets" => $excludeFromBudgets,
-                    "status" => $newStatus
+                    "status" => $newStatus,
+                    "current_balance" => $currentBalance,
+                    "updated_timestamp" => time()
                 ],
                 false
             );
 
-            BalanceModel::insert([
+            $currentMonth = date("n");
+            $currentYear = date("Y");
+
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth, $currentYear, false);
+            if ($currentMonth < 12) {
+                $currentMonth2 = $currentMonth + 1;
+                $currentYear2 = $currentYear;
+            } else {
+                $currentYear2 = $currentYear + 1;
+                $currentMonth2 = 1;
+            }
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth2, $currentYear2, false);
+
+            if ($currentMonth < 12) {
+                $currentMonth3 = $currentMonth2 + 1;
+                $currentYear3 = $currentYear2;
+            } else {
+                $currentYear3 = $currentYear2 + 1;
+                $currentMonth3 = 1;
+            }
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth3, $currentYear3, false);
+
+            /*BalanceModel::insert([
                 "accounts_account_id" => $accountID,
                 "date_timestamp" => time(),
                 "amount" => $currentBalance
-            ]);
+            ]);*/
 
             /* $db->getDB()->commit(); */
 
             return sendResponse($response, EnsoShared::$REST_OK, "Account Updated!");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (BadValidationTypeException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->__toString());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    public static function getUserAccountsBalanceSnapshot(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+            } else {
+                $mobile = false;
+            }
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+                false
+            );
+            $db->getDB()->beginTransaction(); */
+
+            /* echo "1";
+            die(); */
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            $outArr = AccountModel::getBalancesSnapshotForUser($userID, false);
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outArr);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
         } catch (AuthenticationException $e) {
@@ -261,3 +356,5 @@ $app->get('/accounts/', 'Accounts::getAllAccountsForUser');
 $app->post('/accounts/', 'Accounts::addAccount');
 $app->delete('/accounts/', 'Accounts::removeAccount');
 $app->put('/accounts/', 'Accounts::editAccount');
+
+$app->get('/accounts/stats/balance-snapshots/', 'Accounts::getUserAccountsBalanceSnapshot');

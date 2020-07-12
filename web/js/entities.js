@@ -2,13 +2,16 @@
 
 var Entities = {
     getEntities: () => {
+        LoadingManager.showLoading()
         EntityServices.getAllEntities(
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 Entities.initTables(response)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
 
             })
     },
@@ -16,7 +19,7 @@ var Entities = {
         $("#table-entities-wrapper").html(Entities.renderEntitiesTable(entityList))
         tableUtils.setupStaticTableWithCustomColumnWidths("#entities-table",
             [{ "width": "90%", "targets": 0 }]);
-        loadingManager.hideLoading()
+        LoadingManager.hideLoading()
     },
     renderEntitiesTable: (entitiesList) => {
         return `
@@ -45,7 +48,7 @@ var Entities = {
         `
     },
     showAddEntityModal: () => {
-        $("#modal-entities").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova entidade</h4>
                 <div class="row">
@@ -63,8 +66,8 @@ var Entities = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Entities.addEntity()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-entities .modal-content").html(txt);
-        $("#modal-entities .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
     addEntity: () => {
         const entName = $("input#entity_name").val()
@@ -74,19 +77,22 @@ var Entities = {
             return
         }
 
+        LoadingManager.showLoading()
         EntityServices.addEntity(entName,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Entidade adicionada com sucesso!")
                 configs.goToPage("entities", null, true)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     },
     showRemoveEntityModal: (entityName, entityID) => {
-        $("#modal-entities").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Remover entidade <b>${entityName}</b></h4>
                 <div class="row">
@@ -98,25 +104,28 @@ var Entities = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
             <a onClick="Entities.removeEntity(${entityID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
-        $("#modal-entities .modal-content").html(txt);
-        $("#modal-entities .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
     removeEntity: (entityID) => {
         if (!entityID) return;
 
+        LoadingManager.showLoading()
         EntityServices.removeEntity(entityID,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Entidade adicionada com sucesso!")
                 configs.goToPage("entities", null, true)
             }),
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
     showEditEntityModal: (entName, entID) => {
-        $("#modal-entities").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova entidade</h4>
                 <div class="row">
@@ -134,8 +143,8 @@ var Entities = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Entities.editEntity(${entID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-entities .modal-content").html(txt);
-        $("#modal-entities .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         // AUTO-FILL INPUTS
         $("input#entity_name").val(entName)
@@ -148,14 +157,17 @@ var Entities = {
             return
         }
 
+        LoadingManager.showLoading()
         EntityServices.editEntity(entID, entName,
             () => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Entidade atualizada com sucesso!")
                 configs.goToPage("entities", null, true)
             },
             () => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     }

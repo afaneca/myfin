@@ -1,177 +1,177 @@
 var configs = {
-	version: "1.0.0",
-	defaultApp: "login",
-	viewsPath: "views/",
-	afterViewCallBacks: [],
-	beforeViewCallBacks: [],
+    version: "1.0.0",
+    defaultApp: "login",
+    viewsPath: "views/",
+    afterViewCallBacks: [],
+    beforeViewCallBacks: [],
 
-	navigateToPage: function () {
-		if (configs.getCurrentPage() != "") {
-			pageUrl = configs.viewsPath + configs.getCurrentPage() + ".html";
+    navigateToPage: function () {
+        if (configs.getCurrentPage() != "") {
+            pageUrl = configs.viewsPath + configs.getCurrentPage() + ".html";
 
-			$.ajax({
-				type: "GET",
-				dataType: "html",
-				cache: false,
-				url: pageUrl,
-				success: function (response) {
-					$.each(configs.beforeViewCallBacks, function (index, callBack) {
-						callBack();
-					});
-					$("#main-content").empty().append(response);
-					$.each(configs.afterViewCallBacks, function (index, callBack) {
-						callBack();
-					});
-				},
-				error: function (response) {
-					configs.switchApp(configs.defaultApp);
-				}
-			});
-		}
-	},
+            $.ajax({
+                type: "GET",
+                dataType: "html",
+                cache: false,
+                url: pageUrl,
+                success: function (response) {
+                    $.each(configs.beforeViewCallBacks, function (index, callBack) {
+                        callBack();
+                    });
+                    $("#main-content").empty().append(response);
+                    $.each(configs.afterViewCallBacks, function (index, callBack) {
+                        callBack();
+                    });
+                },
+                error: function (response) {
+                    configs.switchApp(configs.defaultApp);
+                }
+            });
+        }
+    },
 
-	goToPage: function (nextPage, args = {}, forceReload = true) {
-		newHash = "#!" + nextPage;
+    goToPage: function (nextPage, args = {}, forceReload = true) {
+        newHash = "#!" + nextPage;
 
-		if (args && Object.keys(args).length > 0) {
-			newHash += '?';
-			$.each(args, function (key, val) {
-				newHash += key + '=' + val + '&';
-			});
-		}
+        if (args && Object.keys(args).length > 0) {
+            newHash += '?';
+            $.each(args, function (key, val) {
+                newHash += key + '=' + val + '&';
+            });
+        }
 
-		if (newHash == window.location.hash && forceReload === true)
-			$(window).trigger('hashchange');
-		else
-			window.location.hash = newHash;
-	},
+        if (newHash == window.location.hash && forceReload === true)
+            $(window).trigger('hashchange');
+        else
+            window.location.hash = newHash;
+    },
 
-	parseParams: function () {
-		var params = {};
-		// Meter o url todo em minúsculas para ser case insensitive
-		var url_lower = window.location.hash.toLowerCase();
-		var paramArray = url_lower.split('?');
+    parseParams: function () {
+        var params = {};
+        // Meter o url todo em minúsculas para ser case insensitive
+        var url_lower = window.location.hash.toLowerCase();
+        var paramArray = url_lower.split('?');
 
-		// se for verdade, tem parâmetros depois de '?'
-		if (paramArray.length > 1) {
-			// começa na posição 1 para excluir a parte que está antes do '?'
-			for (var i = 1; i < paramArray.length; i++) {
+        // se for verdade, tem parâmetros depois de '?'
+        if (paramArray.length > 1) {
+            // começa na posição 1 para excluir a parte que está antes do '?'
+            for (var i = 1; i < paramArray.length; i++) {
 
-				var varArray = paramArray[i].split('&');
+                var varArray = paramArray[i].split('&');
 
-				for (var j = 0; j < varArray.length; j++) {
+                for (var j = 0; j < varArray.length; j++) {
 
-					var pair = varArray[j].split("=");
-					var k = decodeURIComponent(pair[0]);
-					var v = decodeURIComponent(pair[1]);
+                    var pair = varArray[j].split("=");
+                    var k = decodeURIComponent(pair[0]);
+                    var v = decodeURIComponent(pair[1]);
 
-					params[k] = v;
-				}
-			}
-		}
-		return params;
-	},
+                    params[k] = v;
+                }
+            }
+        }
+        return params;
+    },
 
-	switchApp: function (appToLoad, params, newTab) {
-		var url = appToLoad + ".html";
+    switchApp: function (appToLoad, params, newTab) {
+        var url = appToLoad + ".html";
 
-		if (params != null)
-			url += "#?" + params;
+        if (params != null)
+            url += "#?" + params;
 
-		if (newTab != null && newTab)
-			window.open(url, "_blank");
-		else
-			window.location = url;
-	},
+        if (newTab != null && newTab)
+            window.open(url, "_blank");
+        else
+            window.location = url;
 
-	loadFirstView: function (pageToLoad) {
-		$(document).ready(function () {
-			if (window.location.hash == "")
-				configs.goToPage(pageToLoad);
-			else
-				configs.navigateToPage();
-		});
-	},
+        $('body').css('overflow', 'visible')
+    },
 
-	getUrlArgs: function () {
-		var hash = window.location.hash;
-		var indexView = hash.indexOf("?");
-		if (indexView < 0)
-			return null;
+    loadFirstView: function (pageToLoad) {
+        $(document).ready(function () {
+            if (window.location.hash == "")
+                configs.goToPage(pageToLoad);
+            else
+                configs.navigateToPage();
+        });
+    },
 
-		var subStr = hash.substring(indexView + 1, hash.length);
-		var args = subStr.split('!')[0];
-		var argsArray = args.split("&");
-		var myArgs = {};
-		for (var index = 0; index < argsArray.length; index++) {
-			var arg = argsArray[index].split('=');
-			myArgs[arg[0]] = arg[1];
-		}
-		return myArgs;
-	},
+    getUrlArgs: function () {
+        var hash = window.location.hash;
+        var indexView = hash.indexOf("?");
+        if (indexView < 0)
+            return null;
 
-	getCurrentPage: function () {
-		var hash = window.location.hash;
-		var indexView = hash.indexOf("!");
-		if (indexView < 0)
-			return "";
+        var subStr = hash.substring(indexView + 1, hash.length);
+        var args = subStr.split('!')[0];
+        var argsArray = args.split("&");
+        var myArgs = {};
+        for (var index = 0; index < argsArray.length; index++) {
+            var arg = argsArray[index].split('=');
+            myArgs[arg[0]] = arg[1];
+        }
+        return myArgs;
+    },
 
-		var subStr = hash.substring(indexView + 1, hash.length);
-		var str = subStr.split('?')[0];
-		return str;
-	},
+    getCurrentPage: function () {
+        var hash = window.location.hash;
+        var indexView = hash.indexOf("!");
+        if (indexView < 0)
+            return "";
 
-	ensoLoadScripts: function (scripts, callback) {
-		if (scripts.length > 0)
-			configs.ensoLoadScriptsRecursive(scripts, 0, callback);
-	},
+        var subStr = hash.substring(indexView + 1, hash.length);
+        var str = subStr.split('?')[0];
+        return str;
+    },
 
-	ensoLoadScriptsRecursive: function (scripts, index, callback) {
+    ensoLoadScripts: function (scripts, callback) {
+        if (scripts.length > 0)
+            configs.ensoLoadScriptsRecursive(scripts, 0, callback);
+    },
 
-		if (index < scripts.length) {
-			var path = scripts[index];
-			$.getScript(path, function () {
-				index++;
-				if (index < scripts.length)
-					configs.ensoLoadScriptsRecursive(scripts, index, callback);
-				else
-					if (callback != null)
-						callback();
-			});
-		}
-		else {
-			if (callback != null)
-				callback();
-		}
-	},
+    ensoLoadScriptsRecursive: function (scripts, index, callback) {
 
-	addAfterViewCallback: function (arg) {
-		configs.afterViewCallBacks.push(arg);
-	},
+        if (index < scripts.length) {
+            var path = scripts[index];
+            $.getScript(path, function () {
+                index++;
+                if (index < scripts.length)
+                    configs.ensoLoadScriptsRecursive(scripts, index, callback);
+                else if (callback != null)
+                    callback();
+            });
+        } else {
+            if (callback != null)
+                callback();
+        }
+    },
 
-	removeAfterViewCallback: function (arg) {
-		index = configs.afterViewCallBacks.indexOf(arg);
+    addAfterViewCallback: function (arg) {
+        configs.afterViewCallBacks.push(arg);
+    },
 
-		if (index > -1)
-			configs.afterViewCallBacks.splice(index, 1);
-	},
+    removeAfterViewCallback: function (arg) {
+        index = configs.afterViewCallBacks.indexOf(arg);
 
-	addBeforeViewCallback: function (arg) {
-		configs.beforeViewCallBacks.push(arg);
-	},
+        if (index > -1)
+            configs.afterViewCallBacks.splice(index, 1);
+    },
 
-	removeBeforeViewCallback: function (arg) {
-		index = configs.beforeViewCallBacks.indexOf(arg);
+    addBeforeViewCallback: function (arg) {
+        configs.beforeViewCallBacks.push(arg);
+    },
 
-		if (index > -1)
-			configs.beforeViewCallBacks.splice(index, 1);
-	},
+    removeBeforeViewCallback: function (arg) {
+        index = configs.beforeViewCallBacks.indexOf(arg);
 
-	init: function () {
-		$(window).on("hashchange", function () {
-			configs.navigateToPage();
-		});
-	}
+        if (index > -1)
+            configs.beforeViewCallBacks.splice(index, 1);
+    },
+
+    init: function () {
+        $(window).on("hashchange", function () {
+            configs.navigateToPage();
+        });
+    }
 };
 
 configs.init();

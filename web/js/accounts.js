@@ -5,17 +5,22 @@ var Accounts = {
         Accounts.getAccounts()
     },
     getAccounts: () => {
+        LoadingManager.showLoading()
         AccountServices.getAllAccounts((response) => {
-            Accounts.initTable(response)
-        },
+                LoadingManager.hideLoading()
+                CookieUtils.setUserAccounts(response)
+
+                Accounts.initTable(response)
+            },
             (error) => {
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     },
     initTable: (accountsList) => {
         $("#table-wrapper").html(Accounts.renderAccountsTable(accountsList))
         tableUtils.setupStaticTable("#accounts-table");
-        loadingManager.hideLoading()
+        LoadingManager.hideLoading()
     },
     renderAccountsTable: (accountsList) => {
         return `
@@ -40,7 +45,7 @@ var Accounts = {
             <tr data-id='${account.account_id}'>
                 <td>${account.name}</td>
                 <td>${StringUtils.getAccountTypeName(account.type)}</td>
-                <td>${StringUtils.formatStringtoCurrency(account.balance)}</td>
+                <td>${StringUtils.formatStringToCurrency(account.balance)}</td>
                 <td><span class="${(account.status === 'Ativa') ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${account.status}</span></td>
                 <td>
                     <i onClick="Accounts.showEditAccountModal('${account.name}', '${account.description}', '${account.type}', '${account.status}', '${account.balance}', '${account.exclude_from_budgets}', ${account.account_id})" class="material-icons table-action-icons">create</i>
@@ -51,7 +56,7 @@ var Accounts = {
     },
     addNewAccount: () => {
 
-        $("#modal-accounts").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Adicionar nova conta</h4>
                 <div class="row">
@@ -110,8 +115,8 @@ var Accounts = {
         */
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Accounts.addAccount()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
-        $("#modal-accounts .modal-content").html(txt);
-        $("#modal-accounts .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#account_type_select').formSelect();
         $('#account_status_select').formSelect();
@@ -137,21 +142,24 @@ var Accounts = {
             return
         }
 
+        LoadingManager.showLoading()
         AccountServices.addAccount(name, description, type, exclude_from_budgets, status, current_balance,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Conta adicionada com sucesso!")
                 configs.goToPage("accounts", null, true)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
 
 
     },
     showRemoveAccountModal: (accName, accID) => {
-        $("#modal-accounts").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Remover Conta <b>${accName}</b></h4>
                 <div class="row">
@@ -163,25 +171,28 @@ var Accounts = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
             <a onClick="Accounts.removeAccount(${accID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
-        $("#modal-accounts .modal-content").html(txt);
-        $("#modal-accounts .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
     },
     removeAccount: (accID) => {
         if (!accID) return;
 
+        LoadingManager.showLoading()
         AccountServices.removeAccount(accID,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Conta removida com sucesso!")
                 configs.goToPage("accounts", null, true)
             }),
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
     showEditAccountModal: (accName, accDescription, accType, accStatus, current_balance, exclude_from_budgets, accID) => {
-        $("#modal-accounts").modal("open")
+        $("#modal-global").modal("open")
         let txt = `
                 <h4>Editar a conta <b>${accName}</b></h4>
                 <div class="row">
@@ -233,8 +244,8 @@ var Accounts = {
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
     <a onClick="Accounts.editAccount(${accID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Editar</a>`;
-        $("#modal-accounts .modal-content").html(txt);
-        $("#modal-accounts .modal-footer").html(actionLinks);
+        $("#modal-global .modal-content").html(txt);
+        $("#modal-global .modal-footer").html(actionLinks);
 
         $('#account_type_select').formSelect();
         $('#account_status_select').formSelect();
@@ -254,22 +265,24 @@ var Accounts = {
         const type = $("select#account_type_select").val()
         const status = $("select#account_status_select").val()
         const exclude_from_budgets = $("#exclude_from_budgets").is(":checked")
-        
+
         if (!name || name === "" || !type || type === ""
             || !description || description === "" || !status || status === ""
             || !current_balance || current_balance === "") {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
         }
-
+        LoadingManager.showLoading()
         AccountServices.editAccount(accID, name, description, type, exclude_from_budgets, status, current_balance,
             (response) => {
                 // SUCCESS
+                LoadingManager.hideLoading()
                 DialogUtils.showSuccessMessage("Conta atualizada com sucesso!")
                 configs.goToPage("accounts", null, true)
             },
             (response) => {
                 // FAILURE
+                LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
     }
