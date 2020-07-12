@@ -161,8 +161,8 @@ var Dashboard = {
                 if (CHART_EXPENSES_DISTRIBUTION)
                     chartUtils.removeData(CHART_EXPENSES_DISTRIBUTION)
 
-                CHART_INCOME_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_income_distribution", datasetCredit, labelsCredit, "Distribuição de Receita");
-                CHART_EXPENSES_DISTRIBUTION = chartUtils.setupPieChart("chart_pie_spending_distribution", datasetDebit, labelsDebit, "Distribuição de Despesa");
+                CHART_INCOME_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart("chart_pie_income_distribution", datasetCredit, labelsCredit, "Distribuição de Receita");
+                CHART_EXPENSES_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart("chart_pie_spending_distribution", datasetDebit, labelsDebit, "Distribuição de Despesa");
 
 
                 LoadingManager.hideLoading()
