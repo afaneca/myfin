@@ -109,8 +109,7 @@ var Categories = {
         const catDescription = $("textarea#category_description").val()
         const catType = $("select#category_type_select").val()
 
-        if (!catName || catName === "" || !catDescription || catDescription === ""
-            || !catType || catType === "") {
+        if (!catName || catName === "" || !catType || catType === "") {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
         }
@@ -167,7 +166,7 @@ var Categories = {
     showEditCategoryModal: (catName, catDescription, catType, catID) => {
         $("#modal-global").modal("open")
         let txt = `
-                <h4>Adicionar nova categoria</h4>
+                <h4>Editar categoria</h4>
                 <div class="row">
                     <form class="col s12">
                         <div class="input-field col s6">
@@ -212,8 +211,7 @@ var Categories = {
         const catDescription = $("textarea#category_description").val()
         const catType = $("select#category_type_select").val()
 
-        if (!catName || catName === "" || !catDescription || catDescription === ""
-            || !catType || catType === "") {
+        if (!catName || catName === "" || !catType || catType === "") {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
         }
