@@ -20,7 +20,7 @@ class Categories
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
@@ -76,7 +76,7 @@ class Categories
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
             } else {
                 $mobile = false;
             }
@@ -84,7 +84,12 @@ class Categories
 
             $name = Input::validate($request->getParsedBody()['name'], Input::$STRING);
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING);
-            $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING);
+
+            if (array_key_exists('type', $request->getParsedBody())) {
+                $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING);
+            } else {
+                $type = "M"; // MIXED
+            }
 
 
             /* Auth - token validation */
@@ -126,7 +131,7 @@ class Categories
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -171,7 +176,7 @@ class Categories
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int) Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
@@ -180,7 +185,13 @@ class Categories
             $categoryID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 3);
             $newName = Input::validate($request->getParsedBody()['new_name'], Input::$STRING, 4);
             $newDescription = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 5);
-            $newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING, 5);
+            //$newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING, 5);
+
+            if (array_key_exists('new_type', $request->getParsedBody())) {
+                $newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING);
+            } else {
+                $newType = "M"; // MIXED
+            }
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);

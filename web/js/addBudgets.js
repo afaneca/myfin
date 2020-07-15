@@ -30,6 +30,7 @@ var AddBudgets = {
         BudgetServices.getBudget(budgetID, (resp) => {
             // SUCCESS
             LoadingManager.hideLoading()
+            const allCategories = resp['categories']
             const debitCategories = resp['categories'].filter((cat) => cat.type === 'D');
             const creditCategories = resp['categories'].filter((cat) => cat.type === 'C');
             const observations = resp['observations']
@@ -40,8 +41,8 @@ var AddBudgets = {
             AddBudgets.setMonthPickerValue(month, year)
             AddBudgets.setInitialBalance(BUDGET_INITIAL_BALANCE)
             AddBudgets.setObservations(observations)
-            AddBudgets.setupBudgetInputs("#new-budget-debit-inputs", debitCategories, false)
-            AddBudgets.setupBudgetInputs("#new-budget-credit-inputs", creditCategories, true)
+            AddBudgets.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false)
+            AddBudgets.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true)
             AddBudgets.setupInputListenersAndUpdateSummary("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
             AddBudgets.updateSummaryValues("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
         }, (err) => {
@@ -56,12 +57,14 @@ var AddBudgets = {
         BudgetServices.getAddBudgetStep0((resp) => {
             // SUCCESS
             LoadingManager.hideLoading()
+            const allCategories = resp['categories']
             const debitCategories = resp['categories'].filter((cat) => cat.type === 'D');
             const creditCategories = resp['categories'].filter((cat) => cat.type === 'C');
 
             AddBudgets.setInitialBalance(resp.initial_balance)
-            AddBudgets.setupBudgetInputs("#new-budget-debit-inputs", debitCategories, false)
-            AddBudgets.setupBudgetInputs("#new-budget-credit-inputs", creditCategories, true)
+            AddBudgets.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false)
+            AddBudgets.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true)
+
             AddBudgets.setupInputListenersAndUpdateSummary("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
         }, (err) => {
             // FAILURE
@@ -127,17 +130,17 @@ var AddBudgets = {
             <tr>
                 <td>${cat.name}</td>
                 <td><div class="input-field inline">
-                    <input ${(isOpen) ? "" : " disabled "} id="${cat.category_id}" onClick="this.select();" value="${(cat.planned_amount) ? cat.planned_amount : '0.00'}" type="number" class="cat-input validate ${(isCredit) ? 'credit-input-estimated' : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" required>
+                    <input ${(isOpen) ? "" : " disabled "} id="${cat.category_id}${(isCredit) ? 'credit' : 'debit'}" onClick="this.select();" value="${(isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0') : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')}" type="number" class="cat-input validate ${(isCredit) ? 'credit-input-estimated' : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" required>
                     <label for="${cat.category_id}" class="active">Valor (€)</label>
                 </div></td>
                 <td><div class="input-field inline">
-                    <input disabled id="${StringUtils.normalizeStringForHtml(cat.name)}_inline" value="${(cat.current_amount) ? cat.current_amount : '0.00'}" type="number" class="validate ${(isCredit) ? 'credit-input-current' : 'debit-input-current'} input" min="0.00" value="0.00" step="0.01" required>
+                    <input disabled id="${StringUtils.normalizeStringForHtml(cat.name)}_inline" value="${(isCredit) ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0') : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')}" type="number" class="validate ${(isCredit) ? 'credit-input-current' : 'debit-input-current'} input" min="0.00" value="0.00" step="0.01" required>
                     <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline" class="active">Valor (€)</label>
                 </div></td>
             </tr>
             <tr>
                 <td colspan="3">
-                    <progress class="faneca-progressbar cat_progressbar_${cat.category_id}" value="${ProgressbarUtils.getCorrectPercentageValue(parseFloat(cat.current_amount), parseFloat(cat.planned_amount))}" max="100"></progress>
+                    <progress class="faneca-progressbar cat_progressbar_${cat.category_id}" value="${ProgressbarUtils.getCorrectPercentageValue(parseFloat((isCredit) ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0') : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')), parseFloat((isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0') : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')))}" max="100"></progress>
                  </td>
             </tr>
         `
@@ -162,12 +165,14 @@ var AddBudgets = {
         $('.credit-input-estimated').each((i, input) => {
             let inputValue = $('#' + input.id).val()
             incomeAcc += parseFloat(inputValue)
+          // debugger
         })
 
         $('.debit-input-estimated').each((i, input) => {
-            let inputValue = $('#' + input.id).val()
+            let inputValue = $("#" + input.id).val()
             expensesAcc += parseFloat(inputValue)
         })
+
 
         $("#table_total_credit_expected").text(StringUtils.formatStringToCurrency(incomeAcc))
         $("#table_total_debit_expected").text(StringUtils.formatStringToCurrency(expensesAcc))
@@ -236,21 +241,59 @@ var AddBudgets = {
 
     },
     buildCatValuesArr: () => {
-        let inputs = $("input[type=number].cat-input")
-        let catValsArr = new Array()
+        let catValsArr = []
+        let creditValsArr = []
+        let debitValsArr = []
+        let creditInputs = $("input[type=number].credit-input-estimated")
+        let debitInputs = $("input[type=number].debit-input-estimated")
 
-        inputs.each(function () {
+        creditInputs.each(function () {
             const obj = $(this)
 
-            const catID = obj[0]["id"]
+            const catID = parseInt(obj[0]["id"]) + ""
             const plannedAmount = obj.val()
 
-            catValsArr.push({
+            creditValsArr.push({
                 "category_id": catID,
-                "planned_value": plannedAmount
+                "planned_value_credit": plannedAmount
             })
         })
 
+        debitInputs.each(function () {
+            const obj = $(this)
+
+            const catID = parseInt(obj[0]["id"]) + ""
+            const plannedAmount = obj.val()
+
+            debitValsArr.push({
+                "category_id": catID,
+                "planned_value_debit": plannedAmount
+            })
+        })
+
+        /* Merge them together */
+        for (let i = 0; i < debitValsArr.length; i++) {
+            catValsArr.push({
+                    ...debitValsArr[i],
+                    ...(creditValsArr.find((cat) => cat.category_id === debitValsArr[i].category_id))
+                }
+            );
+        }
+
+        /*  let inputs = $("input[type=number].cat-input")
+          let catValsArr = new Array()
+
+          inputs.each(function () {
+              const obj = $(this)
+
+              const catID = obj[0]["id"]
+              const plannedAmount = obj.val()
+
+              catValsArr.push({
+                  "category_id": catID,
+                  "planned_value": plannedAmount
+              })
+          })*/
         return catValsArr
     },
     onBudgetCloseClicked: () => {

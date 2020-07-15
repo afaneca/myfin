@@ -24,7 +24,7 @@ var CategoryServices = {
             }
         });
     },
-    addCategory: (name, description, type, successCallback, errorCallback) => {
+    addCategory: (name, description, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "cats/"
 
         $.ajax({
@@ -38,7 +38,6 @@ var CategoryServices = {
             },
             data: {
                 name,
-                type,
                 description
             },
             url: pageUrl,
@@ -74,7 +73,7 @@ var CategoryServices = {
             }
         });
     },
-    editCategory: (catID, newName, newDescription, newType, successCallback, errorCallback) => {
+    editCategory: (catID, newName, newDescription, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "cats/"
 
         $.ajax({
@@ -90,7 +89,6 @@ var CategoryServices = {
                 category_id: catID,
                 new_name: newName,
                 new_description: newDescription,
-                new_type: newType
             },
             url: pageUrl,
             success: function (response) {
