@@ -144,8 +144,11 @@ class Budgets
                  echo $yearToUser . "\n";
                  echo $type . "\n";
                  die();*/
-                $current_amount = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser, $type)[0]["category_balance"];
-                $category["current_amount"] = abs(Input::convertIntegerToFloat($current_amount));
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
+                $current_amount_credit = $calculatedAmounts["category_balance_credit"];
+                $current_amount_debit = $calculatedAmounts["category_balance_debit"];
+                $category["current_amount_credit"] = abs(Input::convertIntegerToFloat($current_amount_credit));
+                $category["current_amount_debit"] = abs(Input::convertIntegerToFloat($current_amount_debit));
             }
 
             /* $db->getDB()->commit(); */
@@ -249,9 +252,10 @@ class Budgets
             foreach ($catValuesArr as $item) {
 
                 $catID = $item['category_id'];
-                $plannedValue = Input::convertFloatToInteger(floatval($item['planned_value']));
+                $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
+                $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
 
-                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValue);
+                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit);
             }
 
             /* $db->getDB()->commit(); */
@@ -346,11 +350,20 @@ class Budgets
 
 
             // ADD CAT VALUES TO BUDGET CATEGORIES
-            foreach ($catValuesArr as $item) {
+            /*foreach ($catValuesArr as $item) {
                 $catID = $item['category_id'];
                 $plannedValue = Input::convertFloatToInteger(floatval($item['planned_value']));
 
                 BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValue);
+            }*/
+
+            foreach ($catValuesArr as $item) {
+
+                $catID = $item['category_id'];
+                $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
+                $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
+
+                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit);
             }
 
             /* $db->getDB()->commit(); */

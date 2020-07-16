@@ -7,17 +7,23 @@ var Categories = {
             (response) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
-                let debitList = []
+                /*let debitList = []
                 let creditList = []
 
                 debitList = response.filter(item => item.type === 'D')
-                creditList = response.filter(item => item.type === 'C')
-                Categories.initTables(debitList, creditList)
+                creditList = response.filter(item => item.type === 'C')*/
+                Categories.initMergedTable(response)
+                /*Categories.initTables(debitList, creditList)*/
             },
             (response) => {
                 // FAILURE
                 LoadingManager.hideLoading()
             })
+    },
+    initMergedTable: (catsList) => {
+        $("#table-merged-wrapper").html(Categories.renderCreditCategoriesTable(catsList))
+        tableUtils.setupStaticTable("#categories-table");
+        LoadingManager.hideLoading()
     },
     initTables: (debitCatsList, creditCatsList) => {
         $("#table-debit-wrapper").html(Categories.renderDebitCategoriesTable(debitCatsList))
@@ -63,7 +69,7 @@ var Categories = {
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
                 <td>
-                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${StringUtils.normalizeStringForHtml(cats.description)}', '${cats.type}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${StringUtils.normalizeStringForHtml(cats.description)}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
                     <i onClick="Categories.showRemoveCategoryModal('${cats.name}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
@@ -80,14 +86,7 @@ var Categories = {
                             <input id="category_name" type="text" class="validate">
                             <label for="category_name">Nome da Categoria</label>
                         </div>
-                        <div class="input-field col s6">
-                            <i class="material-icons prefix">note</i>
-                            <select id="category_type_select">
-                                <option value="C">Crédito (Renda)</option>
-                                <option value="D">Débito (Despesa)</option>
-                            </select>
-                            <label>Tipo de Categoria</label>
-                        </div>
+                  
                             <div class="col s6">
                                 <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
                             </div>
@@ -102,21 +101,20 @@ var Categories = {
         $("#modal-global .modal-content").html(txt);
         $("#modal-global .modal-footer").html(actionLinks);
 
-        $('#category_type_select').formSelect();
+        /*$('#category_type_select').formSelect();*/
     },
     addCategory: () => {
         const catName = $("input#category_name").val()
         const catDescription = $("textarea#category_description").val()
-        const catType = $("select#category_type_select").val()
+        /*const catType = $("select#category_type_select").val()*/
 
-        if (!catName || catName === "" || !catDescription || catDescription === ""
-            || !catType || catType === "") {
+        if (!catName || catName === "" /*|| !catType || catType === ""*/) {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
         }
 
         LoadingManager.showLoading()
-        CategoryServices.addCategory(catName, catDescription, catType,
+        CategoryServices.addCategory(catName, catDescription,
             (response) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
@@ -145,7 +143,7 @@ var Categories = {
         $("#modal-global .modal-content").html(txt);
         $("#modal-global .modal-footer").html(actionLinks);
 
-        $('#category_type_select').formSelect();
+        /* $('#category_type_select').formSelect();*/
     },
     removeCategory: (catID) => {
         if (!catID) return;
@@ -164,24 +162,16 @@ var Categories = {
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
-    showEditCategoryModal: (catName, catDescription, catType, catID) => {
+    showEditCategoryModal: (catName, catDescription, catID) => {
         $("#modal-global").modal("open")
         let txt = `
-                <h4>Adicionar nova categoria</h4>
+                <h4>Editar categoria</h4>
                 <div class="row">
                     <form class="col s12">
                         <div class="input-field col s6">
                         <i class="material-icons prefix">folder</i>
                             <input id="category_name" type="text" class="validate">
                             <label for="category_name" class="active">Nome da Categoria</label>
-                        </div>
-                        <div class="input-field col s6">
-                            <i class="material-icons prefix">note</i>
-                            <select id="category_type_select">
-                                <option ${(catType === 'C') ? 'selected' : ''} value="C">Crédito (Renda)</option>
-                                <option ${(catType === 'D') ? 'selected' : ''} value="D">Débito (Despesa)</option>
-                            </select>
-                            <label>Tipo de Categoria</label>
                         </div>
                             <div class="col s6">
                                 <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
@@ -197,7 +187,7 @@ var Categories = {
         $("#modal-global .modal-content").html(txt);
         $("#modal-global .modal-footer").html(actionLinks);
 
-        $('#category_type_select').formSelect();
+        /*$('#category_type_select').formSelect();*/
 
         // AUTO-FILL INPUTS
         $("input#category_name").val(catName)
@@ -210,16 +200,15 @@ var Categories = {
     editCategory: (catID) => {
         const catName = $("input#category_name").val()
         const catDescription = $("textarea#category_description").val()
-        const catType = $("select#category_type_select").val()
+        /* const catType = $("select#category_type_select").val()*/
 
-        if (!catName || catName === "" || !catDescription || catDescription === ""
-            || !catType || catType === "") {
+        if (!catName || catName === "" /*|| !catType || catType === ""*/) {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
         }
 
         LoadingManager.showLoading()
-        CategoryServices.editCategory(catID, catName, catDescription, catType,
+        CategoryServices.editCategory(catID, catName, catDescription,
             () => {
                 // SUCCESS
                 LoadingManager.hideLoading()

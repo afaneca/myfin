@@ -57,7 +57,8 @@ class BudgetHasCategoriesModel extends Entity
         "budgets_budget_id",
         "budgets_users_user_id",
         "categories_category_id",
-        "planned_amount",
+        "planned_amount_credit",
+        "planned_amount_debit",
         "current_amount"
     ];
 
@@ -69,7 +70,7 @@ class BudgetHasCategoriesModel extends Entity
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT users_user_id, category_id, name, type, description, budgets_budget_id, truncate((coalesce(planned_amount, 0) / 100), 2) as planned_amount, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
+        $sql = "SELECT users_user_id, category_id, name, type, description, budgets_budget_id, truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit, truncate((coalesce(planned_amount_debit, 0) / 100), 2) as planned_amount_debit, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
             "FROM " .
             "(SELECT * FROM budgets_has_categories WHERE budgets_users_user_id = :userID AND (budgets_budget_id = :budgetID)) b " .
             "RIGHT JOIN categories ON categories.category_id = b.categories_category_id ";
@@ -89,19 +90,20 @@ class BudgetHasCategoriesModel extends Entity
     }
 
 
-    public static function addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedAmount, $transactional = false)
+    public static function addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedAmountCredit, $plannedAmountDebit, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "INSERT INTO budgets_has_categories (budgets_budget_id, budgets_users_user_id, categories_category_id, planned_amount) " .
-            " VALUES(:budgetID, :userID, :catID, :pamount) " .
-            " ON DUPLICATE KEY UPDATE planned_amount = :pamount";
+        $sql = "INSERT INTO budgets_has_categories (budgets_budget_id, budgets_users_user_id, categories_category_id, planned_amount_credit, planned_amount_debit) " .
+            " VALUES(:budgetID, :userID, :catID, :pamount_credit, :pamount_debit) " .
+            " ON DUPLICATE KEY UPDATE planned_amount_credit = :pamount_credit, planned_amount_debit = :pamount_debit";
 
         $values = array();
         $values[':userID'] = $userID;
         $values[':budgetID'] = $budgetID;
         $values[':catID'] = $catID;
-        $values[':pamount'] = $plannedAmount;
+        $values[':pamount_credit'] = $plannedAmountCredit;
+        $values[':pamount_debit'] = $plannedAmountDebit;
 
 
         try {
@@ -128,11 +130,11 @@ class BudgetHasCategoriesModel extends Entity
        AND categories_category_id IS :cat_id
    */
 
-    public static function getAmountForCategoryInMonth($category_id, $month, $year, $type, $transactional = false)
+    public static function getAmountForCategoryInMonth($category_id, $month, $year, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT sum(if(type = '$type', amount, 0)) as 'category_balance' " .
+        $sql = "SELECT sum(if(type = 'I', amount, 0)) as 'category_balance_credit', sum(if(type = 'E', amount, 0)) as 'category_balance_debit' " .
             "FROM transactions " .
             "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
             "AND categories_category_id = :cat_id ";

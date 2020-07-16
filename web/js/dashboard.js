@@ -133,27 +133,42 @@ var Dashboard = {
         StatServices.getDashboardExpensesIncomeDistributionStats(month, year,
             (resp) => {
                 // SUCCESS
-                const creditCategories = resp.categories.filter((cat) => {
+
+                const allCategories = resp.categories
+
+              /*  const creditCategories = allCategories.filter((cat) => {
                     return cat.type === "C"
                 })
-                const deditCategories = resp.categories.filter((cat) => {
+                const deditCategories = allCategories.filter((cat) => {
                     return cat.type === "D"
                 })
 
                 creditCategories.forEach((cat) => {
-                    datasetCredit.push(cat.current_amount)
+                    datasetCredit.push(cat.current_amount_credit)
                     labelsCredit.push(cat.name)
 
-                })
+                })*/
 
                 let totalExpensesRealAmount = 0
                 let totalExpensesBudgetedAmount = 0
-                deditCategories.forEach((cat) => {
-                    datasetDebit.push(cat.current_amount)
+                /*deditCategories.forEach((cat) => {
+                    datasetDebit.push(cat.current_amount_debit)
                     labelsDebit.push(cat.name)
-                    totalExpensesRealAmount += parseFloat(cat.current_amount)
-                    totalExpensesBudgetedAmount += parseFloat(cat.planned_amount)
+                    totalExpensesRealAmount += parseFloat(cat.current_amount_debit)
+                    totalExpensesBudgetedAmount += parseFloat(cat.planned_amount_debit)
+                })*/
+
+
+
+                allCategories.forEach((cat) => {
+                    datasetCredit.push(cat.current_amount_credit)
+                    labelsCredit.push(cat.name)
+                    datasetDebit.push(cat.current_amount_debit)
+                    labelsDebit.push(cat.name)
+                    totalExpensesRealAmount += parseFloat(cat.current_amount_debit)
+                    totalExpensesBudgetedAmount += parseFloat(cat.planned_amount_debit)
                 })
+
                 Dashboard.setupMonthlyOverviewChart(totalExpensesBudgetedAmount, totalExpensesRealAmount)
 
                 if (CHART_INCOME_DISTRIBUTION)

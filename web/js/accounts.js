@@ -136,7 +136,7 @@ var Accounts = {
 
 
         if (!name || name === "" || !type || type === ""
-            || !description || description === "" || !status || status === ""
+            /*|| !description || description === ""*/ || !status || status === ""
             || !current_balance || current_balance === "") {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
@@ -267,7 +267,7 @@ var Accounts = {
         const exclude_from_budgets = $("#exclude_from_budgets").is(":checked")
 
         if (!name || name === "" || !type || type === ""
-            || !description || description === "" || !status || status === ""
+            /*|| !description || description === ""*/ || !status || status === ""
             || !current_balance || current_balance === "") {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
