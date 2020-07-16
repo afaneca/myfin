@@ -60,8 +60,12 @@ class Stats
                 // TODO: map 'D' & 'C' in categories to 'I' & 'E'
                 $type = ($category["type"] == 'D') ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
 
-                $current_amount = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser, $type)[0]["category_balance"];
-                $category["current_amount"] = Input::convertIntegerToFloat($current_amount);
+                $current_amounts =  BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
+                $current_amount_credit = $current_amounts["category_balance_credit"];
+                $current_amount_debit = $current_amounts["category_balance_debit"];
+
+                $category["current_amount_credit"] = Input::convertIntegerToFloat($current_amount_credit);
+                $category["current_amount_debit"] = Input::convertIntegerToFloat($current_amount_debit);
             }
 
 
