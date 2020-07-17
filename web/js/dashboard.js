@@ -136,18 +136,18 @@ var Dashboard = {
 
                 const allCategories = resp.categories
 
-              /*  const creditCategories = allCategories.filter((cat) => {
-                    return cat.type === "C"
-                })
-                const deditCategories = allCategories.filter((cat) => {
-                    return cat.type === "D"
-                })
+                /*  const creditCategories = allCategories.filter((cat) => {
+                      return cat.type === "C"
+                  })
+                  const deditCategories = allCategories.filter((cat) => {
+                      return cat.type === "D"
+                  })
 
-                creditCategories.forEach((cat) => {
-                    datasetCredit.push(cat.current_amount_credit)
-                    labelsCredit.push(cat.name)
+                  creditCategories.forEach((cat) => {
+                      datasetCredit.push(cat.current_amount_credit)
+                      labelsCredit.push(cat.name)
 
-                })*/
+                  })*/
 
                 let totalExpensesRealAmount = 0
                 let totalExpensesBudgetedAmount = 0
@@ -159,12 +159,16 @@ var Dashboard = {
                 })*/
 
 
-
                 allCategories.forEach((cat) => {
-                    datasetCredit.push(cat.current_amount_credit)
-                    labelsCredit.push(cat.name)
-                    datasetDebit.push(cat.current_amount_debit)
-                    labelsDebit.push(cat.name)
+                    if (cat.current_amount_credit && parseFloat(cat.current_amount_credit) !== 0) {
+                        datasetCredit.push(cat.current_amount_credit)
+                        labelsCredit.push(cat.name)
+                    }
+                    if (cat.current_amount_debit && parseFloat(cat.current_amount_debit) !== 0) {
+                        datasetDebit.push(cat.current_amount_debit)
+                        labelsDebit.push(cat.name)
+                    }
+
                     totalExpensesRealAmount += parseFloat(cat.current_amount_debit)
                     totalExpensesBudgetedAmount += parseFloat(cat.planned_amount_debit)
                 })

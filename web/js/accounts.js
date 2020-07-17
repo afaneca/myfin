@@ -48,7 +48,7 @@ var Accounts = {
                 <td>${StringUtils.formatStringToCurrency(account.balance)}</td>
                 <td><span class="${(account.status === 'Ativa') ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${account.status}</span></td>
                 <td>
-                    <i onClick="Accounts.showEditAccountModal('${account.name}', '${account.description}', '${account.type}', '${account.status}', '${account.balance}', '${account.exclude_from_budgets}', ${account.account_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Accounts.showEditAccountModal('${account.name}', '${StringUtils.normalizeString(account.description)}', '${account.type}', '${account.status}', '${account.balance}', '${account.exclude_from_budgets}', ${account.account_id})" class="material-icons table-action-icons">create</i>
                     <i onClick="Accounts.showRemoveAccountModal('${account.name}',${account.account_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
@@ -128,7 +128,7 @@ var Accounts = {
     },
     addAccount: () => {
         const name = $("#account_name").val()
-        const description = StringUtils.removeLineBreaksFromString($("textarea#account_description").val())
+        const description = StringUtils.normalizeString($("textarea#account_description").val())
         const current_balance = $("input#current_balance").val()
         const type = $("select#account_type_select").val()
         const status = $("select#account_status_select").val()
