@@ -10,7 +10,7 @@ var StringUtils = {
     },
     normalizeString: (str) => {
         return StringUtils.removeLineBreaksFromString(str.replace(/\s/g, ' ').normalize("NFC").replace(/[\u0300-\u036f]/g, " ")
-            .replace(/[^\wèéòàáùúìí\s]/gi, '').toLowerCase())
+            .replace(/[^\wèéòàáùúìí\s]/gi, ''))
     },
     getAccountTypeName: (tag) => {
         return account_types[tag]
