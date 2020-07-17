@@ -89,7 +89,7 @@ var ImportTransactions = {
                 <th data-id="${column}"> 
                     <select id="field-mapping-${column}" class="field-mapping-select">
                         <option value="${column}_${FIELD_MAPPING.IGNORE}">Ignorar</option>
-                        <option value="${column}_${FIELD_MAPPING.DATE}">Data</option>
+                        <option value="${column}_${FIELD_MAPPING.DATE}">Data (DD-MM-YYYY)</option>
                         <option value="${column}_${FIELD_MAPPING.DESCRIPTION}">Descrição</option>
                         <option value="${column}_${FIELD_MAPPING.AMOUNT}">Montante</option>
                         <option value="${column}_${FIELD_MAPPING.CREDIT}">Crédito</option>
@@ -334,7 +334,7 @@ var ImportTransactions = {
     renderStep2TableRow: (trx) => `
         <tr>
             <td><center><input type="checkbox" checked="checked" class="trx-checkbox-input reset-checkbox center-align" style="transform:scale(1.5)" /></center></td>
-            <td><center><input type="text" value="${DateUtils.convertUnixTimestampToDateFormat(trx.date)}" class="datepicker input-field col s5 offset-s1"></center></td>
+            <td><center><input type="text" value="${DateUtils.convertUnixTimestampToEuropeanDateFormat(trx.date)}" class="datepicker input-field col s5 offset-s1"></center></td>
             <td><center>${ImportTransactions.renderAmountInput(trx.amount)}</center></td>
             <td><center>${ImportTransactions.renderDescriptionInput(trx.description)}</center></td>
             <td><center>${ImportTransactions.renderEntitiesSelect(trx.selectedEntityID)}</center></td>

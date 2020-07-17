@@ -282,7 +282,7 @@ class AccountModel extends Entity
         if (!$priorMonthsBalance)
             $priorMonthsBalance = 0;
 
-        echo("\nprior months balance: $priorMonthsBalance\n");
+        //echo("\nprior months balance: $priorMonthsBalance\n");
 
         AccountModel::addCustomBalanceSnapshot($accountID, $beginMonth, $beginYear,
             $priorMonthsBalance, $transactional);
@@ -324,13 +324,13 @@ class AccountModel extends Entity
 
             if ($trxType == DEFAULT_TYPE_EXPENSE_TAG) $trxAmount *= -1;
             //print_r($trxList);
-            echo("\n\n");
-            echo("\ninitial balance before: $initialBalance");
+            /*echo("\n\n");
+            echo("\ninitial balance before: $initialBalance");*/
             $initialBalance += $trxAmount;
-            echo("\ninitial balance after: $initialBalance");
+            /*echo("\ninitial balance after: $initialBalance");
             //die();
             //AccountModel::addBalanceSnapshot($accountID, $month, $year, $transactional);
-            echo("\n\n--- adding custom balance snapshot to account $accountID, for month $month & year $year, with balance $initialBalance");
+            echo("\n\n--- adding custom balance snapshot to account $accountID, for month $month & year $year, with balance $initialBalance");*/
             AccountModel::addCustomBalanceSnapshot($accountID, $month, $year, Input::convertFloatToInteger($initialBalance), $transactional);
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 12) ? $month + 1 : 1, ($month < 12) ? $year : $year + 1, Input::convertFloatToInteger($initialBalance), $transactional);
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 11) ? $month + 2 : 1, ($month < 11) ? $year : $year + 1, Input::convertFloatToInteger($initialBalance), $transactional);
