@@ -233,6 +233,7 @@ var ImportTransactions = {
             if (ValidationUtils.checkIfFieldsAreFilled([new_trx.date, new_trx.description, new_trx.amount, new_trx.type]))
                 trxList.push(new_trx)
         })
+
         ImportTransactions.doImportTransactionsStep1(trxList)
     },
     inferTrxAmountAndType: (row, amountColumn, creditColumn, debitColumn) => {
@@ -245,7 +246,9 @@ var ImportTransactions = {
         } else if (creditColumn) {
             amount = StringUtils.convertStringToFloat(row[creditColumn])
             type = MYFIN.TRX_TYPES.INCOME
-        } else if (debitColumn) {
+        }
+
+        if (!amount && debitColumn) {
             amount = StringUtils.convertStringToFloat(row[debitColumn])
             type = MYFIN.TRX_TYPES.EXPENSE
         }
