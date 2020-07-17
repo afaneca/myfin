@@ -80,12 +80,14 @@ var AddBudgets = {
 
         $('.credit-input-current').each((i, input) => {
             let inputValue = $('#' + input.id).val()
-            incomeAcc += parseFloat(inputValue)
+            if (inputValue)
+                incomeAcc += parseFloat(inputValue)
         })
 
         $('.debit-input-current').each((i, input) => {
             let inputValue = $('#' + input.id).val()
-            expensesAcc += parseFloat(inputValue)
+            if (inputValue)
+                expensesAcc += parseFloat(inputValue)
         })
 
         $("#table_total_credit_current").text(StringUtils.formatStringToCurrency(incomeAcc))
@@ -134,8 +136,8 @@ var AddBudgets = {
                     <label for="${cat.category_id}" class="active">Valor (€)</label>
                 </div></td>
                 <td><div class="input-field inline">
-                    <input disabled id="${StringUtils.normalizeStringForHtml(cat.name)}_inline" value="${(isCredit) ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0') : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')}" type="number" class="validate ${(isCredit) ? 'credit-input-current' : 'debit-input-current'} input" min="0.00" value="0.00" step="0.01" required>
-                    <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline" class="active">Valor (€)</label>
+                    <input disabled id="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" value="${(isCredit) ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0') : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')}" type="number" class="validate ${(isCredit) ? 'credit-input-current' : 'debit-input-current'} input" min="0.00" value="0.00" step="0.01" required>
+                    <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" class="active">Valor (€)</label>
                 </div></td>
             </tr>
             <tr>
@@ -165,7 +167,7 @@ var AddBudgets = {
         $('.credit-input-estimated').each((i, input) => {
             let inputValue = $('#' + input.id).val()
             incomeAcc += parseFloat(inputValue)
-          // debugger
+            // debugger
         })
 
         $('.debit-input-estimated').each((i, input) => {
