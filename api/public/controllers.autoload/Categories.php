@@ -151,6 +151,11 @@ class Categories
             die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
 
+
+            BudgetHasCategoriesModel::delete([
+                "categories_category_id" => $categoryID,
+            ], false);
+
             CategoryModel::delete([
                 "category_id" => $categoryID,
                 "users_user_id" => $userID
