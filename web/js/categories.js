@@ -69,7 +69,7 @@ var Categories = {
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
                 <td>
-                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${StringUtils.normalizeStringForHtml(cats.description)}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${StringUtils.normalizeString(cats.description)}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
                     <i onClick="Categories.showRemoveCategoryModal('${cats.name}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
@@ -104,8 +104,8 @@ var Categories = {
         /*$('#category_type_select').formSelect();*/
     },
     addCategory: () => {
-        const catName = $("input#category_name").val()
-        const catDescription = $("textarea#category_description").val()
+        const catName = StringUtils.normalizeString($("input#category_name").val())
+        const catDescription = StringUtils.normalizeString($("textarea#category_description").val())
         /*const catType = $("select#category_type_select").val()*/
 
         if (!catName || catName === "" /*|| !catType || catType === ""*/) {
