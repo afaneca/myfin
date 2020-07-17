@@ -5,12 +5,12 @@ var StringUtils = {
         return parseFloat(str).toFixed(2) + "€"
     },
     normalizeStringForHtml: (str) => {
-        return StringUtils.removeLineBreaksFromString(str.replace(/\s/g, ' ').normalize("NFD").replace(/[\u0300-\u036f]/g, " ")
+        return StringUtils.removeLineBreaksFromString(str.replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "")
             .replace(/[^\wèéòàáùúìí\s]/gi, '').toLowerCase())
     },
     normalizeString: (str) => {
         return StringUtils.removeLineBreaksFromString(str.replace(/\s/g, ' ').normalize("NFC").replace(/[\u0300-\u036f]/g, " ")
-            .replace(/[^\wèéòàáùúìí\s]/gi, '').toLowerCase())
+            .replace(/[^\wèéòàáùúìí\s]/gi, ''))
     },
     getAccountTypeName: (tag) => {
         return account_types[tag]
