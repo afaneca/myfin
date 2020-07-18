@@ -130,8 +130,12 @@ var AddBudgets = {
     renderInputRow: (cat, isCredit) => {
         return `
             <tr>
-                <td>${cat.name}</td>
-                <td><div class="input-field inline">
+                <td><div class="tooltip">
+                        ${cat.name}
+                        <span class="tooltiptext">${cat.description}</span>
+                    </div>
+                 </td>
+                <td><div class="input-field inline tooltip">
                     <input ${(isOpen) ? "" : " disabled "} id="${cat.category_id}${(isCredit) ? 'credit' : 'debit'}" onClick="this.select();" value="${(isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0') : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')}" type="number" class="cat-input validate ${(isCredit) ? 'credit-input-estimated' : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" required>
                     <label for="${cat.category_id}" class="active">Valor (€)</label>
                 </div></td>
