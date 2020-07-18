@@ -287,6 +287,10 @@ class AccountModel extends Entity
         AccountModel::addCustomBalanceSnapshot($accountID, $beginMonth, $beginYear,
             $priorMonthsBalance, $transactional);
 
+       //Reset balance for next 2 months (in case there are no transactions in these months and the balance doesn't get recalculated
+        AccountModel::addCustomBalanceSnapshot($accountID, ($beginMonth < 12) ? $beginMonth + 1 : 1, ($beginMonth < 12) ? $beginYear : $beginYear + 1, Input::convertFloatToInteger($priorMonthsBalance), $transactional);
+        AccountModel::addCustomBalanceSnapshot($accountID, ($beginMonth < 11) ? $beginMonth + 2 : 1, ($beginMonth < 11) ? $beginYear : $beginYear + 1, Input::convertFloatToInteger($priorMonthsBalance), $transactional);
+
         if ($beginMonth > 1) $beginMonth--;
         else {
             $beginMonth = 1;
@@ -312,6 +316,7 @@ class AccountModel extends Entity
         die();*/
         $initialBalance = $priorMonthsBalance;//AccountModel::getBalanceSnapshotAtMonth($accountID, $beginMonth, $beginYear, $transactional)["balance"];
         if (!$initialBalance) $initialBalance = 0;
+
         /*echo($initialBalance);
         die();*/
         foreach ($trxList as $trx) {
@@ -336,7 +341,7 @@ class AccountModel extends Entity
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 11) ? $month + 2 : 1, ($month < 11) ? $year : $year + 1, Input::convertFloatToInteger($initialBalance), $transactional);
         }
 
-        //die();
+
     }
 
     private static function getAllTransactionsForAccountBetweenDates($accountID, $fromDate, $toDate, bool $transactional)
