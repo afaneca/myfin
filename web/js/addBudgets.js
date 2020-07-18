@@ -203,7 +203,7 @@ var AddBudgets = {
         $("textarea#budget_observations").text(value)
     },
     onConclusionClicked: () => {
-        let observations = StringUtils.normalizeString($("#budget_observations").val())
+        let observations = StringUtils.removeLineBreaksFromString($("#budget_observations").val())
         let datepickerValue = $("#budgets-monthpicker").val()
         let month = parseInt(datepickerValue.substring(0, 2))
         let year = parseInt(datepickerValue.substring(3, 7))

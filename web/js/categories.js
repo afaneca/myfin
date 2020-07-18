@@ -69,7 +69,7 @@ var Categories = {
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
                 <td>
-                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${StringUtils.normalizeString(cats.description)}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${StringUtils.removeLineBreaksFromString(cats.description).replace(/["']/g,'')}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
                     <i onClick="Categories.showRemoveCategoryModal('${cats.name}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
@@ -105,7 +105,7 @@ var Categories = {
     },
     addCategory: () => {
         const catName = StringUtils.normalizeString($("input#category_name").val())
-        const catDescription = StringUtils.normalizeString($("textarea#category_description").val())
+        const catDescription = StringUtils.removeLineBreaksFromString($("textarea#category_description").val()).replace(/["']/g,'')
         /*const catType = $("select#category_type_select").val()*/
 
         if (!catName || catName === "" /*|| !catType || catType === ""*/) {
