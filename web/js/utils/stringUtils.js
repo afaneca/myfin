@@ -21,7 +21,13 @@ var StringUtils = {
     convertStringToFloat: (str) => {
         if (!str) return str
         return parseFloat(str.replace(",", "."))
-    }
+    },
+    convertFloatToInteger: (floatVal) => {
+        return parseInt(floatVal * 100)
+    },
+    convertIntegerToFloat: (intVal) => {
+        return parseFloat(intVal / 100)
+    },
 }
 
 /* TYPES OF ACCOUNTS:

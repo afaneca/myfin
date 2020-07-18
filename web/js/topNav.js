@@ -27,32 +27,32 @@ var TopNav = {
         })
 
 
-        return savingsAndCurrentAccounts.reduce((acc, item) => {
-            return acc + parseFloat(item.balance)
-        }, 0)
+        return StringUtils.convertIntegerToFloat(savingsAndCurrentAccounts.reduce((acc, item) => {
+            return acc + StringUtils.convertFloatToInteger(parseFloat(item.balance))
+        }, 0))
     },
     calculateInvestmentsBalance: (accsArr) => {
         const investmentAccounts = accsArr.filter(function (acc) {
             return acc.type === "INVAC"
         })
 
-        return investmentAccounts.reduce((acc, item) => {
-            return acc + parseFloat(item.balance)
-        }, 0)
+        return StringUtils.convertIntegerToFloat(investmentAccounts.reduce((acc, item) => {
+            return acc + StringUtils.convertFloatToInteger(parseFloat(item.balance))
+        }, 0))
     },
     calculateCreditsBalance: (accsArr) => {
         const creditAccounts = accsArr.filter(function (acc) {
             return acc.type === "CREAC"
         })
 
-        return creditAccounts.reduce((acc, item) => {
-            return acc + parseFloat(item.balance)
-        }, 0)
+        return StringUtils.convertIntegerToFloat(creditAccounts.reduce((acc, item) => {
+            return acc + StringUtils.convertFloatToInteger(parseFloat(item.balance))
+        }, 0))
     },
     calculateCurrentPatrimony: (accsArr) => {
-        return accsArr.reduce((acc, item) => {
-            return acc + parseFloat(item.balance)
-        }, 0)
+        return StringUtils.convertIntegerToFloat(accsArr.reduce((acc, item) => {
+            return acc + StringUtils.convertFloatToInteger(parseFloat(item.balance))
+        }, 0))
     },
 }
 

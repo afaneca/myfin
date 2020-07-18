@@ -46,7 +46,7 @@ var Stats = {
             if (!tempList[elem]) continue
 
             let total = tempList[elem].reduce((acc, item) => {
-                return acc + parseFloat(item.balance)
+                return acc + StringUtils.convertFloatToInteger(item.balance)
             }, 0)
 
             for (const elem1 of accsList) {
@@ -64,7 +64,7 @@ var Stats = {
                 }
             }
 
-            cData["sum"].push(total)
+            cData["sum"].push(StringUtils.convertIntegerToFloat(total))
         }
 
 
