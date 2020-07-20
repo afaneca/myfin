@@ -342,3 +342,11 @@ nav ul a:hover {
     visibility: visible;
     opacity: 1;
 }
+
+.add-budget-bottom-btns {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    background: #f3f3f3;
+    padding: 10px;
+}
