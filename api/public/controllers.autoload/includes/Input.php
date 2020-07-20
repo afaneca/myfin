@@ -19,7 +19,7 @@ class Input
 
     public static function convertFloatToInteger($floatVal)
     {
-        return intval($floatVal * 100);
+        return /*intval(*/$floatVal * 100/*)*/;
     }
 
     public static function convertIntegerToFloat($intVal)

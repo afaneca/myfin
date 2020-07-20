@@ -342,3 +342,19 @@ nav ul a:hover {
     visibility: visible;
     opacity: 1;
 }
+
+.add-budget-bottom-btns {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    background: #f3f3f3;
+    padding: 10px;
+}
+
+.highlighted-budget-item {
+    background: -webkit-linear-gradient(45deg, #43a047, #1de9b6) !important;
+    background: linear-gradient(45deg, #43a047, #1de9b6) !important;
+    color: white !important;
+    margin: 80px !important;
+    height: 61px;
+}

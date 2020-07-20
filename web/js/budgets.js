@@ -48,8 +48,10 @@ var Budgets = {
         `
     },
     renderBudgetsRow: (budget) => {
+        const currentMonth = moment().month() + 1;
+        const currentYear = moment().year();
         return `
-            <tr data-id='${budget.budget_id}'>
+            <tr data-id='${budget.budget_id}' class="${(budget.month == currentMonth && budget.year == currentYear) ? 'highlighted-budget-item' : ''}">
                 <td>${budget.month}/${budget.year}</td>
                 <td>${budget.observations}</td>
                 <td><span class="${(budget.is_open == 1) ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${(budget.is_open == 1) ? "Aberto" : "Fechado"}</span></td>
