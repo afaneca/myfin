@@ -73,7 +73,8 @@ class BudgetHasCategoriesModel extends Entity
         $sql = "SELECT users_user_id, category_id, name, type, description, budgets_budget_id, truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit, truncate((coalesce(planned_amount_debit, 0) / 100), 2) as planned_amount_debit, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
             "FROM " .
             "(SELECT * FROM budgets_has_categories WHERE budgets_users_user_id = :userID AND (budgets_budget_id = :budgetID)) b " .
-            "RIGHT JOIN categories ON categories.category_id = b.categories_category_id ";
+            "RIGHT JOIN categories ON categories.category_id = b.categories_category_id " .
+            "WHERE users_user_id = :userID";
 
         $values = array();
         $values[':userID'] = $userID;
@@ -134,7 +135,7 @@ class BudgetHasCategoriesModel extends Entity
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT sum(if(type = 'I', amount, 0)) as 'category_balance_credit', sum(if(type = 'E', amount, 0)) as 'category_balance_debit' " .
+        $sql = "SELECT sum(if(type = 'I' OR type = 'T', amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR type = 'T', amount, 0)) as 'category_balance_debit' " .
             "FROM transactions " .
             "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
             "AND categories_category_id = :cat_id ";

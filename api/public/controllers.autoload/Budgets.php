@@ -189,7 +189,7 @@ class Budgets
             $userID = UserModel::getUserIdByName($authusername, false);
 
 
-            $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type"]);
+            $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type", "description"]);
 
             $list['categories'] = $catsArr;
             $list['initial_balance'] = "-";
