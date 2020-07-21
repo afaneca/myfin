@@ -320,8 +320,14 @@ var ImportTransactions = {
                 }
             },
             drawCallback: function () {
-                $('select.entities-select').select2();
-                $('select.categories-select').select2();
+                $('select.entities-select').select2({
+                    allowClear: true,
+                    placeholder: "Sem Entidade"
+                });
+                $('select.categories-select').select2({
+                    allowClear: true,
+                    placeholder: "Sem Categoria"
+                });
                 $('select.accounts-select2').select2();
                 $(".datepicker").datepicker({
 
