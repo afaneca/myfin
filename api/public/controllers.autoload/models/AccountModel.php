@@ -198,10 +198,14 @@ class AccountModel extends Entity
             "FROM balances_snapshot " .
             "LEFT JOIN accounts ON accounts.account_id = balances_snapshot.accounts_account_id " .
             "WHERE users_user_id = :userID " .
+            "AND month <= :month " .
+            "AND year <= :year " .
             "ORDER BY year ASC, month ASC";
 
         $values = array();
         $values[':userID'] = $userID;
+        $values[':month'] = date('m');
+        $values[':year'] = date("Y");
 
         try {
             $db->prepare($sql);
