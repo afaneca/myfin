@@ -135,7 +135,7 @@ class BudgetHasCategoriesModel extends Entity
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT sum(if(type = 'I', amount, 0)) as 'category_balance_credit', sum(if(type = 'E', amount, 0)) as 'category_balance_debit' " .
+        $sql = "SELECT sum(if(type = 'I' OR type = 'T', amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR type = 'T', amount, 0)) as 'category_balance_debit' " .
             "FROM transactions " .
             "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
             "AND categories_category_id = :cat_id ";
