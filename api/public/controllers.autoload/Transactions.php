@@ -138,7 +138,7 @@ class Transactions
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 3);
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 4);
 
-            if (array_key_exists('entity_id', $request->getParsedBody())) {
+            if (array_key_exists('entity_id', $request->getParsedBody()) && $request->getParsedBody()['entity_id'] !== "") {
                 $entityID = Input::validate($request->getParsedBody()['entity_id'], Input::$INT, 5);
             } else {
                 $entityID = null;
@@ -156,7 +156,13 @@ class Transactions
                 $accountTo = null;
             }
 
-            $categoryID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 8);
+            if (array_key_exists('category_id', $request->getParsedBody()) && $request->getParsedBody()['category_id'] !== "") {
+                $categoryID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 8);
+            } else {
+                $categoryID = null;
+            }
+
+            //$categoryID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 8);
 
             if (array_key_exists('date_timestamp', $request->getParsedBody())) {
                 $date_timestamp = Input::validate($request->getParsedBody()['date_timestamp'], Input::$INT, 9);
@@ -328,7 +334,7 @@ class Transactions
             $type = Input::validate($request->getParsedBody()['new_type'], Input::$STRICT_STRING, 3);
             $description = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 4);
 
-            if (array_key_exists('new_entity_id', $request->getParsedBody())) {
+            if (array_key_exists('new_entity_id', $request->getParsedBody()) && $request->getParsedBody()['new_entity_id'] !== "") {
                 $entityID = Input::validate($request->getParsedBody()['new_entity_id'], Input::$INT, 5);
             } else {
                 $entityID = null;
@@ -346,7 +352,13 @@ class Transactions
                 $accountTo = null;
             }
 
-            $categoryID = Input::validate($request->getParsedBody()['new_category_id'], Input::$INT, 8);
+            if (array_key_exists('new_category_id', $request->getParsedBody()) && $request->getParsedBody()['new_category_id'] !== "") {
+                $categoryID = Input::validate($request->getParsedBody()['new_category_id'], Input::$INT, 8);
+            } else {
+                $categoryID = null;
+            }
+
+            //$categoryID = Input::validate($request->getParsedBody()['new_category_id'], Input::$INT, 8);
 
             if (array_key_exists('new_date_timestamp', $request->getParsedBody())) {
                 $date_timestamp = Input::validate($request->getParsedBody()['new_date_timestamp'], Input::$INT, 9);

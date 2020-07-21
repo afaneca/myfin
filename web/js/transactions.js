@@ -150,11 +150,17 @@ var Transactions = {
                     <a onClick="Transactions.addTransaction()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
                 $("#modal-global .modal-content").html(txt);
                 $("#modal-global .modal-footer").html(actionLinks);
-                $('select.select-trxs-entities').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-entities').select2({
+                    dropdownParent: "#modal-global", allowClear: true,
+                    placeholder: "Sem Entidade"
+                });
                 $('select.select-trxs-account_to').select2({dropdownParent: "#modal-global"});
                 $('select.select-trxs-account_from').select2({dropdownParent: "#modal-global"});
                 $('select.select-trxs-types').select2({dropdownParent: "#modal-global"});
-                $('select.select-trxs-categories').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-categories').select2({
+                    dropdownParent: "#modal-global", allowClear: true,
+                    placeholder: "Sem Categoria"
+                });
                 $(".datepicker").datepicker({
                     defaultDate: new Date(),
                     setDefaultDate: true,
@@ -241,7 +247,7 @@ var Transactions = {
         const date_timestamp = DateUtils.convertDateToUnixTimestamp($(".datepicker").val())
 
 
-        if (!ValidationUtils.checkIfFieldsAreFilled([amount, type, entID, catID, date_timestamp])) {
+        if (!ValidationUtils.checkIfFieldsAreFilled([amount, type, date_timestamp])) {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
         }
@@ -365,11 +371,17 @@ var Transactions = {
                 $("#modal-global .modal-content").html(txt);
                 $("#modal-global .modal-footer").html(actionLinks);
 
-                $('select.select-trxs-entities').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-entities').select2({
+                    dropdownParent: "#modal-global", allowClear: true,
+                    placeholder: "Sem Entidade"
+                });
                 $('select.select-trxs-account_to').select2({dropdownParent: "#modal-global"});
                 $('select.select-trxs-account_from').select2({dropdownParent: "#modal-global"});
                 $('select.select-trxs-types').select2({dropdownParent: "#modal-global"});
-                $('select.select-trxs-categories').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-categories').select2({
+                    dropdownParent: "#modal-global", allowClear: true,
+                    placeholder: "Sem Categoria"
+                });
                 $(".datepicker").datepicker({
                     defaultDate: new Date(DateUtils.convertUnixTimestampToDateFormat(selectedDateTimestamp)),
                     setDefaultDate: true,
@@ -417,7 +429,7 @@ var Transactions = {
         const new_date_timestamp = DateUtils.convertDateToUnixTimestamp($(".datepicker").val())
 
 
-        if (!ValidationUtils.checkIfFieldsAreFilled([new_amount, new_type, new_entity_id, new_category_id, new_date_timestamp])) {
+        if (!ValidationUtils.checkIfFieldsAreFilled([new_amount, new_type, new_date_timestamp])) {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
             return
         }
