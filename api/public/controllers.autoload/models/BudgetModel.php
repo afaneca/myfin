@@ -73,7 +73,8 @@ class BudgetHasCategoriesModel extends Entity
         $sql = "SELECT users_user_id, category_id, name, type, description, budgets_budget_id, truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit, truncate((coalesce(planned_amount_debit, 0) / 100), 2) as planned_amount_debit, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
             "FROM " .
             "(SELECT * FROM budgets_has_categories WHERE budgets_users_user_id = :userID AND (budgets_budget_id = :budgetID)) b " .
-            "RIGHT JOIN categories ON categories.category_id = b.categories_category_id ";
+            "RIGHT JOIN categories ON categories.category_id = b.categories_category_id " .
+            "WHERE users_user_id = :userID";
 
         $values = array();
         $values[':userID'] = $userID;
