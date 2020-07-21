@@ -329,7 +329,7 @@ class AccountModel extends Entity
 
             if ($trxType == DEFAULT_TYPE_EXPENSE_TAG
                 || ($trxType == DEFAULT_TYPE_TRANSFER_TAG && $trx["accounts_account_from_id"]
-                && $trx["accounts_account_from_id"] == $$accountID)) {
+                && $trx["accounts_account_from_id"] == $accountID)) {
                 $trxAmount *= -1;
             }
             //print_r($trxList);
