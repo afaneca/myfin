@@ -23,6 +23,9 @@ var AddBudgets = {
             AddBudgets.initBudget(budgetID)
         }
 
+        $('.tooltipped').tooltip();
+        $('.collapsible').collapsible();
+
 
     },
     initBudget: budgetID => {
@@ -146,7 +149,14 @@ var AddBudgets = {
             </tr>
             <tr>
                 <td colspan="3">
-                    <progress class="faneca-progressbar cat_progressbar_${cat.category_id}" value="${ProgressbarUtils.getCorrectPercentageValue(parseFloat((isCredit) ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0') : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')), parseFloat((isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0') : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')))}" max="100"></progress>
+                    <div id="modded">
+                        <div class="progress medium-dark-gray-bg tooltipped" data-position="top" data-tooltip="${AddBudgets.buildCatTooltipText(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
+                            <span>${cat.name}</span>
+                            <div class="determinate ${isCredit ? 'red-gradient-bg' : 'green-gradient-bg'}" style="width: ${AddBudgets.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
+                                ${AddBudgets.getCorrectPercentageValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%
+                             </div>
+                        </div>
+                    </div>
                  </td>
             </tr>
         `
@@ -157,6 +167,16 @@ var AddBudgets = {
                     <label for="${cat}_inline">Valor (€)</label>
                 </div>
         </div> */
+    },
+    buildCatTooltipText: (current_amount_credit, current_amount_debit, planned_amount_credit, planned_amount_debit, isCredit) => {
+        return "Gastou mais 2.35€ do que o planeado"
+    },
+    getCorrectPercentageValue: (current_amount_credit, current_amount_debit, planned_amount_credit, planned_amount_debit, isCredit) => {
+
+        return ProgressbarUtils.getCorrectPercentageValue(parseFloat((isCredit) ? ((current_amount_credit) ? current_amount_credit : '0') : ((current_amount_debit) ? current_amount_debit : '0')), parseFloat((isCredit) ? ((planned_amount_credit) ? planned_amount_credit : '0') : ((planned_amount_debit) ? planned_amount_debit : '0')))
+    },
+    getCorrectPercentageValueWithMaximumValue: (current_amount_credit, current_amount_debit, planned_amount_credit, planned_amount_debit, isCredit, maximumValue = 100) => {
+        return ProgressbarUtils.getCorrectPercentageValueWithMaximumValue(parseFloat((isCredit) ? ((current_amount_credit) ? current_amount_credit : '0') : ((current_amount_debit) ? current_amount_debit : '0')), parseFloat((isCredit) ? ((planned_amount_credit) ? planned_amount_credit : '0') : ((planned_amount_debit) ? planned_amount_debit : '0')), maximumValue)
     },
     setupInputListenersAndUpdateSummary: (expensesID, incomeID, balanceID) => {
         $('.input').change((input) => {
