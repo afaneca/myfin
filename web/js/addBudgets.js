@@ -193,7 +193,7 @@ var AddBudgets = {
         $("#estimated_closing_balance_value_percentage").text(AddBudgets.calculatePercentageIncrease(BUDGET_INITIAL_BALANCE, (parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
     },
     calculatePercentageIncrease: (val1, val2) => {
-        return (((parseFloat(val2) - parseFloat(val1)) / parseFloat(val1)) * 100).toFixed(2)
+        return (((parseFloat(val2) - parseFloat(val1)) / Math.abs(parseFloat(val1))) * 100).toFixed(2)
     },
     setMonthPickerValue: (month, year) => {
         PickerUtils.setupMonthPickerWithDefaultDate("#budgets-monthpicker", month, year, () => {
