@@ -2,9 +2,11 @@
 
 let currentBudgetID;
 let BUDGET_INITIAL_BALANCE;
+let IS_OPEN
 
 var AddBudgets = {
     init: (isOpen, isNew, budgetID) => {
+        IS_OPEN = isOpen
         currentBudgetID = budgetID;
         if (isOpen == true) {
             $("#conclusion-close-btn").show()
@@ -188,13 +190,29 @@ var AddBudgets = {
         let incomeAcc = 0.00;
         let balance = 0.00;
 
-        $('.credit-input-estimated').each((i, input) => {
+        let creditAmoutsClassSelector
+        let debitAmoutsClassSelector
+
+        if(IS_OPEN){
+            creditAmoutsClassSelector = ".credit-input-estimated"
+            debitAmoutsClassSelector = ".debit-input-estimated"
+        } else{
+            creditAmoutsClassSelector = ".credit-input-current"
+            debitAmoutsClassSelector = ".debit-input-current"
+
+            // Also update labels
+            $("span#estimated_expenses_label").text("Despesas Reais")
+            $("span#estimated_balance_label").text("Balanço Real")
+            $("span#estimated_income_label").text("Renda Real")
+        }
+
+        $(creditAmoutsClassSelector).each((i, input) => {
             let inputValue = $('#' + input.id).val()
             incomeAcc += parseFloat(inputValue)
             // debugger
         })
 
-        $('.debit-input-estimated').each((i, input) => {
+        $(debitAmoutsClassSelector).each((i, input) => {
             let inputValue = $("#" + input.id).val()
             expensesAcc += parseFloat(inputValue)
         })
