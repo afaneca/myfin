@@ -349,6 +349,7 @@ nav ul a:hover {
     bottom: 0;
     background: #f3f3f3;
     padding: 10px;
+    z-index: 999999999999 !important;
 }
 
 .highlighted-budget-item {
