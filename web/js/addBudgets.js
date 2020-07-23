@@ -2,9 +2,11 @@
 
 let currentBudgetID;
 let BUDGET_INITIAL_BALANCE;
+let IS_OPEN
 
 var AddBudgets = {
     init: (isOpen, isNew, budgetID) => {
+        IS_OPEN = isOpen
         currentBudgetID = budgetID;
         if (isOpen == true) {
             $("#conclusion-close-btn").show()
@@ -22,6 +24,9 @@ var AddBudgets = {
             $("#conclusion-btn-text").text("Atualizar Orçamento")
             AddBudgets.initBudget(budgetID)
         }
+
+        $('.tooltipped').tooltip();
+        $('.collapsible').collapsible();
 
 
     },
@@ -146,7 +151,14 @@ var AddBudgets = {
             </tr>
             <tr>
                 <td colspan="3">
-                    <progress class="faneca-progressbar cat_progressbar_${cat.category_id}" value="${ProgressbarUtils.getCorrectPercentageValue(parseFloat((isCredit) ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0') : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')), parseFloat((isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0') : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')))}" max="100"></progress>
+                    <div id="modded">
+                        <div class="progress medium-dark-gray-bg tooltipped" data-position="top" data-tooltip="${AddBudgets.buildCatTooltipText(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
+                            <span>${cat.name}</span>
+                            <div class="determinate ${isCredit ? 'red-gradient-bg' : 'green-gradient-bg'}" style="width: ${AddBudgets.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
+                                ${AddBudgets.getCorrectPercentageValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%
+                             </div>
+                        </div>
+                    </div>
                  </td>
             </tr>
         `
@@ -158,6 +170,16 @@ var AddBudgets = {
                 </div>
         </div> */
     },
+    buildCatTooltipText: (current_amount_credit, current_amount_debit, planned_amount_credit, planned_amount_debit, isCredit) => {
+        return "Gastou mais 2.35€ do que o planeado"
+    },
+    getCorrectPercentageValue: (current_amount_credit, current_amount_debit, planned_amount_credit, planned_amount_debit, isCredit) => {
+
+        return ProgressbarUtils.getCorrectPercentageValue(parseFloat((isCredit) ? ((current_amount_credit) ? current_amount_credit : '0') : ((current_amount_debit) ? current_amount_debit : '0')), parseFloat((isCredit) ? ((planned_amount_credit) ? planned_amount_credit : '0') : ((planned_amount_debit) ? planned_amount_debit : '0')))
+    },
+    getCorrectPercentageValueWithMaximumValue: (current_amount_credit, current_amount_debit, planned_amount_credit, planned_amount_debit, isCredit, maximumValue = 100) => {
+        return ProgressbarUtils.getCorrectPercentageValueWithMaximumValue(parseFloat((isCredit) ? ((current_amount_credit) ? current_amount_credit : '0') : ((current_amount_debit) ? current_amount_debit : '0')), parseFloat((isCredit) ? ((planned_amount_credit) ? planned_amount_credit : '0') : ((planned_amount_debit) ? planned_amount_debit : '0')), maximumValue)
+    },
     setupInputListenersAndUpdateSummary: (expensesID, incomeID, balanceID) => {
         $('.input').change((input) => {
             AddBudgets.updateSummaryValues(expensesID, incomeID, balanceID)
@@ -168,13 +190,29 @@ var AddBudgets = {
         let incomeAcc = 0.00;
         let balance = 0.00;
 
-        $('.credit-input-estimated').each((i, input) => {
+        let creditAmoutsClassSelector
+        let debitAmoutsClassSelector
+
+        if(IS_OPEN){
+            creditAmoutsClassSelector = ".credit-input-estimated"
+            debitAmoutsClassSelector = ".debit-input-estimated"
+        } else{
+            creditAmoutsClassSelector = ".credit-input-current"
+            debitAmoutsClassSelector = ".debit-input-current"
+
+            // Also update labels
+            $("span#estimated_expenses_label").text("Despesas Reais")
+            $("span#estimated_balance_label").text("Balanço Real")
+            $("span#estimated_income_label").text("Renda Real")
+        }
+
+        $(creditAmoutsClassSelector).each((i, input) => {
             let inputValue = $('#' + input.id).val()
             incomeAcc += parseFloat(inputValue)
             // debugger
         })
 
-        $('.debit-input-estimated').each((i, input) => {
+        $(debitAmoutsClassSelector).each((i, input) => {
             let inputValue = $("#" + input.id).val()
             expensesAcc += parseFloat(inputValue)
         })
@@ -193,7 +231,7 @@ var AddBudgets = {
         $("#estimated_closing_balance_value_percentage").text(AddBudgets.calculatePercentageIncrease(BUDGET_INITIAL_BALANCE, (parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
     },
     calculatePercentageIncrease: (val1, val2) => {
-        return (((parseFloat(val2) - parseFloat(val1)) / parseFloat(val1)) * 100).toFixed(2)
+        return (((parseFloat(val2) - parseFloat(val1)) / Math.abs(parseFloat(val1))) * 100).toFixed(2)
     },
     setMonthPickerValue: (month, year) => {
         PickerUtils.setupMonthPickerWithDefaultDate("#budgets-monthpicker", month, year, () => {

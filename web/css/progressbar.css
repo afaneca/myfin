@@ -17,7 +17,7 @@ progress::-webkit-progress-bar {
 
 
 /* source = https://css-tricks.com/html5-progress-element/ */
-progress[value]::-webkit-progress-value {
+/*progress[value]::-webkit-progress-value {
     background-image: -webkit-linear-gradient(-45deg,
     transparent 33%, rgba(0, 0, 0, .1) 33%,
     rgba(0, 0, 0, .1) 66%, transparent 66%),
@@ -28,7 +28,21 @@ progress[value]::-webkit-progress-value {
 
     border-radius: 2px;
     background-size: 35px 20px, 100% 100%, 100% 100%;
+}*/
+
+progress[value]::-webkit-progress-value.cat_progressbar_credit {
+    background-color: black;
+
+    border-radius: 2px;
+    background-size: 35px 20px, 100% 100%, 100% 100%;
 }
+
+/* https://css-tricks.com/html5-progress-element/ */
+/*progress[value]::-webkit-progress-bar {
+    background-color: #eee;
+    border-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+}*/
 
 /* ANIMATIONS */
 @-webkit-keyframes animate-stripes {
@@ -37,8 +51,66 @@ progress[value]::-webkit-progress-value {
     }
 }
 
-@keyframes animate-stripes {
-    100% {
-        background-position: -100px 0px;
+/* https://codepen.io/j_holtslander/pen/pYvKdg */
+#modded .progress {
+    min-height: 36px;
+    overflow: hidden;
+    position: relative;
+}
+#modded .progress span {
+    position: relative;
+    float: left;
+    color: #fff;
+    padding: 8px;
+    z-index: 99999;
+}
+#modded .progress span i {
+    width: inherit;
+    font-size: inherit;
+    position: relative;
+    top: 2px;
+    margin-left: 8px;
+}
+#modded .progress .determinate {
+    width: 0;
+    -webkit-transition: width 1s ease-in-out;
+    transition: width 1s ease-in-out;
+    padding: 8px;
+    position: relative;
+    color: #fff;
+    text-align: right;
+    white-space: nowrap;
+}
+#modded ul.collapsible {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+#modded ul.collapsible li {
+    margin-bottom: 14px;
+}
+#modded ul.collapsible .collapsible-header {
+    padding: 0;
+    border-bottom: 0;
+}
+#modded ul.collapsible .collapsible-header .progress {
+    margin: 0;
+    border-radius: 0;
+}
+#modded ul.collapsible .collapsible-body {
+    padding: 16px;
+    box-shadow: rgba(0, 0, 0, 0.137255) 0px 2px 2px 0px, rgba(0, 0, 0, 0.117647) 0px 3px 1px -2px, rgba(0, 0, 0, 0.2) 0px 1px 5px 0px;
+}
+
+@-webkit-keyframes grow {
+    from {
+        width: 0;
+    }
+}
+
+@keyframes grow {
+    from {
+        width: 0;
     }
 }

@@ -1,8 +1,8 @@
 <div id="page-wrapper">
     <div class="card-panel">
         <span class="blue-text text-darken-2">Novo Orçamento</span>
-        <a class="waves-effect waves-light btn right-align green-gradient-bg" style="margin: 10px; float:right;"><i
-                class="material-icons left">add_circle</i>Clonar mês anterior</a>
+        <a class="waves-effect waves-light btn right-align <!--green-gradient-bg--> disabled" style="margin: 10px; float:right;"><i
+                class="material-icons left">add_circle</i>Clonar outro orçamento</a>
         <div class="row" style="margin-top:25px">
             <div class="col s2">
                 <input id="budgets-monthpicker" type="text" placeholder="Escolha um mês"/>
@@ -18,13 +18,13 @@
                 <div class="card blue-gradient-bg darken-1">
                     <div class="card-content white-text">
                         <div class="row">
-                            <div class="col s4 center-align">Despesa Estimada<br><span id="estimated_expenses_value"
+                            <div class="col s4 center-align"><span id="estimated_expenses_label">Despesa Estimada</span><br><span id="estimated_expenses_value"
                                                                                        class="new-budget-summary-card-values">0.00</span>
                             </div>
-                            <div class="col s4 center-align">Balanço Estimado<br><span id="estimated_balance_value"
+                            <div class="col s4 center-align"><span id="estimated_balance_label">Balanço Estimado</span><br><span id="estimated_balance_value"
                                                                                        class="new-budget-summary-card-values">0.00</span>
                             </div>
-                            <div class="col s4 center-align">Renda Estimada<br><span id="estimated_income_value"
+                            <div class="col s4 center-align"><span id="estimated_income_label">Renda Estimada</span><br><span id="estimated_income_value"
                                                                                      class="new-budget-summary-card-values">0.00</span>
                             </div>
                         </div>
@@ -81,10 +81,15 @@
     }) */
 
 
+    $(document).ready(function () {
+        $('.tooltipped').tooltip();
+    });
+
     var isNew = (configs.getUrlArgs()["new"]) ? (configs.getUrlArgs()["new"] === 'true') : false;
     var isOpen = (configs.getUrlArgs()["open"]) ? (configs.getUrlArgs()["open"] === 'true') : false;
     var budgetID = configs.getUrlArgs()["id"];
 
     AddBudgets.init(isOpen, isNew, budgetID)
+
 
 </script>

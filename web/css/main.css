@@ -10,6 +10,7 @@
     --dark-grey: #262626;
     --light-grey: #f3f3f3;
     --medium-grey: #938f8f;
+    --medium-dark-grey: #aaa;
     --main-blue-background: #141f31;
     --sidebar_width_percentage: 12%;
 }
@@ -32,7 +33,6 @@
     width: 100%;
     margin-bottom: 25px;
 }
-
 
 
 .card-panel {
@@ -154,6 +154,14 @@ nav ul a:hover {
 
 .medium-gray-bg {
     background: var(--medium-grey)
+}
+
+.medium-dark-gray-bg {
+    background: var(--medium-dark-grey)
+}
+
+.medium-dark-gray-color {
+    color: var(--medium-dark-grey)
 }
 
 .medium-gray-color {
@@ -349,6 +357,7 @@ nav ul a:hover {
     bottom: 0;
     background: #f3f3f3;
     padding: 10px;
+    z-index: 999999999999 !important;
 }
 
 .highlighted-budget-item {

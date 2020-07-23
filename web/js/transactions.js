@@ -47,8 +47,8 @@ var Transactions = {
                 <td>${Transactions.formatTypeToString(trx.type, trx.account_from_name, trx.account_to_name)}</td>
                 <td>${StringUtils.formatStringToCurrency(trx.amount)}</td>
                 <td>${trx.description}</td>
-                <td>${trx.entity_name}</td>
-                <td>${trx.category_name}</td>
+                <td>${(trx.entity_name) ? trx.entity_name : "<span class='medium-gray-color'>Sem Entidade</span>"}</td>
+                <td>${(trx.category_name) ? trx.category_name : "<span class='medium-gray-color'>Sem Categoria</span>"}</td>
                 <td>
                     <i onClick="Transactions.showEditTransactionModal(${trx.transaction_id}, ${trx.amount}, ${trx.date_timestamp}, ${trx.entity_id}, ${trx.categories_category_id}, ${trx.accounts_account_from_id}, ${trx.accounts_account_to_id}, '${trx.type}', '${StringUtils.removeLineBreaksFromString(trx.description)}')" class="material-icons table-action-icons">create</i>
                     <i onClick="Transactions.showRemoveTransactionModal(${trx.transaction_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
