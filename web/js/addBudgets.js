@@ -154,7 +154,7 @@ var AddBudgets = {
                     <div id="modded">
                         <div class="progress medium-dark-gray-bg tooltipped" data-position="top" data-tooltip="${AddBudgets.buildCatTooltipText(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
                             <span>${cat.name}</span>
-                            <div class="determinate ${isCredit ? 'red-gradient-bg' : 'green-gradient-bg'}" style="width: ${AddBudgets.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
+                            <div class="determinate ${isCredit ? 'green-gradient-bg' : 'red-gradient-bg'}" style="width: ${AddBudgets.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
                                 ${AddBudgets.getCorrectPercentageValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%
                              </div>
                         </div>
