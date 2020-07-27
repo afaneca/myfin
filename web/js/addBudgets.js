@@ -43,6 +43,20 @@ var AddBudgets = {
             const month = resp['month']
             const year = resp['year']
 
+            /* Reorder categories list */
+            if(isOpen){
+                allCategories.sort((a, b) => {
+                    return parseFloat((Math.abs(b.planned_amount_credit) + Math.abs(b.planned_amount_debit)) - (Math.abs(a.planned_amount_credit) + Math.abs(a.planned_amount_debit)))
+                })
+            } else{
+                allCategories.sort((a, b) => {
+                    return parseFloat((Math.abs(b.current_amount_credit) + Math.abs(b.current_amount_debit)) - (Math.abs(a.current_amount_credit) + Math.abs(a.current_amount_debit)))
+                })
+            }
+
+
+
+
             AddBudgets.setMonthPickerValue(month, year)
             AddBudgets.setInitialBalance(BUDGET_INITIAL_BALANCE)
             AddBudgets.setObservations(observations)
@@ -135,22 +149,22 @@ var AddBudgets = {
     renderInputRow: (cat, isCredit) => {
         return `
             <tr>
-                <td><div class="tooltip">
+                <td style="padding:0px !important;"><div class="tooltip">
                         ${cat.name}
                         <span class="tooltiptext">${cat.description}</span>
                     </div>
                  </td>
-                <td><div class="input-field inline tooltip">
+                <td style="padding:0px !important;"><div class="input-field inline tooltip">
                     <input ${(isOpen) ? "" : " disabled "} id="${cat.category_id}${(isCredit) ? 'credit' : 'debit'}" onClick="this.select();" value="${(isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0') : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')}" type="number" class="cat-input validate ${(isCredit) ? 'credit-input-estimated' : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" required>
                     <label for="${cat.category_id}" class="active">Valor (€)</label>
                 </div></td>
-                <td><div class="input-field inline">
+                <td style="padding:0px !important;"><div class="input-field inline">
                     <input disabled id="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" value="${(isCredit) ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0') : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')}" type="number" class="validate ${(isCredit) ? 'credit-input-current' : 'debit-input-current'} input" min="0.00" value="0.00" step="0.01" required>
                     <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" class="active">Valor (€)</label>
                 </div></td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="3" style="padding:0px !important;">
                     <div id="modded">
                         <div class="progress medium-dark-gray-bg tooltipped" data-position="top" data-tooltip="${AddBudgets.buildCatTooltipText(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
                             <span>${cat.name}</span>
@@ -193,10 +207,10 @@ var AddBudgets = {
         let creditAmoutsClassSelector
         let debitAmoutsClassSelector
 
-        if(IS_OPEN){
+        if (IS_OPEN) {
             creditAmoutsClassSelector = ".credit-input-estimated"
             debitAmoutsClassSelector = ".debit-input-estimated"
-        } else{
+        } else {
             creditAmoutsClassSelector = ".credit-input-current"
             debitAmoutsClassSelector = ".debit-input-current"
 
