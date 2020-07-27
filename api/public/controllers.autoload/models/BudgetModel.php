@@ -133,9 +133,19 @@ class BudgetHasCategoriesModel extends Entity
 
     public static function getAmountForCategoryInMonth($category_id, $month, $year, $transactional = false)
     {
+        $listOfAccountsToExclude = AccountModel::getWhere(["exclude_from_budgets" => true]);
+        if (!$listOfAccountsToExclude || sizeof($listOfAccountsToExclude) == 0) {
+            $accsExclusionSQLExcerptAccountsTo = " 1 = 1 ";
+            $accsExclusionSQLExcerptAccountsFrom = " 1 = 1 ";
+        } else {
+            $accountsToExcludeListInSQL = BudgetHasCategoriesModel::buildSQLForExcludedAccountsList($listOfAccountsToExclude);
+            $accsExclusionSQLExcerptAccountsTo = "accounts_account_to_id NOT IN $accountsToExcludeListInSQL ";
+            $accsExclusionSQLExcerptAccountsFrom = "accounts_account_from_id NOT IN $accountsToExcludeListInSQL ";
+        }
+
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT sum(if(type = 'I' OR type = 'T', amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR type = 'T', amount, 0)) as 'category_balance_debit' " .
+        $sql = "SELECT sum(if(type = 'I' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsTo), amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsFrom), amount, 0)) as 'category_balance_debit' " .
             "FROM transactions " .
             "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
             "AND categories_category_id = :cat_id ";
@@ -175,6 +185,27 @@ class BudgetHasCategoriesModel extends Entity
         } catch (Exception $e) {
             return $e;
         }
+    }
+
+    private static function buildSQLForExcludedAccountsList($excludedAccs)
+    {
+        if (!$excludedAccs || sizeof($excludedAccs) == 0) return " 1 = 1 ";
+        /*print_r($excludedAccs);
+        die();*/
+        $sql = " (";
+
+        for ($cnt = 0; $cnt < sizeof($excludedAccs); $cnt++) {
+            $acc = $excludedAccs[$cnt]["account_id"];
+            $sql .= " '$acc'";
+
+            if ($cnt != (sizeof($excludedAccs) - 1)) {
+                $sql .= ", ";
+            }
+        }
+
+        $sql .= ") ";
+
+        return $sql;
     }
 
 }
