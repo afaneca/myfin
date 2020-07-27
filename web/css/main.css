@@ -367,3 +367,9 @@ nav ul a:hover {
     margin: 80px !important;
     height: 61px;
 }
+
+/* End tooltip */
+
+#chart-angular-target-goals {
+    min-height: 316px;
+}
