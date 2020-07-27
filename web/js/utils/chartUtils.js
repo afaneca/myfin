@@ -89,13 +89,36 @@ var chartUtils = {
                     sidePadding: 10 // Defualt is 20 (as a percentage)
                 }
             },
+            legend: {
+                display: false
+            },
             title: {
                 display: true,
                 text: "Overview Mensal",
                 position: "bottom"
             },
-            legend: {
-                display: false
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                        var dataset = data['datasets'][0]
+                        //debugger
+                        //var metaData = dataset["_meta"].find(x => x !== undefined);
+                        var totalAmount = (() => {
+                            return dataset.data.reduce((acc, item) => {
+                                return acc + Math.abs(parseFloat(item))
+                            }, 0)
+                        })()
+                        //debugger
+                        var percent = Math.abs(Math.round((dataset['data'][tooltipItem['index']] / totalAmount) * 100))
+                        return '(' + percent + '%)'
+                    }
+                }
             }
         }
 
@@ -116,6 +139,30 @@ var chartUtils = {
                 display: true,
                 text: chartTitle,
                 position: "top"
+            },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        debugger
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                        var dataset = data['datasets'][0]
+                        //debugger
+                        //var metaData = dataset["_meta"].find(x => x !== undefined);
+                        var totalAmount = (() => {
+                            return dataset.data.reduce((acc, item) => {
+                                return acc + Math.abs(parseFloat(item))
+                            }, 0)
+                        })()
+                        //debugger
+                        var percent = Math.abs(Math.round((dataset['data'][tooltipItem['index']] / totalAmount) * 100))
+                        return '(' + percent + '%)'
+                    }
+                }
             }
         }
 
