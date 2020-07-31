@@ -323,7 +323,8 @@ nav ul a:hover {
 
     /* Position the tooltip text */
     position: absolute;
-    z-index: 1;
+    /*z-index: 1;*/
+    z-index: 2222222;
     bottom: 125%;
     left: 50%;
     margin-left: -60px;

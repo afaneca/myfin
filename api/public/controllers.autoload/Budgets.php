@@ -97,6 +97,54 @@ class Budgets
         }
     }
 
+    public static function getBudgetsListForUser(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+            } else {
+                $mobile = false;
+            }
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction(); */
+
+            /* echo "1";
+            die(); */
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+            $budgetsArr = BudgetModel::getWhere(["users_user_id" => $userID], ["month", "year", "budget_id"]);
+
+            // orders the list DESC by year, then month
+            usort($budgetsArr, function ($a, $b) {
+                $rdiff = $b['year'] - $a['year'];
+                if ($rdiff) return $rdiff;
+                return $b['month'] - $a['month'];
+            });
+
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $budgetsArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+
     public static function getBudget(Request $request, Response $response, $args)
     {
         try {
@@ -430,6 +478,7 @@ class Budgets
 }
 
 $app->get('/budgets/', 'Budgets::getAllBudgetsForUser');
+$app->get('/budgets/list', 'Budgets::getBudgetsListForUser');
 $app->get('/budgets/{id}', 'Budgets::getBudget');
 $app->post('/budgets/step0', 'Budgets::addBudgetStep0');
 $app->post('/budgets/step1', 'Budgets::addBudget');
