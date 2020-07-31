@@ -1,7 +1,8 @@
 <div id="page-wrapper">
     <div class="card-panel">
         <span class="blue-text text-darken-2">Novo Orçamento</span>
-        <a class="waves-effect waves-light btn right-align <!--green-gradient-bg--> disabled" style="margin: 10px; float:right;"><i
+        <a id="clone-month-btn" class="waves-effect waves-light btn right-align"
+           onClick="AddBudgets.onCloneMonthClicked()" style="margin: 10px; float:right;"><i
                 class="material-icons left">add_circle</i>Clonar outro orçamento</a>
         <div class="row" style="margin-top:25px">
             <div class="col s2">
@@ -18,14 +19,18 @@
                 <div class="card blue-gradient-bg darken-1">
                     <div class="card-content white-text">
                         <div class="row">
-                            <div class="col s4 center-align"><span id="estimated_expenses_label">Despesa Estimada</span><br><span id="estimated_expenses_value"
-                                                                                       class="new-budget-summary-card-values">0.00</span>
+                            <div class="col s4 center-align"><span id="estimated_expenses_label">Despesa Estimada</span><br><span
+                                    id="estimated_expenses_value"
+                                    class="new-budget-summary-card-values">0.00</span>
                             </div>
-                            <div class="col s4 center-align"><span id="estimated_balance_label">Balanço Estimado</span><br><span id="estimated_balance_value"
-                                                                                       class="new-budget-summary-card-values">0.00</span>
+                            <div class="col s4 center-align"><span
+                                    id="estimated_balance_label">Balanço Estimado</span><br><span
+                                    id="estimated_balance_value"
+                                    class="new-budget-summary-card-values">0.00</span>
                             </div>
-                            <div class="col s4 center-align"><span id="estimated_income_label">Renda Estimada</span><br><span id="estimated_income_value"
-                                                                                     class="new-budget-summary-card-values">0.00</span>
+                            <div class="col s4 center-align"><span id="estimated_income_label">Renda Estimada</span><br><span
+                                    id="estimated_income_value"
+                                    class="new-budget-summary-card-values">0.00</span>
                             </div>
                         </div>
                         <div class="row">
@@ -74,7 +79,7 @@
 
     </div>
 </div>
-
+<script src="../js/funcs/cloneMonthFunc.js"></script>
 <script>
     /* PickerUtils.setupMonthPicker("#budgets-monthpicker", () => {
         $("#budgets-monthpicker").val();
@@ -83,6 +88,7 @@
 
     $(document).ready(function () {
         $('.tooltipped').tooltip();
+        DialogUtils.initStandardModal()
     });
 
     var isNew = (configs.getUrlArgs()["new"]) ? (configs.getUrlArgs()["new"] === 'true') : false;

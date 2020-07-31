@@ -1,8 +1,8 @@
 "use strict";
-
 let currentBudgetID;
 let BUDGET_INITIAL_BALANCE;
 let IS_OPEN
+
 
 var AddBudgets = {
     init: (isOpen, isNew, budgetID) => {
@@ -11,10 +11,12 @@ var AddBudgets = {
         if (isOpen == true) {
             $("#conclusion-close-btn").show()
             $("#conclusion-close-btn-text").text("Fechar Orçamento")
+            AddBudgets.enableCloneMonthButton()
         } else {
             $("#conclusion-close-btn").hide()
             $("#conclusion-close-btn").show()
             $("#conclusion-close-btn-text").text("Reabrir Orçamento")
+            AddBudgets.disableCloneMonthButton()
         }
 
         if (isNew == true) {
@@ -30,6 +32,13 @@ var AddBudgets = {
 
 
     },
+    enableCloneMonthButton: () => {
+        $("#clone-month-btn").removeClass("disabled")
+        $("#clone-month-btn").addClass("green-gradient-bg")
+    },
+    disableCloneMonthButton: () => {
+        $("#clone-month-btn").addClass("disabled")
+    },
     initBudget: budgetID => {
         LoadingManager.showLoading()
         BudgetServices.getBudget(budgetID, (resp) => {
@@ -44,17 +53,15 @@ var AddBudgets = {
             const year = resp['year']
 
             /* Reorder categories list */
-            if(isOpen){
+            if (isOpen) {
                 allCategories.sort((a, b) => {
                     return parseFloat((Math.abs(b.planned_amount_credit) + Math.abs(b.planned_amount_debit)) - (Math.abs(a.planned_amount_credit) + Math.abs(a.planned_amount_debit)))
                 })
-            } else{
+            } else {
                 allCategories.sort((a, b) => {
                     return parseFloat((Math.abs(b.current_amount_credit) + Math.abs(b.current_amount_debit)) - (Math.abs(a.current_amount_credit) + Math.abs(a.current_amount_debit)))
                 })
             }
-
-
 
 
             AddBudgets.setMonthPickerValue(month, year)
@@ -69,6 +76,9 @@ var AddBudgets = {
             LoadingManager.hideLoading()
             DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
         })
+    },
+    onCloneMonthClicked: () => {
+        CloneMonthFunc.onCloneMonthClicked()
     },
     initNewBudget: () => {
         AddBudgets.setMonthPickerValue(null, null)
