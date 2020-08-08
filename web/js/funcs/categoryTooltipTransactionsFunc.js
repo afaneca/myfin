@@ -57,8 +57,7 @@ var CategoryTooltipTransactionsFunc = {
                 </div>
                 `;
 
-        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a onClick="Budgets.removeBudget(${budgetID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
+        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Voltar</a>`;
         $("#modal-global .modal-content").html(txt);
         $("#modal-global .modal-footer").html(actionLinks);
     },
