@@ -60,7 +60,8 @@ class AccountModel extends Entity
         $db = new EnsoDB($transactional);
         $sql = "SELECT a.account_id, a.name, a.type, a.description, a.status, a.exclude_from_budgets, (a.current_balance / 100) as 'balance', a.users_user_id " .
             "FROM accounts a " .
-            "WHERE users_user_id = :userID";
+            "WHERE users_user_id = :userID " .
+            "ORDER BY abs(balance) DESC";
 
         $values = array();
         $values[':userID'] = $id_user;

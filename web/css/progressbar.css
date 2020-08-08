@@ -62,7 +62,7 @@ progress[value]::-webkit-progress-value.cat_progressbar_credit {
     float: left;
     color: #fff;
     padding: 8px;
-    z-index: 99999;
+    z-index: 9;
 }
 #modded .progress span i {
     width: inherit;

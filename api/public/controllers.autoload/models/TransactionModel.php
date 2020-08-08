@@ -56,4 +56,47 @@ class TransactionModel extends Entity
             return $e;
         }
     }
+
+    public static function getAllTransactionsForUserInMonthAndCategory($id_user, $month, $year, $catID, $type, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT transaction_id, transactions.date_timestamp, (transactions.amount / 100) as amount, transactions.type, transactions.description, entities.entity_id, entities.name as entity_name, categories_category_id, categories.name as category_name, accounts_account_from_id, acc_to.name as account_to_name, accounts_account_to_id, acc_from.name as account_from_name " .
+            "FROM transactions " .
+            "LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id " .
+            "LEFT JOIN categories ON categories.category_id = transactions.categories_category_id " .
+            "LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id " .
+            "LEFT JOIN accounts acc_to ON acc_to.account_id = transactions.accounts_account_to_id " .
+            "LEFT JOIN accounts acc_from ON acc_from.account_id = transactions.accounts_account_from_id " .
+            "WHERE (acc_to.users_user_id = :userID " .
+            "OR acc_from.users_user_id = :userID) " .
+            "AND categories.category_id = :catID " .
+            "AND transactions.type = :type " .
+            "AND transactions.date_timestamp >= :minTimestamp " .
+            "AND transactions.date_timestamp <= :maxTimestamp " .
+            "GROUP BY transaction_id " .
+            "ORDER BY transactions.date_timestamp DESC ";
+
+        $minDate = strtotime("01-$month-$year");
+
+        $nextMonth = $month < 12 ? $month + 1 : 1;
+        $nextMonthsYear = $month < 12 ? $year : $year + 1;
+        $maxDate = strtotime("01-$nextMonth-$nextMonthsYear");
+
+        $values = array();
+        $values[':userID'] = $id_user;
+        $values[':catID'] = $catID;
+        $values[':type'] = $type;
+        $values[':minTimestamp'] = $minDate;
+        $values[':maxTimestamp'] = $maxDate;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
 }

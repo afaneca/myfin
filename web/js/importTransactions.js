@@ -124,7 +124,7 @@ var ImportTransactions = {
 
         if (IMPORT_STEP == 1) {
             ImportTransactions.consolidateStep0()
-        } else if (IMPORT_STEP == 2) {
+        } else if (IMPORT_STEP > 1) {
             ImportTransactions.consolidateStep1()
         }
     },

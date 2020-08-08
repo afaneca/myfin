@@ -1,6 +1,7 @@
 "use strict";
 let currentBudgetID;
 let BUDGET_INITIAL_BALANCE;
+
 let IS_OPEN
 
 
@@ -51,6 +52,7 @@ var AddBudgets = {
             BUDGET_INITIAL_BALANCE = resp['initial_balance']
             const month = resp['month']
             const year = resp['year']
+
 
             /* Reorder categories list */
             if (isOpen) {
@@ -159,7 +161,7 @@ var AddBudgets = {
     renderInputRow: (cat, isCredit) => {
         return `
             <tr>
-                <td style="padding:0px !important;"><div class="tooltip">
+                <td style="padding:0px !important;"><div class="tooltip" onClick="AddBudgets.onCategoryTooltipClick(${cat.category_id}, ${isCredit})">
                         ${cat.name}
                         <span class="tooltiptext">${cat.description}</span>
                     </div>
@@ -193,6 +195,13 @@ var AddBudgets = {
                     <label for="${cat}_inline">Valor (€)</label>
                 </div>
         </div> */
+    },
+    onCategoryTooltipClick: (catID, isCredit) => {
+        let datepickerValue = $("#budgets-monthpicker").val()
+        let month = parseInt(datepickerValue.substring(0, 2))
+        let year = parseInt(datepickerValue.substring(3, 7))
+
+        CategoryTooltipTransactionsFunc.showCategoryTransactionsForMonthInModal(catID, isCredit, month, year);
     },
     buildCatTooltipText: (current_amount_credit, current_amount_debit, planned_amount_credit, planned_amount_debit, isCredit) => {
         return "Gastou mais 2.35€ do que o planeado"
