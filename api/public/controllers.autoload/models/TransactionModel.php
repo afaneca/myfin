@@ -71,7 +71,8 @@ class TransactionModel extends Entity
             "WHERE (acc_to.users_user_id = :userID " .
             "OR acc_from.users_user_id = :userID) " .
             "AND categories.category_id = :catID " .
-            "AND transactions.type = :type " .
+            "AND (transactions.type = :type " .
+            " OR transactions.type = 'T') " .
             "AND transactions.date_timestamp >= :minTimestamp " .
             "AND transactions.date_timestamp <= :maxTimestamp " .
             "GROUP BY transaction_id " .

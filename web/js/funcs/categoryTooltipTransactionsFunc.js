@@ -36,7 +36,7 @@ var CategoryTooltipTransactionsFunc = {
                         width:100%;
                     }
                 </style>
-                <h4>Listra de transações</b></h4>
+                <h4>Lista de transações</b></h4>
                 <div class="row">
                     <div class="responsive-table scrollable-table table-status-sheet">
                         <table class="bordered scrollable-table striped">
