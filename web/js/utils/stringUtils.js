@@ -20,7 +20,7 @@ var StringUtils = {
     },
     convertStringToFloat: (str) => {
         if (!str) return str
-        return parseFloat(str.replace(",", "."))
+        return parseFloat(str.replace(".", "").replace(",", "."))
     },
     convertFloatToInteger: (floatVal) => {
         return parseInt(floatVal * 100)
