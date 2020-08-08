@@ -43,6 +43,27 @@ var TransactionServices = {
             }
         });
     },
+    getTransactionsFromMonthAndCategory: (month, year, cat_id, type, successCallback, errorCallback) => {
+        var pageUrl = REST_SERVER_PATH + "trxs/inMonthAndCategory"
+        $.ajax({
+            async: true,
+            type: "GET",
+            dataType: "json",
+            cache: false,
+            headers: {
+                authusername: Cookies.get("username"),
+                sessionkey: Cookies.get("sessionkey"),
+            },
+            data: {month, year, cat_id, type},
+            url: pageUrl,
+            success: function (response) {
+                if (successCallback) successCallback(response)
+            },
+            error: function (response) {
+                if (errorCallback) errorCallback(response)
+            }
+        });
+    },
 
     getAddTransactionStep0: (successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "trxs/step0"

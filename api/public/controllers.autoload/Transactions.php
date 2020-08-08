@@ -61,6 +61,63 @@ class Transactions
         }
     }
 
+    public static function getAllTransactionsForUserInCategoryAndInMonth(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            $month = Input::validate($request->getQueryParams()['month'], Input::$INT, 4);
+
+            $year = Input::validate($request->getQueryParams()['year'], Input::$INT, 5);
+
+            $catID = Input::validate($request->getQueryParams()['cat_id'], Input::$INT, 6);
+
+            $type = Input::validate($request->getQueryParams()['type'], Input::$STRICT_STRING, 7);
+            if ($type !== DEFAULT_TYPE_TRANSFER_TAG && $type !== DEFAULT_TYPE_EXPENSE_TAG && $type !== DEFAULT_TYPE_INCOME_TAG) {
+                $type = DEFAULT_TYPE_INCOME_TAG;
+            }
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction(); */
+
+            /* echo "1";
+            die(); */
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            /* $accsArr = AccountModel::getWhere(
+            ["users_user_id" => $userID],
+            ["account_id", "name", "type", "description"]
+
+            ); */
+
+            $trxArr = TransactionModel::getAllTransactionsForUserInMonthAndCategory($userID, $month, $year, $catID, $type, false);
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $trxArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
     public static function addTransactionStep0(Request $request, Response $response, $args)
     {
         try {
@@ -678,6 +735,7 @@ class Transactions
 }
 
 $app->get('/trxs/', 'Transactions::getAllTransactionsForUser');
+$app->get('/trxs/inMonthAndCategory', 'Transactions::getAllTransactionsForUserInCategoryAndInMonth');
 $app->post('/trxs/step0', 'Transactions::addTransactionStep0');
 $app->post('/trxs/step1', 'Transactions::addTransaction');
 $app->delete('/trxs/', 'Transactions::removeTransaction');
