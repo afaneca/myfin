@@ -32,7 +32,7 @@ var Rules = {
     },
     renderRulesTable: (rulesList) => {
         return `
-            <table id="accounts-table" class="display browser-defaults" style="width:100%">
+            <table id="rules-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
                 <th>Condições</th>
