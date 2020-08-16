@@ -22,13 +22,13 @@ var Categories = {
     },
     initMergedTable: (catsList) => {
         $("#table-merged-wrapper").html(Categories.renderCreditCategoriesTable(catsList))
-        tableUtils.setupStaticTable("#categories-table");
+        tableUtils.setupStaticTable("#debit-categories-table");
         LoadingManager.hideLoading()
     },
     initTables: (debitCatsList, creditCatsList) => {
         $("#table-debit-wrapper").html(Categories.renderDebitCategoriesTable(debitCatsList))
         $("#table-crebit-wrapper").html(Categories.renderCreditCategoriesTable(creditCatsList))
-        tableUtils.setupStaticTable("#categories-table");
+        tableUtils.setupStaticTable("#debit-categories-table");
         LoadingManager.hideLoading()
     },
     renderDebitCategoriesTable: (catsList) => {
