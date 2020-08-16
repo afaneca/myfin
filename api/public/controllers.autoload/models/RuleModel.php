@@ -67,7 +67,7 @@ class RuleModel extends Entity
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
-                    if ($ruleValue !== $trx["description"]) {
+                    if ($ruleValue != $trx["description"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
@@ -104,7 +104,7 @@ class RuleModel extends Entity
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
-                    if ($ruleValue !== $trx["amount"]) {
+                    if ($ruleValue != $trx["amount"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
@@ -116,16 +116,112 @@ class RuleModel extends Entity
             /* type matcher */
             if ($rule["matcher_type_operator"] && $rule["matcher_type_value"]) {
                 // If it is defined, check if it matches
+                $ruleOperator = $rule["matcher_type_operator"];
+                $ruleValue = $rule["matcher_type_value"];
+
+                if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
+                    if (RuleModel::contains($ruleValue, $trx["type"])) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_CONTAINS) {
+                    if (!RuleModel::contains($ruleValue, $trx["type"])) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
+                    if ($ruleValue == $trx["type"]) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
+                    if ($ruleValue != $trx["type"]) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                }
             }
 
             /* account_to_id matcher */
             if ($rule["matcher_account_to_id_operator"] && $rule["matcher_account_to_id_value"]) {
                 // If it is defined, check if it matches
+                $ruleOperator = $rule["matcher_account_to_id_operator"];
+                $ruleValue = $rule["matcher_account_to_id_value"];
+
+                if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
+                    if (RuleModel::contains($ruleValue, $trx["accounts_account_to_id"])) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_CONTAINS) {
+                    if (!RuleModel::contains($ruleValue, $trx["accounts_account_to_id"])) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
+                    if ($ruleValue == $trx["accounts_account_to_id"]) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
+                    if ($ruleValue != $trx["accounts_account_to_id"]) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                }
             }
 
             /* account_from_id matcher */
             if ($rule["matcher_account_from_id_operator"] && $rule["matcher_account_from_id_value"]) {
                 // If it is defined, check if it matches
+                $ruleOperator = $rule["matcher_account_from_id_operator"];
+                $ruleValue = $rule["matcher_account_from_id_value"];
+
+                if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
+                    if (RuleModel::contains($ruleValue, $trx["accounts_account_from_id"])) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_CONTAINS) {
+                    if (!RuleModel::contains($ruleValue, $trx["accounts_account_from_id"])) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
+                    if ($ruleValue == $trx["accounts_account_from_id"]) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
+                    if ($ruleValue != $trx["accounts_account_from_id"]) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                }
             }
 
             if ($hasMatched) return $rule;

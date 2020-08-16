@@ -610,6 +610,8 @@ class Transactions
              */
             $outgoingArr["fillData"] = [];
             foreach ($trxList as $trx) {
+                $trx["accounts_account_from_id"] = $accountID;
+                $trx["accounts_account_to_id"] = null;
                 $foundRule = RuleModel::getRuleForTransactions($userID, $trx);
 
                 $outgoingArr["fillData"][] = [

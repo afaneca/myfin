@@ -1,8 +1,8 @@
 "use strict";
 
-var accountsList
-var entitiesList
-var categoriesList
+var accountsList1
+var entitiesList1
+var categoriesList1
 
 var Rules = {
     init: () => {
@@ -15,9 +15,9 @@ var Rules = {
                 // SUCCESS
                 LoadingManager.hideLoading()
                 Rules.initRulesTable(resp.rules)
-                accountsList = resp.accounts
-                entitiesList = resp.entities
-                categoriesList = resp.categories
+                accountsList1 = resp.accounts
+                entitiesList1 = resp.entities
+                categoriesList1 = resp.categories
                 Rules.renderAddRuleForm(resp.accounts, resp.entities, resp.categories)
             }, (err) => {
                 // FAILURE
@@ -35,17 +35,8 @@ var Rules = {
             <table id="accounts-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>Operador</th>
-                <th>Descrição</th>
-                <th>Operador</th>
-                <th>Montante</th>
-                <th>Operador</th>
-                <th>Tipo</th>
-                <th>Operador</th>
-                <th>Conta Origem</th>
-                <th>Operador</th>
-                <th>Conta Destino</th>
-                <th>Regra</th>
+                <th>Condições</th>
+                <th>Resultado</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -58,17 +49,8 @@ var Rules = {
     renderRulesRow: (rule) => {
         return `
             <tr data-id='${rule.rule_id}'>
-                <td>${rule.matcher_description_operator}</td>
-                <td>${rule.matcher_description_value}</td>
-                <td>${rule.matcher_amount_operator}</td>
-                <td>${rule.matcher_amount_value}</td>
-                <td>${rule.matcher_type_operator}</td>
-                <td>${rule.matcher_type_value}</td>
-                <td>${rule.matcher_account_from_id_operator}</td>
-                <td>${rule.matcher_account_from_id_value}</td>
-                <td>${rule.matcher_account_to_id_operator}</td>
-                <td>${rule.matcher_account_to_id_value}</td>
-                <td></td>               
+                <td>${Rules.buildConditionsString(rule)}</td>
+                <td>${Rules.buildResulstsString(rule)}</td>               
                 <td>
                     <i onClick="Rules.showEditRuleModal('${rule.rule_id}', ${rule.matcher_description_operator ? (`'${rule.matcher_description_operator}'`) : null}, ${rule.matcher_description_value ? (`'${rule.matcher_description_value}'`) : null}, 
                     ${rule.matcher_amount_operator ? (`'${rule.matcher_amount_operator}'`) : null}, ${rule.matcher_amount_value ? (`'${rule.matcher_amount_value}'`) : null}, ${rule.matcher_type_operator ? (`'${rule.matcher_type_operator}'`) : null},
@@ -80,12 +62,55 @@ var Rules = {
             </tr>
         `
     },
+    buildConditionsString: rule => {
+        let outputStr = ""
+        if (rule.matcher_description_operator && rule.matcher_description_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
+            outputStr += "<u>Descrição</u>: " + rule.matcher_description_operator + " => " + "\"" + rule.matcher_description_value + "\"" + "<br>"
+        }
+
+        if (rule.matcher_amount_operator && rule.matcher_amount_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
+            outputStr += "<u>Valor</u>: " + rule.matcher_amount_operator + " => " + "\"" + rule.matcher_amount_value + "\"" + "<br>"
+        }
+
+        if (rule.matcher_type_operator && rule.matcher_type_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
+            outputStr += "<u>Tipo</u>: " + rule.matcher_type_operator + " => " + "\"" + rule.matcher_type_value + "\"" + "<br>"
+        }
+
+        if (rule.matcher_account_from_id_operator && rule.matcher_account_from_id_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
+            outputStr += "<u>Conta Origem</u>: " + rule.matcher_account_from_id_operator + " => " + "\"" + CookieUtils.getUserAccount(rule.matcher_account_from_id_value).name + "\"" + "<br>"
+        }
+
+        if (rule.matcher_account_to_id_operator && rule.matcher_account_to_id_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
+            outputStr += "<u>Conta Origem</u>: " + rule.matcher_account_to_id_operator + " => " + "\"" + CookieUtils.getUserAccount(rule.matcher_account_to_id_value).name + "\"" + "<br>"
+        }
+
+        return outputStr
+    },buildResulstsString: rule => {
+        let outputStr = ""
+        if (rule.assign_category_id && rule.assign_category_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
+            outputStr += "<u>Atribuir Categoria</u>: " + rule.assign_category_id + "<br>"
+        }
+
+        if (rule.assign_entity_id && rule.assign_entity_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
+            outputStr += "<u>Atribuir Entidade</u>: " + rule.assign_entity_id + "<br>"
+        }
+
+        if (rule.assign_account_from_id && rule.assign_account_from_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
+            outputStr += "<u>Atribuir Conta Origem</u>: " + CookieUtils.getUserAccount(rule.assign_account_from_id).name + "<br>"
+        }
+
+        if (rule.assign_account_to_id && rule.assign_account_to_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
+            outputStr += "<u>Atribuir Conta Destino</u>: " + CookieUtils.getUserAccount(rule.assign_account_to_id).name + "<br>"
+        }
+
+        return outputStr
+    },
     showEditRuleModal: (ruleID, matcher_description_operator, matcher_description_value, matcher_amount_operator, matcher_amount_value, matcher_type_operator, matcher_type_value,
                         matcher_account_from_id_operator, matcher_account_from_id_value, matcher_account_to_id_operator, matcher_account_to_id_value,
                         assign_account_from_id, assign_account_to_id, assign_category_id, assign_entity_id, assign_type) => {
         // expand add rule form
 
-        Rules.renderAddRuleForm(accountsList, entitiesList, categoriesList, matcher_description_operator, matcher_description_value, matcher_amount_operator, matcher_amount_value, matcher_type_operator, matcher_type_value, matcher_account_from_id_operator, matcher_account_from_id_value,
+        Rules.renderAddRuleForm(accountsList1, entitiesList1, categoriesList1, matcher_description_operator, matcher_description_value, matcher_amount_operator, matcher_amount_value, matcher_type_operator, matcher_type_value, matcher_account_from_id_operator, matcher_account_from_id_value,
             matcher_account_to_id_operator, matcher_account_to_id_value, assign_account_from_id, assign_account_to_id, assign_category_id, assign_entity_id, assign_type)
         $('.collapsible').collapsible('open');
         $('#add-rule-btn').text("Atualizar Regra")
