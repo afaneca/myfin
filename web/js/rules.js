@@ -1,5 +1,9 @@
 "use strict";
 
+var accountsList
+var entitiesList
+var categoriesList
+
 var Rules = {
     init: () => {
         Rules.getRules()
@@ -11,6 +15,9 @@ var Rules = {
                 // SUCCESS
                 LoadingManager.hideLoading()
                 Rules.initRulesTable(resp.rules)
+                accountsList = resp.accounts
+                entitiesList = resp.entities
+                categoriesList = resp.categories
                 Rules.renderAddRuleForm(resp.accounts, resp.entities, resp.categories)
             }, (err) => {
                 // FAILURE
@@ -63,14 +70,78 @@ var Rules = {
                 <td>${rule.matcher_account_to_id_value}</td>
                 <td></td>               
                 <td>
-                    <i onClick="Rules.showEditRuleModal('${rule.rule_id}')" class="material-icons table-action-icons">create</i>
+                    <i onClick="Rules.showEditRuleModal('${rule.rule_id}', ${rule.matcher_description_operator ? (`'${rule.matcher_description_operator}'`) : null}, ${rule.matcher_description_value ? (`'${rule.matcher_description_value}'`) : null}, 
+                    ${rule.matcher_amount_operator ? (`'${rule.matcher_amount_operator}'`) : null}, ${rule.matcher_amount_value ? (`'${rule.matcher_amount_value}'`) : null}, ${rule.matcher_type_operator ? (`'${rule.matcher_type_operator}'`) : null},
+                    ${rule.matcher_type_value ? (`'${rule.matcher_type_value}'`) : null}, ${rule.matcher_account_from_id_operator ? (`'${rule.matcher_account_from_id_operator}'`) : null}, ${rule.matcher_account_from_id_value ? (`'${rule.matcher_account_from_id_value}'`) : null},${rule.matcher_account_to_id_operator ? (`'${rule.matcher_account_to_id_operator}'`) : null
+        }, ${rule.matcher_account_to_id_value ? (`'${rule.matcher_account_to_id_value}'`) : null}, ${rule.assign_account_from_id ? (`'${rule.assign_account_from_id}'`) : null}, ${rule.assign_account_to_id ? (`'${rule.assign_account_to_id}'`) : null},
+                    ${rule.assign_category_id ? (`'${rule.assign_category_id}'`) : null}, ${rule.assign_entity_id ? (`'${rule.assign_entity_id}'`) : null}, ${rule.assign_type ? (`'${rule.assign_type}'`) : null})" class="material-icons table-action-icons">create</i>
                     <i onClick="Rules.showRemoveRuleModal('${rule.rule_id}')" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>             
             </tr>
         `
     },
-    showEditRuleModal: (ruleID) => {
+    showEditRuleModal: (ruleID, matcher_description_operator, matcher_description_value, matcher_amount_operator, matcher_amount_value, matcher_type_operator, matcher_type_value,
+                        matcher_account_from_id_operator, matcher_account_from_id_value, matcher_account_to_id_operator, matcher_account_to_id_value,
+                        assign_account_from_id, assign_account_to_id, assign_category_id, assign_entity_id, assign_type) => {
+        // expand add rule form
 
+        Rules.renderAddRuleForm(accountsList, entitiesList, categoriesList, matcher_description_operator, matcher_description_value, matcher_amount_operator, matcher_amount_value, matcher_type_operator, matcher_type_value, matcher_account_from_id_operator, matcher_account_from_id_value,
+            matcher_account_to_id_operator, matcher_account_to_id_value, assign_account_from_id, assign_account_to_id, assign_category_id, assign_entity_id, assign_type)
+        $('.collapsible').collapsible('open');
+        $('#add-rule-btn').text("Atualizar Regra")
+        $('#add-rule-collapsible-header').html("<i class='material-icons'>edit</i>Atualizar Regra")
+
+        // set btn onClick
+        $('#add-rule-btn').removeAttr('onclick');
+        $('#add-rule-btn').on("click", () => {
+            Rules.editRule(ruleID)
+        })
+
+
+    },
+    editRule: ruleID => {
+
+        const descriptionOperator = $('select#operator-select-description').val()
+        const descriptionValue = $('input#value-input-description').val()
+        const amountOperator = $('select#operator-select-amount').val()
+        const amountValue = $('input#value-input-amount').val()
+        const typeOperator = $('select#operator-select-type').val()
+        const typeValue = $('select#value-select-type').val()
+        const accountFromIDOperator = $('select#operator-select-account-from').val()
+
+        let accountFromIDValue = $('select#operator-select-account-from-value').val()
+        if (accountFromIDValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) accountFromIDValue = null
+        const accountToIDOperator = $('select#operator-select-account-to').val()
+
+        let accountToIDValue = $('select#value-select-account-to').val()
+        if (accountToIDValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) accountToIDValue = null
+
+        let categoryAssignValue = $('select#value-select-category-assign').val()
+        if (categoryAssignValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) categoryAssignValue = null
+
+        let entityAssignValue = $('select#value-select-entity-assign').val()
+        if (entityAssignValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) entityAssignValue = null
+
+        let accountFromAssignValue = $('select#value-select-account-from-assign').val()
+        if (accountFromAssignValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) accountFromAssignValue = null
+
+        let accountToAssignValue = $('select#value-select-account-to-assign').val()
+        if (accountToAssignValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) accountToAssignValue = null
+
+
+        LoadingManager.showLoading()
+        RuleServices.editRule(ruleID, descriptionOperator, descriptionValue, amountOperator, amountValue, typeOperator,
+            typeValue, accountToIDOperator, accountToIDValue, accountFromIDOperator, accountFromIDValue, categoryAssignValue,
+            entityAssignValue, accountToAssignValue, accountFromAssignValue, null,
+            (resp) => {
+                // SUCCESS
+                LoadingManager.hideLoading()
+                configs.goToPage("rules", true)
+            }, (err) => {
+                // FAILURE
+                LoadingManager.hideLoading()
+                DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente...")
+            })
     },
     showRemoveRuleModal: (ruleID) => {
         $("#modal-global").modal("open")
@@ -101,98 +172,109 @@ var Rules = {
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente...")
             })
     },
-    renderAddRuleForm: (accountsList, entitiesList, categoriesList) => {
+    renderAddRuleForm: (accountsList, entitiesList, categoriesList, matcher_description_operator = null, matcher_description_value = null,
+                        matcher_amount_operator = null, matcher_amount_value = null, matcher_type_operator = null, matcher_type_value = null,
+                        matcher_account_from_id_operator = null, matcher_account_from_id_value = null, matcher_account_to_id_operator = null, matcher_account_to_id_value = null,
+                        assign_account_from_id = null, assign_account_to_id = null, assign_category_id = null, assign_entity_id = null, assign_type = null) => {
+
         $("div#add-rule-form-wrapper").html(
             `
              <!---->
                     <div class="row">
                         <div class="input-field col s2">
                             <select id="operator-select-description">
-                                <option value="IG" selected>Ignorar
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_description_operator || matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
                                 </option>
-                                <option value="CONTAINS">Contém</option>
-                                <option value="NOTCONTAINS">Não contém
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_CONTAINS}" ${(matcher_description_operator && matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_CONTAINS) ? 'selected' : ''}>Contém
                                 </option>
-                                <option value="EQ">Igual</option>
-                                <option value="NEQ">Não é igual
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_CONTAINS}" ${(matcher_description_operator && matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_CONTAINS) ? 'selected' : ''}>Não Contém
+                                </option>
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_description_operator && matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
+                                </option>
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_description_operator && matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
                                 </option>
                             </select>
                             <label>Descrição</label>
                         </div>
                         <div class="input-field col s10">
                             <input id="value-input-description" type="text" placeholder="Texto da descrição..."
-                                   disabled/>
+                                    ${(matcher_description_value) ? 'value="' + matcher_description_value + '"' : ''}
+                                   ${(!matcher_description_operator || matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''} />
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s2">
                             <select id="operator-select-amount">
-                                <option value="IG" selected>Ignorar
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_amount_operator || matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
                                 </option>
-                                <option value="EQ">Igual</option>
-                                <option value="NEQ">Não é igual
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_amount_operator && matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
+                                </option>
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_amount_operator && matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
                                 </option>
                             </select>
                             <label>Montante</label>
                         </div>
                         <div class="input-field col s10">
-                            <input id="value-input-amount" type="number" value="0.00" step="0.01" disabled/>
+                            <input id="value-input-amount" type="number" value="${matcher_amount_value ? matcher_amount_value : '0.00'}" step="0.01"
+                             ${(!matcher_amount_operator || matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''} />
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s2">
                             <select id="operator-select-type">
-                                <option value="IG" selected>Ignorar
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_type_operator || matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
                                 </option>
-                                <option value="EQ">Igual</option>
-                                <option value="NEQ">Não é igual
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_type_operator && matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
+                                </option>
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_type_operator && matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
                                 </option>
                             </select>
                             <label>Tipo de Transação</label>
                         </div>
                         <div class="input-field col s10">
-                            <select id="value-select-type" disabled>
-                                <option value="" selected>Ignorar</option>
-                                <option value="E">Débito</option>
-                                <option value="I">Crédito</option>
-                                <option value="T">Transferência</option>
+                            <select id="value-select-type" ${(!matcher_type_operator || matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''}>
+                                <option value="" ${(!matcher_type_value) ? 'disabled' : ''}>Ignorar</option>
+                                <option value="${MYFIN.TRX_TYPES.EXPENSE}" ${(matcher_type_value && matcher_type_value == MYFIN.TRX_TYPES.EXPENSE) ? 'selected' : ''}>Débito</option>
+                                <option value="${MYFIN.TRX_TYPES.INCOME}" ${(matcher_type_value && matcher_type_value == MYFIN.TRX_TYPES.INCOME) ? 'selected' : ''}>Crédito</option>
+                                <option value="${MYFIN.TRX_TYPES.TRANSFER}" ${(matcher_type_value && matcher_type_value == MYFIN.TRX_TYPES.TRANSFER) ? 'selected' : ''}>Transferência</option>
                             </select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s2">
                             <select id="operator-select-account-from">
-                                <option value="IG" selected>Ignorar
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_account_from_id_operator || matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
                                 </option>
-                                <option value="EQ">Igual</option>
-                                <option value="NEQ">Não é igual
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_account_from_id_operator && matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
                                 </option>
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_account_from_id_operator && matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
                                 </option>
                             </select>
                             <label>Conta Origem</label>
                         </div>
                         <div class="input-field col s10">
-                            <select id="operator-select-account-from-value" disabled>
-                                <option value="" selected>Ignorar</option>
-                                 ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name)).join("")}
+                            <select id="operator-select-account-from-value" ${(!matcher_account_from_id_operator || matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''}>
+                                <option value="" ${!matcher_account_from_id_value ? 'selected' : ''}>Ignorar</option>
+                                 ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name, matcher_account_from_id_value)).join("")}
                             </select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s2">
                             <select id="operator-select-account-to">
-                                <option value="IG" selected>Ignorar
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_account_to_id_operator || matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
                                 </option>
-                                <option value="EQ">Igual</option>
-                                <option value="NEQ">Não é igual
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_account_to_id_operator && matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
+                                </option>
+                                <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_account_to_id_operator && matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
                                 </option>
                             </select>
                             <label>Conta Destino</label>
                         </div>
                         <div class="input-field col s10">
-                            <select id="value-select-account-to" disabled>
-                                <option value="" selected>Ignorar</option>
-                                ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name)).join("")}
+                            <select id="value-select-account-to" ${(!matcher_account_to_id_operator || matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''}>
+                                <option value="" ${!matcher_account_to_id_value ? 'selected' : ''}>Ignorar</option>
+                                ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name, matcher_account_to_id_value)).join("")}
                             </select>
                         </div>
                     </div>
@@ -203,8 +285,8 @@ var Rules = {
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-category-assign">
-                                <option value="" selected>Ignorar</option>
-                                ${categoriesList.map(cat => Rules.renderCategoriesSelectOption(cat.category_id, cat.name)).join("")}
+                                <option value="" ${!assign_category_id ? 'selected' : ''}>Ignorar</option>
+                                ${categoriesList.map(cat => Rules.renderCategoriesSelectOption(cat.category_id, cat.name, assign_category_id)).join("")}
                             </select>
                         </div>
                     </div>
@@ -214,8 +296,8 @@ var Rules = {
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-entity-assign">
-                                <option value="" selected>Ignorar</option>
-                                ${entitiesList.map(ent => Rules.renderEntitiesSelectOption(ent.entity_id, ent.name)).join("")}
+                                <option value="" ${!assign_entity_id ? 'selected' : ''}>Ignorar</option>
+                                ${entitiesList.map(ent => Rules.renderEntitiesSelectOption(ent.entity_id, ent.name, assign_entity_id)).join("")}
                             </select>
                         </div>
                     </div>
@@ -225,8 +307,8 @@ var Rules = {
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-account-from-assign">
-                                <option value="" selected>Ignorar</option>
-                                ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name)).join("")}
+                                <option value="" ${!assign_account_from_id ? 'selected' : ''}>Ignorar</option>
+                                ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name, assign_account_from_id)).join("")}
                             </select>
                         </div>
                     </div>
@@ -236,15 +318,15 @@ var Rules = {
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-account-to-assign">
-                                <option value="" selected>Ignorar</option>
-                                ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name)).join("")}
+                                <option value="" ${!assign_account_to_id ? 'selected' : ''}>Ignorar</option>
+                                ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name, assign_account_to_id)).join("")}
                             </select>
                         </div>
                     </div>
 
-                    <a class="waves-effect waves-light btn green-gradient-bg" style="margin: -15px; float:right;"
+                    <a id="add-rule-btn" class="waves-effect waves-light btn green-gradient-bg" style="margin: -15px; float:right;"
                        onClick="Rules.addRule()"><i
-                            class="material-icons left">add_circle</i>Adicionar Conta</a>
+                            class="material-icons left">add_circle</i>Adicionar Regra</a>
                     <!---->
             `
         )
@@ -336,14 +418,14 @@ var Rules = {
 
         let accountFromIDValue = $('select#operator-select-account-from-value').val()
         if (accountFromIDValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) accountFromIDValue = null
-        const accountToIDOperator = $('select#value-select-account-to').val()
+        const accountToIDOperator = $('select#operator-select-account-to').val()
 
-        let accountToIDValue = $('select#operator-select-account-to').val()
+        let accountToIDValue = $('select#value-select-account-to').val()
         if (accountToIDValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) accountToIDValue = null
 
         let categoryAssignValue = $('select#value-select-category-assign').val()
         if (categoryAssignValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) categoryAssignValue = null
-        debugger
+
         let entityAssignValue = $('select#value-select-entity-assign').val()
         if (entityAssignValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) entityAssignValue = null
 
@@ -368,19 +450,19 @@ var Rules = {
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente...")
             })
     },
-    renderAccountsSelectOption: (account_id, account_name) => {
+    renderAccountsSelectOption: (account_id, account_name, default_value = MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) => {
         return `
-           <option value="${account_id}">${account_name}</option>
+           <option value="${account_id}" ${(default_value == account_id) ? 'selected' : ''}>${account_name}</option>
         `
     },
-    renderEntitiesSelectOption: (entity_id, name) => {
+    renderEntitiesSelectOption: (entity_id, name, default_value = MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) => {
         return `
-           <option value="${entity_id}">${name}</option>
+           <option value="${entity_id}" ${(default_value == entity_id) ? 'selected' : ''}>${name}</option>
         `
     },
-    renderCategoriesSelectOption: (category_id, name) => {
+    renderCategoriesSelectOption: (category_id, name, default_value = MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) => {
         return `
-           <option value="${category_id}">${name}</option>
+           <option value="${category_id}" ${(default_value == category_id) ? 'selected' : ''}>${name}</option>
         `
     },
 }
