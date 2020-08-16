@@ -610,13 +610,17 @@ class Transactions
              */
             $outgoingArr["fillData"] = [];
             foreach ($trxList as $trx) {
+                $trx["accounts_account_from_id"] = $accountID;
+                $trx["accounts_account_to_id"] = null;
+                $foundRule = RuleModel::getRuleForTransactions($userID, $trx);
+
                 $outgoingArr["fillData"][] = [
                     "date" => $trx["date"],
                     "description" => $trx["description"],
                     "amount" => $trx["amount"],
                     "type" => $trx["type"],
-                    "selectedCategoryID" => null,
-                    "selectedEntityID" => null,
+                    "selectedCategoryID" => ($foundRule) ? $foundRule["assign_category_id"] : null,
+                    "selectedEntityID" => ($foundRule) ? $foundRule["assign_entity_id"] : null,
                     "selectedAccountFromID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? null : $accountID,
                     "selectedAccountToID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? $accountID : null
                 ];

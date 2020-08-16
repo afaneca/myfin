@@ -41,8 +41,8 @@ var Entities = {
             <tr data-id='$entity.entity_id'>
                 <td>${entity.name}</td>
                 <td>
-                    <i onClick="Entities.showEditEntityModal('${StringUtils.normalizeString(entity.name)}', ${entity.entity_id})" class="material-icons table-action-icons">create</i>
-                    <i onClick="Entities.showRemoveEntityModal('${StringUtils.normalizeString(entity.name)}', ${entity.entity_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
+                    <i onClick="Entities.showEditEntityModal('${StringUtils.escapeHtml(entity.name)}', ${entity.entity_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Entities.showRemoveEntityModal('${StringUtils.escapeHtml(entity.name)}', ${entity.entity_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
         `
@@ -70,7 +70,7 @@ var Entities = {
         $("#modal-global .modal-footer").html(actionLinks);
     },
     addEntity: () => {
-        const entName = StringUtils.normalizeString($("input#entity_name").val())
+        const entName = StringUtils.removeLineBreaksFromString($("input#entity_name").val())
 
         if (!entName || entName === "") {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
@@ -150,7 +150,7 @@ var Entities = {
         $("input#entity_name").val(entName)
     },
     editEntity: (entID) => {
-        const entName = StringUtils.normalizeString($("input#entity_name").val())
+        const entName = StringUtils.removeLineBreaksFromString($("input#entity_name").val())
 
         if (!entName || entName === "") {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")

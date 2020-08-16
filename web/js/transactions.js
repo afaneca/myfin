@@ -66,18 +66,18 @@ var Transactions = {
 
         switch (type) {
             case 'I':
-                return `<span class='badge green lighten-5 green-text text-accent-6'>(${acc_from} ⮕ ${acc_to})</span></span>`
+                return `<span style="height: auto !important;" class='badge green lighten-5 green-text text-accent-6'>(${acc_from} ⮕ ${acc_to})</span></span>`
                 break;
             case 'E':
-                return `<span class='badge pink lighten-5 pink-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
+                return `<span style="height: auto !important;" class='badge pink lighten-5 pink-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
                 break;
             case 'T':
-                return `<span class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
+                return `<spa style="height: auto !important;"n class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
                 break;
         }
 
 
-        return `<span class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
+        return `<span style="height: auto !important;" class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
 
         /* return str; */
     },

@@ -381,7 +381,7 @@ var ImportTransactions = {
     },
     renderCategoriesSelectOptions: (cat_id, cat_name, selectedCategoryID) => {
         return `
-            <option value="${cat_id}" ${selectedCategoryID == cat_id} ? 'selected' : ''}>${cat_name}</option>
+            <option value="${cat_id}" ${(selectedCategoryID == cat_id) ? 'selected' : ''}>${cat_name}</option>
         `
     },
     renderAccountsSelect: (selectedAccountID) => {

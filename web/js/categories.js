@@ -22,13 +22,13 @@ var Categories = {
     },
     initMergedTable: (catsList) => {
         $("#table-merged-wrapper").html(Categories.renderCreditCategoriesTable(catsList))
-        tableUtils.setupStaticTable("#categories-table");
+        tableUtils.setupStaticTable("#debit-categories-table");
         LoadingManager.hideLoading()
     },
     initTables: (debitCatsList, creditCatsList) => {
         $("#table-debit-wrapper").html(Categories.renderDebitCategoriesTable(debitCatsList))
         $("#table-crebit-wrapper").html(Categories.renderCreditCategoriesTable(creditCatsList))
-        tableUtils.setupStaticTable("#categories-table");
+        tableUtils.setupStaticTable("#debit-categories-table");
         LoadingManager.hideLoading()
     },
     renderDebitCategoriesTable: (catsList) => {
@@ -69,8 +69,8 @@ var Categories = {
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
                 <td>
-                    <i onClick="Categories.showEditCategoryModal('${cats.name}', '${StringUtils.removeLineBreaksFromString(cats.description).replace(/["']/g,'')}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
-                    <i onClick="Categories.showRemoveCategoryModal('${cats.name}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
+                    <i onClick="Categories.showEditCategoryModal('${StringUtils.escapeHtml(cats.name)}', '${StringUtils.removeLineBreaksFromString(cats.description).replace(/["']/g,'')}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Categories.showRemoveCategoryModal('${StringUtils.escapeHtml(cats.name)}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
         `
@@ -104,7 +104,7 @@ var Categories = {
         /*$('#category_type_select').formSelect();*/
     },
     addCategory: () => {
-        const catName = StringUtils.normalizeString($("input#category_name").val())
+        const catName = StringUtils.removeLineBreaksFromString($("input#category_name").val())
         const catDescription = StringUtils.removeLineBreaksFromString($("textarea#category_description").val()).replace(/["']/g,'')
         /*const catType = $("select#category_type_select").val()*/
 
