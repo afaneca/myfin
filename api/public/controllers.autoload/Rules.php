@@ -36,13 +36,15 @@ class Rules
             die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
 
-            $rulesArr = RuleModel::getWhere(
-                ["users_user_id" => $userID]
-            );
+            $outputArr["rules"] = RuleModel::getWhere(["users_user_id" => $userID]);
+            $outputArr["categories"] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name"]);
+            $outputArr["entities"] = EntityModel::getWhere(["users_user_id" => $userID], ["entity_id", "name"]);
+            $outputArr["accounts"] = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
+
 
             /* $db->getDB()->commit(); */
 
-            return sendResponse($response, EnsoShared::$REST_OK, $rulesArr);
+            return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
         } catch (AuthenticationException $e) {
@@ -83,7 +85,7 @@ class Rules
             }
 
             if (array_key_exists('matcher_amount_value', $request->getParsedBody()) && $request->getParsedBody()['matcher_amount_value'] !== "") {
-                $matcherAmountValue = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$INT, 6));
+                $matcherAmountValue = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$FLOAT, 6));
             } else {
                 $matcherAmountValue = null;
             }
