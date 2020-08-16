@@ -79,6 +79,38 @@ class RuleModel extends Entity
             /* amount matcher */
             if ($rule["matcher_amount_operator"] && $rule["matcher_amount_value"]) {
                 // If it is defined, check if it matches
+                $ruleOperator = $rule["matcher_amount_operator"];
+                $ruleValue = $rule["matcher_amount_value"];
+
+                if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
+                    if (RuleModel::contains($ruleValue, $trx["amount"])) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_CONTAINS) {
+                    if (!RuleModel::contains($ruleValue, $trx["amount"])) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
+                    if ($ruleValue == $trx["amount"]) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
+                    if ($ruleValue !== $trx["amount"]) {
+                        $hasMatched = true;
+                    } else {
+                        // Fails the validation -> try to next rule
+                        continue;
+                    }
+                }
             }
 
             /* type matcher */
