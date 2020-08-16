@@ -41,8 +41,8 @@ var Entities = {
             <tr data-id='$entity.entity_id'>
                 <td>${entity.name}</td>
                 <td>
-                    <i onClick="Entities.showEditEntityModal('${StringUtils.normalizeStringForHtml(entity.name)}', ${entity.entity_id})" class="material-icons table-action-icons">create</i>
-                    <i onClick="Entities.showRemoveEntityModal('${StringUtils.normalizeStringForHtml(entity.name)}', ${entity.entity_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
+                    <i onClick="Entities.showEditEntityModal('${StringUtils.escapeHtml(entity.name)}', ${entity.entity_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Entities.showRemoveEntityModal('${StringUtils.escapeHtml(entity.name)}', ${entity.entity_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
         `
