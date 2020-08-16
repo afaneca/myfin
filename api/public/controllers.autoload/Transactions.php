@@ -621,8 +621,8 @@ class Transactions
                     "type" => $trx["type"],
                     "selectedCategoryID" => ($foundRule) ? $foundRule["assign_category_id"] : null,
                     "selectedEntityID" => ($foundRule) ? $foundRule["assign_entity_id"] : null,
-                    "selectedAccountFromID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? null : $accountID,
-                    "selectedAccountToID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? $accountID : null
+                    "selectedAccountFromID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? (($foundRule) ? $foundRule["assign_account_to_id"] : null) : $accountID,
+                    "selectedAccountToID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? $accountID : (($foundRule) ? $foundRule["assign_account_to_id"] : null)
                 ];
                 /*  array_push($outgoingArr["fillData"], [
                     "date" => $trx["date"],
