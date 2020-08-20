@@ -15,6 +15,19 @@ var Stats = {
             LoadingManager.hideLoading()
             DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
         })
+        tableUtils.setupStaticTable("#ev-pat-table")
+
+    },
+    changeTabs: activeID => {
+        switch (activeID) {
+            case "tab-ev-pat":
+                Stats.init()
+                break;
+            case "tab-projections":
+                break;
+            default:
+                break;
+        }
     },
     transformList: list => {
         let tempList = []
