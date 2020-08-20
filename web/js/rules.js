@@ -14,10 +14,10 @@ var Rules = {
             (resp) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
-                Rules.initRulesTable(resp.rules)
                 accountsList1 = resp.accounts
                 entitiesList1 = resp.entities
                 categoriesList1 = resp.categories
+                Rules.initRulesTable(resp.rules)
                 Rules.renderAddRuleForm(resp.accounts, resp.entities, resp.categories)
             }, (err) => {
                 // FAILURE
@@ -85,14 +85,14 @@ var Rules = {
         }
 
         return outputStr
-    },buildResulstsString: rule => {
+    }, buildResulstsString: rule => {
         let outputStr = ""
         if (rule.assign_category_id && rule.assign_category_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-            outputStr += "<u>Atribuir Categoria</u>: " + rule.assign_category_id + "<br>"
+            outputStr += "<u>Atribuir Categoria</u>: " + Rules.getCategoryName(rule.assign_category_id) + "<br>"
         }
 
         if (rule.assign_entity_id && rule.assign_entity_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-            outputStr += "<u>Atribuir Entidade</u>: " + rule.assign_entity_id + "<br>"
+            outputStr += "<u>Atribuir Entidade</u>: " + Rules.getEntityName(rule.assign_entity_id) + "<br>"
         }
 
         if (rule.assign_account_from_id && rule.assign_account_from_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
@@ -104,6 +104,16 @@ var Rules = {
         }
 
         return outputStr
+    },
+    getCategoryName: (catID) => {
+        const category = categoriesList1.find(cat => cat.category_id == catID)
+        if (category) return category.name
+        return catID
+    },
+    getEntityName: (entID) => {
+        const entity = entitiesList1.find(ent => ent.entity_id == entID)
+        if (entity) return entity.name
+        return entID
     },
     showEditRuleModal: (ruleID, matcher_description_operator, matcher_description_value, matcher_amount_operator, matcher_amount_value, matcher_type_operator, matcher_type_value,
                         matcher_account_from_id_operator, matcher_account_from_id_value, matcher_account_to_id_operator, matcher_account_to_id_value,
