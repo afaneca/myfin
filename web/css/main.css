@@ -371,7 +371,7 @@ nav ul a:hover {
 
 /* End tooltip */
 
-@media only screen and (min-width: 1250px) {
+@media only screen and (min-width: 1580px) {
     #chart-angular-target-goals {
         min-height: 316px;
     }
