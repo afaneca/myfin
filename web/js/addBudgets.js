@@ -12,11 +12,13 @@ var AddBudgets = {
         if (isOpen == true) {
             $("#conclusion-close-btn").show()
             $("#conclusion-close-btn-text").text("Fechar Orçamento")
+            $("#estimated_state_value").text("Aberto")
             AddBudgets.enableCloneMonthButton()
         } else {
             $("#conclusion-close-btn").hide()
             $("#conclusion-close-btn").show()
             $("#conclusion-close-btn-text").text("Reabrir Orçamento")
+            $("#estimated_state_value").text("Fechado")
             AddBudgets.disableCloneMonthButton()
         }
 
