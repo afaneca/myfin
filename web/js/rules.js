@@ -132,7 +132,8 @@ var Rules = {
             Rules.editRule(ruleID)
         })
 
-
+        // scroll to addRule form
+        LayoutUtils.smoothScrollToDiv("#add-rule-collapsible-header")
     },
     editRule: ruleID => {
 
