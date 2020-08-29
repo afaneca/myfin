@@ -63,7 +63,7 @@ var Budgets = {
         `
     },
     goToBudget: (budgetID, isOpen) => {
-        configs.goToPage('addBudget', {'new': false, 'open': (isOpen == 1) ? true : false, 'id': budgetID}, true);
+        configs.goToPage('budgetDetails', {'new': false, 'open': (isOpen == 1) ? true : false, 'id': budgetID}, true);
     },
     showRemoveBudgetModal: (budgetID, month, year) => {
         $("#modal-global").modal("open")

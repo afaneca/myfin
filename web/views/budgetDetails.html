@@ -2,7 +2,7 @@
     <div class="card-panel">
         <span class="blue-text text-darken-2">Novo Orçamento</span>
         <a id="clone-month-btn" class="waves-effect waves-light btn right-align"
-           onClick="AddBudgets.onCloneMonthClicked()" style="margin: 10px; float:right;"><i
+           onClick="BudgetDetails.onCloneMonthClicked()" style="margin: 10px; float:right;"><i
                 class="material-icons left">add_circle</i>Clonar outro orçamento</a>
         <div class="row" style="margin-top:25px">
             <div class="col s2">
@@ -67,11 +67,11 @@
             </div>
         </div>
         <center class="add-budget-bottom-btns">
-            <a id="conclusion-btn" onClick="AddBudgets.onConclusionClicked()"
+            <a id="conclusion-btn" onClick="BudgetDetails.onConclusionClicked()"
                class="waves-effect waves-light btn right-align btn-large green-gradient-bg" style="margin: 10px;"><i
                     class="material-icons left">add_circle</i><span id="conclusion-btn-text">Adicionar
                     Orçamento</span></a>
-            <span id="conclusion-close-btn" onClick="AddBudgets.onBudgetCloseClicked()"
+            <span id="conclusion-close-btn" onClick="BudgetDetails.onBudgetCloseClicked()"
                   class="waves-effect waves-light btn right-align btn-large orange orange-gradient-bg"
                   style="margin: 10px;display:none;"><i class="material-icons left">archive</i><span
                     id="conclusion-close-btn-text">Fechar Orçamento</span></span>
@@ -96,7 +96,7 @@
     var isOpen = (configs.getUrlArgs()["open"]) ? (configs.getUrlArgs()["open"] === 'true') : false;
     var budgetID = configs.getUrlArgs()["id"];
 
-    AddBudgets.init(isOpen, isNew, budgetID)
+    BudgetDetails.init(isOpen, isNew, budgetID)
 
 
 </script>
