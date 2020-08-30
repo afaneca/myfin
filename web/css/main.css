@@ -255,6 +255,86 @@ nav ul a:hover {
     background: linear-gradient(45deg, #0F2027, #203A43, #2C5364) !important;
 }
 
+.dark-gray-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #29323c, #485563) !important;
+    background: linear-gradient(45deg, #29323c, #485563) !important;
+}
+
+.purple-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #667eea, #764ba2) !important;
+    background: linear-gradient(45deg, #667eea, #764ba2) !important;
+}
+
+.pink-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #ee9ca7, #ffdde1) !important;
+    background: linear-gradient(45deg, #ee9ca7, #ffdde1) !important;
+}
+
+.brown-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #c79081, #dfa579) !important;
+    background: linear-gradient(45deg, #c79081, #dfa579) !important;
+}
+
+.dark-blue-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #243949, #517fa4) !important;
+    background: linear-gradient(45deg, #243949, #517fa4) !important;
+}
+
+.light-green-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #96e6a1, #d4fc79) !important;
+    background: linear-gradient(45deg, #96e6a1, #d4fc79) !important;
+}
+
+.dark-red-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #ED213A, #93291E) !important;
+    background: linear-gradient(45deg, #ED213A, #93291E) !important;
+}
+
+.yellow-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #FFE884, #FFF493) !important;
+    background: linear-gradient(45deg, #FFE884, #FFF493) !important;
+}
+
+.roseanna-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #ffafbd, #ffc3a0) !important;
+    background: linear-gradient(45deg, #ffafbd, #ffc3a0) !important;
+}
+
+.mauve-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #42275a, #734b6d) !important;
+    background: linear-gradient(45deg, #42275a, #734b6d) !important;
+}
+
+.lush-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #56ab2f, #a8e063) !important;
+    background: linear-gradient(45deg, #56ab2f, #a8e063) !important;
+}
+
+.pale-wood-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #eacda3, #d6ae7b) !important;
+    background: linear-gradient(45deg, #eacda3, #d6ae7b) !important;
+}
+
+.aubergine-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #aa076b, #61045f) !important;
+    background: linear-gradient(45deg, #aa076b, #61045f) !important;
+}
+
+.orange-coral-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #ff9966, #ff5e62) !important;
+    background: linear-gradient(45deg, #ff9966, #ff5e62) !important;
+}
+
+.decent-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #4ca1af, #c4e0e5) !important;
+    background: linear-gradient(45deg, #4ca1af, #c4e0e5) !important;
+}
+
+.dusk-gradient-bg {
+    background: -webkit-linear-gradient(45deg, #ffd89b, #19547b) !important;
+    background: linear-gradient(45deg, #ffd89b, #19547b) !important;
+}
+
 /* RESET-CHECKBOX - to remove materializecss styling from checkbox inputs */
 
 [type="checkbox"].reset-checkbox, [type="checkbox"].reset-checkbox:checked, [type="checkbox"].reset-checkbox:not(checked) {
