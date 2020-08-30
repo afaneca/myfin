@@ -37,6 +37,7 @@ var Budgets = {
             <tr>
                 <th>Mês</th>
                 <th>Observações</th>
+                <th>Balanço</th>
                 <th>Estado</th>
                 <th>Ações</th>
             </tr>
@@ -54,6 +55,7 @@ var Budgets = {
             <tr data-id='${budget.budget_id}' class="${(budget.month == currentMonth && budget.year == currentYear) ? 'highlighted-budget-item' : ''}">
                 <td>${budget.month}/${budget.year}</td>
                 <td>${budget.observations}</td>
+                <td>${Budgets.buildBudgetBalanceRow(budget.balance_value, budget.balance_change_percentage, (budget.month == currentMonth && budget.year == currentYear))}</td>
                 <td><span class="${(budget.is_open == 1) ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${(budget.is_open == 1) ? "Aberto" : "Fechado"}</span></td>
                 <td>
                     <i onClick="Budgets.goToBudget(${budget.budget_id}, ${budget.is_open})" class="material-icons table-action-icons">remove_red_eye</i>
@@ -61,6 +63,19 @@ var Budgets = {
                 </td>
             </tr>
         `
+    },
+    buildBudgetBalanceRow: (balanceValue, balanceChangePercentage, isCurrentMonth) => {
+        let strToReturn = "";
+
+        if (balanceValue > 0) {
+            strToReturn = `+${StringUtils.formatStringToCurrency(balanceValue)} <span class="${!isCurrentMonth ? 'green-text text-accent-4' : ''}" style="font-size: small;">(+${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
+        } else if (balanceValue < 0) {
+            strToReturn = `${StringUtils.formatStringToCurrency(balanceValue)} <span class="${!isCurrentMonth ? 'pink-text text-accent-2' : ''}" style="font-size: small;">(${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
+        } else {
+            strToReturn = `${StringUtils.formatStringToCurrency(balanceValue)} <span class="" style="font-size: small;">(${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
+        }
+
+        return strToReturn
     },
     goToBudget: (budgetID, isOpen) => {
         configs.goToPage('budgetDetails', {'new': false, 'open': (isOpen == 1) ? true : false, 'id': budgetID}, true);

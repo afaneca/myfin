@@ -46,6 +46,70 @@ class BudgetModel extends Entity
             return $e;
         }
     }*/
+    public static function calculateBudgetBalance($userID, $budget)
+    {
+        $budgetID = $budget["budget_id"];
+        $month = intval($budget["month"]);
+        $year = intval($budget["year"]);
+        $isOpen = intval($budget["is_open"]);
+
+        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+
+        $balance = 0;
+
+        foreach ($categories as &$category) {
+            $monthToUse = $month;
+            $yearToUser = $year;
+
+            if ($isOpen) {
+                $amount_credit = abs(Input::convertFloatToInteger($category["planned_amount_credit"]));
+                $amount_debit = abs(Input::convertFloatToInteger($category["planned_amount_debit"]));
+            } else {
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
+                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
+                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);
+            }
+            $balance += $amount_credit;
+            $balance -= $amount_debit;
+
+            /*if ($budgetID == 2) {
+                echo "\n------------------------------------\n";
+                echo "Categoria:" . $category["name"] . "\n";
+                echo "Crédito: $amount_credit\n";
+                echo "Débito: $amount_debit\n";
+                echo "Saldo: $balance\n";
+                echo "\n------------------------------------\n";
+            }*/
+        }
+        /*if ($budgetID == 2) {
+            echo "\n------------------------------------\n";
+            echo "Saldo Final: $balance";
+            echo "\n------------------------------------\n";
+            die();
+        }*/
+        return Input::convertIntegerToFloat($balance);
+    }
+
+    public static function calculateBudgetBalanceChangePercentage($userID, $budget, $budgetBalance)
+    {
+        $month = intval($budget["month"]);
+        $year = intval($budget["year"]);
+
+        $initialBalance =
+            AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12,
+                ($month > 1) ? $year : $year - 1, false);
+        $finalBalance = $initialBalance + $budgetBalance;
+
+        if ($initialBalance == 0) return "NaN";
+
+        /*if ($budget["budget_id"] == 2) {
+            echo "Saldo Inicial: $initialBalance\n";
+            echo "Saldo Final: $finalBalance\n";
+            echo "Percentagem:" . (($finalBalance - $initialBalance) / (abs($initialBalance))* 100) . "\n";
+            die();
+        }*/
+        return (($finalBalance - $initialBalance) / (abs($initialBalance)) * 100);
+    }
 }
 
 
