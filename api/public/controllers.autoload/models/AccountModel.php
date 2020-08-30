@@ -22,7 +22,8 @@ class AccountModel extends Entity
         "users_user_id",
         "current_balance",
         "created_timestamp",
-        "updated_timestamp"
+        "updated_timestamp",
+        "color_gradient"
     ];
 
     /*
@@ -58,7 +59,7 @@ class AccountModel extends Entity
     public static function getAllAccountsForUserWithAmounts($id_user, $transactional = false)
     {
         $db = new EnsoDB($transactional);
-        $sql = "SELECT a.account_id, a.name, a.type, a.description, a.status, a.exclude_from_budgets, (a.current_balance / 100) as 'balance', a.users_user_id " .
+        $sql = "SELECT a.account_id, a.name, a.type, a.description, a.status, a.color_gradient, a.exclude_from_budgets, (a.current_balance / 100) as 'balance', a.users_user_id " .
             "FROM accounts a " .
             "WHERE users_user_id = :userID " .
             "ORDER BY abs(balance) DESC";
@@ -334,7 +335,7 @@ class AccountModel extends Entity
 
             if ($trxType == DEFAULT_TYPE_EXPENSE_TAG
                 || ($trxType == DEFAULT_TYPE_TRANSFER_TAG && $trx["accounts_account_from_id"]
-                && $trx["accounts_account_from_id"] == $accountID)) {
+                    && $trx["accounts_account_from_id"] == $accountID)) {
                 $trxAmount *= -1;
             }
             //print_r($trxList);

@@ -22,7 +22,7 @@ var AccountServices = {
             }
         });
     },
-    addAccount: (name, description, type, exclude_from_budgets, status, current_balance, successCallback, errorCallback) => {
+    addAccount: (name, description, type, exclude_from_budgets, status, current_balance, color_gradient, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "accounts/"
 
         $.ajax({
@@ -40,7 +40,8 @@ var AccountServices = {
                 description,
                 exclude_from_budgets,
                 status,
-                current_balance
+                current_balance,
+                color_gradient
             },
             url: pageUrl,
             success: function (response) {
@@ -75,7 +76,7 @@ var AccountServices = {
             }
         });
     },
-    editAccount: (account_id, name, description, type, exclude_from_budgets, status, current_balance, successCallback, errorCallback) => {
+    editAccount: (account_id, name, description, type, exclude_from_budgets, status, current_balance, color_gradient, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "accounts/"
 
         $.ajax({
@@ -94,7 +95,8 @@ var AccountServices = {
                 new_description: description,
                 exclude_from_budgets,
                 new_status: status,
-                current_balance
+                current_balance,
+                color_gradient
             },
             url: pageUrl,
             success: function (response) {

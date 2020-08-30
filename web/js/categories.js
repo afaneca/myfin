@@ -28,7 +28,10 @@ var Categories = {
     initTables: (debitCatsList, creditCatsList) => {
         $("#table-debit-wrapper").html(Categories.renderDebitCategoriesTable(debitCatsList))
         $("#table-crebit-wrapper").html(Categories.renderCreditCategoriesTable(creditCatsList))
+
         tableUtils.setupStaticTable("#debit-categories-table");
+        $("select.cat-color-select").select2()
+
         LoadingManager.hideLoading()
     },
     renderDebitCategoriesTable: (catsList) => {
@@ -52,6 +55,7 @@ var Categories = {
             <table id="debit-categories-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
+                <th>Cor</th>
                 <th>Nome</th>
                 <th>Descrição</th>
                 <th>Ações</th>
@@ -66,19 +70,30 @@ var Categories = {
     renderCategoriesRow: cats => {
         return `
             <tr data-id='${cats.category_id}'>
+                <td>
+                   ${Categories.renderColorColumn(cats.color_gradient)}
+                </td>
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
                 <td>
-                    <i onClick="Categories.showEditCategoryModal('${StringUtils.escapeHtml(cats.name)}', '${StringUtils.removeLineBreaksFromString(cats.description).replace(/["']/g,'')}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Categories.showEditCategoryModal('${StringUtils.escapeHtml(cats.name)}', '${StringUtils.removeLineBreaksFromString(cats.description).replace(/["']/g, '')}', '${cats.color_gradient}', ${cats.category_id})" class="material-icons table-action-icons">create</i>
                     <i onClick="Categories.showRemoveCategoryModal('${StringUtils.escapeHtml(cats.name)}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
         `
     },
+    renderColorColumn: catColorGradient => {
+        return `
+            <div style="width:45px;height:25px;" class="${catColorGradient}-bg"></div>
+        `
+    },
     showAddCategoryModal: () => {
         $("#modal-global").modal("open")
         let txt = `
-                <h4>Adicionar nova categoria</h4>
+                <div class="row">
+                    <h4 class="col s8">Adicionar nova categoria</h4>
+                    <div class="col s4 right-align">${Categories.renderColorPickerSelect(null)}</div>
+                </div>
                 <div class="row">
                     <form class="col s12">
                         <div class="input-field col s6">
@@ -102,11 +117,28 @@ var Categories = {
         $("#modal-global .modal-footer").html(actionLinks);
 
         /*$('#category_type_select').formSelect();*/
+
+        const colorGradientsArr = chartUtils.getColorGradientsArr(null)
+
+        $("select.cat-color-picker-select").select2({
+            minimumResultsForSearch: -1,
+            data: colorGradientsArr,
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+            templateResult: function (data) {
+                return data.html;
+            },
+            templateSelection: function (data) {
+                return data.text;
+            }
+        })
     },
     addCategory: () => {
         const catName = StringUtils.removeLineBreaksFromString($("input#category_name").val())
-        const catDescription = StringUtils.removeLineBreaksFromString($("textarea#category_description").val()).replace(/["']/g,'')
+        const catDescription = StringUtils.removeLineBreaksFromString($("textarea#category_description").val()).replace(/["']/g, '')
         /*const catType = $("select#category_type_select").val()*/
+        const catColorGradient = $("select.cat-color-picker-select").val()
 
         if (!catName || catName === "" /*|| !catType || catType === ""*/) {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
@@ -114,7 +146,7 @@ var Categories = {
         }
 
         LoadingManager.showLoading()
-        CategoryServices.addCategory(catName, catDescription,
+        CategoryServices.addCategory(catName, catDescription, catColorGradient,
             (response) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
@@ -162,10 +194,14 @@ var Categories = {
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
-    showEditCategoryModal: (catName, catDescription, catID) => {
+    showEditCategoryModal: (catName, catDescription, catColorGradient, catID) => {
         $("#modal-global").modal("open")
         let txt = `
-                <h4>Editar categoria</h4>
+                <div class="row">
+                    <h4 class="col s8">Editar categoria</h4>
+                    <div class="col s4 right-align">${Categories.renderColorPickerSelect()}</div>
+                </div>
+                
                 <div class="row">
                     <form class="col s12">
                         <div class="input-field col s6">
@@ -195,12 +231,45 @@ var Categories = {
         //$(`select#category_type_select_edit option[value='${catType}']`).prop('selected', 'selected')
         //$('select#category_type_select').find('option[value=' + catType + ']').prop('selected', true).trigger('change');
 
+        const colorGradientsArr = chartUtils.getColorGradientsArr(catColorGradient)
 
+        $("select.cat-color-picker-select").select2({
+            minimumResultsForSearch: -1,
+            data: colorGradientsArr,
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+            templateResult: function (data) {
+                return data.html;
+            },
+            templateSelection: function (data) {
+                return data.text;
+            }
+        })
+    },
+    renderColorPickerSelect: cat => {
+        return `
+            <style>
+                /* Height fix for select2 */
+                .select2-container .select2-selection--single, .select2-container--default .select2-selection--single .select2-selection__rendered, .select2-container--default .select2-selection--single .select2-selection__arrow {
+                    height: 50px;
+                }
+                
+                .select2-container--default .select2-selection--single .select2-selection__rendered {
+                    line-height: 75px;
+                }
+            </style>
+            <select style="width: 107px;" class="cat-color-picker-select">
+                
+            </select>
+        `
     },
     editCategory: (catID) => {
         const catName = $("input#category_name").val()
         const catDescription = $("textarea#category_description").val()
         /* const catType = $("select#category_type_select").val()*/
+        let catNewColorGradient = $("select.cat-color-picker-select").val()
+        if (!catNewColorGradient) catNewColorGradient = "red-gradient"
 
         if (!catName || catName === "" /*|| !catType || catType === ""*/) {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
@@ -208,7 +277,7 @@ var Categories = {
         }
 
         LoadingManager.showLoading()
-        CategoryServices.editCategory(catID, catName, catDescription,
+        CategoryServices.editCategory(catID, catName, catDescription, catNewColorGradient,
             () => {
                 // SUCCESS
                 LoadingManager.hideLoading()

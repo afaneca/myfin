@@ -18,6 +18,7 @@ var Dashboard = {
         Dashboard.setupLastTransactionsTable()
         Dashboard.setupDebtDistributionChart()
         Dashboard.setupInvestmentDistributionChart()
+
         Dashboard.setupIncomeExpensesDistributionChart()
 
 
@@ -90,14 +91,16 @@ var Dashboard = {
 
         let dataset = []
         let labels = []
+        let colorGradientsArr = []
 
         for (const cacc of creditAccounts) {
             dataset.push(parseFloat(cacc.balance).toFixed(2))
             labels.push(cacc.name)
+            colorGradientsArr.push(cacc.color_gradient)
         }
 
 
-        chartUtils.setupDebtDistributionPieChart("chart_pie_debt_distribution", dataset, labels, "Distribuição da Dívida");
+        chartUtils.setupDebtDistributionPieChart("chart_pie_debt_distribution", dataset, labels, "Distribuição da Dívida", colorGradientsArr);
     },
     setupInvestmentDistributionChart: () => {
 
@@ -109,20 +112,24 @@ var Dashboard = {
 
         let dataset = []
         let labels = []
+        let colorGradientsArr = []
 
         for (const invAcc of investmentAccounts) {
             dataset.push(parseFloat(invAcc.balance).toFixed(2))
             labels.push(invAcc.name)
+            colorGradientsArr.push(invAcc.color_gradient)
         }
 
 
-        chartUtils.setupDebtDistributionPieChart("chart_pie_investing_portfolio", dataset, labels, "Portefólio de Investimento");
+        chartUtils.setupDebtDistributionPieChart("chart_pie_investing_portfolio", dataset, labels, "Portefólio de Investimento", colorGradientsArr);
     },
     setupIncomeExpensesDistributionChart: () => {
         let datasetDebit = []
         let labelsDebit = []
         let datasetCredit = []
         let labelsCredit = []
+        let catColorsCredit = []
+        let catColorsDebit = []
 
         const selectedMonth = $("#dashboard-monthpicker").val();
 
@@ -136,37 +143,19 @@ var Dashboard = {
 
                 const allCategories = resp.categories
 
-                /*  const creditCategories = allCategories.filter((cat) => {
-                      return cat.type === "C"
-                  })
-                  const deditCategories = allCategories.filter((cat) => {
-                      return cat.type === "D"
-                  })
-
-                  creditCategories.forEach((cat) => {
-                      datasetCredit.push(cat.current_amount_credit)
-                      labelsCredit.push(cat.name)
-
-                  })*/
-
                 let totalExpensesRealAmount = 0
                 let totalExpensesBudgetedAmount = 0
-                /*deditCategories.forEach((cat) => {
-                    datasetDebit.push(cat.current_amount_debit)
-                    labelsDebit.push(cat.name)
-                    totalExpensesRealAmount += parseFloat(cat.current_amount_debit)
-                    totalExpensesBudgetedAmount += parseFloat(cat.planned_amount_debit)
-                })*/
-
 
                 allCategories.forEach((cat) => {
                     if (cat.current_amount_credit && parseFloat(cat.current_amount_credit) !== 0) {
                         datasetCredit.push(cat.current_amount_credit)
                         labelsCredit.push(cat.name)
+                        catColorsCredit.push(cat.color_gradient)
                     }
                     if (cat.current_amount_debit && parseFloat(cat.current_amount_debit) !== 0) {
                         datasetDebit.push(cat.current_amount_debit)
                         labelsDebit.push(cat.name)
+                        catColorsDebit.push(cat.color_gradient)
                     }
 
                     totalExpensesRealAmount += parseFloat(cat.current_amount_debit)
@@ -180,8 +169,8 @@ var Dashboard = {
                 if (CHART_EXPENSES_DISTRIBUTION)
                     chartUtils.removeData(CHART_EXPENSES_DISTRIBUTION)
 
-                CHART_INCOME_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart("chart_pie_income_distribution", datasetCredit, labelsCredit, "Distribuição de Receita");
-                CHART_EXPENSES_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart("chart_pie_spending_distribution", datasetDebit, labelsDebit, "Distribuição de Despesa");
+                CHART_INCOME_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart("chart_pie_income_distribution", datasetCredit, labelsCredit, "Distribuição de Receita", catColorsCredit);
+                CHART_EXPENSES_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart("chart_pie_spending_distribution", datasetDebit, labelsDebit, "Distribuição de Despesa", catColorsDebit);
 
 
                 LoadingManager.hideLoading()

@@ -27,6 +27,7 @@ var Accounts = {
             <table id="accounts-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
+                <th>Cor</th>
                 <th>Nome</th>
                 <th>Tipo</th>
                 <th>Saldo</th>
@@ -43,12 +44,13 @@ var Accounts = {
     renderAccountsRow: account => {
         return `
             <tr data-id='${account.account_id}'>
+                <td>${Categories.renderColorColumn(account.color_gradient)}</td>
                 <td>${account.name}</td>
                 <td>${StringUtils.getAccountTypeName(account.type)}</td>
                 <td>${StringUtils.formatStringToCurrency(account.balance)}</td>
                 <td><span class="${(account.status === 'Ativa') ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${account.status}</span></td>
                 <td>
-                    <i onClick="Accounts.showEditAccountModal('${account.name}', '${StringUtils.normalizeString(account.description)}', '${account.type}', '${account.status}', '${account.balance}', '${account.exclude_from_budgets}', ${account.account_id})" class="material-icons table-action-icons">create</i>
+                    <i onClick="Accounts.showEditAccountModal('${account.name}', '${StringUtils.normalizeString(account.description)}', '${account.type}', '${account.status}', '${account.balance}', '${account.exclude_from_budgets}','${account.color_gradient}', ${account.account_id})" class="material-icons table-action-icons">create</i>
                     <i onClick="Accounts.showRemoveAccountModal('${account.name}',${account.account_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
@@ -58,7 +60,10 @@ var Accounts = {
 
         $("#modal-global").modal("open")
         let txt = `
-                <h4>Adicionar nova conta</h4>
+                <div class="row">
+                    <h4 class="col s8">Adicionar Nova Conta</h4>
+                    <div class="col s4 right-align">${Accounts.renderColorPickerSelect()}</div>
+                </div>
                 <div class="row">
                     <form class="col s12">
                         <div class="input-field col s6">
@@ -125,6 +130,22 @@ var Accounts = {
             format: 'dd/mm/yyyy'
 
         }); */
+
+        const colorGradientsArr = chartUtils.getColorGradientsArr(null)
+
+        $("select.acc-color-picker-select").select2({
+            minimumResultsForSearch: -1,
+            data: colorGradientsArr,
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+            templateResult: function (data) {
+                return data.html;
+            },
+            templateSelection: function (data) {
+                return data.text;
+            }
+        })
     },
     addAccount: () => {
         const name = $("#account_name").val()
@@ -133,7 +154,8 @@ var Accounts = {
         const type = $("select#account_type_select").val()
         const status = $("select#account_status_select").val()
         const exclude_from_budgets = $("#exclude_from_budgets").is(":checked")
-
+        let accNewColorGradient = $("select.acc-color-picker-select").val()
+        if (!accNewColorGradient) accNewColorGradient = "red-gradient"
 
         if (!name || name === "" || !type || type === ""
             /*|| !description || description === ""*/ || !status || status === ""
@@ -143,7 +165,7 @@ var Accounts = {
         }
 
         LoadingManager.showLoading()
-        AccountServices.addAccount(name, description, type, exclude_from_budgets, status, current_balance,
+        AccountServices.addAccount(name, description, type, exclude_from_budgets, status, current_balance, accNewColorGradient,
             (response) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
@@ -191,10 +213,30 @@ var Accounts = {
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             }
     },
-    showEditAccountModal: (accName, accDescription, accType, accStatus, current_balance, exclude_from_budgets, accID) => {
+    renderColorPickerSelect: cat => {
+        return `
+            <style>
+                /* Height fix for select2 */
+                .select2-container .select2-selection--single, .select2-container--default .select2-selection--single .select2-selection__rendered, .select2-container--default .select2-selection--single .select2-selection__arrow {
+                    height: 50px;
+                }
+                
+                .select2-container--default .select2-selection--single .select2-selection__rendered {
+                    line-height: 75px;
+                }
+            </style>
+            <select style="width: 107px;" class="acc-color-picker-select">
+                
+            </select>
+        `
+    },
+    showEditAccountModal: (accName, accDescription, accType, accStatus, current_balance, exclude_from_budgets, accColorGradient, accID) => {
         $("#modal-global").modal("open")
         let txt = `
-                <h4>Editar a conta <b>${accName}</b></h4>
+                <div class="row">
+                    <h4 class="col s8">Editar a conta <b>${accName}</b></h4>
+                    <div class="col s4 right-align">${Accounts.renderColorPickerSelect(null)}</div>
+                </div>
                 <div class="row">
                     <form class="col s12">
                         <div class="input-field col s6">
@@ -257,6 +299,23 @@ var Accounts = {
 
         if (exclude_from_budgets === "1")
             $("input#exclude_from_budgets").prop('checked', 'checked')
+
+
+        const colorGradientsArr = chartUtils.getColorGradientsArr(accColorGradient)
+
+        $("select.acc-color-picker-select").select2({
+            minimumResultsForSearch: -1,
+            data: colorGradientsArr,
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+            templateResult: function (data) {
+                return data.html;
+            },
+            templateSelection: function (data) {
+                return data.text;
+            }
+        })
     },
     editAccount: (accID) => {
         const name = $("#account_name").val()
@@ -265,6 +324,8 @@ var Accounts = {
         const type = $("select#account_type_select").val()
         const status = $("select#account_status_select").val()
         const exclude_from_budgets = $("#exclude_from_budgets").is(":checked")
+        let accNewColorGradient = $("select.acc-color-picker-select").val()
+        if (!accNewColorGradient) accNewColorGradient = "red-gradient"
 
         if (!name || name === "" || !type || type === ""
             /*|| !description || description === ""*/ || !status || status === ""
@@ -273,7 +334,7 @@ var Accounts = {
             return
         }
         LoadingManager.showLoading()
-        AccountServices.editAccount(accID, name, description, type, exclude_from_budgets, status, current_balance,
+        AccountServices.editAccount(accID, name, description, type, exclude_from_budgets, status, current_balance, accNewColorGradient,
             (response) => {
                 // SUCCESS
                 LoadingManager.hideLoading()

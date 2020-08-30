@@ -73,6 +73,7 @@ class Accounts
             $status = Input::validate($request->getParsedBody()['status'], Input::$STRING, 6);
             $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 7);
             $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8));
+            $colorGradient = Input::validate($request->getParsedBody()["color_gradient"], Input::$STRICT_STRING, 9);
 
             if (
                 $type !== "CHEAC" && $type !== "SAVAC"
@@ -105,7 +106,8 @@ class Accounts
                 "status" => $status,
                 "users_user_id" => $userID,
                 "current_balance" => $currentBalance,
-                "created_timestamp" => time()
+                "created_timestamp" => time(),
+                "color_gradient" => $colorGradient,
             ], false);
 
 
@@ -223,6 +225,7 @@ class Accounts
             $newStatus = Input::validate($request->getParsedBody()['new_status'], Input::$STRING, 7);
             $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 8);
             $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9));
+            $colorGradient = Input::validate($request->getParsedBody()["color_gradient"], Input::$STRICT_STRING, 10);
 
             if (
                 $newType !== "CHEAC" && $newType !== "SAVAC"
@@ -260,7 +263,8 @@ class Accounts
                     "exclude_from_budgets" => $excludeFromBudgets,
                     "status" => $newStatus,
                     "current_balance" => $currentBalance,
-                    "updated_timestamp" => time()
+                    "updated_timestamp" => time(),
+                    "color_gradient" => $colorGradient,
                 ],
                 false
             );
