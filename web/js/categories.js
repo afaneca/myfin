@@ -259,7 +259,7 @@ var Categories = {
                     line-height: 75px;
                 }
             </style>
-            <select style="width: 75px;" class="cat-color-picker-select">
+            <select style="width: 107px;" class="cat-color-picker-select">
                 
             </select>
         `
