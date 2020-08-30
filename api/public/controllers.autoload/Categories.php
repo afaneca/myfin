@@ -45,14 +45,12 @@ class Categories
             if (isset($type)) {
                 $catsArr = CategoryModel::getWhere(
                     ["users_user_id" => $userID, "type" => $type],
-                    ["category_id", "name", "type", "description"]
-
+                    ["category_id", "name", "type", "description", "color_gradient"]
                 );
             } else {
                 $catsArr = CategoryModel::getWhere(
                     ["users_user_id" => $userID],
-                    ["category_id", "name", "type", "description"]
-
+                    ["category_id", "name", "type", "description", "color_gradient"]
                 );
             }
 
@@ -85,6 +83,8 @@ class Categories
             $name = Input::validate($request->getParsedBody()['name'], Input::$STRING);
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING);
 
+            $colorGradient = Input::validate($request->getParsedBody()['color_gradient'], Input::$STRICT_STRING);
+
             if (array_key_exists('type', $request->getParsedBody())) {
                 $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING);
             } else {
@@ -108,7 +108,8 @@ class Categories
                 "name" => $name,
                 "type" => $type,
                 "description" => $description,
-                "users_user_id" => $userID
+                "users_user_id" => $userID,
+                "color_gradient" => $colorGradient,
             ], false);
 
 
@@ -190,6 +191,8 @@ class Categories
             $categoryID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 3);
             $newName = Input::validate($request->getParsedBody()['new_name'], Input::$STRING, 4);
             $newDescription = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 5);
+
+            $newColorGradient = Input::validate($request->getParsedBody()["new_color_gradient"], Input::$STRICT_STRING, 6);
             //$newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING, 5);
 
             if (array_key_exists('new_type', $request->getParsedBody())) {
@@ -218,7 +221,8 @@ class Categories
                 [
                     "name" => $newName,
                     "description" => $newDescription,
-                    "type" => $newType
+                    "type" => $newType,
+                    "color_gradient" => $newColorGradient
                 ],
                 false
             );
