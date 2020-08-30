@@ -91,14 +91,16 @@ var Dashboard = {
 
         let dataset = []
         let labels = []
+        let colorGradientsArr = []
 
         for (const cacc of creditAccounts) {
             dataset.push(parseFloat(cacc.balance).toFixed(2))
             labels.push(cacc.name)
+            colorGradientsArr.push(cacc.color_gradient)
         }
 
 
-        chartUtils.setupDistributionPieChart("chart_pie_debt_distribution", dataset, labels, "Distribuição da Dívida");
+        chartUtils.setupDebtDistributionPieChart("chart_pie_debt_distribution", dataset, labels, "Distribuição da Dívida", colorGradientsArr);
     },
     setupInvestmentDistributionChart: () => {
 
@@ -110,14 +112,16 @@ var Dashboard = {
 
         let dataset = []
         let labels = []
+        let colorGradientsArr = []
 
         for (const invAcc of investmentAccounts) {
             dataset.push(parseFloat(invAcc.balance).toFixed(2))
             labels.push(invAcc.name)
+            colorGradientsArr.push(invAcc.color_gradient)
         }
 
 
-        chartUtils.setupDistributionPieChart("chart_pie_investing_portfolio", dataset, labels, "Portefólio de Investimento");
+        chartUtils.setupDebtDistributionPieChart("chart_pie_investing_portfolio", dataset, labels, "Portefólio de Investimento", colorGradientsArr);
     },
     setupIncomeExpensesDistributionChart: () => {
         let datasetDebit = []
@@ -164,7 +168,7 @@ var Dashboard = {
                     chartUtils.removeData(CHART_INCOME_DISTRIBUTION)
                 if (CHART_EXPENSES_DISTRIBUTION)
                     chartUtils.removeData(CHART_EXPENSES_DISTRIBUTION)
-                
+
                 CHART_INCOME_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart("chart_pie_income_distribution", datasetCredit, labelsCredit, "Distribuição de Receita", catColorsCredit);
                 CHART_EXPENSES_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart("chart_pie_spending_distribution", datasetDebit, labelsDebit, "Distribuição de Despesa", catColorsDebit);
 

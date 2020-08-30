@@ -262,7 +262,7 @@ var chartUtils = {
             let colorGradient
             let gradientsArr = chartUtils.getPieChartGradientsList(ctx)
             if (catColors[i]) {
-                colorGradient = eval(catColors[i].replace("-", "_"))
+                colorGradient = eval(catColors[i].replaceAll("-", "_"))
             } else {
                 colorGradient = gradientsArr[0]
             }
@@ -501,7 +501,7 @@ var chartUtils = {
                 text: '<div style="width: 75px; height: 50px;" class="green-gradient-bg"></div>',
                 html: '<div style="width: 75px; height: 50px;" class="green-gradient-bg"></div>',
                 title: 'green-gradient',
-                selected: (catColorGradient == 'orange-gradient')
+                selected: (catColorGradient == 'green-gradient')
             }, {
                 id: 'orange-gradient',
                 text: '<div style="width: 75px; height: 50px;" class="orange-gradient-bg"></div>',

@@ -199,7 +199,7 @@ var Categories = {
         let txt = `
                 <div class="row">
                     <h4 class="col s8">Editar categoria</h4>
-                    <div class="col s4 right-align">${Categories.renderColorPickerSelect(null)}</div>
+                    <div class="col s4 right-align">${Categories.renderColorPickerSelect()}</div>
                 </div>
                 
                 <div class="row">
