@@ -343,6 +343,38 @@ var chartUtils = {
         yellowGradient.addColorStop(0, "#FFE884");
         yellowGradient.addColorStop(1, "#FFF493");
 
+        var roseannaGradient = ctx.createLinearGradient(500, 0, 100, 0);
+        roseannaGradient.addColorStop(0, "#ffafbd");
+        roseannaGradient.addColorStop(1, "#ffc3a0");
+
+        var mauveGradient = ctx.createLinearGradient(500, 0, 100, 0);
+        mauveGradient.addColorStop(0, "#42275a");
+        mauveGradient.addColorStop(1, "#734b6d");
+
+        var lushGradient = ctx.createLinearGradient(500, 0, 100, 0);
+        lushGradient.addColorStop(0, "#56ab2f");
+        lushGradient.addColorStop(1, "#a8e063");
+
+        var paleWoodGradient = ctx.createLinearGradient(500, 0, 100, 0);
+        paleWoodGradient.addColorStop(0, "#eacda3");
+        paleWoodGradient.addColorStop(1, "#d6ae7b");
+
+        var aubergineGradient = ctx.createLinearGradient(500, 0, 100, 0);
+        aubergineGradient.addColorStop(0, "#aa076b");
+        aubergineGradient.addColorStop(1, "#61045f");
+
+        var orangeCoralGradient = ctx.createLinearGradient(500, 0, 100, 0);
+        orangeCoralGradient.addColorStop(0, "#ff9966");
+        orangeCoralGradient.addColorStop(1, "#ff5e62");
+
+        var decentGradient = ctx.createLinearGradient(500, 0, 100, 0);
+        decentGradient.addColorStop(0, "#4ca1af");
+        decentGradient.addColorStop(1, "#c4e0e5");
+
+        var duskGradient = ctx.createLinearGradient(500, 0, 100, 0);
+        duskGradient.addColorStop(0, "#ffd89b");
+        duskGradient.addColorStop(1, "#19547b");
+
         return ArrayUtils.shuffle([
             redGradient,
             greenGradient,
@@ -356,6 +388,14 @@ var chartUtils = {
             lightGreenGradient,
             darkRedGradient,
             yellowGradient,
+            roseannaGradient,
+            mauveGradient,
+            lushGradient,
+            paleWoodGradient,
+            aubergineGradient,
+            orangeCoralGradient,
+            decentGradient,
+            duskGradient
         ]);
     },
     addData: (chart, label, data) => {

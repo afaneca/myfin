@@ -75,7 +75,7 @@ var CloneMonthFunc = {
             $("#" + catID + "debit").val(plannedAmountDebit)
         })
 
-        AddBudgets.updateSummaryValues("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
+        BudgetDetails.updateSummaryValues("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
     },
 }
 //# sourceURL=js/funcs/cloneMonthFunc.js

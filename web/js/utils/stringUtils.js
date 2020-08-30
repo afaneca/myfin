@@ -4,6 +4,9 @@ var StringUtils = {
     formatStringToCurrency: (str) => {
         return parseFloat(str).toFixed(2) + "€"
     },
+    formatStringToPercentage: (str) => {
+        return parseFloat(str).toFixed(2) + "%"
+    },
     escapeHtml: (unsafe) => {
         return StringUtils.removeLineBreaksFromString(unsafe)
             .replace(/&/g, "&amp;")

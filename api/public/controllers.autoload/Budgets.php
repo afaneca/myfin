@@ -84,6 +84,10 @@ class Budgets
                 return $b['month'] - $a['month'];
             });
 
+            foreach ($budgetsArr as &$budget) {
+                $budget["balance_value"] = BudgetModel::calculateBudgetBalance($userID, $budget);//"-343.54";
+                $budget["balance_change_percentage"] = BudgetModel::calculateBudgetBalanceChangePercentage($userID, $budget, $budget["balance_value"]);
+            }
 
             /* $db->getDB()->commit(); */
 

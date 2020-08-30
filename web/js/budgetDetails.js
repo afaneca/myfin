@@ -5,7 +5,7 @@ let BUDGET_INITIAL_BALANCE;
 let IS_OPEN
 
 
-var AddBudgets = {
+var BudgetDetails = {
     init: (isOpen, isNew, budgetID) => {
         IS_OPEN = isOpen
         currentBudgetID = budgetID;
@@ -13,21 +13,21 @@ var AddBudgets = {
             $("#conclusion-close-btn").show()
             $("#conclusion-close-btn-text").text("Fechar Orçamento")
             $("#estimated_state_value").text("Aberto")
-            AddBudgets.enableCloneMonthButton()
+            BudgetDetails.enableCloneMonthButton()
         } else {
             $("#conclusion-close-btn").hide()
             $("#conclusion-close-btn").show()
             $("#conclusion-close-btn-text").text("Reabrir Orçamento")
             $("#estimated_state_value").text("Fechado")
-            AddBudgets.disableCloneMonthButton()
+            BudgetDetails.disableCloneMonthButton()
         }
 
         if (isNew == true) {
             $("#conclusion-btn-text").text("Adicionar Orçamento")
-            AddBudgets.initNewBudget()
+            BudgetDetails.initNewBudget()
         } else {
             $("#conclusion-btn-text").text("Atualizar Orçamento")
-            AddBudgets.initBudget(budgetID)
+            BudgetDetails.initBudget(budgetID)
         }
 
         $('.tooltipped').tooltip();
@@ -68,13 +68,13 @@ var AddBudgets = {
             }
 
 
-            AddBudgets.setMonthPickerValue(month, year)
-            AddBudgets.setInitialBalance(BUDGET_INITIAL_BALANCE)
-            AddBudgets.setObservations(observations)
-            AddBudgets.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false)
-            AddBudgets.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true)
-            AddBudgets.setupInputListenersAndUpdateSummary("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
-            AddBudgets.updateSummaryValues("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
+            BudgetDetails.setMonthPickerValue(month, year)
+            BudgetDetails.setInitialBalance(BUDGET_INITIAL_BALANCE)
+            BudgetDetails.setObservations(observations)
+            BudgetDetails.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false)
+            BudgetDetails.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true)
+            BudgetDetails.setupInputListenersAndUpdateSummary("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
+            BudgetDetails.updateSummaryValues("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
         }, (err) => {
             // FAILURE
             LoadingManager.hideLoading()
@@ -85,7 +85,7 @@ var AddBudgets = {
         CloneMonthFunc.onCloneMonthClicked()
     },
     initNewBudget: () => {
-        AddBudgets.setMonthPickerValue(null, null)
+        BudgetDetails.setMonthPickerValue(null, null)
         LoadingManager.showLoading()
         BudgetServices.getAddBudgetStep0((resp) => {
             // SUCCESS
@@ -94,11 +94,11 @@ var AddBudgets = {
             const debitCategories = resp['categories'].filter((cat) => cat.type === 'D');
             const creditCategories = resp['categories'].filter((cat) => cat.type === 'C');
 
-            AddBudgets.setInitialBalance(resp.initial_balance)
-            AddBudgets.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false)
-            AddBudgets.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true)
+            BudgetDetails.setInitialBalance(resp.initial_balance)
+            BudgetDetails.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false)
+            BudgetDetails.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true)
 
-            AddBudgets.setupInputListenersAndUpdateSummary("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
+            BudgetDetails.setupInputListenersAndUpdateSummary("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
         }, (err) => {
             // FAILURE
             LoadingManager.hideLoading()
@@ -106,7 +106,7 @@ var AddBudgets = {
         })
     },
     setupBudgetInputs: (selectorID, categoriesArr, isCredit) => {
-        $(selectorID).html(AddBudgets.buildBudgetInputs(categoriesArr, isCredit))
+        $(selectorID).html(BudgetDetails.buildBudgetInputs(categoriesArr, isCredit))
         //ProgressBarUtils.setupProgressBar(".cat_progressbar_1", 13)
 
         let incomeAcc = 0, expensesAcc = 0
@@ -135,8 +135,8 @@ var AddBudgets = {
                 <th>Valor Atual</th>
             </thead>
             <tbody>
-                ${AddBudgets.buildTotalsRow(isCredit)}
-                ${categoriesArr.map(cat => AddBudgets.renderInputRow(cat, isCredit)).join("")}
+                ${BudgetDetails.buildTotalsRow(isCredit)}
+                ${categoriesArr.map(cat => BudgetDetails.renderInputRow(cat, isCredit)).join("")}
             </tbody>
         </table>
         `
@@ -163,7 +163,7 @@ var AddBudgets = {
     renderInputRow: (cat, isCredit) => {
         return `
             <tr>
-                <td style="padding:0px !important;"><div class="tooltip" onClick="AddBudgets.onCategoryTooltipClick(${cat.category_id}, ${isCredit})">
+                <td style="padding:0px !important;"><div class="tooltip" onClick="BudgetDetails.onCategoryTooltipClick(${cat.category_id}, ${isCredit})">
                         ${cat.name}
                         <span class="tooltiptext">${cat.description}</span>
                     </div>
@@ -180,10 +180,10 @@ var AddBudgets = {
             <tr>
                 <td colspan="3" style="padding:0px !important;">
                     <div id="modded">
-                        <div class="progress medium-dark-gray-bg tooltipped" data-position="top" data-tooltip="${AddBudgets.buildCatTooltipText(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
+                        <div class="progress medium-dark-gray-bg tooltipped" data-position="top" data-tooltip="${BudgetDetails.buildCatTooltipText(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
                             <span>${cat.name}</span>
-                            <div class="determinate ${isCredit ? 'green-gradient-bg' : 'red-gradient-bg'}" style="width: ${AddBudgets.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
-                                ${AddBudgets.getCorrectPercentageValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%
+                            <div class="determinate ${isCredit ? 'green-gradient-bg' : 'red-gradient-bg'}" style="width: ${BudgetDetails.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
+                                ${BudgetDetails.getCorrectPercentageValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%
                              </div>
                         </div>
                     </div>
@@ -217,7 +217,7 @@ var AddBudgets = {
     },
     setupInputListenersAndUpdateSummary: (expensesID, incomeID, balanceID) => {
         $('.input').change((input) => {
-            AddBudgets.updateSummaryValues(expensesID, incomeID, balanceID)
+            BudgetDetails.updateSummaryValues(expensesID, incomeID, balanceID)
         })
     },
     updateSummaryValues: (expensesID, incomeID, balanceID) => {
@@ -263,7 +263,7 @@ var AddBudgets = {
         $(incomeID).text(StringUtils.formatStringToCurrency(incomeAcc))
         $(balanceID).text(StringUtils.formatStringToCurrency(balance))
         $("#estimated_closing_balance_value_amount").text(StringUtils.formatStringToCurrency((parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
-        $("#estimated_closing_balance_value_percentage").text(AddBudgets.calculatePercentageIncrease(BUDGET_INITIAL_BALANCE, (parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
+        $("#estimated_closing_balance_value_percentage").text(BudgetDetails.calculatePercentageIncrease(BUDGET_INITIAL_BALANCE, (parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
     },
     calculatePercentageIncrease: (val1, val2) => {
         return (((parseFloat(val2) - parseFloat(val1)) / Math.abs(parseFloat(val1))) * 100).toFixed(2)
@@ -284,7 +284,7 @@ var AddBudgets = {
         let datepickerValue = $("#budgets-monthpicker").val()
         let month = parseInt(datepickerValue.substring(0, 2))
         let year = parseInt(datepickerValue.substring(3, 7))
-        let catValuesArr = AddBudgets.buildCatValuesArr();
+        let catValuesArr = BudgetDetails.buildCatValuesArr();
 
 
         if (!datepickerValue || datepickerValue === "") {
@@ -299,7 +299,7 @@ var AddBudgets = {
                 (resp) => {
                     // SUCCESS
                     LoadingManager.hideLoading()
-                    configs.goToPage('addBudget', {'new': false, 'open': true, 'id': resp["budget_id"]}, true);
+                    configs.goToPage('budgetDetails', {'new': false, 'open': true, 'id': resp["budget_id"]}, true);
                 }, (err) => {
                     // FAILURE
                     LoadingManager.hideLoading()
@@ -310,7 +310,7 @@ var AddBudgets = {
                 (resp) => {
                     // SUCCESS
                     LoadingManager.hideLoading()
-                    configs.goToPage('addBudget', {'new': false, 'open': true, 'id': currentBudgetID}, true);
+                    configs.goToPage('budgetDetails', {'new': false, 'open': true, 'id': currentBudgetID}, true);
                 }, (err) => {
                     // FAILURE
                     LoadingManager.hideLoading()
@@ -380,7 +380,7 @@ var AddBudgets = {
             (resp) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
-                configs.goToPage('addBudget', {'new': false, 'open': !isOpen, 'id': currentBudgetID}, true);
+                configs.goToPage('budgetDetails', {'new': false, 'open': !isOpen, 'id': currentBudgetID}, true);
             }, (err) => {
                 // FAILURE
                 LoadingManager.hideLoading()
@@ -390,4 +390,4 @@ var AddBudgets = {
 }
 
 
-//# sourceURL=js/addBudgets.js
+//# sourceURL=js/budgetDetails.js
