@@ -127,7 +127,7 @@ var Entities = {
     showEditEntityModal: (entName, entID) => {
         $("#modal-global").modal("open")
         let txt = `
-                <h4>Adicionar nova entidade</h4>
+                <h4>Editar entidade <b>${entName}</b></h4>
                 <div class="row">
                     <form class="col s12">
                         <div class="input-field col s6">
@@ -142,7 +142,7 @@ var Entities = {
                 `;
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a onClick="Entities.editEntity(${entID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
+    <a onClick="Entities.editEntity(${entID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Editar</a>`;
         $("#modal-global .modal-content").html(txt);
         $("#modal-global .modal-footer").html(actionLinks);
 
