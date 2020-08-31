@@ -216,8 +216,11 @@ class BudgetHasCategoriesModel extends Entity
 
         $tz = new DateTimeZone('UTC');
         $beginTimestamp = new DateTime("$year-$month-01", $tz);
-        $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t'), $tz);
+        $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t 23:59:59'), $tz);
 
+        /*print_r($beginTimestamp);
+        print_r($endTimestamp);
+        die();*/
         $values = array();
         $values[':cat_id'] = $category_id;
         $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
