@@ -4,13 +4,13 @@
         <!--<a class="waves-effect waves-light btn right-align blue-gradient-bg" onclick="Entities.showAddEntityModal()"
             style="margin: 10px;"><i class="material-icons left">add_circle</i>Atualizar</a>-->
 
-        <div class="row">
+        <div class="row" style="margin-top:10px;">
             <div class="col s12">
                 <ul class="tabs">
                     <li class="tab col s3"><a href="#tab-ev-pat">Evolução do Património</a></li>
                     <li class="tab col s3"><a href="#tab-projections">Projeções</a></li>
-                    <li class="tab col s3 disabled"><a href="#test3">Disabled Tab</a></li>
-                    <li class="tab col s3"><a href="#test4">Test 4</a></li>
+                    <li class="tab col s3 disabled"><a href="#tab-expenses-per-cat">Despesas por Categoria</a></li>
+                    <li class="tab col s3 disabled"><a href="#tab-income-per-cat">Receitas por Categoria</a></li>
                 </ul>
             </div>
 
@@ -19,85 +19,23 @@
                     <canvas id="chart_pie_patrimony_evolution" width="800"
                             height="450"></canvas>
 
-                    <table id="ev-pat-table" class="centered" style="margin-top: 10px;background: white;">
-                        <thead>
-                        <tr>
-                            <th>Mês</th>
-                            <th>Balanço Prévio (€)</th>
-                            <th>Balanço Final (€)</th>
-                            <th>Crescimento (%)</th>
-                        </tr>
-                        </thead>
+                    <div id="patrimony-table" style="background:white !important;padding: 10px;margin-top: 20px;">
 
-                        <tbody>
-                        <tr>
-                            <td>01/2020</td>
-                            <td>-10500.55 €</td>
-                            <td>-9700.23 €</td>
-                            <td>+7.9%</td>
-                        </tr>
-                        <tr>
-                            <td>01/2020</td>
-                            <td>-10500.55 €</td>
-                            <td>-9700.23 €</td>
-                            <td>+7.9%</td>
-                        </tr>
-                        <tr>
-                            <td>01/2020</td>
-                            <td>-10500.55 €</td>
-                            <td>-9700.23 €</td>
-                            <td>+7.9%</td>
-                        </tr>
-                        <tr>
-                            <td>01/2020</td>
-                            <td>-10500.55 €</td>
-                            <td>-9700.23 €</td>
-                            <td>+7.9%</td>
-                        </tr>
-                        <tr>
-                            <td>01/2020</td>
-                            <td>-10500.55 €</td>
-                            <td>-9700.23 €</td>
-                            <td>+7.9%</td>
-                        </tr>
-                        <tr>
-                            <td>01/2020</td>
-                            <td>-10500.55 €</td>
-                            <td>-9700.23 €</td>
-                            <td>+7.9%</td>
-                        </tr>
-
-                        </tbody>
-                    </table>
-
+                    </div>
                 </div>
             </div>
             <div id="tab-projections" class="col s12">
                 <div class="card-panel">
-                    <table class="centered">
-                        <thead>
-                        <tr>
-                            <th>Mês</th>
-                            <th>Balanço Prévio (€)</th>
-                            <th>Balanço Final (€)</th>
-                            <th>Crescimento (%)</th>
-                        </tr>
-                        </thead>
+                    <canvas id="chart_pie_patrimony_projection" width="800"
+                            height="450"></canvas>
 
-                        <tbody>
-                        <tr>
-                            <td>01/2020</td>
-                            <td>-10500.55 €</td>
-                            <td>-9700.23 €</td>
-                            <td>+7.9%</td>
-                        </tr>
+                    <div id="patrimony-projections-table" style="background:white !important;padding: 10px;margin-top: 20px;">
 
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
             </div>
-            <div id="test3" class="col s12">Test 3</div>
-            <div id="test4" class="col s12">Test 4</div>
+            <div id="tab-expenses-per-cat" class="col s12">Despesas por Categoria</div>
+            <div id="tab-income-per-cat" class="col s12">Receitas por Categoria</div>
         </div>
 
     </div>

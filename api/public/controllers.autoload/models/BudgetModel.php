@@ -46,6 +46,44 @@ class BudgetModel extends Entity
             return $e;
         }
     }*/
+    public static function getBudgetsAfterCertainMonth($userID, int $previousMonth, int $previousMonthsYear, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT month, year, budget_id, users_user_id, observations, is_open, initial_balance " .
+            "FROM budgets " .
+            "WHERE budgets.users_user_id = :userID " .
+            "AND (year = :year AND month > :month) " .
+            "OR (year > :year) " .
+            "ORDER BY year ASC, month ASC";
+
+        $values = array();
+        $values[':userID'] = $userID;
+        $values[':month'] = $previousMonth;
+        $values[':year'] = $previousMonthsYear;
+
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    public static function getBudgetPlannedBalance($budget, $transactional = false)
+    {
+        $budgetCategoriesArr = BudgetHasCategoriesModel::getAllCategoryPlannedAmountsForBudget($budget["users_user_id"], $budget["budget_id"], $transactional);
+        $balance = 0;
+
+        foreach ($budgetCategoriesArr as $budgetCat) {
+            $balance += $budgetCat["planned_amount_credit"];
+            $balance -= $budgetCat["planned_amount_debit"];
+        }
+
+        return Input::convertIntegerToFloat($balance);
+    }
 }
 
 
@@ -62,6 +100,33 @@ class BudgetHasCategoriesModel extends Entity
         "current_amount"
     ];
 
+
+    /**
+     * Gets all categories for the user, with planned & current amounts related to a specific budget
+     */
+    public static function getAllCategoryPlannedAmountsForBudget($userID, $budgetID, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT truncate(coalesce(planned_amount_credit, 0), 2) as planned_amount_credit, truncate(coalesce(planned_amount_debit, 0), 2) as planned_amount_debit " .
+            "FROM " .
+            "(SELECT * FROM budgets_has_categories WHERE budgets_users_user_id = :userID AND (budgets_budget_id = :budgetID)) b " .
+            "RIGHT JOIN categories ON categories.category_id = b.categories_category_id " .
+            "WHERE users_user_id = :userID";
+
+        $values = array();
+        $values[':userID'] = $userID;
+        $values[':budgetID'] = $budgetID;
+
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 
     /**
      * Gets all categories for the user, with planned & current amounts related to a specific budget

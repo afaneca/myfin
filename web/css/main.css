@@ -376,3 +376,46 @@ nav ul a:hover {
         min-height: 316px;
     }
 }
+
+/* MATERIALIZE TABS */
+/* source: https://stackoverflow.com/a/41406867 */
+
+/* Black color to the text */
+.tabs .tab a {
+    color: black;
+}
+
+/* Text color on hover */
+.tabs .tab a:hover {
+    background-color: #eee;
+    color: #000;
+}
+
+/* Background and text color when a tab is active */
+.tabs .tab a.active {
+    background-color: var(--main-blue-background);
+    background: -webkit-linear-gradient(45deg, #0288d1, #26c6da) !important;
+    background: linear-gradient(45deg, #0288d1, #26c6da) !important;
+    color: white;
+}
+
+/*Color of underline*/
+.tabs .indicator {
+    background: -webkit-linear-gradient(45deg, #0288d1, #26c6da) !important;
+    background: linear-gradient(45deg, #0288d1, #26c6da) !important;
+}
+
+.tabs .tab a:focus, .tabs .tab a:focus.active {
+    background-color: white;
+    outline: none;
+    color: white;
+}
+
+.tabs .tab a:focus, .tabs .tab a:focus.active {
+    color: var(--main-blue-background);
+}
+
+.tabs .tab.disabled a, .tabs .tab.disabled a:hover {
+    color: rgb(20 31 49 / 44%);
+}
+/* END MATERIALIZE TABS */
