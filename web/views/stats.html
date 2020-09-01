@@ -4,18 +4,56 @@
         <!--<a class="waves-effect waves-light btn right-align blue-gradient-bg" onclick="Entities.showAddEntityModal()"
             style="margin: 10px;"><i class="material-icons left">add_circle</i>Atualizar</a>-->
 
-        <div class="card-panel">
-            <canvas id="chart_pie_patrimony_evolution" width="800" height="450"></canvas>
-        </div>
+        <div class="row" style="margin-top:10px;">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s3"><a href="#tab-ev-pat">Evolução do Património</a></li>
+                    <li class="tab col s3"><a href="#tab-projections">Projeções</a></li>
+                    <li class="tab col s3 disabled"><a href="#tab-expenses-per-cat">Despesas por Categoria</a></li>
+                    <li class="tab col s3 disabled"><a href="#tab-income-per-cat">Receitas por Categoria</a></li>
+                </ul>
+            </div>
 
+            <div id="tab-ev-pat" class="col s12">
+                <div class="card-panel">
+                    <canvas id="chart_pie_patrimony_evolution" width="800"
+                            height="450"></canvas>
+
+                    <div id="patrimony-table" style="background:white !important;padding: 10px;margin-top: 20px;">
+
+                    </div>
+                </div>
+            </div>
+            <div id="tab-projections" class="col s12">
+                <div class="card-panel">
+                    <canvas id="chart_pie_patrimony_projection" width="800"
+                            height="450"></canvas>
+
+                    <div id="patrimony-projections-table" style="background:white !important;padding: 10px;margin-top: 20px;">
+
+                    </div>
+                </div>
+            </div>
+            <div id="tab-expenses-per-cat" class="col s12">Despesas por Categoria</div>
+            <div id="tab-income-per-cat" class="col s12">Receitas por Categoria</div>
+        </div>
 
     </div>
 </div>
 
 
 <script>
-    DialogUtils.initStandardModal()
-    Stats.init()
+    $(document).ready(function () {
+        DialogUtils.initStandardModal()
+        $('.tabs').tabs({
+            'onShow': (a, b) => {
+                let activeID = $(a)[0]["id"]
+                Stats.changeTabs(activeID)
+            }
+        });
+        Stats.changeTabs("tab-ev-pat")
+
+    });
 
 
 </script>

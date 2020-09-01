@@ -12,7 +12,14 @@ var CookieUtils = {
     },
     setUserAccounts: (accounts) => {
         return Cookies.set(USER_ACCOUNTS_TAG, JSON.stringify(accounts))
-    }
+    },
+    getDebtAccounts: () => {
+        const accsArr = CookieUtils.getUserAccounts()
+
+        return accsArr.filter(function (acc) {
+            return acc.type === "CREAC"
+        })
+    },
 
 }
 
