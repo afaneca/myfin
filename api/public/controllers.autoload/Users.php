@@ -29,7 +29,7 @@ require_once 'consts.php';
 
 class Users
 {
-    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     /* 
     $app->group('/users/{id:[0-9]+}', function (RouteCollectorProxy $group) {
