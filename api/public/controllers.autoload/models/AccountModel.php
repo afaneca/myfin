@@ -226,9 +226,9 @@ class AccountModel extends Entity
         $sql = "SELECT truncate((coalesce(balance, 0) / 100), 2) as 'balance' " .
             "FROM balances_snapshot " .
             "WHERE accounts_account_id = :accID " .
-            "AND month = :month " .
-            "AND year = :year " .
-            "ORDER BY year ASC, month ASC " .
+            "AND month <= :month " .
+            "AND year <= :year " .
+            "ORDER BY year DESC, month DESC " .
             "LIMIT 1";
 
         $values = array();
@@ -248,7 +248,10 @@ class AccountModel extends Entity
     public
     static function getBalancesSnapshotForMonthForUser($userID, $month, $year, $transactional = false)
     {
-        $db = new EnsoDB($transactional);
+
+        /*echo "Get balance snapshot for month $month and year $year for user $userID";*/
+
+        /*$db = new EnsoDB($transactional);
 
         $sql = "SELECT sum(balance) as 'totalBalance' " .
             "FROM(SELECT account_id, month, year, truncate((coalesce(balance, 0) / 100), 2) as 'balance', users_user_id " .
@@ -262,13 +265,28 @@ class AccountModel extends Entity
         $values[':month'] = $month;
         $values[':year'] = $year;
 
+
         try {
             $db->prepare($sql);
             $db->execute($values);
             return $db->fetch(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
             return $e;
+        }*/
+
+        $totalBalance = 0;
+        $accsArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"], $transactional);
+
+        foreach ($accsArr as $acc) {
+            $balanceSnapshotAtMonth = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $month, $year, $transactional)["balance"];
+            /*echo "\n-> balance snapshot at month for account " . $acc["account_id"] . ": $balanceSnapshotAtMonth";*/
+            if ($balanceSnapshotAtMonth)
+                $totalBalance += $balanceSnapshotAtMonth;
+
+            /*echo "\n-> total balance: $totalBalance";*/
         }
+       /* die();*/
+        return $totalBalance;
     }
 
     public static function recalculateIterativelyBalanceForAccount($accountID, $fromDate, $toDate, $transactional = false)
@@ -312,8 +330,8 @@ class AccountModel extends Entity
             $endYear++;
         }
 
-        $fromDate = $timestamp = strtotime("1-$beginMonth-$beginYear");
-        $toDate = $timestamp = strtotime("1-$endMonth-$endYear");
+        $fromDate = strtotime("1-$beginMonth-$beginYear");
+        $toDate = strtotime("1-$endMonth-$endYear");
         /*echo("$fromDate\n");
         echo($toDate);
         die();*/
@@ -325,6 +343,17 @@ class AccountModel extends Entity
 
         /*echo($initialBalance);
         die();*/
+
+        /*
+         * Loop through all of the months that are being recalculated to clean up the data
+         * Very important in case there are months with no transactions at all
+         */
+        $month1 = date("m", $fromDate);
+        $year1 = date("Y", $fromDate);
+        $month2 = date("m", $toDate);
+        $year2 = date("Y", $toDate);
+        AccountModel::removeBalanceSnapshotsForAccountBetweenMonths($accountID, $month1, $year1, $month2, $year2, $transactional);
+
         foreach ($trxList as $trx) {
             $trxDate = $trx["date_timestamp"];
             $month = date('m', $trxDate);
@@ -339,13 +368,15 @@ class AccountModel extends Entity
                 $trxAmount *= -1;
             }
             //print_r($trxList);
-            /*echo("\n\n");
-            echo("\ninitial balance before: $initialBalance");*/
+            /*echo("\n#### new transaction of " . Input::convertIntegerToFloat($trxAmount) . " € \n");
+            echo("\ninitial balance before:  " . Input::convertIntegerToFloat($initialBalance));*/
             $initialBalance += $trxAmount;
-            /*echo("\ninitial balance after: $initialBalance");
+
             //die();
             //AccountModel::addBalanceSnapshot($accountID, $month, $year, $transactional);
-            echo("\n\n--- adding custom balance snapshot to account $accountID, for month $month & year $year, with balance $initialBalance");*/
+            /*echo("\ninitial balance after: " . Input::convertIntegerToFloat($initialBalance));
+            echo("\n\n--- adding custom balance snapshot to account $accountID, for month $month & year $year, with balance " . Input::convertIntegerToFloat($initialBalance));
+            echo("\n\n----------------------------------------------------------------------\n\n");*/
             AccountModel::addCustomBalanceSnapshot($accountID, $month, $year, $initialBalance, $transactional);
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 12) ? $month + 1 : 1, ($month < 12) ? $year : $year + 1, $initialBalance, $transactional);
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 11) ? $month + 2 : 1, ($month < 11) ? $year : $year + 1, $initialBalance, $transactional);
@@ -367,6 +398,31 @@ class AccountModel extends Entity
         $values[':accID'] = $accountID;
         $values[':fromDate'] = $fromDate;
         $values[':toDate'] = $toDate;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    private static function removeBalanceSnapshotsForAccountBetweenMonths($accountID, string $month1, string $year1, string $month2, string $year2, bool $transactional)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "DELETE FROM balances_snapshot " .
+            "WHERE accounts_account_id = :accID " .
+            "AND ((year > :year1 AND year < :year2) OR (year = :year1 AND month >= :month1) OR (year = :year2 AND month <= :month2))";
+
+        $values = array();
+        $values[':accID'] = $accountID;
+        $values[':month1'] = $month1;
+        $values[':year1'] = $year1;
+        $values[':month2'] = $month2;
+        $values[':year2'] = $year2;
+
 
         try {
             $db->prepare($sql);

@@ -148,4 +148,5 @@ class Stats
     }
 }
 
+$app->get('/stats/dashboard/month-expenses-income-distribution', 'Stats::getExpensesIncomeDistributionForMonth');
 $app->get('/stats/stats/monthly-patrimony-projections', 'Stats::getMonthlyPatrimonyProjections');

@@ -128,6 +128,7 @@ var Stats = {
         $("#patrimony-table").html(Stats.renderPatrimonyTable(sumArr, sumLabels))
     },
     renderPatrimonyTable: (sumArr, sumLabels) => {
+        debugger
         return `
         <table id="ev-pat-table" class="centered" style="margin-top: 10px;background: white;">
             <thead>
