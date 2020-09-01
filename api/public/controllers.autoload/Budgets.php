@@ -204,14 +204,14 @@ class Budgets
             }
 
             // we need to also add uncategorized transactions to the calculations
-            $uncategorizedTrxAmounts = BudgetHasCategoriesModel::getAmountForUncategorizedTransactionsInMonth($monthToUse, $yearToUser)[0];
+            /*$uncategorizedTrxAmounts = BudgetHasCategoriesModel::getAmountForUncategorizedTransactionsInMonth($monthToUse, $yearToUser)[0];
             array_push($list["categories"], [
                 "category_id" => -1,
                 "current_amount_credit" => abs(Input::convertIntegerToFloat($uncategorizedTrxAmounts["category_balance_credit"])),
                 "current_amount_debit" => abs(Input::convertIntegerToFloat($uncategorizedTrxAmounts["category_balance_debit"])),
                 "name" => "Não Categorizadas",
                 "description" => "Transações sem categoria atribuída"
-            ]);
+            ]);*/
 
 
             /* $db->getDB()->commit(); */
