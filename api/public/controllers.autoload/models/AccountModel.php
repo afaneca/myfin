@@ -352,7 +352,7 @@ class AccountModel extends Entity
         $year1 = date("Y", $fromDate);
         $month2 = date("m", $toDate);
         $year2 = date("Y", $toDate);
-        AccountModel::removeBalanceSnapshotsForAccountBetweenMonths($accountID, $month1, $year1, $month2, $year2, $transactional);
+        //AccountModel::removeBalanceSnapshotsForAccountBetweenMonths($accountID, $month1, $year1, $month2, $year2, $transactional);
 
         foreach ($trxList as $trx) {
             $trxDate = $trx["date_timestamp"];
