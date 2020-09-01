@@ -283,9 +283,9 @@ class AccountModel extends Entity
             if ($balanceSnapshotAtMonth)
                 $totalBalance += $balanceSnapshotAtMonth;
 
-            /*echo "\n-> total balance: $totalBalance";*/
+           /* echo "\n-> total balance: $totalBalance";*/
         }
-       /* die();*/
+        /*die();*/
         return $totalBalance;
     }
 

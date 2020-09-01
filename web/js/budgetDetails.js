@@ -137,6 +137,7 @@ var BudgetDetails = {
             <tbody>
                 ${BudgetDetails.buildTotalsRow(isCredit)}
                 ${categoriesArr.map(cat => BudgetDetails.renderInputRow(cat, isCredit)).join("")}
+                
             </tbody>
         </table>
         `
