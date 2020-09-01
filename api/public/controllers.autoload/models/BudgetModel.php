@@ -84,6 +84,7 @@ class BudgetModel extends Entity
 
         return Input::convertIntegerToFloat($balance);
     }
+
     public static function calculateBudgetBalance($userID, $budget)
     {
         $budgetID = $budget["budget_id"];
@@ -283,32 +284,48 @@ class BudgetHasCategoriesModel extends Entity
         $beginTimestamp = new DateTime("$year-$month-01", $tz);
         $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t 23:59:59'), $tz);
 
-        /*print_r($beginTimestamp);
-        print_r($endTimestamp);
-        die();*/
         $values = array();
         $values[':cat_id'] = $category_id;
         $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
         $values[':endTimestamp'] = $endTimestamp->getTimestamp();
 
-        /*  print_r($beginTimestamp);
-         echo "\n";
-         print_r($endTimestamp);
-         echo "\n";
-         print_r($beginTimestamp->getTimestamp());
-         echo "\n";
-         print_r($endTimestamp->getTimestamp());
-         echo "\n";
 
-        $date1 = new DateTime();
-         $date2 = new DateTime();
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 
-         $date1->setTimestamp($beginTimestamp->getTimestamp());
-         $date2->setTimestamp($endTimestamp->getTimestamp());
+    public static function getAmountForUncategorizedTransactionsInMonth($month, $year, $transactional = false)
+    {
+        $listOfAccountsToExclude = AccountModel::getWhere(["exclude_from_budgets" => true]);
+        if (!$listOfAccountsToExclude || sizeof($listOfAccountsToExclude) == 0) {
+            $accsExclusionSQLExcerptAccountsTo = " 1 = 1 ";
+            $accsExclusionSQLExcerptAccountsFrom = " 1 = 1 ";
+        } else {
+            $accountsToExcludeListInSQL = BudgetHasCategoriesModel::buildSQLForExcludedAccountsList($listOfAccountsToExclude);
+            $accsExclusionSQLExcerptAccountsTo = "accounts_account_to_id NOT IN $accountsToExcludeListInSQL ";
+            $accsExclusionSQLExcerptAccountsFrom = "accounts_account_from_id NOT IN $accountsToExcludeListInSQL ";
+        }
 
-         print_r($date1);
-         echo "\n";
-         print_r($date2);*/
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT sum(if(type = 'I' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsTo), amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsFrom), amount, 0)) as 'category_balance_debit' " .
+            "FROM transactions " .
+            "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
+            "AND categories_category_id IS NULL ";
+
+        $tz = new DateTimeZone('UTC');
+        $beginTimestamp = new DateTime("$year-$month-01", $tz);
+        $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t 23:59:59'), $tz);
+
+        $values = array();
+        $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
+        $values[':endTimestamp'] = $endTimestamp->getTimestamp();
+
 
         try {
             $db->prepare($sql);

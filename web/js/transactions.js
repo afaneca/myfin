@@ -366,7 +366,7 @@ var Transactions = {
                 `;
 
                 let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-                    <a onClick="Transactions.editTransaction(${trxID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`;
+                    <a onClick="Transactions.editTransaction(${trxID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Editar</a>`;
 
                 $("#modal-global .modal-content").html(txt);
                 $("#modal-global .modal-footer").html(actionLinks);

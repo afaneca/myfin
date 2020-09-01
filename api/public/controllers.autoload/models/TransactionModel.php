@@ -70,8 +70,13 @@ class TransactionModel extends Entity
             "LEFT JOIN accounts acc_from ON acc_from.account_id = transactions.accounts_account_from_id " .
             "WHERE (acc_to.users_user_id = :userID " .
             "OR acc_from.users_user_id = :userID) " .
-            "AND categories.category_id = :catID " .
-            "AND (transactions.type = :type " .
+            "AND categories.category_id ";
+        if ($catID == -1)
+            $sql .= " IS NULL ";
+        else
+            $sql .= " = :catID ";
+
+        $sql .= "AND (transactions.type = :type " .
             " OR transactions.type = 'T') " .
             "AND transactions.date_timestamp >= :minTimestamp " .
             "AND transactions.date_timestamp <= :maxTimestamp " .
