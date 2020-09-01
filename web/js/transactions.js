@@ -252,6 +252,11 @@ var Transactions = {
             return
         }
 
+        if (amount <= 0) {
+            DialogUtils.showErrorMessage("O Campo Valor deve ser superior a zero!")
+            return
+        }
+
         LoadingManager.showLoading()
         TransactionServices.addTransaction(amount, type, description, entID, account_from_id, account_to_id, catID, date_timestamp,
             (response) => {
@@ -431,6 +436,11 @@ var Transactions = {
 
         if (!ValidationUtils.checkIfFieldsAreFilled([new_amount, new_type, new_date_timestamp])) {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
+            return
+        }
+
+        if (new_amount <= 0) {
+            DialogUtils.showErrorMessage("O Campo Valor deve ser superior a zero!")
             return
         }
 
