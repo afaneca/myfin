@@ -21,10 +21,11 @@ var Stats = {
         StatServices.getMonthlyPatrimonyProjections((resp) => {
             // SUCCESS
             LoadingManager.hideLoading()
-            let initialAssetsValue = StringUtils.convertFloatToInteger(Stats.getInitialAssetsBalance())
+            let initialAssetsValue = Stats.getInitialAssetsBalance()
             for (let budget of resp) {
-                budget["planned_final_balance_assets_only"] = StringUtils.convertIntegerToFloat(initialAssetsValue
-                    + (StringUtils.convertFloatToInteger(budget.planned_final_balance) - StringUtils.convertFloatToInteger(budget.planned_initial_balance)))
+                budget["planned_final_balance_assets_only"] = initialAssetsValue
+                    + StringUtils.convertIntegerToFloat((StringUtils.convertFloatToInteger(budget.planned_final_balance) - StringUtils.convertFloatToInteger(budget.planned_initial_balance)))
+                initialAssetsValue = budget["planned_final_balance_assets_only"]
             }
             let chartData = resp.map(budget => parseFloat(budget.planned_final_balance).toFixed(2));
             let chartLabels = resp.map(budget => budget.month + "/" + budget.year);
