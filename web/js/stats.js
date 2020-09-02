@@ -21,12 +21,16 @@ var Stats = {
         StatServices.getMonthlyPatrimonyProjections((resp) => {
             // SUCCESS
             LoadingManager.hideLoading()
-
-            let chartData = resp.map(budget => budget.planned_final_balance);
+            let initialAssetsValue = StringUtils.convertFloatToInteger(Stats.getInitialAssetsBalance())
+            for (let budget of resp) {
+                budget["planned_final_balance_assets_only"] = StringUtils.convertIntegerToFloat(initialAssetsValue
+                    + (StringUtils.convertFloatToInteger(budget.planned_final_balance) - StringUtils.convertFloatToInteger(budget.planned_initial_balance)))
+            }
+            let chartData = resp.map(budget => parseFloat(budget.planned_final_balance).toFixed(2));
             let chartLabels = resp.map(budget => budget.month + "/" + budget.year);
             let extraChartData = [{
                 borderColor: "#FF5722",
-                data: resp.map(budget => Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)),
+                data: resp.map(budget => parseFloat(budget.planned_final_balance_assets_only).toFixed(2) /*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/),
                 fill: true,
                 hidden: true,
                 label: "Balanço Projetado (Ativos)",
@@ -223,6 +227,19 @@ var Stats = {
         $("#patrimony-projections-table").html(Stats.renderPatrimonyProjectionsTable(resp))
         tableUtils.setupStaticTable("#ev-pat-projections-table")
     },
+    getInitialAssetsBalance() {
+        const allAccs = CookieUtils.getUserAccounts()
+        const assetsAccounts = allAccs.filter(function (acc) {
+            return acc.type === "CHEAC" || acc.type === "SAVAC"
+                || acc.type === "INVAC" || acc.type === "OTHACC"
+        })
+
+        let assetsBalance = assetsAccounts.reduce((acc, val) => {
+            return acc + parseFloat(val.balance)
+        }, 0)
+
+        return assetsBalance
+    },
     renderPatrimonyProjectionsTable: budgets => {
         return `
         <table id="ev-pat-projections-table" class="centered" style="margin-top: 10px;background: white;">
@@ -248,13 +265,13 @@ var Stats = {
         <p class="right-align grey-text text-accent-4 projections-table-footnotes">** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo</p>
       `
     },
-    renderPatrimonyProjectionsTableRow: budget => {
+    renderPatrimonyProjectionsTableRow: (budget) => {
         return `
         <tr>
             <td>${budget.month}/${budget.year}</td>
             <td>${StringUtils.formatStringToCurrency(budget.planned_initial_balance)}</td>
             <td>${StringUtils.formatStringToCurrency(budget.planned_final_balance)}</td>
-            <td>${StringUtils.formatStringToCurrency(Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance))}</td>
+            <td>${StringUtils.formatStringToCurrency(budget.planned_final_balance_assets_only/*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/)}</td>
             <td>${(budget.planned_initial_balance) ? Stats.calculateGrowthPercentage(budget.planned_initial_balance, budget.planned_final_balance) : "-"}</td>
         </tr>
       `
