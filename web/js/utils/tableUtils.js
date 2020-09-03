@@ -8,7 +8,7 @@ var tableUtils = {
             "lengthChange": true,
             "pageLength": 50,
             "language": {
-                "lengthMenu": "A mostrar _MENU_ registos por página",
+                "lengthMenu": "",/*"A mostrar _MENU_ registos por página",*/
                 "zeroRecords": "Nenhum registo encontrado",
                 "info": "A mostrar a página _PAGE_ de _PAGES_",
                 "infoEmpty": "Nenhum registo encontrado",
@@ -32,7 +32,7 @@ var tableUtils = {
             "pageLength": 50,
             "columnDefs": customColumnWidths,
             "language": {
-                "lengthMenu": "A mostrar _MENU_ registos por página",
+                "lengthMenu": "",/*"A mostrar _MENU_ registos por página",*/
                 "zeroRecords": "Nenhum registo encontrado",
                 "info": "A mostrar a página _PAGE_ de _PAGES_",
                 "infoEmpty": "Nenhum registo encontrado",

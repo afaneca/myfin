@@ -181,7 +181,7 @@ var BudgetDetails = {
             <tr>
                 <td colspan="3" style="padding:0px !important;">
                     <div id="modded">
-                        <div class="progress medium-dark-gray-bg tooltipped" data-position="top" data-tooltip="${BudgetDetails.buildCatTooltipText(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
+                        <div class="progress main-dark-bg tooltipped" data-position="top" data-tooltip="${BudgetDetails.buildCatTooltipText(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
                             <span>${cat.name}</span>
                             <div class="determinate ${isCredit ? 'green-gradient-bg' : 'red-gradient-bg'}" style="width: ${BudgetDetails.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
                                 ${BudgetDetails.getCorrectPercentageValue(cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%
