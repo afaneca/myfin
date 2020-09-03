@@ -56,7 +56,7 @@ var Budgets = {
                 <td>${budget.month}/${budget.year}</td>
                 <td>${budget.observations}</td>
                 <td>${Budgets.buildBudgetBalanceRow(budget.balance_value, budget.balance_change_percentage, (budget.month == currentMonth && budget.year == currentYear))}</td>
-                <td><span class="${(budget.is_open == 1) ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${(budget.is_open == 1) ? "Aberto" : "Fechado"}</span></td>
+                <td><span class="${(budget.month == currentMonth && budget.year == currentYear) ? '' : (budget.is_open == 1) ? 'badge green-text text-accent-4' : 'badge pink-text text-accent-2'} ">${(budget.is_open == 1) ? "Aberto" : "Fechado"}</span></td>
                 <td>
                     <i onClick="Budgets.goToBudget(${budget.budget_id}, ${budget.is_open})" class="material-icons table-action-icons">remove_red_eye</i>
                     <i onClick="Budgets.showRemoveBudgetModal(${budget.budget_id}, ${budget.month}, ${budget.year})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
