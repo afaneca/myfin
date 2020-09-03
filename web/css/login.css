@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
 html {
     height: 100%;
 }
@@ -26,11 +27,12 @@ td {
 }
 
 #login-bg {
-    background: #141E30;
-    /* fallback for old browsers */
+    background: var(--main-body-background);
+    /*background: #141E30;
+    !* fallback for old browsers *!
     background: -webkit-linear-gradient(to bottom, #243B55, #141E30);
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to bottom, #243B55, #141E30);
+    !* Chrome 10-25, Safari 5.1-6 *!
+    background: linear-gradient(to bottom, #243B55, #141E30);*/
     /*background-image: url('../img/login_bg.jpg');
     background-size: cover;
     background-position: center;
@@ -62,12 +64,17 @@ td {
     position: relative;
     z-index: 1;
     background: #FFFFFF;
+    /*background: var(--main-card-background);*/
     max-width: 360px;
     margin: 0 auto 100px;
     padding: 45px;
     padding-bottom: 5px;
     text-align: center;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+.login-box p {
+    color: black !important;
 }
 
 .login-logo-img {

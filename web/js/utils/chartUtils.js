@@ -36,7 +36,7 @@ var chartUtils = {
                         var centerConfig = chart.config.options.elements.center;
                         var fontStyle = centerConfig.fontStyle || 'Arial';
                         var txt = centerConfig.text;
-                        var color = centerConfig.color || '#000';
+                        var color = centerConfig.color || '#fff';
                         var sidePadding = centerConfig.sidePadding || 20;
                         var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2)
                         //Start with a base font of 30px
@@ -89,9 +89,11 @@ var chartUtils = {
                 data: chartData,
                 backgroundColor: [
                     gradientStroke,
-                    '#d5d5d5',
+                    /*'#d5d5d5',*/
+                    '#15161b'
+                    /*'#1f2029'*/
                 ],
-                borderWidth: 1,
+                borderWidth: 0,
 
             }],
             labels: customLabels,
@@ -104,18 +106,22 @@ var chartUtils = {
             elements: {
                 center: {
                     text: customText,
-                    color: '#000000', // Default is #000000
+                    color: '#fff', // Default is #000000
                     fontStyle: 'Arial', // Default is Arial
                     sidePadding: 10 // Defualt is 20 (as a percentage)
                 }
             },
             legend: {
-                display: false
+                display: false,
+                labels: {
+                    fontColor: 'white'
+                }
             },
             title: {
                 display: true,
                 text: "Overview Mensal",
-                position: "bottom"
+                position: "bottom",
+                fontColor: "white"
             },
             tooltips: {
                 callbacks: {
@@ -158,7 +164,13 @@ var chartUtils = {
             title: {
                 display: true,
                 text: chartTitle,
-                position: "top"
+                position: "top",
+                fontColor: "white"
+            },
+            legend: {
+                labels: {
+                    fontColor: 'white'
+                }
             },
             tooltips: {
                 callbacks: {
@@ -210,6 +222,11 @@ var chartUtils = {
                 display: true,
                 text: chartTitle,
                 position: "top"
+            },
+            legend: {
+                labels: {
+                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                }
             },
             tooltips: {
                 callbacks: {
@@ -273,7 +290,13 @@ var chartUtils = {
             title: {
                 display: true,
                 text: chartTitle,
-                position: "top"
+                position: "top",
+                fontColor: 'white'
+            },
+            legend: {
+                labels: {
+                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                }
             },
             tooltips: {
                 callbacks: {

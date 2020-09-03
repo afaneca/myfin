@@ -12,15 +12,99 @@
     --medium-grey: #938f8f;
     --medium-dark-grey: #aaa;
     --main-blue-background: #141f31;
+    --main-light-blue: #1bb2d7;
     --sidebar_width_percentage: 12%;
+    /* Dark theme */
+    --main-dark-background: #15161b;
+    --main-dark-on-dark-background: #1f2029;
+    --main-text-color: rgba(255, 255, 255, 0.7);
+    --main-text-headline-color: white;
+
+    --main-accent-color: var(--main-light-blue);
+    --main-body-background: var(--main-dark-background);
+    --main-sidebar-background: var(--main-dark-on-dark-background);
+    --main-card-background: var(--main-dark-on-dark-background);
+    --main-modal-background: var(--main-dark-background);
+    --main-disabled-color: var(--light-grey);
+
+}
+
+body {
+    background: var(--main-body-background);
+    overflow: visible !important;
+}
+
+p {
+    color: var(--main-text-color);
+}
+
+b {
+    color: var(--main-text-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--main-text-headline-color);
+}
+
+table {
+    border-collapse: collapse;
+    color: var(--main-text-color);
+}
+
+input {
+    color: var(--main-text-color);
+}
+
+input:not([type]):disabled + label, input:not([type])[readonly="readonly"] + label, input[type=text]:not(.browser-default):disabled + label, input[type=text]:not(.browser-default)[readonly="readonly"] + label, input[type=password]:not(.browser-default):disabled + label, input[type=password]:not(.browser-default)[readonly="readonly"] + label, input[type=email]:not(.browser-default):disabled + label, input[type=email]:not(.browser-default)[readonly="readonly"] + label, input[type=url]:not(.browser-default):disabled + label, input[type=url]:not(.browser-default)[readonly="readonly"] + label, input[type=time]:not(.browser-default):disabled + label, input[type=time]:not(.browser-default)[readonly="readonly"] + label, input[type=date]:not(.browser-default):disabled + label, input[type=date]:not(.browser-default)[readonly="readonly"] + label, input[type=datetime]:not(.browser-default):disabled + label, input[type=datetime]:not(.browser-default)[readonly="readonly"] + label, input[type=datetime-local]:not(.browser-default):disabled + label, input[type=datetime-local]:not(.browser-default)[readonly="readonly"] + label, input[type=tel]:not(.browser-default):disabled + label, input[type=tel]:not(.browser-default)[readonly="readonly"] + label, input[type=number]:not(.browser-default):disabled + label, input[type=number]:not(.browser-default)[readonly="readonly"] + label, input[type=search]:not(.browser-default):disabled + label, input[type=search]:not(.browser-default)[readonly="readonly"] + label, textarea.materialize-textarea:disabled + label, textarea.materialize-textarea[readonly="readonly"] + label {
+    color: var(--main-text-color);
+}
+
+input:not([type]):disabled, input:not([type])[readonly="readonly"], input[type=text]:not(.browser-default):disabled, input[type=text]:not(.browser-default)[readonly="readonly"], input[type=password]:not(.browser-default):disabled, input[type=password]:not(.browser-default)[readonly="readonly"], input[type=email]:not(.browser-default):disabled, input[type=email]:not(.browser-default)[readonly="readonly"], input[type=url]:not(.browser-default):disabled, input[type=url]:not(.browser-default)[readonly="readonly"], input[type=time]:not(.browser-default):disabled, input[type=time]:not(.browser-default)[readonly="readonly"], input[type=date]:not(.browser-default):disabled, input[type=date]:not(.browser-default)[readonly="readonly"], input[type=datetime]:not(.browser-default):disabled, input[type=datetime]:not(.browser-default)[readonly="readonly"], input[type=datetime-local]:not(.browser-default):disabled, input[type=datetime-local]:not(.browser-default)[readonly="readonly"], input[type=tel]:not(.browser-default):disabled, input[type=tel]:not(.browser-default)[readonly="readonly"], input[type=number]:not(.browser-default):disabled, input[type=number]:not(.browser-default)[readonly="readonly"], input[type=search]:not(.browser-default):disabled, input[type=search]:not(.browser-default)[readonly="readonly"], textarea.materialize-textarea:disabled, textarea.materialize-textarea[readonly="readonly"] {
+    color: rgb(84 114 121);
+    cursor: not-allowed;
+}
+
+textarea {
+    color: var(--main-text-color);
+}
+
+.main-accent-color {
+    color: var(--main-accent-color);
+}
+
+.main-dark-bg {
+    background: var(--main-dark-background);
+}
+
+.myfin-table {
+    color: var(--main-text-color);
+}
+
+.material-icons {
+    color: var(--main-accent-color);
+}
+
+.material-icons.no-accent-color {
+    color: var(--main-text-color);
+}
+
+a > .material-icons, td > .material-icons, div.card-quick-actions > span > .material-icons {
+    color: var(--main-text-color);
 }
 
 .modal {
     overflow: visible !important;
+    background: var(--main-modal-background);
+}
+
+.modal .modal-footer {
+    color: var(--main-text-color) !important;
+    background: var(--main-modal-background);
 }
 
 .modal .modal-footer .btn-flat {
-    color: black !important;
+    color: var(--main-text-color) !important;
+    background: var(--main-modal-background);
 }
 
 #page-wrapper {
@@ -36,7 +120,8 @@
 
 
 .card-panel {
-    background: var(--light-grey);
+    /*background: var(--light-grey);*/
+    background: var(--main-dark-on-dark-background);
 }
 
 .top-nav {
@@ -59,6 +144,7 @@ nav ul a:hover {
     width: var(--sidebar_width_percentage);
     float: left;
     margin-top: 0px;
+    background: var(--main-dark-on-dark-background);
 }
 
 .side-nav-menu li {
@@ -77,6 +163,7 @@ nav ul a:hover {
 
 .side-nav-menu .material-icons {
     margin-top: 4px;
+    color: var(--main-text-color);
 }
 
 .inline-icon {
@@ -436,7 +523,7 @@ nav ul a:hover {
     position: -webkit-sticky;
     position: sticky;
     bottom: 0;
-    background: #f3f3f3;
+    background: var(--main-card-background);
     padding: 10px;
     z-index: 999999999999 !important;
 }
@@ -447,6 +534,7 @@ nav ul a:hover {
     color: white !important;
     margin: 80px !important;
     height: 61px;
+    border-bottom: 2px solid rgb(31 32 41);
 }
 
 /* End tooltip */
@@ -461,14 +549,19 @@ nav ul a:hover {
 /* source: https://stackoverflow.com/a/41406867 */
 
 /* Black color to the text */
+.tabs {
+    background: var(--main-body-background);
+}
+
 .tabs .tab a {
-    color: black;
+    color: var(--main-text-headline-color);
 }
 
 /* Text color on hover */
 .tabs .tab a:hover {
     background-color: #eee;
     color: #000;
+    /*color: var(--main-text-headline-color);*/
 }
 
 /* Background and text color when a tab is active */
@@ -497,6 +590,164 @@ nav ul a:hover {
 }
 
 .tabs .tab.disabled a, .tabs .tab.disabled a:hover {
-    color: rgb(20 31 49 / 44%);
+    color: var(--main-text-color);
+    cursor: not-allowed;
 }
+
 /* END MATERIALIZE TABS */
+
+/* DATATABLES CUSTOMIZATION */
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #f6f6f60f;
+}
+
+table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
+
+    background-color: var(--main-body-background);
+}
+
+table.dataTable tbody tr {
+    background-color: #1f2029;
+}
+
+tr {
+    border-bottom: 1px solid rgb(21 22 27);
+}
+
+table.dataTable {
+    color: var(--main-text-color);
+    border-collapse: collapse;
+}
+
+table.dataTable.row-border tbody th, table.dataTable.row-border tbody td, table.dataTable.display tbody th, table.dataTable.display tbody td {
+    /* border-top: 1px solid #000; */
+    border-top: 0px;
+}
+
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    color: #9e9e9e;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: var(--main-text-color) !important;
+    background: var(--main-body-background);
+    border: 0px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: var(--main-text-color) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    color: white !important;
+    border: 0px !important;
+    background: var(--dark-grey);
+
+}
+
+table.dataTable.display tbody tr.odd > .sorting_1, table.dataTable.order-column.stripe tbody tr.odd > .sorting_1 {
+    background-color: transparent !important;
+}
+
+table.dataTable.order-column tbody tr > .sorting_1, table.dataTable.order-column tbody tr > .sorting_2, table.dataTable.order-column tbody tr > .sorting_3, table.dataTable.display tbody tr > .sorting_1, table.dataTable.display tbody tr > .sorting_2, table.dataTable.display tbody tr > .sorting_3 {
+    /* background-color: #fafafa; */
+    background-color: transparent !important;
+}
+
+/* END DATATABLES */
+
+/* SELECT2 */
+.select2-container--default .select2-selection--single {
+    background-color: #0a0b0d;
+    border: 0px;
+    border-radius: 4px;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color: #0a0b0d8f;
+    cursor: not-allowed;
+}
+
+.select2-dropdown {
+    background-color: var(--main-body-background);
+    border: 0px;
+    color: var(--main-text-color);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--main-text-color);
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--main-accent-color);
+    color: var(--main-body-background);
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #3f737f;
+}
+
+/* END SELECT2 */
+
+/* MATERIALIZE SELECT */
+.dropdown-content {
+    background-color: #15161b;
+}
+
+.dropdown-content li > a, .dropdown-content li > span {
+    color: var(--main-text-color);
+}
+
+/*.select-dropdown.dropdown-content li.selected {
+    background-color: #3f737f;
+}*/
+
+.select-dropdown.dropdown-content li:hover {
+    background-color: var(--main-accent-color);
+    color: var(--main-body-background);
+}
+
+/* END MATERIALIZE SELECT */
+
+/* COLLAPSIBLE */
+.collapsible-header {
+    background-color: var(--main-body-background);
+    color: var(--main-text-headline-color);
+    border-bottom: 0px;
+}
+
+.collapsible-body {
+    border: 0px !important;
+    border-top: 2px solid #0a0a0c52 !important;
+    background: var(--main-body-background);
+}
+
+.collapsible {
+    margin: .5rem 0 1rem 0;
+    border: 0px;
+}
+
+/* END COLLAPSIBLE */
+
+/* DATEPICKER */
+
+svg:not(:root) {
+    overflow: hidden;
+    fill: var(--main-accent-color);
+}
+
+.datepicker-date-display {
+    background-color: var(--main-accent-color);
+}
+
+.datepicker-table td.is-selected {
+    background-color: var(--main-accent-color);
+    color: #fff;
+}
+
+.datepicker-cancel, .datepicker-clear, .datepicker-today, .datepicker-done {
+    color: var(--main-accent-color);
+    padding: 0 1rem;
+}
+
+/* END DATEPICKER */

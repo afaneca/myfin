@@ -59,7 +59,7 @@ var Dashboard = {
     },
     setupLastMovementsTable: list => {
         $('#last_movements_table_wrapper').html(`
-         <table class="responsive-table">
+         <table class="responsive-table myfin-table">
             <thead>
                 <th>Data</th>
                 <th>Descrição</th>
@@ -77,9 +77,23 @@ var Dashboard = {
             <tr data-id='${mov.transaction_id}'>
                 <td>${DateUtils.convertUnixTimestampToDateString(mov.date_timestamp)}</td>
                 <td>${mov.description}</td>
-                <td><span class="${(mov.type == 'I') ? 'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'} ">${StringUtils.formatStringToCurrency(mov.amount)}</span></td>
+                <td>${Dashboard.formatCurrencyColumn(mov.type, StringUtils.formatStringToCurrency(mov.amount))}</td>
             </tr>
         `
+    },
+    formatCurrencyColumn: (type, formattedCurrencyString) => {
+        switch (type) {
+            case 'I':
+                return `<span style="height: auto !important;" class='badge green-text text-accent-6'>${formattedCurrencyString}</span></span>`
+                break;
+            case 'E':
+                return `<span style="height: auto !important;" class='badge pink-text text-accent-2'>${formattedCurrencyString}</span>`
+                break;
+            case 'T':
+            default:
+                return `<spa style="height: auto !important;" class='badge orange-text text-accent-2'>${formattedCurrencyString}</span>`
+                break;
+        }
     },
     setupDebtDistributionChart: () => {
 

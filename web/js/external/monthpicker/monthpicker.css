@@ -19,9 +19,10 @@
     border: none;
     outline: none;
     cursor: pointer;
+
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    color: #000;
+    color: #fff;
 }
 
 .monthpicker_input .placeholder {
