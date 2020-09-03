@@ -9,16 +9,17 @@
             <div class="card-panel green-gradient-bg dashboard-btn" onclick="configs.goToPage('transactions');">
                 <center>
                     <div class="card_quick_actions">
-                        <span><i class="material-icons left">library_add</i>Nova Transação</span>
+                        <span><i class="material-icons no-accent-color left">library_add</i>Nova Transação</span>
                     </div>
                 </center>
             </div>
         </div>
         <div class="col s3">
-            <div class="card-panel orange-gradient-bg dashboard-btn" onclick="configs.goToPage('budgetDetails',{'new': true, 'open' : true}, true);">
+            <div class="card-panel orange-gradient-bg dashboard-btn"
+                 onclick="configs.goToPage('budgetDetails',{'new': true, 'open' : true}, true);">
                 <center>
                     <div class="card_quick_actions">
-                        <span><i class="material-icons left">assignment</i>Novo Orçamento</span>
+                        <span><i class="material-icons no-accent-color left">assignment</i>Novo Orçamento</span>
                     </div>
                 </center>
             </div>
@@ -27,7 +28,7 @@
             <div class="card-panel blue-gradient-bg dashboard-btn" onclick="configs.goToPage('transactions');">
                 <center>
                     <div class="card_quick_actions">
-                        <span><i class="material-icons left">library_books</i>Ver Movimentos</span>
+                        <span><i class="material-icons no-accent-color left">library_books</i>Ver Movimentos</span>
                     </div>
                 </center>
             </div>
@@ -36,7 +37,7 @@
             <div class="card-panel red-gradient-bg dashboard-btn" onclick="configs.goToPage('stats');">
                 <center>
                     <div class="card_quick_actions">
-                        <span><i class="material-icons left">assessment</i>Ver Estatísticas</span>
+                        <span><i class="material-icons no-accent-color left">assessment</i>Ver Estatísticas</span>
                     </div>
                 </center>
             </div>
@@ -46,58 +47,24 @@
     <div class="row">
         <div class="col s4">
             <div class="card-panel">
-                <span class="blue-text text-darken-2">
+                <span style="color: var(--main-text-headline-color)">
                     <div>
                         <canvas id="chart-angular-target-goals" width="600" height="400"></canvas>
-                        <center style="margin-top: -10px;"><span id="chart-monthly-overview-real-amount" style="font-size:150%">1500€</span>/<span id="chart-monthly-overview-budgeted-amount">2000</span></center>
+                        <center style="margin-top: -10px;"><span id="chart-monthly-overview-real-amount"
+                                                                 style="font-size:150%">1500€</span>/<span
+                                id="chart-monthly-overview-budgeted-amount">2000</span></center>
                     </div>
                 </span>
             </div>
         </div>
         <div class="col s8">
             <div class="card-panel">
-                <span class="blue-text text-darken-2">Movimentos Recentes</span> <span class="right-align"
-                                                                                       style="float:right;"><a
+                <span class="white-text">Movimentos Recentes</span> <span class="right-align"
+                                                                          style="float:right;"><a
                     href="#!transactions" onclick="configs.goToPage('transactions')">[Ver
                 Mais...]</a></span>
                 <div id="last_movements_table_wrapper">
-                    <table id="last_movements_table">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Item Name</th>
-                            <th>Item Price</th>
-                        </tr>
-                        </thead>
 
-                        <tbody>
-                        <tr>
-                            <td>Alvin</td>
-                            <td>Eclair</td>
-                            <td>$0.87</td>
-                        </tr>
-                        <tr>
-                            <td>Alan</td>
-                            <td>Jellybean</td>
-                            <td>$3.76</td>
-                        </tr>
-                        <tr>
-                            <td>Jonathan</td>
-                            <td>Lollipop</td>
-                            <td>$7.00</td>
-                        </tr>
-                        <tr>
-                            <td>Jonathan</td>
-                            <td>Lollipop</td>
-                            <td>$7.00</td>
-                        </tr>
-                        <tr>
-                            <td>Jonathan</td>
-                            <td>Lollipop</td>
-                            <td>$7.00</td>
-                        </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>

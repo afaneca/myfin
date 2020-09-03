@@ -331,7 +331,8 @@ var ImportTransactions = {
                 $('select.accounts-select2').select2();
                 $(".datepicker").datepicker({
 
-                    format: "dd/mm/yyyy"
+                    format: "dd/mm/yyyy",
+                    i18n: PickerUtils.getDatePickerDefault18nStrings(),
                 });
             },
         })

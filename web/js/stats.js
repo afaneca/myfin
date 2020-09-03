@@ -134,7 +134,7 @@ var Stats = {
     },
     renderPatrimonyTable: (sumArr, sumLabels) => {
         return `
-        <table id="ev-pat-table" class="centered" style="margin-top: 10px;background: white;">
+        <table id="ev-pat-table" class="centered" style="margin-top: 10px;">
             <thead>
                 <tr>
                     <th>Mês</th>
@@ -168,9 +168,9 @@ var Stats = {
         if (percentageChange == 0)
             return `<span>${percentageChange}%</span>`;
         else if (percentageChange < 0)
-            return `<span class="badge pink lighten-5 pink-text text-accent-2">${percentageChange}%</span>`;
+            return `<span class="badge pink-text text-accent-2">${percentageChange}%</span>`;
         else {
-            return `<span class="badge green lighten-5 green-text text-accent-4">${percentageChange}%</span>`;
+            return `<span class="badge green-text text-accent-4">${percentageChange}%</span>`;
         }
     },
     setupPatrimonyLineChart: (chartData, chartLabels, extraChartData) => {
@@ -181,8 +181,14 @@ var Stats = {
             title: {
                 display: true,
                 text: chartTitle,
-                position: "top"
-            }
+                position: "top",
+                fontColor: "white"
+            },
+            legend: {
+                labels: {
+                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                }
+            },
         }
 
         /*let extraChartData = [
@@ -243,7 +249,7 @@ var Stats = {
     },
     renderPatrimonyProjectionsTable: budgets => {
         return `
-        <table id="ev-pat-projections-table" class="centered" style="margin-top: 10px;background: white;">
+        <table id="ev-pat-projections-table" class="centered" style="margin-top: 10px;">
             <thead>
                 <tr>
                     <th>Mês</th>
@@ -293,8 +299,14 @@ var Stats = {
             title: {
                 display: true,
                 text: chartTitle,
-                position: "top"
-            }
+                position: "top",
+                fontColor: "white"
+            },
+            legend: {
+                labels: {
+                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                }
+            },
         }
 
         var data = {

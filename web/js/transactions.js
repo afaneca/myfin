@@ -45,7 +45,7 @@ var Transactions = {
             <tr data-id='$trx.transaction_id'>
                 <td>${DateUtils.convertUnixTimestampToDateString(trx.date_timestamp)}</td>
                 <td>${Transactions.formatTypeToString(trx.type, trx.account_from_name, trx.account_to_name)}</td>
-                <td>${StringUtils.formatStringToCurrency(trx.amount)}</td>
+                <td>${Transactions.formatCurrencyColumn(trx.type, StringUtils.formatStringToCurrency(trx.amount))}</td>
                 <td>${trx.description}</td>
                 <td>${(trx.entity_name) ? trx.entity_name : "<span class='medium-gray-color'>Sem Entidade</span>"}</td>
                 <td>${(trx.category_name) ? trx.category_name : "<span class='medium-gray-color'>Sem Categoria</span>"}</td>
@@ -56,6 +56,20 @@ var Transactions = {
             </tr>
         `
     },
+    formatCurrencyColumn: (type, formattedCurrencyString) => {
+        switch (type) {
+            case 'I':
+                return `<span style="height: auto !important;" class='badge green-text text-accent-6'>${formattedCurrencyString}</span></span>`
+                break;
+            case 'E':
+                return `<span style="height: auto !important;" class='badge pink-text text-accent-2'>${formattedCurrencyString}</span>`
+                break;
+            case 'T':
+            default:
+                return `<spa style="height: auto !important;" class='badge orange-text text-accent-2'>${formattedCurrencyString}</span>`
+                break;
+        }
+    },
     formatTypeToString: (type, acc_from, acc_to) => {
         //'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'
         let str = type;
@@ -63,8 +77,9 @@ var Transactions = {
         if (!acc_from || acc_from == "") acc_from = `<span style="color:gray">Conta Externa</span>`
         if (!acc_to || acc_to == "") acc_to = `<span style="color:gray">Conta Externa</span>`
 
+        return `<span style="height: auto !important;">(${acc_from} ⮕ ${acc_to})</span></span>`
 
-        switch (type) {
+        /*switch (type) {
             case 'I':
                 return `<span style="height: auto !important;" class='badge green lighten-5 green-text text-accent-6'>(${acc_from} ⮕ ${acc_to})</span></span>`
                 break;
@@ -77,7 +92,7 @@ var Transactions = {
         }
 
 
-        return `<span style="height: auto !important;" class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
+        return `<span style="height: auto !important;" class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`*/
 
         /* return str; */
     },
@@ -164,7 +179,8 @@ var Transactions = {
                 $(".datepicker").datepicker({
                     defaultDate: new Date(),
                     setDefaultDate: true,
-                    format: "dd/mm/yyyy"
+                    format: "dd/mm/yyyy",
+                    i18n: PickerUtils.getDatePickerDefault18nStrings(),
                 });
 
                 Transactions.manageAccountsSelectAvailability()
@@ -390,7 +406,8 @@ var Transactions = {
                 $(".datepicker").datepicker({
                     defaultDate: new Date(DateUtils.convertUnixTimestampToDateFormat(selectedDateTimestamp)),
                     setDefaultDate: true,
-                    format: "dd/mm/yyyy"
+                    format: "dd/mm/yyyy",
+                    i18n: PickerUtils.getDatePickerDefault18nStrings(),
                 });
 
                 // AUTO-FILL
