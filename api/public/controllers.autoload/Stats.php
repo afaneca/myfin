@@ -117,6 +117,7 @@ class Stats
             $previousMonth = ($currentMonth > 1) ? $currentMonth - 1 : 12;
             $previousMonthsYear = ($currentMonth > 1) ? $currentYear : $currentYear - 1;
 
+
             $budgetsList = BudgetModel::getBudgetsAfterCertainMonth($userID, $previousMonth, $previousMonthsYear);
 
             $lastPlannedFinalBalance = null;
