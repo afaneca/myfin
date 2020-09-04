@@ -53,8 +53,8 @@ class BudgetModel extends Entity
         $sql = "SELECT month, year, budget_id, users_user_id, observations, is_open, initial_balance " .
             "FROM budgets " .
             "WHERE budgets.users_user_id = :userID " .
-            "AND (year = :year AND month > :month) " .
-            "OR (year > :year) " .
+            "AND ((year = :year AND month > :month) " .
+            "OR (year > :year)) " .
             "ORDER BY year ASC, month ASC";
 
         $values = array();
