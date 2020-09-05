@@ -7,13 +7,14 @@
             <a class="waves-effect waves-light btn right-align green-gradient-bg"
                onclick="configs.goToPage('budgetDetails',{'new': true, 'open' : true}, true);" style="margin: 10px;"><i
                     class="material-icons left">add_circle</i>Adicionar Orçamento</a>
+            <p style="float:right;">
+                <label>
+                    <input type="checkbox" id="show_only_open_cb"/>
+                    <span>Só Abertos</span>
+                </label>
+            </p>
         </div>
-        <p style="float:right;">
-            <label>
-                <input type="checkbox" id="show_only_open_cb"/>
-                <span>Só Abertos</span>
-            </label>
-        </p>
+
         <div id="table-wrapper">
 
         </div>
