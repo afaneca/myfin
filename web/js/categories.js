@@ -96,15 +96,16 @@ var Categories = {
                 </div>
                 <div class="row">
                     <form class="col s12">
-                        <div class="input-field col s6">
+                        <div class="input-field col s4">
                         <i class="material-icons prefix">folder</i>
                             <input id="category_name" type="text" class="validate">
                             <label for="category_name">Nome da Categoria</label>
                         </div>
-                  
-                            <div class="col s6">
-                                <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
-                            </div>
+                        <div class="input-field col s8">
+                            <i class="material-icons prefix">description</i>
+                            <label for="category_description" class="active">Descrição da Categoria</label>
+                            <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                        </div>
                         </div>
                         
                     </form>
@@ -204,12 +205,14 @@ var Categories = {
                 
                 <div class="row">
                     <form class="col s12">
-                        <div class="input-field col s6">
+                        <div class="input-field col s4">
                         <i class="material-icons prefix">folder</i>
                             <input id="category_name" type="text" class="validate">
                             <label for="category_name" class="active">Nome da Categoria</label>
                         </div>
-                            <div class="col s6">
+                            <div class="input-field col s8">
+                                <i class="material-icons prefix">description</i>
+                                <label for="category_description" class="active">Descrição da Categoria</label>
                                 <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
                             </div>
                         </div>
