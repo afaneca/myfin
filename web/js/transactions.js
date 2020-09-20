@@ -112,13 +112,16 @@ var Transactions = {
                 
                     <form class="col s12">
                         <div class="row">
-                            <div class="input-field col s5">
-                                <i class="material-icons prefix">folder</i>
+                            <div class="input-field col s3">
+                                <i class="material-icons prefix">euro_symbol</i>
                                 <input id="trx_amount" type="number" step=".01" class="validate">
                                 <label for="trx_amount">Valor (€)</label>
                             </div>
-                            <input type="text" class="datepicker input-field col s5 offset-s1">
-                             
+                             <div class="input-field col s7">
+                                <i class="material-icons prefix">date_range</i>
+                                <input id="trx_date" type="text" class="datepicker input-field col s5 offset-s1">
+                                <label for="trx_date">Data da transação</label>
+                            </div>                             
                         </div>
                         <div class="row col s12">                     
                             <div class="input-field col s4">
@@ -153,6 +156,7 @@ var Transactions = {
                             </div> 
                         </div>
                         <div class="input-field col s12">
+                            <i class="material-icons prefix">description</i>
                             <textarea id="trx-description" class="materialize-textarea"></textarea>
                             <label for="trx-description">Descrição</label>
                         </div>
@@ -337,13 +341,17 @@ var Transactions = {
                 
                     <form class="col s12">
                         <div class="row">
-                            <div class="input-field col s5">
-                                <i class="material-icons prefix">folder</i>
+                            <div class="input-field col s3">
+                                <i class="material-icons prefix">euro_symbol</i>
                                 <input id="trx_amount" type="number" step=".01" class="validate">
                                 <label for="trx_amount" class="active">Valor (€)</label>
                             </div>
-                            <input type="text" class="datepicker input-field col s5 offset-s1">
-                             
+                            
+                             <div class="input-field col s7">
+                                <i class="material-icons prefix">date_range</i>
+                                <input id="trx_date" type="text" class="datepicker input-field col s5 offset-s1">
+                                <label for="trx_date">Data da transação</label>
+                            </div>
                         </div>
                         <div class="row col s12">                     
                             <div class="input-field col s4">
@@ -378,6 +386,7 @@ var Transactions = {
                             </div> 
                         </div>
                         <div class="input-field col s12">
+                            <i class="material-icons prefix">description</i>
                             <textarea id="trx-description" class="materialize-textarea"></textarea>
                             <label class="active" for="trx-description">Descrição</label>
                         </div>

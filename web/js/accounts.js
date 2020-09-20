@@ -97,9 +97,11 @@ var Accounts = {
                             <input id="current_balance" type="number" step="0.01" min="0.00" class="validate" value="0.00" disabled>
                             <label for="current_balance" class="active">Saldo Atual (€)</label>
                         </div>
-                        <div class="col s6">
-                                <textarea id="account_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
-                            </div>
+                        <div class="input-field col s6">
+                            <i class="material-icons prefix">description</i>
+                            <label for="account_description" class="active">Descrição</label>
+                            <textarea id="account_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                        </div>
                         <div class="input-field col s6">
                             <label>
                                 <input id="exclude_from_budgets" type="checkbox" />
@@ -270,9 +272,11 @@ var Accounts = {
                             <input id="current_balance" type="number" step="0.01" min="0.00" class="validate">
                             <label class="active" for="current_balance">Saldo Atual (€)</label>
                         </div>
-                        <div class="col s6">
-                                <textarea id="account_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
-                            </div>
+                         <div class="input-field col s6">
+                            <i class="material-icons prefix">description</i>
+                            <label for="account_description" class="active">Descrição</label>
+                            <textarea id="account_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                        </div>
                         <div class="input-field col s6">
                             <label>
                                 <input id="exclude_from_budgets" type="checkbox" />
