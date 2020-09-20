@@ -687,6 +687,10 @@ table.dataTable.order-column tbody tr > .sorting_1, table.dataTable.order-column
     background-color: #3f737f;
 }
 
+.select-dropdown li.disabled, .select-dropdown li.disabled>span, .select-dropdown li.optgroup {
+    color: rgb(138 122 122 / 88%);
+}
+
 /* END SELECT2 */
 
 /* MATERIALIZE SELECT */
