@@ -156,6 +156,7 @@ var Transactions = {
                             </div> 
                         </div>
                         <div class="input-field col s12">
+                            <i class="material-icons prefix">description</i>
                             <textarea id="trx-description" class="materialize-textarea"></textarea>
                             <label for="trx-description">Descrição</label>
                         </div>
@@ -385,6 +386,7 @@ var Transactions = {
                             </div> 
                         </div>
                         <div class="input-field col s12">
+                            <i class="material-icons prefix">description</i>
                             <textarea id="trx-description" class="materialize-textarea"></textarea>
                             <label class="active" for="trx-description">Descrição</label>
                         </div>
