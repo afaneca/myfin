@@ -87,6 +87,9 @@ class Budgets
             foreach ($budgetsArr as &$budget) {
                 $budget["balance_value"] = BudgetModel::calculateBudgetBalance($userID, $budget);//"-343.54";
                 $budget["balance_change_percentage"] = BudgetModel::calculateBudgetBalanceChangePercentage($userID, $budget, $budget["balance_value"]);
+                $budgetSums = BudgetModel::getSumAmountsForBudget($userID, $budget);
+                $budget["credit_amount"] = $budgetSums["balance_credit"];
+                $budget["debit_amount"] = $budgetSums["balance_debit"];
             }
 
             /* $db->getDB()->commit(); */

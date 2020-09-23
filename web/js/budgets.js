@@ -37,6 +37,8 @@ var Budgets = {
             <tr>
                 <th>Mês</th>
                 <th>Observações</th>
+                <th>Despesa</th>
+                <th>Receita</th>
                 <th>Balanço</th>
                 <th>Estado</th>
                 <th>Ações</th>
@@ -55,6 +57,8 @@ var Budgets = {
             <tr data-id='${budget.budget_id}' class="${(budget.month == currentMonth && budget.year == currentYear) ? 'highlighted-budget-item' : ''}">
                 <td>${budget.month}/${budget.year}</td>
                 <td>${budget.observations}</td>
+                <td>${StringUtils.formatStringToCurrency(budget.debit_amount)}</td>
+                <td>${StringUtils.formatStringToCurrency(budget.credit_amount)}</td>
                 <td>${Budgets.buildBudgetBalanceRow(budget.balance_value, budget.balance_change_percentage, (budget.month == currentMonth && budget.year == currentYear))}</td>
                 <td><span class="${(budget.month == currentMonth && budget.year == currentYear) ? '' : (budget.is_open == 1) ? 'badge green-text text-accent-4' : 'badge pink-text text-accent-2'} ">${(budget.is_open == 1) ? "Aberto" : "Fechado"}</span></td>
                 <td>
