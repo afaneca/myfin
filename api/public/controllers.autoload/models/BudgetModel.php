@@ -149,6 +149,36 @@ class BudgetModel extends Entity
         }*/
         return (($finalBalance - $initialBalance) / (abs($initialBalance)) * 100);
     }
+
+    public static function getSumAmountsForBudget($userID, $budget)
+    {
+        $budgetID = $budget["budget_id"];
+        $month = intval($budget["month"]);
+        $year = intval($budget["year"]);
+        $isOpen = intval($budget["is_open"]);
+
+        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+
+        $balance_credit = $balance_debit = 0;
+
+        foreach ($categories as &$category) {
+            $monthToUse = $month;
+            $yearToUser = $year;
+
+            if ($isOpen) {
+                $amount_credit = abs(Input::convertFloatToInteger($category["planned_amount_credit"]));
+                $amount_debit = abs(Input::convertFloatToInteger($category["planned_amount_debit"]));
+            } else {
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
+                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
+                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);
+            }
+            $balance_credit += $amount_credit;
+            $balance_debit += $amount_debit;
+        }
+
+        return ["balance_credit" => Input::convertIntegerToFloat($balance_credit), "balance_debit" => Input::convertIntegerToFloat($balance_debit)];
+    }
 }
 
 
