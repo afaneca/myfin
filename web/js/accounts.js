@@ -8,7 +8,7 @@ var Accounts = {
         LoadingManager.showLoading()
         AccountServices.getAllAccounts((response) => {
                 LoadingManager.hideLoading()
-                CookieUtils.setUserAccounts(response)
+                LocalDataManager.setUserAccounts(response)
 
                 Accounts.initTable(response)
             },

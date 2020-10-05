@@ -14,7 +14,7 @@ var TopNav = {
         const credits_element = $("#top-summary-col-credits-value")
         const globalPatrimony_element = $("#top-summary-col-patrimony-value")
 
-        let accsArr = CookieUtils.getUserAccounts()
+        let accsArr = LocalDataManager.getUserAccounts()
 
         current_savings_element.text(StringUtils.formatStringToCurrency(TopNav.calculateCurrentSavingsBalance(accsArr)))
         investments_element.text(StringUtils.formatStringToCurrency(TopNav.calculateInvestmentsBalance(accsArr)))
