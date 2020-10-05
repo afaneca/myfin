@@ -4,12 +4,6 @@ class UserModel extends Entity
 {
     protected static $table = "users";
     // protected static $view = 'UserInfo';
-    /* protected static $joinUserTaskTable = "user_has_tasks";
-    protected static $joinUserWorkBlockTable = "user_has_workblocks";
-    protected static $joinUserRoleTable = "user_has_roles";
-    protected static $joinUserGroupTable = "user_has_groups";
-    protected static $groupsTable = "groups";
-    protected static $vacDaysTable = "vac_days"; */
 
     protected static $columns = [
         "user_id",
@@ -31,7 +25,6 @@ class UserModel extends Entity
 
         $values = array();
         $values[':name'] = $name;
-
 
 
         try {
@@ -60,7 +53,6 @@ class UserModel extends Entity
 
         $values = array();
         $values[':id'] = $id;
-
 
 
         try {
