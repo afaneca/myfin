@@ -65,7 +65,7 @@ var Stats = {
         /**
          * [account_id] = { }
          */
-        accsList = CookieUtils.getUserAccounts()
+        accsList = LocalDataManager.getUserAccounts()
 
 
         for (const elem of list) {
@@ -235,10 +235,11 @@ var Stats = {
         tableUtils.setupStaticTable("#ev-pat-projections-table")
     },
     getInitialAssetsBalance() {
-        const allAccs = CookieUtils.getUserAccounts()
+        const allAccs = LocalDataManager.getUserAccounts()
         const assetsAccounts = allAccs.filter(function (acc) {
-            return acc.type === "CHEAC" || acc.type === "SAVAC"
-                || acc.type === "INVAC" || acc.type === "OTHACC"
+            return acc.type === account_types_tag.CHEAC || acc.type === account_types_tag.SAVAC
+                || acc.type === account_types_tag.INVAC || acc.type === account_types_tag.OTHAC
+                || acc.type === account_types_tag.WALLET || acc.type === account_types_tag.MEALAC
         })
 
         let assetsBalance = assetsAccounts.reduce((acc, val) => {
@@ -284,7 +285,7 @@ var Stats = {
       `
     },
     getFinalBalanceForAssetsOnly: (totalBalance) => {
-        const debtAccounts = CookieUtils.getDebtAccounts()
+        const debtAccounts = LocalDataManager.getDebtAccounts()
         let debtTotals = debtAccounts.reduce((acc, val) => {
             return acc + parseFloat(val.balance)
         }, 0)

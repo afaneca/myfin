@@ -97,7 +97,7 @@ var Dashboard = {
     },
     setupDebtDistributionChart: () => {
 
-        const accsArr = CookieUtils.getUserAccounts()
+        const accsArr = LocalDataManager.getUserAccounts()
 
         const creditAccounts = accsArr.filter(function (acc) {
             return acc.type === "CREAC"
@@ -118,7 +118,7 @@ var Dashboard = {
     },
     setupInvestmentDistributionChart: () => {
 
-        const accsArr = CookieUtils.getUserAccounts()
+        const accsArr = LocalDataManager.getUserAccounts()
 
         const investmentAccounts = accsArr.filter(function (acc) {
             return acc.type === "INVAC" || acc.type === "SAVAC"

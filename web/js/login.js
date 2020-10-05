@@ -184,11 +184,10 @@ function performLogin(username, password) {
             //console.log(response);
             enableLoginBtn()
             LoadingManager.hideLoading()
-            Cookies.set("actions", response["actions"]);
             Cookies.set("sessionkey", response["sessionkey"]);
             Cookies.set("username", response["username"]);
             Cookies.set("trustlimit", response["trustlimit"]);
-            CookieUtils.setUserAccounts(response["accounts"])
+            LocalDataManager.setUserAccounts(response["accounts"])
 
             configs.switchApp("myfin");
             /* if (!misc.checkIfUserHasAction("canAccessBackoffice")) {
@@ -216,9 +215,9 @@ function performLogin(username, password) {
 /* Removes all user data from Cookies */
 function resetSession() {
     Cookies.remove("sessionkey");
-    Cookies.remove("actions");
     Cookies.remove("username");
     Cookies.remove("trustlimit");
+    LocalDataManager.clearLocalData();
 
     if (window.location.pathname.split("/").pop() != "login.html") // if we're not in the login page
         window.location = configs.defaultApp + ".html"; // redirect to login page
@@ -228,7 +227,6 @@ function resetSession() {
 function browserHasGoodCookies() {
     return (
         Cookies.get("sessionkey") !== undefined &&
-        Cookies.get("actions") !== undefined &&
         Cookies.get("username") !== undefined &&
         Cookies.get("trustlimit") !== undefined
     );

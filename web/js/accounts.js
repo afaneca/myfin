@@ -8,7 +8,7 @@ var Accounts = {
         LoadingManager.showLoading()
         AccountServices.getAllAccounts((response) => {
                 LoadingManager.hideLoading()
-                CookieUtils.setUserAccounts(response)
+                LocalDataManager.setUserAccounts(response)
 
                 Accounts.initTable(response)
             },
@@ -79,6 +79,8 @@ var Accounts = {
                                 <option value="SAVAC">Conta Poupança</option>
                                 <option value="INVAC">Investimento</option>
                                 <option value="CREAC">Crédito</option>
+                                <option value="MEALAC">Cartão-Refeição</option>
+                                <option value="WALLET">Carteira</option>
                                 <option value="OTHAC">Outra</option>
                             </select>
                             <label>Tipo de Conta</label>
@@ -254,6 +256,8 @@ var Accounts = {
                                 <option ${(accType === 'SAVAC') ? 'selected' : ''} value="SAVAC">Conta Poupança</option>
                                 <option ${(accType === 'INVAC') ? 'selected' : ''} value="INVAC">Investimento</option>
                                 <option ${(accType === 'CREAC') ? 'selected' : ''} value="CREAC">Crédito</option>
+                                <option ${(accType === 'MEALAC') ? 'selected' : ''} value="MEALAC">Cartão-Refeição</option>
+                                <option ${(accType === 'WALLET') ? 'selected' : ''} value="WALLET">Carteira</option>
                                 <option ${(accType === 'OTHAC') ? 'selected' : ''} value="OTHAC">Outra</option>
                             </select>
                             <label>Tipo de Conta</label>

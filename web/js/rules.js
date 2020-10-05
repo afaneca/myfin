@@ -77,11 +77,11 @@ var Rules = {
         }
 
         if (rule.matcher_account_from_id_operator && rule.matcher_account_from_id_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE && rule.matcher_account_from_id_value) {
-            outputStr += "<u>Conta Origem</u>: " + rule.matcher_account_from_id_operator + " => " + "\"" + CookieUtils.getUserAccount(rule.matcher_account_from_id_value).name + "\"" + "<br>"
+            outputStr += "<u>Conta Origem</u>: " + rule.matcher_account_from_id_operator + " => " + "\"" + LocalDataManager.getUserAccount(rule.matcher_account_from_id_value).name + "\"" + "<br>"
         }
 
         if (rule.matcher_account_to_id_operator && rule.matcher_account_to_id_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE && rule.matcher_account_to_id_value) {
-            outputStr += "<u>Conta Origem</u>: " + rule.matcher_account_to_id_operator + " => " + "\"" + CookieUtils.getUserAccount(rule.matcher_account_to_id_value).name + "\"" + "<br>"
+            outputStr += "<u>Conta Origem</u>: " + rule.matcher_account_to_id_operator + " => " + "\"" + LocalDataManager.getUserAccount(rule.matcher_account_to_id_value).name + "\"" + "<br>"
         }
 
         return outputStr
@@ -96,11 +96,11 @@ var Rules = {
         }
 
         if (rule.assign_account_from_id && rule.assign_account_from_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-            outputStr += "<u>Atribuir Conta Origem</u>: " + CookieUtils.getUserAccount(rule.assign_account_from_id).name + "<br>"
+            outputStr += "<u>Atribuir Conta Origem</u>: " + LocalDataManager.getUserAccount(rule.assign_account_from_id).name + "<br>"
         }
 
         if (rule.assign_account_to_id && rule.assign_account_to_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-            outputStr += "<u>Atribuir Conta Destino</u>: " + CookieUtils.getUserAccount(rule.assign_account_to_id).name + "<br>"
+            outputStr += "<u>Atribuir Conta Destino</u>: " + LocalDataManager.getUserAccount(rule.assign_account_to_id).name + "<br>"
         }
 
         return outputStr

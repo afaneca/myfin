@@ -42,16 +42,31 @@ var StringUtils = {
 }
 
 /* TYPES OF ACCOUNTS:
-    - Checking Accounts (CHEAC)
-    - Saving Accounts (SAVAC)
-    - Investment Accounts (INVAC)
-    - Credit Accounts (CREAC)
-    - Other Accounts (OTHAC) */
+- Checking Accounts (CHEAC)
+- Saving Accounts (SAVAC)
+- Investment Accounts (INVAC)
+- Credit Accounts (CREAC)
+- Meal Accounts (MEALAC)
+- WALLETS (WALLET)
+- Other Accounts (OTHAC)
+*/
 const account_types = {
     "CHEAC": "Conta à Ordem",
     "SAVAC": "Conta Poupança",
     "INVAC": "Investimento",
     "CREAC": "Crédito",
+    "MEALAC": "Cartão-Refeição",
+    "WALLET": "Carteira",
     "OTHAC": "Outra"
+}
+
+const account_types_tag = {
+    "CHEAC": "CHEAC",
+    "SAVAC": "SAVAC",
+    "INVAC": "INVAC",
+    "CREAC": "CREAC",
+    "MEALAC": "MEALAC",
+    "WALLET": "WALLET",
+    "OTHAC": "OTHAC"
 }
 //# sourceURL=js/utils/stringUtils.js

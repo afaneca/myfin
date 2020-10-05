@@ -32,7 +32,7 @@ var ImportTransactions = {
                 ImportTransactionsServices.doImportTransactionsStep0(
                     (resp) => {
                         // SUCCESS
-                        CookieUtils.setUserAccounts(resp)
+                        LocalDataManager.setUserAccounts(resp)
                         ImportTransactions.renderAccountSelect(resp)
                         $("#continue_import_btn").removeAttr('disabled')
                     }, (err) => {
@@ -447,7 +447,7 @@ var ImportTransactions = {
         $("#modal-global").modal("open")
         let newBalanceCalc = ImportTransactions.calculateNewBalance()
         let trxCnt = importedObjData.data.length
-        let accountName = CookieUtils.getUserAccount(selectedAccountID).name
+        let accountName = LocalDataManager.getUserAccount(selectedAccountID).name
 
         let txt = `
                 <h4>Concluir Importação?</h4>
@@ -461,7 +461,7 @@ var ImportTransactions = {
         $("#modal-global .modal-footer").html(actionLinks);
     },
     calculateNewBalance: () => {
-        const account = CookieUtils.getUserAccount(selectedAccountID)
+        const account = LocalDataManager.getUserAccount(selectedAccountID)
         let newBalance = parseFloat(account.balance)
 
         importedObjData.data.forEach((acc, index, array) => {
