@@ -79,6 +79,8 @@ class Accounts
                 $type !== "CHEAC" && $type !== "SAVAC"
                 && $type !== "INVAC" && $type !== "CREAC"
                 && $type !== "OTHAC"
+                && $type !== "WALLET"
+                && $type !== "MEALAC"
             ) {
                 throw new BadValidationTypeException("Account type not valid!");
             }
@@ -231,6 +233,8 @@ class Accounts
                 $newType !== "CHEAC" && $newType !== "SAVAC"
                 && $newType !== "INVAC" && $newType !== "CREAC"
                 && $newType !== "OTHAC"
+                && $newType !== "WALLET"
+                && $newType !== "MEALAC"
             ) {
                 throw new BadValidationTypeException("New account type not valid!");
             }

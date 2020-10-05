@@ -5,7 +5,10 @@
 - Saving Accounts (SAVAC)
 - Investment Accounts (INVAC)
 - Credit Accounts (CREAC)
-- Other Accounts (OTHAC) */
+- Meal Accounts (MEALAC)
+- WALLETS (WALLET)
+- Other Accounts (OTHAC)
+*/
 require_once 'consts.php';
 
 class AccountModel extends Entity

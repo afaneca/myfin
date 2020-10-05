@@ -23,7 +23,8 @@ var TopNav = {
     },
     calculateCurrentSavingsBalance: (accsArr) => {
         const savingsAndCurrentAccounts = accsArr.filter(function (acc) {
-            return acc.type === "CHEAC" || acc.type === "SAVAC"
+            return acc.type == account_types_tag.CHEAC || acc.type === account_types_tag.SAVAC
+                || acc.type === account_types_tag.MEALAC || acc.type === account_types_tag.WALLET
         })
 
 

@@ -237,8 +237,9 @@ var Stats = {
     getInitialAssetsBalance() {
         const allAccs = LocalDataManager.getUserAccounts()
         const assetsAccounts = allAccs.filter(function (acc) {
-            return acc.type === "CHEAC" || acc.type === "SAVAC"
-                || acc.type === "INVAC" || acc.type === "OTHACC"
+            return acc.type === account_types_tag.CHEAC || acc.type === account_types_tag.SAVAC
+                || acc.type === account_types_tag.INVAC || acc.type === account_types_tag.OTHAC
+                || acc.type === account_types_tag.WALLET || acc.type === account_types_tag.MEALAC
         })
 
         let assetsBalance = assetsAccounts.reduce((acc, val) => {
