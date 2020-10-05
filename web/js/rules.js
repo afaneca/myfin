@@ -81,7 +81,7 @@ var Rules = {
         }
 
         if (rule.matcher_account_to_id_operator && rule.matcher_account_to_id_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE && rule.matcher_account_to_id_value) {
-            outputStr += "<u>Conta Origem</u>: " + rule.matcher_account_to_id_operator + " => " + "\"" + LocalDataManager.getUserAccount(rule.matcher_account_to_id_value).name + "\"" + "<br>"
+            outputStr += "<u>Conta Destino</u>: " + rule.matcher_account_to_id_operator + " => " + "\"" + LocalDataManager.getUserAccount(rule.matcher_account_to_id_value).name + "\"" + "<br>"
         }
 
         return outputStr
@@ -147,6 +147,7 @@ var Rules = {
 
         let accountFromIDValue = $('select#operator-select-account-from-value').val()
         if (accountFromIDValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) accountFromIDValue = null
+
         const accountToIDOperator = $('select#operator-select-account-to').val()
 
         let accountToIDValue = $('select#value-select-account-to').val()
@@ -164,7 +165,7 @@ var Rules = {
         let accountToAssignValue = $('select#value-select-account-to-assign').val()
         if (accountToAssignValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) accountToAssignValue = null
 
-
+        debugger
         LoadingManager.showLoading()
         RuleServices.editRule(ruleID, descriptionOperator, descriptionValue, amountOperator, amountValue, typeOperator,
             typeValue, accountToIDOperator, accountToIDValue, accountFromIDOperator, accountFromIDValue, categoryAssignValue,
