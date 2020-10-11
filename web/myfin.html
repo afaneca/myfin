@@ -54,7 +54,7 @@
             </div>
             <div class="col s6">
                 <ul class="right hide-on-med-and-down">
-                    <li class="green-gradient-bg"><a href="#"><i class="large material-icons">account_circle</i></a>
+                    <li class="green-gradient-bg"><a href="#!profile" onClick="configs.goToPage('profile');MenuUtils.changeActiveMenu('profile')"><i class="large material-icons">account_circle</i></a>
                     </li>
                     <li class="red-gradient-bg"><a onClick="resetSession()" href="#"><i
                             class="large material-icons">exit_to_app</i></a></li>
@@ -170,6 +170,7 @@
 <script src="./js/services/transactionServices.js"></script>
 <script src="./js/services/importTransactionsServices.js"></script>
 <script src="./js/services/statServices.js"></script>
+<script src="./js/services/userServices.js"></script>
 
 <script src="./js/login.js" type="text/javascript"></script>
 <script src="./js/accounts.js" type="text/javascript"></script>
@@ -182,6 +183,7 @@
 <script src="./js/transactions.js"></script>
 <script src="./js/stats.js"></script>
 <script src="./js/dashboard.js"></script>
+<script src="./js/profile.js"></script>
 
 <script>
     $(document).ready(function () {

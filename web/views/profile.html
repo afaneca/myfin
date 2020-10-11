@@ -1,0 +1,70 @@
+<div id="page-wrapper">
+
+    <div class="card-panel">
+        <span class="main-accent-color">Gestão de Perfil</span><br>
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header"><i
+                        class="material-icons">edit</i>Alterar Password
+                </div>
+                <div class="collapsible-body">
+                    <div class="row">
+                        <form class="col s12">
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <input id="current_pw" type="password" class="validate" required>
+                                    <label for="current_pw">Password atual</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s6">
+                                    <input id="new_pw" type="password" class="validate" required>
+                                    <label for="new_pw">Password atual</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <input id="new_pw_repeat" type="password"
+                                           class="validate" required>
+                                    <label for="new_pw_repeat">Password atual</label>
+                                </div>
+                            </div>
+                            <button id="change_pw_btn"
+                                    class="waves-effect waves-light btn right-align green-gradient-bg"
+                                    style="float:right;" type="submit" name="action">Alterar Password
+                                <i class="material-icons no-accent-color right">send</i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header"><i
+                        class="material-icons">info_outline
+                </i>Estatísticas para nerds
+                </div>
+                <div class="collapsible-body">
+                    <ul>
+                        <li><b>Nr. de transações criadas:</b> <span id="counter_created_trx"></span></li>
+                        <li><b>Nr. de entidades criadas:</b> <span id="counter_created_entities"></span></li>
+                        <li><b>Nr. de categorias criadas:</b> <span id="counter_created_categories"></span></li>
+                        <li><b>Nr. de contas criadas:</b> <span id="counter_created_accounts"></span></li>
+                        <li><b>Nr. de orçamentos criadas:</b> <span id="counter_created_budgets"></span></li>
+                        <li><b>Nr. de regras criadas:</b> <span id="counter_created_rules"></span></li>
+                    </ul>
+
+                </div>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('.collapsible').collapsible();
+        Profile.init()
+    });
+</script>

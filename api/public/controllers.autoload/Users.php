@@ -104,7 +104,54 @@ class Users
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function changeUserPassword($request, $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+            } else {
+                $mobile = false;
+            }
+
+            $currentPassword = Input::validate($request->getParsedBody()["current_password"], Input::$STRICT_STRING, 2);
+            $newPassword = Input::validate($request->getParsedBody()["new_password"], Input::$STRICT_STRING, 3);
+
+            $idAuthUser = UserModel::getUserIdByName($authusername);
+
+            /* 1. autenticação - validação do token */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* Check if current password is correct */
+            AuthenticationModel::performCredentialCheck($authusername, $currentPassword);
+
+            /* Changes the password */
+            $hashedPassword = EnsoShared::hash($newPassword);
+            UserModel::editWhere(["user_id" => $idAuthUser], ["password" => $hashedPassword]);
+
+            EnsoLogsModel::addEnsoLog($authusername, "Changed password of user '$authusername'.", EnsoLogsModel::$INFORMATIONAL, 'Users');
+
+            AuthenticationModel::generateNewsessionkeyForUser($authusername);
+            /* 5. response */
+            return sendResponse($response, EnsoShared::$REST_OK, "User password changed with success.");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (PermissionDeniedException $e) {
+            EnsoLogsModel::addEnsoLog($authusername, "Tried to change user password, operation failed due to lack of permissions.", EnsoLogsModel::$NOTICE, "Users");
+            return sendResponse($response, EnsoShared::$REST_FORBIDDEN, $e);
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getMessage());
+        } catch (Exception $e) {
+            EnsoLogsModel::addEnsoLog($authusername, "Tried to change user password, operation failed.", EnsoLogsModel::$ERROR, "Users");
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
 }
 
 $app->get('/users/{userID}', 'Users::getUserInfo');
 $app->post('/users/', 'Users::addUser');
+$app->put('/users/changePW/', 'Users::changeUserPassword');
