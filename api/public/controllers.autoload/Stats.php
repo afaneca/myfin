@@ -180,7 +180,7 @@ class Stats
 
             $userID = UserModel::getUserIdByName($authusername, false);
             $outputArr = array();
-            $outputArr["nr_of_trx"] = TransactionModel::getCounterOfUserTransactions($userID); // TODO
+            $outputArr["nr_of_trx"] = TransactionModel::getCounterOfUserTransactions($userID);
             $outputArr["nr_of_entities"] = EntityModel::getCounterWhere(["users_user_id" => $userID]);
             $outputArr["nr_of_categories"] = CategoryModel::getCounterWhere(["users_user_id" => $userID]);
             $outputArr["nr_of_accounts"] = AccountModel::getCounterWhere(["users_user_id" => $userID]);
