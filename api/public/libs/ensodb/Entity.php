@@ -15,7 +15,7 @@ abstract class Entity implements iEntity
 
         $values = array();
         $sql .= static::formulateWhere($filters, $values);
-        
+
         $db->prepare($sql);
         $db->execute($values);
 
@@ -80,7 +80,7 @@ abstract class Entity implements iEntity
 
         $sql = "DELETE FROM " . static::$table . " ";
         $sql .= static::formulateWhere($primaryKeys, $values);
-       
+
         $db->prepare($sql);
         $db->execute($values);
     }
@@ -164,6 +164,7 @@ abstract class Entity implements iEntity
         $sql = "";
         if (!empty($filters)) {
             $sql .= " WHERE ";
+
             foreach ($filters as $dbName => $value) {
                 if (!in_array($dbName, static::$columns)) {
                     throw new InexistentAttributeProvidedException();
@@ -198,16 +199,38 @@ abstract class Entity implements iEntity
     public static function getCounter()
     {
         $sql = "SELECT count(*) " .
-            "FROM \"" . static::$table . "\"";
+            "FROM " . static::$table;
 
         try {
             $db = new EnsoDB();
             $db->prepare($sql);
             $db->execute();
 
-            return $db->fetchAll(PDO::FETCH_COLUMN);
+            return $db->fetch(PDO::FETCH_COLUMN);
         } catch (PDOException $e) {
-            return false;
+            return $e;
+        }
+    }
+
+    public static function getCounterWhere($filters = null)
+    {
+        $values = array();
+        $sql = "SELECT count(*) " .
+            "FROM " . static::$table . " ";
+
+        if ($filters != null)
+            $sql .= static::formulateWhere($filters, $values);
+
+
+
+        try {
+            $db = new EnsoDB();
+            $db->prepare($sql);
+            $db->execute($values);
+
+            return $db->fetch(PDO::FETCH_COLUMN);
+        } catch (PDOException $e) {
+            return $e;
         }
     }
 
