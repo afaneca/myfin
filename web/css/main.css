@@ -34,7 +34,7 @@ body {
     overflow: visible !important;
 }
 
-p, i, b, strong {
+p, i, b, strong, ul, ol, li {
     color: var(--main-text-color);
 }
 

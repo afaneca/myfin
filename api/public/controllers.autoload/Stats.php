@@ -147,7 +147,59 @@ class Stats
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function getUserCounterStats(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction(); */
+
+            /**
+             * Skeleton:
+             *  [
+             *    {category_name, category_expenses },
+             *    ...
+             * ]
+             */
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+            $outputArr = array();
+            $outputArr["nr_of_trx"] = TransactionModel::getCounterOfUserTransactions($userID); // TODO
+            $outputArr["nr_of_entities"] = EntityModel::getCounterWhere(["users_user_id" => $userID]);
+            $outputArr["nr_of_categories"] = CategoryModel::getCounterWhere(["users_user_id" => $userID]);
+            $outputArr["nr_of_accounts"] = AccountModel::getCounterWhere(["users_user_id" => $userID]);
+            $outputArr["nr_of_budgets"] = BudgetModel::getCounterWhere(["users_user_id" => $userID]);
+            $outputArr["nr_of_rules"] = RuleModel::getCounterWhere(["users_user_id" => $userID]);
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/stats/dashboard/month-expenses-income-distribution', 'Stats::getExpensesIncomeDistributionForMonth');
 $app->get('/stats/stats/monthly-patrimony-projections', 'Stats::getMonthlyPatrimonyProjections');
+$app->get('/stats/userStats', 'Stats::getUserCounterStats');
