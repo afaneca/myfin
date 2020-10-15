@@ -59,12 +59,13 @@ var Stats = {
                 break;
             case "tab-expenses-per-cat":
                 Stats.clearCanvasAndTableWrapper("#chart_pie_cat_expenses_evolution_table", "chart_pie_cat_expenses_evolution")
-
+                $('#chart_pie_cat_expenses_evolution').remove(); $('#canvas_chart_expenses_evo_wrapper').append(' <canvas id="chart_pie_cat_expenses_evolution" width="800" height="300"></canvas>');
                 Stats.initExpensesPerCatEvolution()
                 window.history.replaceState(null, null, "#!stats?tab=cat-expenses-evo");
                 break;
             case "tab-income-per-cat":
                 Stats.clearCanvasAndTableWrapper("#chart_pie_cat_income_evolution_table", "chart_pie_cat_income_evolution")
+                $('#chart_pie_cat_income_evolution').remove(); $('#canvas_chart_income_evo_wrapper').append(' <canvas id="chart_pie_cat_income_evolution" width="800" height="300"></canvas>');
 
                 Stats.initIncomePerCatEvolution()
                 window.history.replaceState(null, null, "#!stats?tab=cat-income-evo");
@@ -300,7 +301,7 @@ var Stats = {
             </table>
         `)
 
-        tableUtils.setupStaticTable("table#cat-expenses-evolution-table")
+        tableUtils.setupStaticTable("table#cat-income-evolution-table")
     },
     renderIncomePerCategoryTableRow: (oldMonth, monthData) => {
 
