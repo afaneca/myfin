@@ -86,9 +86,9 @@ var Stats = {
             (resp) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
-                Stats.setupCategorySelect(resp)
+                Stats.setupCategorySelect(resp, "#tab-expenses-per-cat")
 
-                $("select.category-selection-select").formSelect();//.select2()
+                $("#tab-expenses-per-cat").find("select.category-selection-select").select2()//.formSelect();//.select2()
                 $("select.category-selection-select").on("change", (v) => {
                     let selectedCatId = $("select#category_select").val()
                     Stats.clearCanvasAndTableWrapper("#chart_pie_cat_expenses_evolution_table", "chart_pie_cat_expenses_evolution")
@@ -188,16 +188,13 @@ var Stats = {
         </tr>
       `
     },
-    setupCategorySelect: (categories) => {
-
-        $("div.categories-select-wrapper").html(`
-            <div class="input-field col s6">
-                <i class="material-icons prefix">note</i>
+    setupCategorySelect: (categories, wrapperDivLocator) => {
+        $(wrapperDivLocator).find("div.categories-select-wrapper").html(`
+            <div class="input-field col s3">
                 <select id="category_select" class="category-selection-select">
-                    <option value="" disabled selected>Escolha uma opção</option>
+                    <option value="" disabled selected>Escolha uma categoria</option>
                     ${categories.map(cat => Stats.renderCategorySelectOption(cat)).join("")}
                 </select>
-                <label>Categoria</label>
             </div>
         `)
     },
@@ -211,9 +208,9 @@ var Stats = {
             (resp) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
-                Stats.setupCategorySelect(resp)
+                Stats.setupCategorySelect(resp, "#tab-income-per-cat")
 
-                $("select.category-selection-select").formSelect();//.select2()
+                $("#tab-income-per-cat").find("select.category-selection-select").select2()//.formSelect();//.select2()
                 $("select.category-selection-select").on("change", (v) => {
                     let selectedCatId = $("#tab-income-per-cat").find("select.category-selection-select").val()
                     Stats.clearCanvasAndTableWrapper("#chart_pie_cat_income_evolution_table", "chart_pie_cat_income_evolution")
