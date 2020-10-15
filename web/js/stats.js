@@ -52,9 +52,91 @@ var Stats = {
             case "tab-projections":
                 Stats.initTabProjections()
                 break;
+            case "tab-expenses-per-cat":
+                Stats.initExpensesPerCatEvolution()
+                break;
+            case "tab-income-per-cat":
+                Stats.initIncomePerCatEvolution()
+                break;
             default:
                 break;
         }
+    },
+    initExpensesPerCatEvolution: () => {
+
+        CategoryServices.getAllCategories(undefined,
+            (resp) => {
+                // SUCCESS
+                LoadingManager.hideLoading()
+                Stats.setupCategorySelect(resp)
+
+                $("select.category-selection-select").formSelect();//.select2()
+                $("select.category-selection-select").on("change", (v) => {
+                    let selectedCatId = $("select#category_select").val()
+
+                    LoadingManager.showLoading()
+                    StatServices.getCategoryExpensesEvolution(selectedCatId,
+                        (resp) => {
+                            // SUCCESS
+                            LoadingManager.hideLoading()
+                            Stats.renderExpensesPerCategoryTable(resp)
+                        }, (resp) => {
+                            // FAILURE
+                            LoadingManager.hideLoading()
+                            DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+                        })
+                })
+            }, (err) => {
+                // FAILURE
+                LoadingManager.hideLoading()
+                DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+            }
+        )
+    },
+    renderExpensesPerCategoryTable: data => {
+        $("div#chart_pie_cat_expenses_evolution_table").html(`
+            <table id="transactions-table" class="display browser-defaults" style="width:100%">
+                <tr>
+                   <th>Mês</th>
+                   <th>Valor</th>
+                   <th>Alteração (%)</th>
+                </tr>
+                ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).join("")}
+            </table>
+        `)
+
+        tableUtils.setupStaticTable("cat-expenses-evolution-table")
+    },
+    renderExpensesPerCategoryTableRow: (oldMonth, monthData) => {
+
+        return `
+        <tr>
+            <td>${monthData.month}/${monthData.year}</td>
+            <td>${StringUtils.formatStringToCurrency(monthData.value)}</td>
+            <td>${(!oldMonth) ? "-" : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
+        </tr>
+      `
+    },
+    setupCategorySelect: (categories) => {
+
+        $("div.categories-select-wrapper").html(`
+            <div class="input-field col s6">
+                <i class="material-icons prefix">note</i>
+                <select id="category_select" class="category-selection-select">
+                    <option value="" disabled selected>Escolha uma opção</option>
+                    ${categories.map(cat => Stats.renderCategorySelectOption(cat)).join("")}
+                </select>
+                <label>Categoria</label>
+            </div>
+        `)
+    },
+    renderCategorySelectOption: cat => {
+        return `
+            <option value="${cat.category_id}">${cat.name}</option>
+        `
+    },
+    initIncomePerCatEvolution: () => {
+
     },
     transformList: list => {
         let tempList = []

@@ -180,7 +180,7 @@ class BudgetModel extends Entity
         return ["balance_credit" => Input::convertIntegerToFloat($balance_credit), "balance_debit" => Input::convertIntegerToFloat($balance_debit)];
     }
 
-    public static function getBudgetsUntilCertainMonth($userID, int $nextMonth, int $nextMonthsYear, $transactional = false)
+    public static function getBudgetsUntilCertainMonth($userID, int $nextMonth, int $nextMonthsYear, string $orderByDate = "ASC", $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
@@ -189,7 +189,7 @@ class BudgetModel extends Entity
             "WHERE budgets.users_user_id = :userID " .
             "AND ((year = :year AND month < :month) " .
             "OR (year < :year)) " .
-            "ORDER BY year ASC, month ASC";
+            "ORDER BY year $orderByDate, month $orderByDate";
 
         $values = array();
         $values[':userID'] = $userID;

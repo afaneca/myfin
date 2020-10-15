@@ -9,8 +9,8 @@
                 <ul class="tabs">
                     <li class="tab col s3"><a href="#tab-ev-pat">Evolução do Património</a></li>
                     <li class="tab col s3"><a href="#tab-projections">Projeções</a></li>
-                    <li class="tab col s3 disabled"><a href="#tab-expenses-per-cat">Despesas por Categoria</a></li>
-                    <li class="tab col s3 disabled"><a href="#tab-income-per-cat">Receitas por Categoria</a></li>
+                    <li class="tab col s3"><a href="#tab-expenses-per-cat">Despesas por Categoria</a></li>
+                    <li class="tab col s3"><a href="#tab-income-per-cat">Receitas por Categoria</a></li>
                 </ul>
             </div>
 
@@ -34,8 +34,27 @@
                     </div>
                 </div>
             </div>
-            <div id="tab-expenses-per-cat" class="col s12">Despesas por Categoria</div>
-            <div id="tab-income-per-cat" class="col s12">Receitas por Categoria</div>
+            <div id="tab-expenses-per-cat" class="col s12">
+                <div class="card-panel">
+                    <div class="categories-select-wrapper">
+                    </div>
+                    <canvas id="chart_pie_cat_expenses_evolution" width="800"
+                            height="450"></canvas>
+                    <div id="chart_pie_cat_expenses_evolution_table" style="padding: 10px;margin-top: 20px;">
+
+                    </div>
+                </div>
+            </div>
+            <div id="tab-income-per-cat" class="col s12">
+                <div class="card-panel">
+                    <div class="categories-select-wrapper"></div>
+                    <canvas id="chart_pie_cat_income_evolution" width="800"
+                            height="450"></canvas>
+                    <div id="chart_pie_cat_income_evolution_table" style="padding: 10px;margin-top: 20px;">
+
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
