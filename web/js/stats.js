@@ -48,15 +48,20 @@ var Stats = {
         switch (activeID) {
             case "tab-ev-pat":
                 Stats.initTabEvolutionOfPatrimony()
+                window.history.replaceState(null, null, "#!stats?tab=ev-pat");
                 break;
             case "tab-projections":
                 Stats.initTabProjections()
+                window.history.replaceState(null, null, "#!stats?tab=projections");
+
                 break;
             case "tab-expenses-per-cat":
                 Stats.initExpensesPerCatEvolution()
+                window.history.replaceState(null, null, "#!stats?tab=cat-expenses-evo");
                 break;
             case "tab-income-per-cat":
                 Stats.initIncomePerCatEvolution()
+                window.history.replaceState(null, null, "#!stats?tab=cat-income-evo");
                 break;
             default:
                 break;

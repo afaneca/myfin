@@ -64,13 +64,34 @@
 <script>
     $(document).ready(function () {
         DialogUtils.initStandardModal()
+
+
         $('.tabs').tabs({
             'onShow': (a, b) => {
                 let activeID = $(a)[0]["id"]
                 Stats.changeTabs(activeID)
             }
         });
-        Stats.changeTabs("tab-ev-pat")
+
+        //const selectedTab = (configs.hasOwnProperty("tab")) ? configs.getUrlArgs()["tab"] : undefined
+        const selectedTab = (configs.getUrlArgs()["tab"]) ? configs.getUrlArgs()["tab"] : undefined
+
+        switch (selectedTab) {
+            case "projections":
+                $('.tabs').tabs('select', "tab-projections")
+                break;
+            case "cat-expenses-evo":
+                $('.tabs').tabs('select', "tab-expenses-per-cat")
+                break;
+            case "cat-income-evo":
+                $('.tabs').tabs('select', "tab-income-per-cat")
+                break;
+            case "ev-pat":
+            default:
+                $('.tabs').tabs('select', "tab-ev-pat")
+                break;
+        }
+
 
     });
 
