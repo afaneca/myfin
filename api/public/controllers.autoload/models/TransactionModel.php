@@ -105,4 +105,23 @@ class TransactionModel extends Entity
         }
     }
 
+    public static function getCounterOfUserTransactions($userID, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+        $sql = "SELECT count(DISTINCT(transaction_id)) FROM transactions " .
+            "LEFT JOIN accounts ON transactions.accounts_account_from_id = accounts.account_id  or transactions.accounts_account_to_id = accounts.account_id " .
+            "WHERE accounts.users_user_id = :userID";
+
+        $values = array();
+        $values[':userID'] = $userID;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetch(PDO::FETCH_COLUMN);
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
 }

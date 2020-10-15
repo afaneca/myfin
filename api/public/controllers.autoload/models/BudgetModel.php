@@ -179,6 +179,32 @@ class BudgetModel extends Entity
 
         return ["balance_credit" => Input::convertIntegerToFloat($balance_credit), "balance_debit" => Input::convertIntegerToFloat($balance_debit)];
     }
+
+    public static function getBudgetsUntilCertainMonth($userID, int $nextMonth, int $nextMonthsYear, string $orderByDate = "ASC", $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT month, year, budget_id, users_user_id, observations, is_open, initial_balance " .
+            "FROM budgets " .
+            "WHERE budgets.users_user_id = :userID " .
+            "AND ((year = :year AND month < :month) " .
+            "OR (year < :year)) " .
+            "ORDER BY year $orderByDate, month $orderByDate";
+
+        $values = array();
+        $values[':userID'] = $userID;
+        $values[':month'] = $nextMonth;
+        $values[':year'] = $nextMonthsYear;
+
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 }
 
 

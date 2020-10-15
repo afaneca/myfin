@@ -125,10 +125,10 @@ class Stats
                 $budget["planned_balance"] = BudgetModel::getBudgetPlannedBalance($budget);
                 $month = $budget["month"];
                 $year = $budget["year"];
-                if (!$lastPlannedFinalBalance){
+                if (!$lastPlannedFinalBalance) {
                     $budget["planned_initial_balance"] = floatVal(AccountModel::getBalancesSnapshotForMonthForUser($userID,
                         ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, false));
-                } else{
+                } else {
                     $budget["planned_initial_balance"] = $lastPlannedFinalBalance;
                 }
 
@@ -147,7 +147,189 @@ class Stats
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function getUserCounterStats(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction(); */
+
+            /**
+             * Skeleton:
+             *  [
+             *    {category_name, category_expenses },
+             *    ...
+             * ]
+             */
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+            $outputArr = array();
+            $outputArr["nr_of_trx"] = TransactionModel::getCounterOfUserTransactions($userID);
+            $outputArr["nr_of_entities"] = EntityModel::getCounterWhere(["users_user_id" => $userID]);
+            $outputArr["nr_of_categories"] = CategoryModel::getCounterWhere(["users_user_id" => $userID]);
+            $outputArr["nr_of_accounts"] = AccountModel::getCounterWhere(["users_user_id" => $userID]);
+            $outputArr["nr_of_budgets"] = BudgetModel::getCounterWhere(["users_user_id" => $userID]);
+            $outputArr["nr_of_rules"] = RuleModel::getCounterWhere(["users_user_id" => $userID]);
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    public static function getCategoryExpensesEvolution(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+            $catID = Input::validate($request->getQueryParams()['cat_id'], Input::$INT, 4);
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction(); */
+
+            /**
+             * Skeleton:
+             *  [
+             *    {category_name, category_expenses },
+             *    ...
+             * ]
+             */
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+            $currentMonth = $date = date('m');
+            $currentYear = $date = date('Y');
+            $nextMonth = ($currentMonth < 12) ? $currentMonth + 1 : 1;
+            $nextMonthsYear = ($currentMonth < 12) ? $currentYear : $currentYear + 1;
+
+
+            $budgetsList = BudgetModel::getBudgetsUntilCertainMonth($userID, $nextMonth, $nextMonthsYear, "DESC");
+
+            $outputArr = [];
+            foreach ($budgetsList as &$budget) {
+                $item = [];
+                $item["month"] = $budget["month"];
+                $item["year"] = $budget["year"];
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($catID, $item["month"], $item["year"])[0];
+                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
+                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);;
+                $item["value"] = Input::convertIntegerToFloat($amount_debit);
+                array_push($outputArr, $item);
+            }
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    public static function getCategoryIncomeEvolution(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+            $catID = Input::validate($request->getQueryParams()['cat_id'], Input::$INT, 4);
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction(); */
+
+            /**
+             * Skeleton:
+             *  [
+             *    {category_name, category_expenses },
+             *    ...
+             * ]
+             */
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+            $currentMonth = $date = date('m');
+            $currentYear = $date = date('Y');
+            $nextMonth = ($currentMonth < 12) ? $currentMonth + 1 : 1;
+            $nextMonthsYear = ($currentMonth < 12) ? $currentYear : $currentYear + 1;
+
+
+            $budgetsList = BudgetModel::getBudgetsUntilCertainMonth($userID, $nextMonth, $nextMonthsYear, "DESC");
+
+            $outputArr = [];
+            foreach ($budgetsList as &$budget) {
+                $item = [];
+                $item["month"] = $budget["month"];
+                $item["year"] = $budget["year"];
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($catID, $item["month"], $item["year"])[0];
+                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
+                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);;
+                $item["value"] = Input::convertIntegerToFloat($amount_credit);
+                array_push($outputArr, $item);
+            }
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/stats/dashboard/month-expenses-income-distribution', 'Stats::getExpensesIncomeDistributionForMonth');
 $app->get('/stats/stats/monthly-patrimony-projections', 'Stats::getMonthlyPatrimonyProjections');
+$app->get('/stats/userStats', 'Stats::getUserCounterStats');
+$app->get("/stats/category-expenses-evolution", 'Stats:getCategoryExpensesEvolution');
+$app->get("/stats/category-income-evolution", 'Stats:getCategoryIncomeEvolution');
