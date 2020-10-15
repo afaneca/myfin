@@ -17,7 +17,7 @@
             <div id="tab-ev-pat" class="col s12">
                 <div class="card-panel">
                     <canvas id="chart_pie_patrimony_evolution" width="800"
-                            height="450"></canvas>
+                            height="300"></canvas>
 
                     <div id="patrimony-table" style="padding: 10px;margin-top: 20px;">
 
@@ -27,7 +27,7 @@
             <div id="tab-projections" class="col s12">
                 <div class="card-panel">
                     <canvas id="chart_pie_patrimony_projection" width="800"
-                            height="450"></canvas>
+                            height="300"></canvas>
 
                     <div id="patrimony-projections-table" style="padding: 10px;margin-top: 20px;">
 
@@ -39,7 +39,7 @@
                     <div class="categories-select-wrapper">
                     </div>
                     <canvas id="chart_pie_cat_expenses_evolution" width="800"
-                            height="450"></canvas>
+                            height="300"></canvas>
                     <div id="chart_pie_cat_expenses_evolution_table" style="padding: 10px;margin-top: 20px;">
 
                     </div>
@@ -49,7 +49,7 @@
                 <div class="card-panel">
                     <div class="categories-select-wrapper"></div>
                     <canvas id="chart_pie_cat_income_evolution" width="800"
-                            height="450"></canvas>
+                            height="300"></canvas>
                     <div id="chart_pie_cat_income_evolution_table" style="padding: 10px;margin-top: 20px;">
 
                     </div>
@@ -65,7 +65,6 @@
     $(document).ready(function () {
         DialogUtils.initStandardModal()
 
-
         $('.tabs').tabs({
             'onShow': (a, b) => {
                 let activeID = $(a)[0]["id"]
@@ -73,9 +72,14 @@
             }
         });
 
-        //const selectedTab = (configs.hasOwnProperty("tab")) ? configs.getUrlArgs()["tab"] : undefined
-        const selectedTab = (configs.getUrlArgs()["tab"]) ? configs.getUrlArgs()["tab"] : undefined
 
+        //const selectedTab = (configs.hasOwnProperty("tab")) ? configs.getUrlArgs()["tab"] : undefined
+        const argsArr = configs.getUrlArgs()
+        const selectedTab = (argsArr && argsArr.hasOwnProperty("tab")) ? argsArr["tab"] : undefined
+        /*if(!selectedTab){
+            $('.tabs').tabs('select', "tab-ev-pat")
+            Stats.changeTabs("tab-ev-pat")
+        }*/
         switch (selectedTab) {
             case "projections":
                 $('.tabs').tabs('select', "tab-projections")

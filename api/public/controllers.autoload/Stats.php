@@ -301,7 +301,7 @@ class Stats
             $nextMonthsYear = ($currentMonth < 12) ? $currentYear : $currentYear + 1;
 
 
-            $budgetsList = BudgetModel::getBudgetsUntilCertainMonth($userID, $nextMonth, $nextMonthsYear);
+            $budgetsList = BudgetModel::getBudgetsUntilCertainMonth($userID, $nextMonth, $nextMonthsYear, "DESC");
 
             $outputArr = [];
             foreach ($budgetsList as &$budget) {

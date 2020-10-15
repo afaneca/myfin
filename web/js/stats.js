@@ -1,5 +1,8 @@
 "use strict";
 
+let EXPENSES_PER_CATEGORY_LINE_CHART
+let INCOME_PER_CATEGORY_LINE_CHART
+
 var Stats = {
     initTabEvolutionOfPatrimony: () => {
         /* let cData = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
@@ -53,19 +56,28 @@ var Stats = {
             case "tab-projections":
                 Stats.initTabProjections()
                 window.history.replaceState(null, null, "#!stats?tab=projections");
-
                 break;
             case "tab-expenses-per-cat":
+                Stats.clearCanvasAndTableWrapper("#chart_pie_cat_expenses_evolution_table", "chart_pie_cat_expenses_evolution")
+
                 Stats.initExpensesPerCatEvolution()
                 window.history.replaceState(null, null, "#!stats?tab=cat-expenses-evo");
                 break;
             case "tab-income-per-cat":
+                Stats.clearCanvasAndTableWrapper("#chart_pie_cat_income_evolution_table", "chart_pie_cat_income_evolution")
+
                 Stats.initIncomePerCatEvolution()
                 window.history.replaceState(null, null, "#!stats?tab=cat-income-evo");
                 break;
             default:
                 break;
         }
+    },
+    clearCanvasAndTableWrapper: (tableWrapperLocator, canvasLocator) => {
+        $(tableWrapperLocator).html('')
+        let canvas = document.getElementById(canvasLocator);
+        let context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
     },
     initExpensesPerCatEvolution: () => {
 
@@ -78,6 +90,7 @@ var Stats = {
                 $("select.category-selection-select").formSelect();//.select2()
                 $("select.category-selection-select").on("change", (v) => {
                     let selectedCatId = $("select#category_select").val()
+                    Stats.clearCanvasAndTableWrapper("#chart_pie_cat_expenses_evolution_table", "chart_pie_cat_expenses_evolution")
 
                     LoadingManager.showLoading()
                     StatServices.getCategoryExpensesEvolution(selectedCatId,
@@ -85,6 +98,7 @@ var Stats = {
                             // SUCCESS
                             LoadingManager.hideLoading()
                             Stats.renderExpensesPerCategoryTable(resp)
+                            Stats.renderExpensesPerCategoryLineChart(resp)
                         }, (resp) => {
                             // FAILURE
                             LoadingManager.hideLoading()
@@ -98,19 +112,70 @@ var Stats = {
             }
         )
     },
+    renderExpensesPerCategoryLineChart: data => {
+        /*let chartData = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
+        let chartLabels = ["01/2020", "02/2020", "03/2020", "04/2020", "05/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020"];*/
+        let chartData = []
+        let chartLabels = []
+
+        for (var i = data.length - 1; i >= 0; i--) {
+            chartData.push(data[i].value)
+            chartLabels.push(`${data[i].month}/${data[i].year}`)
+        }
+
+
+        var ctx = document.getElementById("chart_pie_cat_expenses_evolution").getContext('2d');
+
+        const chartTitle = "Evolução de Despesa"
+        var customOptions = {
+            title: {
+                display: true,
+                text: chartTitle,
+                position: "top",
+                fontColor: "white"
+            },
+            legend: {
+                labels: {
+                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                }
+            },
+        }
+
+        var data = {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                label: "Evolução de Despesa",
+                borderColor: "#3e95cd",
+                fill: true
+            }
+            ]
+        };
+
+
+        EXPENSES_PER_CATEGORY_LINE_CHART = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: customOptions
+        });
+    },
     renderExpensesPerCategoryTable: data => {
         $("div#chart_pie_cat_expenses_evolution_table").html(`
-            <table id="transactions-table" class="display browser-defaults" style="width:100%">
-                <tr>
-                   <th>Mês</th>
-                   <th>Valor</th>
-                   <th>Alteração (%)</th>
-                </tr>
-                ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).join("")}
+            <table id="cat-expenses-evolution-table" class="display browser-defaults" style="width:100%">
+                <thead>
+                    <tr>
+                       <th>Mês</th>
+                       <th>Valor</th>
+                       <th>Alteração (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).join("")}
+                </tbody>
             </table>
         `)
 
-        tableUtils.setupStaticTable("cat-expenses-evolution-table")
+        tableUtils.setupStaticTable("table#cat-expenses-evolution-table")
     },
     renderExpensesPerCategoryTableRow: (oldMonth, monthData) => {
 
@@ -141,7 +206,111 @@ var Stats = {
         `
     },
     initIncomePerCatEvolution: () => {
+        CategoryServices.getAllCategories(undefined,
+            (resp) => {
+                // SUCCESS
+                LoadingManager.hideLoading()
+                Stats.setupCategorySelect(resp)
 
+                $("select.category-selection-select").formSelect();//.select2()
+                $("select.category-selection-select").on("change", (v) => {
+                    let selectedCatId = $("#tab-income-per-cat").find("select.category-selection-select").val()
+                    Stats.clearCanvasAndTableWrapper("#chart_pie_cat_income_evolution_table", "chart_pie_cat_income_evolution")
+
+                    LoadingManager.showLoading()
+                    StatServices.getCategoryIncomeEvolution(selectedCatId,
+                        (resp) => {
+                            // SUCCESS
+                            LoadingManager.hideLoading()
+                            Stats.renderIncomePerCategoryTable(resp)
+                            Stats.renderIncomePerCategoryLineChart(resp)
+                        }, (resp) => {
+                            // FAILURE
+                            LoadingManager.hideLoading()
+                            DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+                        })
+                })
+            }, (err) => {
+                // FAILURE
+                LoadingManager.hideLoading()
+                DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+            }
+        )
+    },
+    renderIncomePerCategoryLineChart: data => {
+            /*let chartData = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
+            let chartLabels = ["01/2020", "02/2020", "03/2020", "04/2020", "05/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020"];*/
+            let chartData = []
+            let chartLabels = []
+
+            for (var i = data.length - 1; i >= 0; i--) {
+                chartData.push(data[i].value)
+                chartLabels.push(`${data[i].month}/${data[i].year}`)
+            }
+
+
+            var ctx = document.getElementById("chart_pie_cat_income_evolution").getContext('2d');
+
+            const chartTitle = "Evolução de Receita"
+            var customOptions = {
+                title: {
+                    display: true,
+                    text: chartTitle,
+                    position: "top",
+                    fontColor: "white"
+                },
+                legend: {
+                    labels: {
+                        fontColor: 'rgba(255, 255, 255, 0.7)'
+                    }
+                },
+            }
+
+            var data = {
+                labels: chartLabels,
+                datasets: [{
+                    data: chartData,
+                    label: "Evolução de Receita Por Categoria",
+                    borderColor: "#3e95cd",
+                    fill: true
+                }
+                ]
+            };
+
+
+            INCOME_PER_CATEGORY_LINE_CHART = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: customOptions
+            });
+    },
+    renderIncomePerCategoryTable: data => {
+        $("div#chart_pie_cat_income_evolution_table").html(`
+            <table id="cat-income-evolution-table" class="display browser-defaults" style="width:100%">
+                <thead>
+                    <tr>
+                       <th>Mês</th>
+                       <th>Valor</th>
+                       <th>Alteração (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.map((month, index) => Stats.renderIncomePerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).join("")}
+                </tbody>
+            </table>
+        `)
+
+        tableUtils.setupStaticTable("table#cat-expenses-evolution-table")
+    },
+    renderIncomePerCategoryTableRow: (oldMonth, monthData) => {
+
+        return `
+        <tr>
+            <td>${monthData.month}/${monthData.year}</td>
+            <td>${StringUtils.formatStringToCurrency(monthData.value)}</td>
+            <td>${(!oldMonth) ? "-" : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
+        </tr>
+      `
     },
     transformList: list => {
         let tempList = []
