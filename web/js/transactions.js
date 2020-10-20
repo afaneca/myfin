@@ -200,6 +200,9 @@ var Transactions = {
         const accountFromSelect = $("select.select-trxs-account_from")
         const accountToSelect = $("select.select-trxs-account_to")
         const trxTypeSelect = $("select.select-trxs-types")
+        const accountFromSelect2 = $("select.select-trxs-account_from2")
+        const accountToSelect2 = $("select.select-trxs-account_to2")
+        const trxTypeSelect2 = $("select.select-trxs-types2")
 
         Transactions.handleAccountsSelectAvailability(accountFromSelect, accountToSelect, trxTypeSelect.val())
 
@@ -207,7 +210,14 @@ var Transactions = {
             const selectedType = resp.target.value
 
             Transactions.handleAccountsSelectAvailability(accountFromSelect, accountToSelect, selectedType)
+        })
 
+        Transactions.handleAccountsSelectAvailability(accountFromSelect2, accountToSelect2, trxTypeSelect2.val())
+
+        trxTypeSelect2.change((resp) => {
+            const selectedType = resp.target.value
+
+            Transactions.handleAccountsSelectAvailability(accountFromSelect2, accountToSelect2, selectedType)
         })
     },
     handleAccountsSelectAvailability: (accountFromSelect, accountToSelect, selectedType) => {
@@ -341,16 +351,19 @@ var Transactions = {
                 
                     <form class="col s12">
                         <div class="row">
-                            <div class="input-field col s3">
+                            <div class="input-field col s2">
                                 <i class="material-icons prefix">euro_symbol</i>
                                 <input id="trx_amount" type="number" step=".01" class="validate">
                                 <label for="trx_amount" class="active">Valor (€)</label>
                             </div>
                             
-                             <div class="input-field col s7">
+                             <div class="input-field col s6">
                                 <i class="material-icons prefix">date_range</i>
                                 <input id="trx_date" type="text" class="datepicker input-field col s5 offset-s1">
                                 <label for="trx_date">Data da transação</label>
+                            </div>
+                            <div class="col s4">
+                                <a id="split-trx-btn" class="waves-effect waves-light btn right-align" onclick="" style="margin: 10px;"><i class="material-icons left"><span id="split-trx-btn-icon-id">call_split</span></i><span id="split-trx-btn-text">Dividir Transação</span></a>
                             </div>
                         </div>
                         <div class="row col s12">                     
@@ -374,23 +387,71 @@ var Transactions = {
                             </div>
                         </div>
                         <div class="row col s12">
-                            <div class="input-field col s5">
+                            <div class="input-field col s4">
                                 <select class="select-trxs-categories" name="categories">
                                     ${categoriesArr.map(cat => Transactions.renderCategoriesSelectOptions(cat)).join("")}
                                 </select>
                             </div>
-                            <div class="input-field col s5 offset-s1">
+                            <div class="input-field col s4 offset-s1">
                                 <select class="select-trxs-entities" name="entities">
                                     ${entitiesArr.map(entity => Transactions.renderEntitiesSelectOptions(entity)).join("")}
                                 </select>
                             </div> 
                         </div>
-                        <div class="input-field col s12">
+                        <div class="input-field col s10">
                             <i class="material-icons prefix">description</i>
                             <textarea id="trx-description" class="materialize-textarea"></textarea>
                             <label class="active" for="trx-description">Descrição</label>
                         </div>
-            
+                        <div id="split-trx-wrapper" style="display: none;">
+                            <hr>
+                            <div class="row">
+                                <div class="input-field col s2">
+                                    <i class="material-icons prefix">euro_symbol</i>
+                                    <input id="trx_amount_2" type="number" step=".01" class="validate" style="width: auto;">
+                                    <label for="trx_amount_2">Valor (€)</label>
+                                </div>
+                                <div class="input-field col s8 offset-s2">
+                                    <i class="material-icons prefix">description</i>
+                                    <textarea id="trx-description2" class="materialize-textarea"></textarea>
+                                    <label for="trx-description2">Descrição</label>
+                                </div>
+                            </div>
+                            
+                            <div class="row">                     
+                                <div class="input-field col s4">
+                                    <select class="select-trxs-account_from2" name="accounts" style="width: 100%;">
+                                        <option disabled selected value="-1">Conta Origem</option>
+                                        ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
+                                    </select>
+                                    
+                                </div>
+                                <div class="input-field col s4 offset-s1">
+                                    <select class="select-trxs-account_to2" name="accounts" style="width: 100%;">
+                                        <option disabled selected value="-1">Conta Destino</option>
+                                        ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
+                                    </select>
+                                </div>
+                                <div class="input-field col s1 offset-s1">
+                                    <select class="select-trxs-types2" name="types">
+                                        ${typesArr.map(type => Transactions.renderTypesSelectOptions(type)).join("")}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s4">
+                                    <select class="select-trxs-categories2" name="categories" style="width: 100%;">
+                                        ${categoriesArr.map(cat => Transactions.renderCategoriesSelectOptions(cat)).join("")}
+                                    </select>
+                                </div>
+                                <div class="input-field col s4 offset-s1">
+                                    <select class="select-trxs-entities2" name="entities" style="width: 100%;">
+                                        ${entitiesArr.map(entity => Transactions.renderEntitiesSelectOptions(entity)).join("")}
+                                    </select>
+                                </div> 
+                            </div>
+                        </div>
+                        
                     </form>
                 </div>
                 `;
@@ -405,10 +466,21 @@ var Transactions = {
                     dropdownParent: "#modal-global", allowClear: true,
                     placeholder: "Sem Entidade"
                 });
+                $('select.select-trxs-entities2').select2({
+                    dropdownParent: "#modal-global", allowClear: true,
+                    placeholder: "Sem Entidade"
+                });
                 $('select.select-trxs-account_to').select2({dropdownParent: "#modal-global"});
                 $('select.select-trxs-account_from').select2({dropdownParent: "#modal-global"});
                 $('select.select-trxs-types').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-account_to2').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-account_from2').select2({dropdownParent: "#modal-global"});
+                $('select.select-trxs-types2').select2({dropdownParent: "#modal-global"});
                 $('select.select-trxs-categories').select2({
+                    dropdownParent: "#modal-global", allowClear: true,
+                    placeholder: "Sem Categoria"
+                });
+                $('select.select-trxs-categories2').select2({
                     dropdownParent: "#modal-global", allowClear: true,
                     placeholder: "Sem Categoria"
                 });
@@ -428,7 +500,30 @@ var Transactions = {
                 $('select.select-trxs-types').select2("val", selectedTypeID);
                 $('select.select-trxs-categories').val(selectedCategoryID).trigger('change');
 
+                $('select.select-trxs-categories2').val(selectedCategoryID).trigger('change');
+                $('select.select-trxs-entities2').val(selectedEntityID).trigger('change');
+                $('select.select-trxs-account_to2').val(selectedAccountToID).trigger('change');
+                $('select.select-trxs-account_from2').val(selectedAccountFromID).trigger('change');
+                $('select.select-trxs-types2').select2("val", selectedTypeID);
+
                 Transactions.manageAccountsSelectAvailability()
+
+                $("a#split-trx-btn").on("click", function (view) {
+                    const wrapperLocator = $("div#split-trx-wrapper")
+                    const btnLocator = $("span#split-trx-btn-text")
+                    const btnIconLocator = $("span#split-trx-btn-icon-id")
+
+                    if (wrapperLocator.is(":visible")) {
+                        wrapperLocator.hide()
+                        btnLocator.text("Dividir Transação")
+                        btnIconLocator.text("call_split")
+
+                    } else {
+                        wrapperLocator.show()
+                        btnLocator.text("Unir Transações")
+                        btnIconLocator.text("call_merge")
+                    }
+                })
 
             },
             (error) => {

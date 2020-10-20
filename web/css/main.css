@@ -34,6 +34,12 @@ body {
     overflow: visible !important;
 }
 
+hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgb(255 255 255 / 0%), rgb(255 255 255 / 68%), rgba(0, 0, 0, 0));
+}
+
 p, i, b, strong, ul, ol, li {
     color: var(--main-text-color);
 }
@@ -661,6 +667,7 @@ table.dataTable.order-column tbody tr > .sorting_1, table.dataTable.order-column
     background-color: #0a0b0d;
     border: 0px;
     border-radius: 4px;
+    min-width: 100px;
 }
 
 .select2-container--default.select2-container--disabled .select2-selection--single {
