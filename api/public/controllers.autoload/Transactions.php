@@ -432,6 +432,54 @@ class Transactions
 
             $trxID = Input::validate($request->getParsedBody()['transaction_id'], Input::$INT, 11);
 
+            if (array_key_exists('is_split', $request->getParsedBody()) && $request->getParsedBody()['is_split'] !== "") {
+                $isSplit = (int)Input::validate($request->getParsedBody()['is_split'], Input::$BOOLEAN, 12);
+            } else {
+                $isSplit = false;
+            }
+
+            if (array_key_exists('split_amount', $request->getParsedBody()) && $request->getParsedBody()['split_amount'] !== "") {
+                $split_amount = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['split_amount'], Input::$FLOAT, 13));
+            } else {
+                $split_amount = 0;
+            }
+
+            if (array_key_exists('split_category', $request->getParsedBody()) && $request->getParsedBody()['split_category'] !== "") {
+                $split_cat_id = Input::validate($request->getParsedBody()['split_category'], Input::$INT, 14);
+            } else {
+                $split_cat_id = null;
+            }
+
+            if (array_key_exists('split_entity', $request->getParsedBody()) && $request->getParsedBody()['split_entity'] !== "") {
+                $split_entity_id = Input::validate($request->getParsedBody()['split_entity'], Input::$INT, 15);
+            } else {
+                $split_entity_id = null;
+            }
+
+            if (array_key_exists('split_type', $request->getParsedBody()) && $request->getParsedBody()['split_type'] !== "") {
+                $split_type = Input::validate($request->getParsedBody()['split_type'], Input::$STRICT_STRING, 16);
+            } else {
+                $split_type = null;
+            }
+
+            if (array_key_exists('split_account_from', $request->getParsedBody()) && $request->getParsedBody()['split_account_from'] !== "") {
+                $split_accountFromID = Input::validate($request->getParsedBody()['split_account_from'], Input::$INT, 17);
+            } else {
+                $split_accountFromID = null;
+            }
+
+            if (array_key_exists('split_account_to', $request->getParsedBody()) && $request->getParsedBody()['split_account_to'] !== "") {
+                $split_accountToID = Input::validate($request->getParsedBody()['split_account_to'], Input::$INT, 18);
+            } else {
+                $split_accountToID = null;
+            }
+
+            if (array_key_exists('split_description', $request->getParsedBody()) && $request->getParsedBody()['split_description'] !== "") {
+                $split_description = Input::validate($request->getParsedBody()['split_description'], Input::$STRING, 19);
+            } else {
+                $split_description = null;
+            }
+
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
@@ -520,6 +568,38 @@ class Transactions
                     AccountModel::changeBalance($userID, $accountTo, +$amount, false);
                     AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
                     AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    break;
+            }
+
+            if($isSplit){
+                TransactionModel::insert([
+                    "date_timestamp" => $date_timestamp,
+                    "amount" => $split_amount,
+                    "type" => $split_type,
+                    "description" => $split_description,
+                    "entities_entity_id" => $split_entity_id,
+                    "accounts_account_from_id" => $split_accountFromID,
+                    "accounts_account_to_id" => $split_accountToID,
+                    "categories_category_id" => $split_cat_id
+                ]);
+            }
+
+            switch ($split_type) {
+                case DEFAULT_TYPE_INCOME_TAG:
+                    // Decrement $oldAmount to level it out
+                    AccountModel::changeBalance($userID, $split_accountToID, $split_amount, false);
+                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    break;
+                case DEFAULT_TYPE_EXPENSE_TAG:
+                    // Increment $oldAmount to level it out, by reimbursing the amount
+                    AccountModel::changeBalance($userID, $accountFrom, -$split_amount, false);
+                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    break;
+                case DEFAULT_TYPE_TRANSFER_TAG:
+                    AccountModel::changeBalance($userID, $split_accountFromID, -$split_amount, false);
+                    AccountModel::changeBalance($userID, $split_accountToID, +$split_amount, false);
+                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
                     break;
             }
 
