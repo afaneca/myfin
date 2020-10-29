@@ -477,7 +477,7 @@ class Transactions
             if (array_key_exists('split_description', $request->getParsedBody()) && $request->getParsedBody()['split_description'] !== "") {
                 $split_description = Input::validate($request->getParsedBody()['split_description'], Input::$STRING, 19);
             } else {
-                $split_description = null;
+                $split_description = "";
             }
 
             /* Auth - token validation */
@@ -571,7 +571,7 @@ class Transactions
                     break;
             }
 
-            if($isSplit){
+            if ($isSplit) {
                 TransactionModel::insert([
                     "date_timestamp" => $date_timestamp,
                     "amount" => $split_amount,

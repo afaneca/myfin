@@ -108,59 +108,70 @@ var Transactions = {
 
                 $("#modal-global").modal("open")
                 let txt = `
-                <h4>Adicionar nova transação</h4>
+                <div class="row row-no-margin-bottom">
+                    <div class="input-field col s8">
+                        <h4>Adicionar nova transação</h4>
+                    </div>
+                    <div class="input-field col s4">
+                        <span class="select2-top-label">Tipo de Transação</span>
+                        <select class="select-trxs-types" name="types">
+                            ${typesArr.map(type => Transactions.renderTypesSelectOptions(type)).join("")}
+                        </select>
+                    </div>
+                </div>
                 
                     <form class="col s12">
-                        <div class="row">
-                            <div class="input-field col s3">
+                        <div class="row row-no-margin-bottom">
+                            <div class="input-field col s2">
                                 <i class="material-icons prefix">euro_symbol</i>
                                 <input id="trx_amount" type="number" step=".01" class="validate">
                                 <label for="trx_amount">Valor (€)</label>
                             </div>
-                             <div class="input-field col s7">
+                             <div class="input-field col s3">
                                 <i class="material-icons prefix">date_range</i>
-                                <input id="trx_date" type="text" class="datepicker input-field col s5 offset-s1">
+                                <input id="trx_date" type="text" class="datepicker input-field">
                                 <label for="trx_date">Data da transação</label>
-                            </div>                             
+                            </div>     
+                            <div class="col s7">
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">description</i>
+                                    <textarea id="trx-description" class="materialize-textarea"></textarea>
+                                    <label for="trx-description">Descrição</label>
+                                </div>
+                            </div>                        
                         </div>
-                        <div class="row col s12">                     
-                            <div class="input-field col s4">
-                                <select class="select-trxs-account_from" name="accounts">
+                        <div class="row row-no-margin-bottom col s12">                     
+                            <div class="input-field col s6">
+                            <span class="select2-top-label">Conta Origem</span>
+                                <select class="select-trxs-account_from" name="accounts" style="width: 100%;">
                                     <option disabled selected value="-1">Conta Origem</option>
                                     ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
                                 </select>
                                 
                             </div>
-                            <div class="input-field col s4 offset-s1">
-                                <select class="select-trxs-account_to" name="accounts">
+                            <div class="input-field col s6">
+                                <span class="select2-top-label">Conta Destino</span>
+                                <select class="select-trxs-account_to" name="accounts" style="width: 100%;">
                                     <option disabled selected value="-1">Conta Destino</option>
                                     ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
                                 </select>
                             </div>
-                            <div class="input-field col s1 offset-s1">
-                                <select class="select-trxs-types" name="types">
-                                    ${typesArr.map(type => Transactions.renderTypesSelectOptions(type)).join("")}
-                                </select>
-                            </div>
+                         
                         </div>
-                        <div class="row col s12">
-                            <div class="input-field col s5">
-                                <select class="select-trxs-categories" name="categories">
+                        <div class="row row-no-margin-bottom col s12">
+                            <div class="input-field col s6">
+                                <span class="select2-top-label">Categoria</span>
+                                <select class="select-trxs-categories" name="categories" style="width: 100%;">
                                     ${categoriesArr.map(cat => Transactions.renderCategoriesSelectOptions(cat)).join("")}
                                 </select>
                             </div>
-                            <div class="input-field col s5 offset-s1">
-                                <select class="select-trxs-entities" name="entities">
+                            <div class="input-field col s6">
+                                <span class="select2-top-label">Entidade</span>
+                                <select class="select-trxs-entities" name="entities" style="width: 100%;">
                                     ${entitiesArr.map(entity => Transactions.renderEntitiesSelectOptions(entity)).join("")}
                                 </select>
                             </div> 
-                        </div>
-                        <div class="input-field col s12">
-                            <i class="material-icons prefix">description</i>
-                            <textarea id="trx-description" class="materialize-textarea"></textarea>
-                            <label for="trx-description">Descrição</label>
-                        </div>
-            
+                        </div>                                 
                     </form>
                 </div>
                 `;
@@ -347,104 +358,117 @@ var Transactions = {
 
                 $("#modal-global").modal("open")
                 let txt = `
-                <h4>Editar transação <b>#${trxID}</b></h4>
-                
+                    <div class="row row-no-margin-bottom">
+                        <div class="input-field col s8">
+                            <h4>Editar transação <b>#${trxID}</b></h4>
+                        </div>
+                        <div class="input-field col s4">
+                            <span class="select2-top-label">Tipo de Transação</span>
+                            <select class="select-trxs-types" name="types">
+                                ${typesArr.map(type => Transactions.renderTypesSelectOptions(type)).join("")}
+                            </select>
+                        </div>
+                    </div>
                     <form class="col s12">
-                        <div class="row">
+                        <div class="row row-no-margin-bottom">
                             <div class="input-field col s2">
                                 <i class="material-icons prefix">euro_symbol</i>
                                 <input id="trx_amount" type="number" step=".01" class="validate">
                                 <label for="trx_amount" class="active">Valor (€)</label>
                             </div>
                             
-                             <div class="input-field col s6">
+                             <div class="input-field col s3">
                                 <i class="material-icons prefix">date_range</i>
-                                <input id="trx_date" type="text" class="datepicker input-field col s5 offset-s1">
+                                <input id="trx_date" type="text" class="datepicker input-field">
                                 <label for="trx_date">Data da transação</label>
                             </div>
-                            <div class="col s4">
-                                <a id="split-trx-btn" class="waves-effect waves-light btn right-align" onclick="" style="margin: 10px;"><i class="material-icons left"><span id="split-trx-btn-icon-id">call_split</span></i><span id="split-trx-btn-text">Dividir Transação</span></a>
+                            <div class="col s7">
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">description</i>
+                                    <textarea id="trx-description" class="materialize-textarea"></textarea>
+                                    <label class="active" for="trx-description">Descrição</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="row col s12">                     
-                            <div class="input-field col s4">
-                                <select class="select-trxs-account_from" name="accounts">
+                        <div class="row row-no-margin-bottom col s12">                     
+                            <div class="input-field col s6">
+                                <span class="select2-top-label">Conta Origem</span>
+                                <select class="select-trxs-account_from" name="accounts" style="width: 100%;">
                                     <option disabled selected value="-1">Conta Origem</option>
                                     ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
                                 </select>
                                 
                             </div>
-                            <div class="input-field col s4 offset-s1">
-                                <select class="select-trxs-account_to" name="accounts">
+                            <div class="input-field col s6">
+                                <span class="select2-top-label">Conta Destino</span>
+                                <select class="select-trxs-account_to" name="accounts" style="width: 100%;">
                                     <option disabled selected value="-1">Conta Destino</option>
                                     ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
                                 </select>
                             </div>
-                            <div class="input-field col s1 offset-s1">
-                                <select class="select-trxs-types" name="types">
-                                    ${typesArr.map(type => Transactions.renderTypesSelectOptions(type)).join("")}
-                                </select>
-                            </div>
                         </div>
-                        <div class="row col s12">
-                            <div class="input-field col s4">
-                                <select class="select-trxs-categories" name="categories">
+                        <div class="row row-no-margin-bottom col s12">
+                            <div class="input-field col s6">
+                                <span class="select2-top-label">Categoria</span>
+                                <select class="select-trxs-categories" name="categories" style="width: 100%;">
                                     ${categoriesArr.map(cat => Transactions.renderCategoriesSelectOptions(cat)).join("")}
                                 </select>
                             </div>
-                            <div class="input-field col s4 offset-s1">
-                                <select class="select-trxs-entities" name="entities">
+                            <div class="input-field col s6">
+                                <span class="select2-top-label">Entidade</span>
+                                <select class="select-trxs-entities" name="entities" style="width: 100%;">
                                     ${entitiesArr.map(entity => Transactions.renderEntitiesSelectOptions(entity)).join("")}
                                 </select>
                             </div> 
                         </div>
-                        <div class="input-field col s10">
-                            <i class="material-icons prefix">description</i>
-                            <textarea id="trx-description" class="materialize-textarea"></textarea>
-                            <label class="active" for="trx-description">Descrição</label>
-                        </div>
+                       
                         <div id="split-trx-wrapper" style="display: none;">
                             <hr>
-                            <div class="row">
+                            <div class="row row-no-margin-bottom">
                                 <div class="input-field col s2">
                                     <i class="material-icons prefix">euro_symbol</i>
                                     <input id="trx_amount_2" type="number" step=".01" class="validate" style="width: auto;">
                                     <label for="trx_amount_2">Valor (€)</label>
                                 </div>
-                                <div class="input-field col s8 offset-s2">
+                                <div class="input-field col s6 offset-s1">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description2" class="materialize-textarea"></textarea>
                                     <label for="trx-description2">Descrição</label>
                                 </div>
+                                <div class="input-field col s3">
+                                    <span class="select2-top-label" style="display: none;">Tipo de Transação</span>
+                                    <select class="select-trxs-types2" name="types" style="width: 100% !important">
+                                        ${typesArr.map(type => Transactions.renderTypesSelectOptions(type)).join("")}
+                                    </select>
+                                </div>
                             </div>
                             
-                            <div class="row">                     
-                                <div class="input-field col s4">
+                            <div class="row row-no-margin-bottom">                     
+                                <div class="input-field col s6">
+                                    <span class="select2-top-label">Conta Origem</span>
                                     <select class="select-trxs-account_from2" name="accounts" style="width: 100%;">
                                         <option disabled selected value="-1">Conta Origem</option>
                                         ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
                                     </select>
                                     
                                 </div>
-                                <div class="input-field col s4 offset-s1">
+                                <div class="input-field col s6">
+                                    <span class="select2-top-label">Conta Destino</span>
                                     <select class="select-trxs-account_to2" name="accounts" style="width: 100%;">
                                         <option disabled selected value="-1">Conta Destino</option>
                                         ${accountsArr.map(account => Transactions.renderAccountsSelectOptions(account)).join("")}
                                     </select>
                                 </div>
-                                <div class="input-field col s1 offset-s1">
-                                    <select class="select-trxs-types2" name="types">
-                                        ${typesArr.map(type => Transactions.renderTypesSelectOptions(type)).join("")}
-                                    </select>
-                                </div>
                             </div>
-                            <div class="row">
-                                <div class="input-field col s4">
+                            <div class="row row-no-margin-bottom">
+                                <div class="input-field col s6">
+                                    <span class="select2-top-label">Categoria</span>
                                     <select class="select-trxs-categories2" name="categories" style="width: 100%;">
                                         ${categoriesArr.map(cat => Transactions.renderCategoriesSelectOptions(cat)).join("")}
                                     </select>
                                 </div>
-                                <div class="input-field col s4 offset-s1">
+                                <div class="input-field col s6">
+                                    <span class="select2-top-label">Entidade</span>
                                     <select class="select-trxs-entities2" name="entities" style="width: 100%;">
                                         ${entitiesArr.map(entity => Transactions.renderEntitiesSelectOptions(entity)).join("")}
                                     </select>
@@ -456,7 +480,7 @@ var Transactions = {
                 </div>
                 `;
 
-                let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
+                let actionLinks = `<a id="split-trx-btn" class="waves-effect waves-light btn right-align transparent-bordered-btn-blue" onclick="" style="margin: 10px; float:left;"><i class="material-icons left"><span id="split-trx-btn-icon-id">call_split</span></i><span id="split-trx-btn-text">Dividir Transação</span></a><a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
                     <a onClick="Transactions.editTransaction(${trxID})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Editar</a>`;
 
                 $("#modal-global .modal-content").html(txt);
@@ -567,6 +591,27 @@ var Transactions = {
         const new_category_id = $("select.select-trxs-categories").val()
         const new_date_timestamp = DateUtils.convertDateToUnixTimestamp($(".datepicker").val())
 
+        let split_amount = null
+        let split_category = null
+        let split_entity = null
+        let split_type = null
+        let split_account_from = null
+        let split_account_to = null
+        let split_description = null
+        const wrapperLocator = $("div#split-trx-wrapper")
+
+        let isSplit = false
+
+        if (wrapperLocator.is(":visible")) {
+            isSplit = true
+            split_amount = $("input#trx_amount_2").val()
+            split_category = $("select.select-trxs-categories2").val()
+            split_entity = $("select.select-trxs-entities2").val();
+            split_type = $("select.select-trxs-types2").val();
+            split_account_from = $("select.select-trxs-account_from2").val();
+            split_account_to = $("select.select-trxs-account_to2").val();
+            split_description = StringUtils.removeLineBreaksFromString($("textarea#trx-description2").val());
+        }
 
         if (!ValidationUtils.checkIfFieldsAreFilled([new_amount, new_type, new_date_timestamp])) {
             DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
@@ -578,27 +623,20 @@ var Transactions = {
             return
         }
 
-        LoadingManager.showLoading()
+        if (isSplit) {
+            if (!ValidationUtils.checkIfFieldsAreFilled([split_amount, split_type])) {
+                DialogUtils.showErrorMessage("Por favor, preencha todos os campos!")
+                return
+            }
 
-        let split_amount = null
-        let split_category = null
-        let split_entity = null
-        let split_type = null
-        let split_account_from = null
-        let split_account_to = null
-        let split_description = null
-        const wrapperLocator = $("div#split-trx-wrapper")
-        let isSplit = false
-        if (wrapperLocator.is(":visible")) {
-            isSplit = true
-            split_amount = $("input#trx_amount_2").val()
-            split_category = $("select.select-trxs-categories2").val()
-            split_entity = $("select.select-trxs-entities2").val();
-            split_type = $("select.select-trxs-types2").val();
-            split_account_from = $("select.select-trxs-account_from2").val();
-            split_account_to = $("select.select-trxs-account_to2").val();
-            split_description = StringUtils.removeLineBreaksFromString($("textarea#trx-description2").val());
+            if (split_amount <= 0) {
+                DialogUtils.showErrorMessage("O Campo Valor deve ser superior a zero!")
+                return
+            }
         }
+
+
+        LoadingManager.showLoading()
 
         TransactionServices.editTransaction(trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp,
             isSplit, split_amount, split_category, split_entity, split_type, split_account_from, split_account_to, split_description,
