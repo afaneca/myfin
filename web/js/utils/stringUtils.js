@@ -27,7 +27,7 @@ var StringUtils = {
         return account_types[tag]
     },
     removeLineBreaksFromString: (ogStr) => {
-        return ogStr.replace(/[\r\n]+/gm, "")
+        return (ogStr == null) ? "" : ogStr.replace(/[\r\n]+/gm, "")
     },
     convertStringToFloat: (str) => {
         if (!str) return str
