@@ -101,6 +101,7 @@ a > .material-icons, td > .material-icons, div.card-quick-actions > span > .mate
 .modal {
     overflow: visible !important;
     background: var(--main-modal-background);
+    max-height: 100% !important;
 }
 
 .modal .modal-footer {

@@ -512,16 +512,29 @@ var Transactions = {
                     const wrapperLocator = $("div#split-trx-wrapper")
                     const btnLocator = $("span#split-trx-btn-text")
                     const btnIconLocator = $("span#split-trx-btn-icon-id")
+                    const amount1Locator = $("input#trx_amount");
+                    const amount2Locator = $("input#trx_amount_2");
 
                     if (wrapperLocator.is(":visible")) {
                         wrapperLocator.hide()
                         btnLocator.text("Dividir Transação")
                         btnIconLocator.text("call_split")
 
+                        // Sum to amount1 the value of amount2 (unless undefined)
+                        if (amount2Locator.val()) {
+                            amount1Locator.val(parseFloat(amount1Locator.val()) + parseFloat(amount2Locator.val()))
+                        }
+
                     } else {
                         wrapperLocator.show()
                         btnLocator.text("Unir Transações")
                         btnIconLocator.text("call_merge")
+
+                        // Subtract from amount1 the value of amount2 (unless undefined)
+                        if (amount2Locator.val()) {
+                            amount1Locator.val(parseFloat(amount1Locator.val()) - parseFloat(amount2Locator.val()))
+                        }
+
                     }
                 })
 
@@ -566,7 +579,29 @@ var Transactions = {
         }
 
         LoadingManager.showLoading()
+
+        let split_amount = null
+        let split_category = null
+        let split_entity = null
+        let split_type = null
+        let split_account_from = null
+        let split_account_to = null
+        let split_description = null
+        const wrapperLocator = $("div#split-trx-wrapper")
+        let isSplit = false
+        if (wrapperLocator.is(":visible")) {
+            isSplit = true
+            split_amount = $("input#trx_amount_2").val()
+            split_category = $("select.select-trxs-categories2").val()
+            split_entity = $("select.select-trxs-entities2").val();
+            split_type = $("select.select-trxs-types2").val();
+            split_account_from = $("select.select-trxs-account_from2").val();
+            split_account_to = $("select.select-trxs-account_to2").val();
+            split_description = StringUtils.removeLineBreaksFromString($("textarea#trx-description2").val());
+        }
+
         TransactionServices.editTransaction(trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp,
+            isSplit, split_amount, split_category, split_entity, split_type, split_account_from, split_account_to, split_description,
             () => {
                 // SUCCESS
                 LoadingManager.hideLoading()
