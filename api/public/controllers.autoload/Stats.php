@@ -117,12 +117,12 @@ class Stats
             $previousMonth = ($currentMonth > 1) ? $currentMonth - 1 : 12;
             $previousMonthsYear = ($currentMonth > 1) ? $currentYear : $currentYear - 1;
 
-
+            $outputArr = array();
             $budgetsList = BudgetModel::getBudgetsAfterCertainMonth($userID, $previousMonth, $previousMonthsYear);
 
             $lastPlannedFinalBalance = null;
             foreach ($budgetsList as &$budget) {
-                $budget["planned_balance"] = BudgetModel::getBudgetPlannedBalance($budget);
+                $budget["planned_balance"] = BudgetModel::calculateBudgetBalance($userID, $budget);//BudgetModel::getBudgetPlannedBalance($budget);
                 $month = $budget["month"];
                 $year = $budget["year"];
                 if (!$lastPlannedFinalBalance) {
@@ -136,9 +136,23 @@ class Stats
                 $lastPlannedFinalBalance = $budget["planned_final_balance"];
             }
 
+            $accountsFromPreviousMonth = AccountModel::getWhere(["users_user_id" => $userID],
+                ["account_id", "type"]);
+
+            $currentMonth = $date = date('m');
+            $currentYear = $date = date('Y');
+            $previousMonth = ($currentMonth > 1) ? $currentMonth - 1 : 12;
+            $previousMonthsYear = ($currentMonth > 1) ? $currentYear : $currentYear - 1;
+
+            foreach ($accountsFromPreviousMonth as &$acc) {
+                $acc["balance"] = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $previousMonth, $previousMonthsYear, false)["balance"];
+            }
+
+            $outputArr["budgets"] = $budgetsList;
+            $outputArr["accountsFromPreviousMonth"] = $accountsFromPreviousMonth;
             /* $db->getDB()->commit(); */
 
-            return sendResponse($response, EnsoShared::$REST_OK, $budgetsList);
+            return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
         } catch (AuthenticationException $e) {
