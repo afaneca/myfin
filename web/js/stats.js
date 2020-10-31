@@ -24,23 +24,25 @@ var Stats = {
         StatServices.getMonthlyPatrimonyProjections((resp) => {
             // SUCCESS
             LoadingManager.hideLoading()
-            let initialAssetsValue = Stats.getInitialAssetsBalance()
-            for (let budget of resp) {
+            const budgetsList = resp["budgets"]
+            const accountsFromPreviousMonth = resp["accountsFromPreviousMonth"]
+            let initialAssetsValue = Stats.getInitialAssetsBalance(accountsFromPreviousMonth)
+            for (let budget of budgetsList) {
                 budget["planned_final_balance_assets_only"] = initialAssetsValue
                     + StringUtils.convertIntegerToFloat((StringUtils.convertFloatToInteger(budget.planned_final_balance) - StringUtils.convertFloatToInteger(budget.planned_initial_balance)))
                 initialAssetsValue = budget["planned_final_balance_assets_only"]
             }
-            let chartData = resp.map(budget => parseFloat(budget.planned_final_balance).toFixed(2));
-            let chartLabels = resp.map(budget => budget.month + "/" + budget.year);
+            let chartData = budgetsList.map(budget => parseFloat(budget.planned_final_balance).toFixed(2));
+            let chartLabels = budgetsList.map(budget => budget.month + "/" + budget.year);
             let extraChartData = [{
                 borderColor: "#FF5722",
-                data: resp.map(budget => parseFloat(budget.planned_final_balance_assets_only).toFixed(2) /*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/),
+                data: budgetsList.map(budget => parseFloat(budget.planned_final_balance_assets_only).toFixed(2) /*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/),
                 fill: true,
                 hidden: true,
                 label: "Balanço Projetado (Ativos)",
             }];
             Stats.setupPatrimonyProjectionsLineChart(chartData, chartLabels, extraChartData)
-            Stats.setupPatrimonyProjectionsList(resp)
+            Stats.setupPatrimonyProjectionsList(budgetsList)
         }, (err) => {
             // FAILURE
             LoadingManager.hideLoading()
@@ -488,8 +490,8 @@ var Stats = {
         $("#patrimony-projections-table").html(Stats.renderPatrimonyProjectionsTable(resp))
         tableUtils.setupStaticTable("#ev-pat-projections-table")
     },
-    getInitialAssetsBalance() {
-        const allAccs = LocalDataManager.getUserAccounts()
+    getInitialAssetsBalance(accs) {
+        const allAccs = accs//LocalDataManager.getUserAccounts()
         const assetsAccounts = allAccs.filter(function (acc) {
             return acc.type === account_types_tag.CHEAC || acc.type === account_types_tag.SAVAC
                 || acc.type === account_types_tag.INVAC || acc.type === account_types_tag.OTHAC
