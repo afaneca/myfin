@@ -637,7 +637,7 @@ class Transactions
             $userID = UserModel::getUserIdByName($authusername, false);
 
             //$outgoingArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
-            $outgoingArr = AccountModel::getAllAccountsForUserWithAmounts($userID);
+            $outgoingArr = AccountModel::getAllAccountsForUserWithAmounts($userID, true);
             /* $db->getDB()->commit(); */
 
             return sendResponse($response, EnsoShared::$REST_OK, $outgoingArr);
