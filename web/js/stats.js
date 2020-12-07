@@ -61,13 +61,15 @@ var Stats = {
                 break;
             case "tab-expenses-per-cat":
                 Stats.clearCanvasAndTableWrapper("#chart_pie_cat_expenses_evolution_table", "chart_pie_cat_expenses_evolution")
-                $('#chart_pie_cat_expenses_evolution').remove(); $('#canvas_chart_expenses_evo_wrapper').append(' <canvas id="chart_pie_cat_expenses_evolution" width="800" height="300"></canvas>');
+                $('#chart_pie_cat_expenses_evolution').remove();
+                $('#canvas_chart_expenses_evo_wrapper').append(' <canvas id="chart_pie_cat_expenses_evolution" width="800" height="300"></canvas>');
                 Stats.initExpensesPerCatEvolution()
                 window.history.replaceState(null, null, "#!stats?tab=cat-expenses-evo");
                 break;
             case "tab-income-per-cat":
                 Stats.clearCanvasAndTableWrapper("#chart_pie_cat_income_evolution_table", "chart_pie_cat_income_evolution")
-                $('#chart_pie_cat_income_evolution').remove(); $('#canvas_chart_income_evo_wrapper').append(' <canvas id="chart_pie_cat_income_evolution" width="800" height="300"></canvas>');
+                $('#chart_pie_cat_income_evolution').remove();
+                $('#canvas_chart_income_evo_wrapper').append(' <canvas id="chart_pie_cat_income_evolution" width="800" height="300"></canvas>');
 
                 Stats.initIncomePerCatEvolution()
                 window.history.replaceState(null, null, "#!stats?tab=cat-income-evo");
@@ -84,19 +86,26 @@ var Stats = {
     },
     initExpensesPerCatEvolution: () => {
 
-        CategoryServices.getAllCategories(undefined,
+        UserServices.getAllCategoriesAndEntitiesForUser(
             (resp) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
-                Stats.setupCategorySelect(resp, "#tab-expenses-per-cat")
+                Stats.setupCategorySelect(resp.categories, resp.entities, "#tab-expenses-per-cat")
 
                 $("#tab-expenses-per-cat").find("select.category-selection-select").select2()//.formSelect();//.select2()
                 $("select.category-selection-select").on("change", (v) => {
-                    let selectedCatId = $("select#category_select").val()
+                    let selectedEntCatId = $("#tab-expenses-per-cat").find("select.category-selection-select").val()
+                    let selectedCatId, selectedEntId
+                    if (selectedEntCatId.startsWith("cat-")) {
+                        selectedCatId = selectedEntCatId.split("cat-")[1]
+                    } else if (selectedEntCatId.startsWith("ent-")) {
+                        selectedEntId = selectedEntCatId.split("ent-")[1]
+                    }
+
                     Stats.clearCanvasAndTableWrapper("#chart_pie_cat_expenses_evolution_table", "chart_pie_cat_expenses_evolution")
 
                     LoadingManager.showLoading()
-                    StatServices.getCategoryExpensesEvolution(selectedCatId,
+                    StatServices.getCategoryExpensesEvolution(selectedCatId, selectedEntId,
                         (resp) => {
                             // SUCCESS
                             LoadingManager.hideLoading()
@@ -190,35 +199,52 @@ var Stats = {
         </tr>
       `
     },
-    setupCategorySelect: (categories, wrapperDivLocator) => {
+    setupCategorySelect: (categories, entities, wrapperDivLocator) => {
         $(wrapperDivLocator).find("div.categories-select-wrapper").html(`
             <div class="input-field col s3">
                 <select id="category_select" class="category-selection-select">
                     <option value="" disabled selected>Escolha uma categoria</option>
-                    ${categories.map(cat => Stats.renderCategorySelectOption(cat)).join("")}
+                    <optgroup label="Categorias">
+                        ${categories.map(cat => Stats.renderCategorySelectOption(cat)).join("")}
+                    </optgroup>
+                    <optgroup label="Entidades">
+                        ${entities.map(ent => Stats.renderEntitySelectOption(ent)).join("")}
+                    </optgroup>
                 </select>
             </div>
         `)
     },
     renderCategorySelectOption: cat => {
         return `
-            <option value="${cat.category_id}">${cat.name}</option>
+            <option value="cat-${cat.category_id}">${cat.name}</option>
+        `
+    },
+    renderEntitySelectOption: ent => {
+        return `
+            <option value="ent-${ent.entity_id}">${ent.name}</option>
         `
     },
     initIncomePerCatEvolution: () => {
-        CategoryServices.getAllCategories(undefined,
+        UserServices.getAllCategoriesAndEntitiesForUser(
             (resp) => {
                 // SUCCESS
                 LoadingManager.hideLoading()
-                Stats.setupCategorySelect(resp, "#tab-income-per-cat")
+                Stats.setupCategorySelect(resp.categories, resp.entities, "#tab-income-per-cat")
 
                 $("#tab-income-per-cat").find("select.category-selection-select").select2()//.formSelect();//.select2()
                 $("select.category-selection-select").on("change", (v) => {
-                    let selectedCatId = $("#tab-income-per-cat").find("select.category-selection-select").val()
+                    let selectedEntCatId = $("#tab-income-per-cat").find("select.category-selection-select").val()
+                    let selectedCatId, selectedEntId
+                    if (selectedEntCatId.startsWith("cat-")) {
+                        selectedCatId = selectedEntCatId.split("cat-")[1]
+                    } else if (selectedEntCatId.startsWith("ent-")) {
+                        selectedEntId = selectedEntCatId.split("ent-")[1]
+                    }
+
                     Stats.clearCanvasAndTableWrapper("#chart_pie_cat_income_evolution_table", "chart_pie_cat_income_evolution")
 
                     LoadingManager.showLoading()
-                    StatServices.getCategoryIncomeEvolution(selectedCatId,
+                    StatServices.getCategoryIncomeEvolution(selectedCatId, selectedEntId,
                         (resp) => {
                             // SUCCESS
                             LoadingManager.hideLoading()
@@ -238,51 +264,51 @@ var Stats = {
         )
     },
     renderIncomePerCategoryLineChart: data => {
-            /*let chartData = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
-            let chartLabels = ["01/2020", "02/2020", "03/2020", "04/2020", "05/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020"];*/
-            let chartData = []
-            let chartLabels = []
+        /*let chartData = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
+        let chartLabels = ["01/2020", "02/2020", "03/2020", "04/2020", "05/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020"];*/
+        let chartData = []
+        let chartLabels = []
 
-            for (var i = data.length - 1; i >= 0; i--) {
-                chartData.push(data[i].value)
-                chartLabels.push(`${data[i].month}/${data[i].year}`)
-            }
+        for (var i = data.length - 1; i >= 0; i--) {
+            chartData.push(data[i].value)
+            chartLabels.push(`${data[i].month}/${data[i].year}`)
+        }
 
 
-            var ctx = document.getElementById("chart_pie_cat_income_evolution").getContext('2d');
+        var ctx = document.getElementById("chart_pie_cat_income_evolution").getContext('2d');
 
-            const chartTitle = "Evolução de Receita"
-            var customOptions = {
-                title: {
-                    display: true,
-                    text: chartTitle,
-                    position: "top",
-                    fontColor: "white"
-                },
-                legend: {
-                    labels: {
-                        fontColor: 'rgba(255, 255, 255, 0.7)'
-                    }
-                },
-            }
-
-            var data = {
-                labels: chartLabels,
-                datasets: [{
-                    data: chartData,
-                    label: "Evolução de Receita Por Categoria",
-                    borderColor: "#3e95cd",
-                    fill: true
+        const chartTitle = "Evolução de Receita"
+        var customOptions = {
+            title: {
+                display: true,
+                text: chartTitle,
+                position: "top",
+                fontColor: "white"
+            },
+            legend: {
+                labels: {
+                    fontColor: 'rgba(255, 255, 255, 0.7)'
                 }
-                ]
-            };
+            },
+        }
+
+        var data = {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                label: "Evolução de Receita Por Categoria",
+                borderColor: "#3e95cd",
+                fill: true
+            }
+            ]
+        };
 
 
-            INCOME_PER_CATEGORY_LINE_CHART = new Chart(ctx, {
-                type: 'line',
-                data: data,
-                options: customOptions
-            });
+        INCOME_PER_CATEGORY_LINE_CHART = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: customOptions
+        });
     },
     renderIncomePerCategoryTable: data => {
         $("div#chart_pie_cat_income_evolution_table").html(`

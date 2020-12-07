@@ -224,7 +224,16 @@ class Stats
             } else {
                 $mobile = false;
             }
-            $catID = Input::validate($request->getQueryParams()['cat_id'], Input::$INT, 4);
+            if (array_key_exists('cat_id', $request->getQueryParams())) {
+                $catID = Input::validate($request->getQueryParams()['cat_id'], Input::$INT, 4);
+            } else {
+                $catID = null;
+            }
+            if (array_key_exists('ent_id', $request->getQueryParams())) {
+                $entID = Input::validate($request->getQueryParams()['ent_id'], Input::$INT, 4);
+            } else {
+                $entID = null;
+            }
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
@@ -258,9 +267,17 @@ class Stats
                 $item = [];
                 $item["month"] = $budget["month"];
                 $item["year"] = $budget["year"];
-                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($catID, $item["month"], $item["year"])[0];
-                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
-                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);;
+
+                if ($catID) {
+                    $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($catID, $item["month"], $item["year"])[0];
+                    $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
+                    $amount_debit = abs($calculatedAmounts["category_balance_debit"]);
+                } else if ($entID) {
+                    $calculatedAmounts = BudgetHasCategoriesModel::getAmountForEntityInMonth($entID, $item["month"], $item["year"])[0];
+                    $amount_credit = abs($calculatedAmounts["entity_balance_credit"]);
+                    $amount_debit = abs($calculatedAmounts["entity_balance_debit"]);
+                }
+
                 $item["value"] = Input::convertIntegerToFloat($amount_debit);
                 array_push($outputArr, $item);
             }
@@ -288,7 +305,18 @@ class Stats
             } else {
                 $mobile = false;
             }
-            $catID = Input::validate($request->getQueryParams()['cat_id'], Input::$INT, 4);
+
+            if (array_key_exists('cat_id', $request->getQueryParams())) {
+                $catID = Input::validate($request->getQueryParams()['cat_id'], Input::$INT, 4);
+            } else {
+                $catID = null;
+            }
+            if (array_key_exists('ent_id', $request->getQueryParams())) {
+                $entID = Input::validate($request->getQueryParams()['ent_id'], Input::$INT, 4);
+            } else {
+                $entID = null;
+            }
+
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
@@ -322,9 +350,17 @@ class Stats
                 $item = [];
                 $item["month"] = $budget["month"];
                 $item["year"] = $budget["year"];
-                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($catID, $item["month"], $item["year"])[0];
-                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
-                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);;
+
+                if ($catID) {
+                    $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($catID, $item["month"], $item["year"])[0];
+                    $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
+                    $amount_debit = abs($calculatedAmounts["category_balance_debit"]);
+                } else if ($entID) {
+                    $calculatedAmounts = BudgetHasCategoriesModel::getAmountForEntityInMonth($entID, $item["month"], $item["year"])[0];
+                    $amount_credit = abs($calculatedAmounts["entity_balance_credit"]);
+                    $amount_debit = abs($calculatedAmounts["entity_balance_debit"]);
+                }
+
                 $item["value"] = Input::convertIntegerToFloat($amount_credit);
                 array_push($outputArr, $item);
             }

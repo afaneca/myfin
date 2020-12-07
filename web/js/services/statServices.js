@@ -88,7 +88,7 @@ var StatServices = {
             }
         });
     },
-    getCategoryExpensesEvolution: (selectedCatID, successCallback, errorCallback) => {
+    getCategoryExpensesEvolution: (selectedCatID, selectedEntId, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "stats/category-expenses-evolution"
         $.ajax({
             async: true,
@@ -101,6 +101,7 @@ var StatServices = {
             },
             data: {
                 cat_id: selectedCatID,
+                ent_id: selectedEntId
             },
             url: pageUrl,
             success: function (response) {
@@ -111,7 +112,7 @@ var StatServices = {
             }
         });
     },
-    getCategoryIncomeEvolution: (selectedCatID, successCallback, errorCallback) => {
+    getCategoryIncomeEvolution: (selectedCatID, selectedEntId, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "stats/category-income-evolution"
         $.ajax({
             async: true,
@@ -124,6 +125,7 @@ var StatServices = {
             },
             data: {
                 cat_id: selectedCatID,
+                ent_id: selectedEntId
             },
             url: pageUrl,
             success: function (response) {

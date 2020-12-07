@@ -150,8 +150,59 @@ class Users
         }
     }
 
+    public static function getUserCategoriesAndEntities(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+            } else {
+                $mobile = false;
+            }
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* Execute Operations */
+            /* $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction(); */
+
+            /* echo "1";
+            die(); */
+            $userID = UserModel::getUserIdByName($authusername, false);
+            $outputArr = array();
+            $catsArr = CategoryModel::getWhere(
+                ["users_user_id" => $userID],
+                ["category_id", "name", "type"]
+            );
+            $entsArr = EntityModel::getWhere(
+                ["users_user_id" => $userID],
+                ["entity_id", "name"]
+            );
+
+            $outputArr["categories"] = $catsArr;
+            $outputArr["entities"] = $entsArr;
+
+
+            /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
 }
 
-$app->get('/users/{userID}', 'Users::getUserInfo');
+/*$app->get('/users/{userID}', 'Users::getUserInfo');*/
+$app->get('/user/categoriesAndEntities', 'Users::getUserCategoriesAndEntities');
 $app->post('/users/', 'Users::addUser');
 $app->put('/users/changePW/', 'Users::changeUserPassword');
