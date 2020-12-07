@@ -165,7 +165,7 @@ var Rules = {
         let accountToAssignValue = $('select#value-select-account-to-assign').val()
         if (accountToAssignValue == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) accountToAssignValue = null
 
-        debugger
+
         LoadingManager.showLoading()
         RuleServices.editRule(ruleID, descriptionOperator, descriptionValue, amountOperator, amountValue, typeOperator,
             typeValue, accountToIDOperator, accountToIDValue, accountFromIDOperator, accountFromIDValue, categoryAssignValue,

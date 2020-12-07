@@ -546,7 +546,7 @@ var Transactions = {
 
                         // Sum to amount1 the value of amount2 (unless undefined)
                         if (amount2Locator.val()) {
-                            debugger
+
                             amount1Locator.val((parseFloat(amount1Locator.val()) + parseFloat(amount2Locator.val())).toFixed(2))
                         }
 
