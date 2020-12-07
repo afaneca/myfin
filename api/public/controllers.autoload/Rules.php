@@ -391,9 +391,9 @@ class Rules
 
             return sendResponse($response, EnsoShared::$REST_OK, "Rule successfully deleted.");
         } catch (BadInputValidationException $e) {
-            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e);
         } catch (AuthenticationException $e) {
-            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e);
         } catch (Exception $e) {
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
