@@ -65,10 +65,12 @@ class AccountModel extends Entity
         $sql = "SELECT a.account_id, a.name, a.type, a.description, a.status, a.color_gradient, a.exclude_from_budgets, (a.current_balance / 100) as 'balance', a.users_user_id " .
             "FROM accounts a " .
             "WHERE users_user_id = :userID " .
+            "AND a.status = :accStatus " .
             "ORDER BY abs(balance) DESC";
 
         $values = array();
         $values[':userID'] = $id_user;
+        $values[':accStatus'] = DEFAULT_ACCOUNT_ACTIVE_STATUS;
 
         try {
             $db->prepare($sql);
@@ -286,7 +288,7 @@ class AccountModel extends Entity
             if ($balanceSnapshotAtMonth)
                 $totalBalance += $balanceSnapshotAtMonth;
 
-           /* echo "\n-> total balance: $totalBalance";*/
+            /* echo "\n-> total balance: $totalBalance";*/
         }
         /*die();*/
         return $totalBalance;
