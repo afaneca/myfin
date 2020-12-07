@@ -637,7 +637,7 @@ class Transactions
             $userID = UserModel::getUserIdByName($authusername, false);
 
             //$outgoingArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
-            $outgoingArr = AccountModel::getAllAccountsForUserWithAmounts($userID);
+            $outgoingArr = AccountModel::getAllAccountsForUserWithAmounts($userID, true);
             /* $db->getDB()->commit(); */
 
             return sendResponse($response, EnsoShared::$REST_OK, $outgoingArr);
@@ -692,8 +692,9 @@ class Transactions
             foreach ($trxList as $trx) {
                 $trx["accounts_account_from_id"] = ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? null : $accountID;
                 $trx["accounts_account_to_id"] = ($trx["type"] != DEFAULT_TYPE_INCOME_TAG) ? null : $accountID;
-                $foundRule = RuleModel::getRuleForTransactions($userID, $trx);
-
+                $foundRule = RuleModel::getRuleForTransaction($userID, $trx);
+                /*print_r($foundRule);
+                die();*/
                 $outgoingArr["fillData"][] = [
                     "date" => $trx["date"],
                     "description" => $trx["description"],
@@ -701,7 +702,7 @@ class Transactions
                     "type" => $trx["type"],
                     "selectedCategoryID" => ($foundRule) ? $foundRule["assign_category_id"] : null,
                     "selectedEntityID" => ($foundRule) ? $foundRule["assign_entity_id"] : null,
-                    "selectedAccountFromID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? (($foundRule) ? $foundRule["assign_account_to_id"] : null) : $accountID,
+                    "selectedAccountFromID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? (($foundRule) ? $foundRule["assign_account_from_id"] : null) : $accountID,
                     "selectedAccountToID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? $accountID : (($foundRule) ? $foundRule["assign_account_to_id"] : null)
                 ];
                 /*  array_push($outgoingArr["fillData"], [

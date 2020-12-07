@@ -97,7 +97,8 @@ var Dashboard = {
     },
     setupDebtDistributionChart: () => {
 
-        const accsArr = LocalDataManager.getUserAccounts()
+        const accsArr = LocalDataManager.getUserAccounts().filter((acc) => acc.status === MYFIN.TRX_STATUS.ACTIVE
+            && parseFloat(acc.balance) !== 0)
 
         const creditAccounts = accsArr.filter(function (acc) {
             return acc.type === "CREAC"
@@ -118,7 +119,8 @@ var Dashboard = {
     },
     setupInvestmentDistributionChart: () => {
 
-        const accsArr = LocalDataManager.getUserAccounts()
+        const accsArr = LocalDataManager.getUserAccounts().filter((acc) => acc.status === MYFIN.TRX_STATUS.ACTIVE
+            && parseFloat(acc.balance) !== 0)
 
         const investmentAccounts = accsArr.filter(function (acc) {
             return acc.type === "INVAC" || acc.type === "SAVAC"

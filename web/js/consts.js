@@ -10,6 +10,10 @@ var MYFIN = {
         EXPENSE: "E",
         TRANSFER: "T"
     },
+    TRX_STATUS: {
+        ACTIVE: "Ativa",
+        INACTIVE: "Inativa"
+    },
     RULES_OPERATOR: {
         DEFAULT_RULES_OPERATOR_IGNORE: "IG",
         DEFAULT_RULES_OPERATOR_EQUALS: "EQ",

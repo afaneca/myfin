@@ -546,7 +546,8 @@ var Transactions = {
 
                         // Sum to amount1 the value of amount2 (unless undefined)
                         if (amount2Locator.val()) {
-                            amount1Locator.val(parseFloat(amount1Locator.val()) + parseFloat(amount2Locator.val()))
+
+                            amount1Locator.val((parseFloat(amount1Locator.val()) + parseFloat(amount2Locator.val())).toFixed(2))
                         }
 
                     } else {
@@ -556,7 +557,7 @@ var Transactions = {
 
                         // Subtract from amount1 the value of amount2 (unless undefined)
                         if (amount2Locator.val()) {
-                            amount1Locator.val(parseFloat(amount1Locator.val()) - parseFloat(amount2Locator.val()))
+                            amount1Locator.val((parseFloat(amount1Locator.val()) - parseFloat(amount2Locator.val())).toFixed(2))
                         }
 
                     }

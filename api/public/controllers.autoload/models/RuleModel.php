@@ -26,7 +26,7 @@ class RuleModel extends Entity
         "users_user_id"
     ];
 
-    public static function getRuleForTransactions($userID, $trx, $transactional = false)
+    public static function getRuleForTransaction($userID, $trx, $transactional = false)
     {
 
         $rules = RuleModel::getWhere(

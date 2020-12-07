@@ -355,6 +355,44 @@ class BudgetHasCategoriesModel extends Entity
         }
     }
 
+    public static function getAmountForEntityInMonth($entity_id, $month, $year, $transactional = false)
+    {
+        $listOfAccountsToExclude = AccountModel::getWhere(["exclude_from_budgets" => true]);
+        if (!$listOfAccountsToExclude || sizeof($listOfAccountsToExclude) == 0) {
+            $accsExclusionSQLExcerptAccountsTo = " 1 = 1 ";
+            $accsExclusionSQLExcerptAccountsFrom = " 1 = 1 ";
+        } else {
+            $accountsToExcludeListInSQL = BudgetHasCategoriesModel::buildSQLForExcludedAccountsList($listOfAccountsToExclude);
+            $accsExclusionSQLExcerptAccountsTo = "accounts_account_to_id NOT IN $accountsToExcludeListInSQL ";
+            $accsExclusionSQLExcerptAccountsFrom = "accounts_account_from_id NOT IN $accountsToExcludeListInSQL ";
+        }
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT sum(if(type = 'I' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsTo), amount, 0)) as 'entity_balance_credit', sum(if(type = 'E' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsFrom), amount, 0)) as 'entity_balance_debit' " .
+            "FROM transactions " .
+            "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
+            "AND entities_entity_id = :ent_id ";
+
+        $tz = new DateTimeZone('UTC');
+        $beginTimestamp = new DateTime("$year-$month-01", $tz);
+        $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t 23:59:59'), $tz);
+
+        $values = array();
+        $values[':ent_id'] = $entity_id;
+        $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
+        $values[':endTimestamp'] = $endTimestamp->getTimestamp();
+
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
     public static function getAmountForUncategorizedTransactionsInMonth($month, $year, $transactional = false)
     {
         $listOfAccountsToExclude = AccountModel::getWhere(["exclude_from_budgets" => true]);

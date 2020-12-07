@@ -751,6 +751,10 @@ table.dataTable.order-column tbody tr > .sorting_1, table.dataTable.order-column
     margin-bottom: 0px !important;
 }
 
+.select2-container--default .select2-results__group {
+    background: #1f2029;
+}
+
 /* END SELECT2 */
 
 /* MATERIALIZE SELECT */
