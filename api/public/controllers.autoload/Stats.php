@@ -146,6 +146,7 @@ class Stats
 
             foreach ($accountsFromPreviousMonth as &$acc) {
                 $acc["balance"] = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $previousMonth, $previousMonthsYear, false)["balance"];
+                if (!$acc["balance"]) $acc["balance"] = "0.00";
             }
 
             $outputArr["budgets"] = $budgetsList;
