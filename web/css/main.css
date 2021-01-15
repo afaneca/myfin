@@ -34,6 +34,10 @@ body {
     overflow: visible !important;
 }
 
+body.noScroll {
+    overflow: hidden !important;
+}
+
 hr {
     border: 0;
     height: 1px;
@@ -231,6 +235,12 @@ nav ul a:hover {
 @media only screen and (max-width: 1100px) {
     #side-nav-logo-img {
         width: 70%;
+    }
+}
+
+@media only screen and (max-height: 750px) {
+    .modal {
+        top: 0% !important;
     }
 }
 

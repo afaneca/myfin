@@ -68,8 +68,8 @@ class AccountModel extends Entity
         if ($onlyActive) {
             $sql .= "AND a.status = :accStatus ";
         }
-        $sql .= "ORDER BY abs(balance) DESC";
-
+        $sql .= "ORDER BY abs(balance) DESC, case when a.status = '" .
+            DEFAULT_ACCOUNT_INACTIVE_STATUS . "' then 1 else 0 end";
 
         $values = array();
         $values[':userID'] = $id_user;
@@ -209,8 +209,10 @@ class AccountModel extends Entity
             "FROM balances_snapshot " .
             "LEFT JOIN accounts ON accounts.account_id = balances_snapshot.accounts_account_id " .
             "WHERE users_user_id = :userID " .
-            "AND month <= :month " .
-            "AND year <= :year " .
+            /*"AND month <= :month " .
+            "AND year <= :year " .*/
+            "AND ((year = :year AND month <= :month) " .
+            "OR (year <= :year)) " .
             "ORDER BY year ASC, month ASC";
 
         $values = array();

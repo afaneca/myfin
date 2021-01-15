@@ -347,6 +347,7 @@ class Accounts
             $outArr = AccountModel::getBalancesSnapshotForUser($userID, false);
             /* $db->getDB()->commit(); */
 
+
             return sendResponse($response, EnsoShared::$REST_OK, $outArr);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
