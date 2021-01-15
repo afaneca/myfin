@@ -1,0 +1,96 @@
+const db = require("../models");
+const User = db.users;
+const Op = db.Sequelize.Op;
+const joi = require('joi')
+const encryptUtils = require("../utils/encryptUtils.js");
+const APIError = require("../errorHandling/apiError");
+const SessionManager = require("../utils/sessionManager")
+
+// GET ALL
+exports.findAll = async (req, res, next) => {
+    /* const title = req.query.title;
+    var condition = title ? { title: { [Op.like]: `%${title}%` } } : null; */
+    SessionManager.checkIfSessionKeyIsValid("", "tony", true, false)
+    User.findAll()
+        .then(data => {
+            if (data)
+                res.send(data);
+            else next(APIError.notFound("No user found"))
+        })
+        .catch(err => {
+            next(APIError.internalServerError())
+        });
+};
+
+
+// GET ONE
+exports.findOne = (req, res, next) => {
+    const id = req.params.id
+
+    User.findByPk(id)
+        .then(data => {
+            if (data)
+                res.send(data)
+            else next(APIError.notFound("User not found"))
+        }).catch(err => {
+            next(APIError.internalServerError())
+        })
+}
+
+// CREATE
+const createUserSchema = joi.object({
+    username: joi.string().trim().required(),
+    password: joi.string().trim().required(),
+    email: joi.string().email().required(),
+
+})
+exports.createOne = async (req, res, next) => {
+    try {
+        const user = await createUserSchema.validateAsync(req.body)
+        user.password = encryptUtils.hashPassword(user.password)
+        User.create(user)
+            .then(data => {
+                res.send(data)
+            }).catch(err => {
+                next(APIError.internalServerError())
+            })
+
+    } catch (err) {
+        next(APIError.internalServerError())
+    }
+}
+
+
+// AUTH
+const attemptLoginSchema = joi.object({
+    username: joi.string().trim().required(),
+    password: joi.string().trim().required()
+})
+exports.attemptLogin = async (req, res, next) => {
+    try {
+        const userData = await attemptLoginSchema.validateAsync(req.body)
+
+        const condition = { username: { [Op.like]: `${userData.username}` } }
+        User.findOne({ where: condition })
+            .then(data => {
+                if (data) {
+                    const isValid = encryptUtils.verifyPassword(userData.password, data.password)
+                    if (isValid) {
+                        res.send(data)
+                        // TODO 
+                    } else {
+                        next(APIError.notAuthorized("Wrong Credentials"))
+                    }
+                } else {
+                    next(APIError.notAuthorized("User Not Found"))
+                }
+
+            }).catch(err => {
+                next(APIError.internalServerError())
+            })
+    } catch (err) {
+        next(APIError.internalServerError())
+    }
+
+}
+
