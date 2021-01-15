@@ -130,5 +130,7 @@ function sendResponse($responseObj, $responseCode, $responseBody)
 	$responseObj->getBody()->rewind();
 	$responseObj->getBody()->write(json_encode($responseBody));
 
+
+
 	return $responseObj;
 }

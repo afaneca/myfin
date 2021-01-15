@@ -68,8 +68,8 @@ class AccountModel extends Entity
         if ($onlyActive) {
             $sql .= "AND a.status = :accStatus ";
         }
-        $sql .= "ORDER BY abs(balance) DESC";
-
+        $sql .= "ORDER BY abs(balance) DESC, case when a.status = '" .
+            DEFAULT_ACCOUNT_INACTIVE_STATUS . "' then 1 else 0 end";
 
         $values = array();
         $values[':userID'] = $id_user;
