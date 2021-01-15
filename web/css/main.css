@@ -34,6 +34,10 @@ body {
     overflow: visible !important;
 }
 
+body.noScroll {
+    overflow: hidden !important;
+}
+
 hr {
     border: 0;
     height: 1px;

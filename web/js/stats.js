@@ -473,33 +473,14 @@ var Stats = {
             },
         }
 
-        /*let extraChartData = [
-            {
-                data: chartData,
-                label: "v1",
-                borderColor: "#3e95cd",
-                fill: true
-            },
-            {
-                data: chartData,
-                label: "v2",
-                borderColor: "#3e95cd",
-                fill: true
-            },
-        ]*/
-
         var data = {
             labels: chartLabels,
-            /* datasets: [{
-                data: [0, 10, 20, 30, 100, 40, 56, 60, 70, 91, 300],
-                backgroundColor: chartUtils.getPieChartColorsList()
-
-            }] */
             datasets: [{
                 data: chartData,
                 label: "Acumulado",
                 borderColor: "#3e95cd",
-                fill: true
+                fill: true,
+                /*lineTension: 0,*/
             },
                 ...extraChartData
             ]
