@@ -238,6 +238,12 @@ nav ul a:hover {
     }
 }
 
+@media only screen and (max-height: 750px) {
+    .modal {
+        top: 0% !important;
+    }
+}
+
 .main-progress-bar {
     /* padding: 10px; */
     float: right;
