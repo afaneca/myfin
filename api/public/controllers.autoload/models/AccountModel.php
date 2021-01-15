@@ -212,7 +212,7 @@ class AccountModel extends Entity
             /*"AND month <= :month " .
             "AND year <= :year " .*/
             "AND ((year = :year AND month <= :month) " .
-            "OR (year <= :year)) " .
+            "OR (year < :year)) " .
             "ORDER BY year ASC, month ASC";
 
         $values = array();
