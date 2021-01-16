@@ -6,6 +6,7 @@ var configs = {
     beforeViewCallBacks: [],
 
     navigateToPage: function () {
+        DialogUtils.preventScrollBug();
         if (configs.getCurrentPage() != "") {
             pageUrl = configs.viewsPath + configs.getCurrentPage() + ".html";
 
@@ -31,6 +32,7 @@ var configs = {
     },
 
     goToPage: function (nextPage, args = {}, forceReload = true) {
+        DialogUtils.preventScrollBug();
         newHash = "#!" + nextPage;
 
         if (args && Object.keys(args).length > 0) {
@@ -73,6 +75,7 @@ var configs = {
     },
 
     switchApp: function (appToLoad, params, newTab) {
+        DialogUtils.preventScrollBug();
         var url = appToLoad + ".html";
 
         if (params != null)
