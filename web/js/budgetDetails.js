@@ -140,9 +140,8 @@ var BudgetDetails = {
                     if (IS_OPEN)
                         return cat.status === MYFIN.CATEGORY_STATUS.ACTIVE
                     else
-                        return (cat.status === MYFIN.CATEGORY_STATUS.ACTIVE
-                            && (parseFloat(cat.current_amount_credit) !== 0
-                            || parseFloat(cat.current_amount_debit) !== 0))
+                        return (parseFloat(cat.current_amount_credit) !== 0
+                            || parseFloat(cat.current_amount_debit) !== 0)
         
                 }).map(cat => BudgetDetails.renderInputRow(cat, isCredit)).join("")}
                 
