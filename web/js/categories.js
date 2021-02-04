@@ -110,7 +110,7 @@ var Categories = {
                                 <option value="Ativa">Ativa</option>
                                 <option value="Inativa">Inativa</option>
                             </select>
-                            <label>Estado da Conta</label>
+                            <label>Estado</label>
                         </div>
                      </div>
                      <div class="row">
@@ -230,7 +230,7 @@ var Categories = {
                                 <option ${(catStatus === 'Ativa') ? 'selected' : ''} value="Ativa">Ativa</option>
                                 <option ${(catStatus === 'Inativa') ? 'selected' : ''} value="Inativa">Inativa</option>
                             </select>
-                            <label>Estado da Conta</label>
+                            <label>Estado</label>
                         </div>
                     </div>
                     <div class="row">
