@@ -93,6 +93,9 @@ class Categories
 
             if (array_key_exists('status', $request->getParsedBody())) {
                 $status = Input::validate($request->getParsedBody()['status'], Input::$STRICT_STRING);
+                if ($status != DEFAULT_CATEGORY_ACTIVE_STATUS && $status != DEFAULT_CATEGORY_INACTIVE_STATUS) {
+                    $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
+                }
             } else {
                 $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
             }
@@ -208,8 +211,11 @@ class Categories
                 $newType = "M"; // MIXED
             }
 
-            if (array_key_exists('status', $request->getParsedBody())) {
-                $status = Input::validate($request->getParsedBody()['status'], Input::$STRICT_STRING);
+            if (array_key_exists('new_status', $request->getParsedBody())) {
+                $status = Input::validate($request->getParsedBody()['new_status'], Input::$STRING);
+                if ($status != DEFAULT_CATEGORY_ACTIVE_STATUS && $status != DEFAULT_CATEGORY_INACTIVE_STATUS) {
+                    $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
+                }
             } else {
                 $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
             }
