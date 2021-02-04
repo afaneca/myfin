@@ -153,7 +153,7 @@ class Transactions
             $outgoingArr['entities'] = EntityModel::getWhere(["users_user_id" => $userID], ["entity_id", "name"]);
 
             /* Categories */
-            $outgoingArr['categories'] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "description"]);
+            $outgoingArr['categories'] = CategoryModel::getWhere(["users_user_id" => $userID, "status" => DEFAULT_CATEGORY_ACTIVE_STATUS], ["category_id", "name", "description"]);
 
             /* Type */
             $outgoingArr['type'] = array(
@@ -717,7 +717,7 @@ class Transactions
                 ]); */
             }
 
-            $outgoingArr["categories"] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name"]);
+            $outgoingArr["categories"] = CategoryModel::getWhere(["users_user_id" => $userID, "status" => DEFAULT_CATEGORY_ACTIVE_STATUS], ["category_id", "name"]);
             $outgoingArr["entities"] = EntityModel::getWhere(["users_user_id" => $userID], ["entity_id", "name"]);
             $outgoingArr["accounts"] = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
 

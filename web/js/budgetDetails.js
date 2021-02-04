@@ -48,8 +48,8 @@ var BudgetDetails = {
             // SUCCESS
             LoadingManager.hideLoading()
             const allCategories = resp['categories']
-            const debitCategories = resp['categories'].filter((cat) => cat.type === 'D');
-            const creditCategories = resp['categories'].filter((cat) => cat.type === 'C');
+            /*const debitCategories = resp['categories'].filter((cat) => cat.type === 'D');
+            const creditCategories = resp['categories'].filter((cat) => cat.type === 'C');*/
             const observations = resp['observations']
             BUDGET_INITIAL_BALANCE = resp['initial_balance']
             const month = resp['month']
@@ -136,7 +136,15 @@ var BudgetDetails = {
             </thead>
             <tbody>
                 ${BudgetDetails.buildTotalsRow(isCredit)}
-                ${categoriesArr.map(cat => BudgetDetails.renderInputRow(cat, isCredit)).join("")}
+                ${categoriesArr.filter((cat) => {
+                    if (IS_OPEN)
+                        return cat.status === MYFIN.CATEGORY_STATUS.ACTIVE
+                    else
+                        return (cat.status === MYFIN.CATEGORY_STATUS.ACTIVE
+                            && (parseFloat(cat.current_amount_credit) !== 0
+                            || parseFloat(cat.current_amount_debit) !== 0))
+        
+                }).map(cat => BudgetDetails.renderInputRow(cat, isCredit)).join("")}
                 
             </tbody>
         </table>

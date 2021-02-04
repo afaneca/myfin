@@ -14,6 +14,10 @@ var MYFIN = {
         ACTIVE: "Ativa",
         INACTIVE: "Inativa"
     },
+    CATEGORY_STATUS: {
+        ACTIVE: "Ativa",
+        INACTIVE: "Inativa"
+    },
     RULES_OPERATOR: {
         DEFAULT_RULES_OPERATOR_IGNORE: "IG",
         DEFAULT_RULES_OPERATOR_EQUALS: "EQ",
