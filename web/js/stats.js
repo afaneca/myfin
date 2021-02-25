@@ -194,7 +194,7 @@ var Stats = {
         return `
         <tr>
             <td>${monthData.month}/${monthData.year}</td>
-            <td>${StringUtils.formatStringToCurrency(monthData.value)}</td>
+            <td>${StringUtils.formatMoney(monthData.value)}</td>
             <td>${(!oldMonth) ? "-" : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
         </tr>
       `
@@ -333,7 +333,7 @@ var Stats = {
         return `
         <tr>
             <td>${monthData.month}/${monthData.year}</td>
-            <td>${StringUtils.formatStringToCurrency(monthData.value)}</td>
+            <td>${StringUtils.formatMoney(monthData.value)}</td>
             <td>${(!oldMonth) ? "-" : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
         </tr>
       `
@@ -436,9 +436,9 @@ var Stats = {
         return `
         <tr>
             <td>${label}</td>
-            <td>${(starValue) ? StringUtils.formatStringToCurrency(starValue) : "-"}</td>
-            <td>${StringUtils.formatStringToCurrency(endValue)}</td>
-            <td>${(starValue) ? StringUtils.formatStringToCurrency(endValue - starValue) : "-"}</td>
+            <td>${(starValue) ? StringUtils.formatMoney(starValue) : "-"}</td>
+            <td>${StringUtils.formatMoney(endValue)}</td>
+            <td>${(starValue) ? StringUtils.formatMoney(endValue - starValue) : "-"}</td>
             <td>${(starValue) ? Stats.calculateGrowthPercentage(starValue, endValue) : "-"}</td>
         </tr>
       `
@@ -540,9 +540,9 @@ var Stats = {
         return `
         <tr>
             <td>${budget.month}/${budget.year}</td>
-            <td>${StringUtils.formatStringToCurrency(budget.planned_initial_balance)}</td>
-            <td>${StringUtils.formatStringToCurrency(budget.planned_final_balance)}</td>
-            <td>${StringUtils.formatStringToCurrency(budget.planned_final_balance_assets_only/*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/)}</td>
+            <td>${StringUtils.formatMoney(budget.planned_initial_balance)}</td>
+            <td>${StringUtils.formatMoney(budget.planned_final_balance)}</td>
+            <td>${StringUtils.formatMoney(budget.planned_final_balance_assets_only/*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/)}</td>
             <td>${(budget.planned_initial_balance) ? Stats.calculateGrowthPercentage(budget.planned_initial_balance, budget.planned_final_balance) : "-"}</td>
         </tr>
       `

@@ -47,7 +47,7 @@ var Accounts = {
                 <td>${Categories.renderColorColumn(account.color_gradient)}</td>
                 <td>${account.name}</td>
                 <td>${StringUtils.getAccountTypeName(account.type)}</td>
-                <td>${StringUtils.formatStringToCurrency(account.balance)}</td>
+                <td>${StringUtils.formatMoney(account.balance)}</td>
                 <td><span class="${(account.status === 'Ativa') ? 'badge green-text text-accent-4' : 'badge pink-text text-accent-2'} ">${account.status}</span></td>
                 <td>
                     <i onClick="Accounts.showEditAccountModal('${account.name}', '${StringUtils.normalizeString(account.description)}', '${account.type}', '${account.status}', '${account.balance}', '${account.exclude_from_budgets}','${account.color_gradient}', ${account.account_id})" class="material-icons table-action-icons">create</i>

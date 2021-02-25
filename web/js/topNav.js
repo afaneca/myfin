@@ -16,10 +16,10 @@ var TopNav = {
 
         let accsArr = LocalDataManager.getUserAccounts()
 
-        current_savings_element.text(StringUtils.formatStringToCurrency(TopNav.calculateCurrentSavingsBalance(accsArr)))
-        investments_element.text(StringUtils.formatStringToCurrency(TopNav.calculateInvestmentsBalance(accsArr)))
-        credits_element.text(StringUtils.formatStringToCurrency(TopNav.calculateCreditsBalance(accsArr)))
-        globalPatrimony_element.text(StringUtils.formatStringToCurrency(TopNav.calculateCurrentPatrimony(accsArr)))
+        current_savings_element.text(StringUtils.formatMoney(TopNav.calculateCurrentSavingsBalance(accsArr)))
+        investments_element.text(StringUtils.formatMoney(TopNav.calculateInvestmentsBalance(accsArr)))
+        credits_element.text(StringUtils.formatMoney(TopNav.calculateCreditsBalance(accsArr)))
+        globalPatrimony_element.text(StringUtils.formatMoney(TopNav.calculateCurrentPatrimony(accsArr)))
     },
     calculateCurrentSavingsBalance: (accsArr) => {
         const savingsAndCurrentAccounts = accsArr.filter(function (acc) {
