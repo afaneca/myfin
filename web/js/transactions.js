@@ -45,7 +45,7 @@ var Transactions = {
             <tr data-id='$trx.transaction_id'>
                 <td>${DateUtils.convertUnixTimestampToDateString(trx.date_timestamp)}</td>
                 <td>${Transactions.formatTypeToString(trx.type, trx.account_from_name, trx.account_to_name)}</td>
-                <td>${Transactions.formatCurrencyColumn(trx.type, StringUtils.formatStringToCurrency(trx.amount))}</td>
+                <td>${Transactions.formatCurrencyColumn(trx.type, StringUtils.formatMoney(trx.amount))}</td>
                 <td>${trx.description}</td>
                 <td>${(trx.entity_name) ? trx.entity_name : "<span class='medium-gray-color'>Sem Entidade</span>"}</td>
                 <td>${(trx.category_name) ? trx.category_name : "<span class='medium-gray-color'>Sem Categoria</span>"}</td>

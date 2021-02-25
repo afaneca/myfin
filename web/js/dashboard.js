@@ -77,7 +77,7 @@ var Dashboard = {
             <tr data-id='${mov.transaction_id}'>
                 <td>${DateUtils.convertUnixTimestampToDateString(mov.date_timestamp)}</td>
                 <td>${mov.description}</td>
-                <td>${Dashboard.formatCurrencyColumn(mov.type, StringUtils.formatStringToCurrency(mov.amount))}</td>
+                <td>${Dashboard.formatCurrencyColumn(mov.type, StringUtils.formatMoney(mov.amount))}</td>
             </tr>
         `
     },
