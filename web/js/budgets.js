@@ -60,7 +60,7 @@ var Budgets = {
                 <td>${StringUtils.formatStringToCurrency(budget.debit_amount)}</td>
                 <td>${StringUtils.formatStringToCurrency(budget.credit_amount)}</td>
                 <td>${Budgets.buildBudgetBalanceRow(budget.balance_value, budget.balance_change_percentage, (budget.month == currentMonth && budget.year == currentYear))}</td>
-                <td><span class="${(budget.month == currentMonth && budget.year == currentYear) ? '' : (budget.is_open == 1) ? 'badge green-text text-accent-4' : 'badge pink-text text-accent-2'} ">${(budget.is_open == 1) ? "Aberto" : "Fechado"}</span></td>
+                <td><span class="${(budget.month == currentMonth && budget.year == currentYear) ? '' : (budget.is_open == 1) ? 'badge green-text text-accent-4' : 'badge pink-text text-accent-1'} ">${(budget.is_open == 1) ? "Aberto" : "Fechado"}</span></td>
                 <td>
                     <i onClick="Budgets.goToBudget(${budget.budget_id}, ${budget.is_open})" class="material-icons table-action-icons">remove_red_eye</i>
                     <i onClick="Budgets.showRemoveBudgetModal(${budget.budget_id}, ${budget.month}, ${budget.year})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
@@ -74,7 +74,7 @@ var Budgets = {
         if (balanceValue > 0) {
             strToReturn = `+${StringUtils.formatStringToCurrency(balanceValue)} <span class="${!isCurrentMonth ? 'green-text text-accent-4' : ''}" style="font-size: small;">(+${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
         } else if (balanceValue < 0) {
-            strToReturn = `${StringUtils.formatStringToCurrency(balanceValue)} <span class="${!isCurrentMonth ? 'pink-text text-accent-2' : ''}" style="font-size: small;">(${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
+            strToReturn = `${StringUtils.formatStringToCurrency(balanceValue)} <span class="${!isCurrentMonth ? 'pink-text text-accent-1' : ''}" style="font-size: small;">(${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
         } else {
             strToReturn = `${StringUtils.formatStringToCurrency(balanceValue)} <span class="" style="font-size: small;">(${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
         }

@@ -770,7 +770,7 @@ table.dataTable.order-column tbody tr > .sorting_1, table.dataTable.order-column
 
 /* MATERIALIZE SELECT */
 .dropdown-content {
-    background-color: #15161b;
+    background-color: var(--main-dark-background);
 }
 
 .dropdown-content li > a, .dropdown-content li > span {

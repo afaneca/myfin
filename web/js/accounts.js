@@ -48,7 +48,7 @@ var Accounts = {
                 <td>${account.name}</td>
                 <td>${StringUtils.getAccountTypeName(account.type)}</td>
                 <td>${StringUtils.formatMoney(account.balance)}</td>
-                <td><span class="${(account.status === 'Ativa') ? 'badge green-text text-accent-4' : 'badge pink-text text-accent-2'} ">${account.status}</span></td>
+                <td><span class="${(account.status === 'Ativa') ? 'badge green-text text-accent-4' : 'badge pink-text text-accent-1'} ">${account.status}</span></td>
                 <td>
                     <i onClick="Accounts.showEditAccountModal('${account.name}', '${StringUtils.normalizeString(account.description)}', '${account.type}', '${account.status}', '${account.balance}', '${account.exclude_from_budgets}','${account.color_gradient}', ${account.account_id})" class="material-icons table-action-icons">create</i>
                     <i onClick="Accounts.showRemoveAccountModal('${account.name}',${account.account_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>

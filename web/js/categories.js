@@ -76,7 +76,7 @@ var Categories = {
                 </td>
                 <td>${cats.name}</td>
                 <td>${cats.description}</td>
-                <td><span class="${(cats.status === 'Ativa') ? 'badge green-text text-accent-4' : 'badge pink-text text-accent-2'} ">${cats.status}</span></td>
+                <td><span class="${(cats.status === 'Ativa') ? 'badge green-text text-accent-4' : 'badge pink-text text-accent-1'} ">${cats.status}</span></td>
                 <td>
                     <i onClick="Categories.showEditCategoryModal('${StringUtils.escapeHtml(cats.name)}', '${StringUtils.removeLineBreaksFromString(cats.description).replace(/["']/g, '')}', '${cats.color_gradient}', ${cats.category_id}, '${StringUtils.removeLineBreaksFromString(cats.status).replace(/["']/g, '')}')" class="material-icons table-action-icons">create</i>
                     <i onClick="Categories.showRemoveCategoryModal('${StringUtils.escapeHtml(cats.name)}', ${cats.category_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>

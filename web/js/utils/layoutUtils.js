@@ -6,6 +6,10 @@ var LayoutUtils = {
             scrollTop: $(divStr).offset().top
         }, animationDurationInMs);
     },
+    getCSSVariableValue: (varName) => {
+        return getComputedStyle(document.documentElement)
+            .getPropertyValue(varName)
+    }
 }
 
 //# sourceURL=js/utils/layoutUtils.js
