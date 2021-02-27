@@ -29,6 +29,7 @@ var Budgets = {
     initTable: (resp) => {
         $("#table-wrapper").html(Budgets.renderTable(resp))
         tableUtils.setupStaticTableWithCustomColumnWidths("#budgets-table", [{"width": "5%", "targets": 0}]);
+        LayoutUtils.scrollToWithAnimation(".highlighted-budget-item", 400)
     },
     renderTable: (budgetsList) => {
         return `
