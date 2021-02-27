@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="./css/dashboard.css"/>
     <link rel="stylesheet" href="./css/budgets.css"/>
     <link rel="stylesheet" href="./css/progressbar.css"/>
+    <link rel="stylesheet" href="./css/themes/dark_gray_theme.css"/>
 </head>
 
 <body onLoad="checkPreAuth(); checkPreAuthWithInterval(); TopNav.setupTopNavSummaryAmounts()"
@@ -54,9 +55,11 @@
             </div>
             <div class="col s6">
                 <ul class="right hide-on-med-and-down">
-                    <li class="green-gradient-bg"><a href="#!profile" onClick="configs.goToPage('profile');MenuUtils.changeActiveMenu('profile')"><i class="large material-icons">account_circle</i></a>
+                    <li ><a href="#!profile"
+                                                     onClick="configs.goToPage('profile');MenuUtils.changeActiveMenu('profile')"><i
+                            class="large material-icons">account_circle</i></a>
                     </li>
-                    <li class="red-gradient-bg"><a onClick="resetSession()" href="#"><i
+                    <li><a onClick="resetSession()" href="#"><i
                             class="large material-icons">exit_to_app</i></a></li>
                 </ul>
             </div>
@@ -190,6 +193,7 @@
         configs.loadFirstView("dashboard");
         $('.sidenav').sidenav();
         $(".dropdown-trigger").dropdown();
+        LayoutUtils.changeTheme(LayoutUtils.getCurrentThemeName())
     });
 </script>
 </body>

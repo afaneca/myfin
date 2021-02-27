@@ -7,6 +7,7 @@
 
 :root {
     --main-green: #009688;
+    --main-light-green: #4ca341;
     --dark-grey: #262626;
     --light-grey: #f3f3f3;
     --medium-grey: #938f8f;
@@ -703,7 +704,7 @@ table.dataTable.order-column tbody tr > .sorting_1, table.dataTable.order-column
 .select2-container--default .select2-selection--single {
     background-color: #0a0b0d8f;
     height: 2.5rem;
-    cursor: not-allowed;
+    cursor: default;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
@@ -769,7 +770,7 @@ table.dataTable.order-column tbody tr > .sorting_1, table.dataTable.order-column
 
 /* MATERIALIZE SELECT */
 .dropdown-content {
-    background-color: #15161b;
+    background-color: var(--main-dark-background);
 }
 
 .dropdown-content li > a, .dropdown-content li > span {
@@ -829,3 +830,16 @@ svg:not(:root) {
 }
 
 /* END DATEPICKER */
+
+[type="radio"]:checked + span:after, [type="radio"].with-gap:checked + span:after {
+    background-color: var(--main-light-blue);
+    background: -webkit-linear-gradient(
+            45deg, #43a047, #1de9b6) !important;
+    background: linear-gradient(
+            45deg, #43a047, #1de9b6) !important;
+}
+
+[type="radio"]:checked + span:after, [type="radio"].with-gap:checked + span:before, [type="radio"].with-gap:checked + span:after {
+    /* border: 2px solid var(--main-light-blue); */
+    border: none !important;
+}

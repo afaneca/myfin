@@ -450,7 +450,7 @@ var Stats = {
         if (percentageChange == 0)
             return `<span>${percentageChange}%</span>`;
         else if (percentageChange < 0)
-            return `<span class="badge pink-text text-accent-2">${percentageChange}%</span>`;
+            return `<span class="badge pink-text text-accent-1">${percentageChange}%</span>`;
         else {
             return `<span class="badge green-text text-accent-4">${percentageChange}%</span>`;
         }

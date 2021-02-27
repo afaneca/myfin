@@ -25,6 +25,14 @@ var MYFIN = {
         DEFAULT_RULES_OPERATOR_CONTAINS: "CONTAINS",
         DEFAULT_RULES_OPERATOR_NOT_CONTAINS: "NOTCONTAINS"
     },
+    APP_THEMES_CSS_PATH: {
+        DARK_BLUE: "./css/main.css",
+        DARK_GRAY: "./css/themes/dark_gray_theme.css",
+    },
+    APP_THEMES: {
+        DARK_BLUE: "DARK_BLUE",
+        DARK_GRAY: "DARK_GRAY",
+    }
 }
 
 var EXTERNAL_ACCOUNT_LABEL = "** Conta Externa **"

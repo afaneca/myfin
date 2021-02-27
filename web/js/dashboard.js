@@ -87,7 +87,7 @@ var Dashboard = {
                 return `<span style="height: auto !important;" class='badge green-text text-accent-6'>${formattedCurrencyString}</span></span>`
                 break;
             case 'E':
-                return `<span style="height: auto !important;" class='badge pink-text text-accent-2'>${formattedCurrencyString}</span>`
+                return `<span style="height: auto !important;" class='badge pink-text text-accent-1'>${formattedCurrencyString}</span>`
                 break;
             case 'T':
             default:
