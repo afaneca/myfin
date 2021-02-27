@@ -830,3 +830,16 @@ svg:not(:root) {
 }
 
 /* END DATEPICKER */
+
+[type="radio"]:checked + span:after, [type="radio"].with-gap:checked + span:after {
+    background-color: var(--main-light-blue);
+    background: -webkit-linear-gradient(
+            45deg, #43a047, #1de9b6) !important;
+    background: linear-gradient(
+            45deg, #43a047, #1de9b6) !important;
+}
+
+[type="radio"]:checked + span:after, [type="radio"].with-gap:checked + span:before, [type="radio"].with-gap:checked + span:after {
+    /* border: 2px solid var(--main-light-blue); */
+    border: none !important;
+}

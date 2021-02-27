@@ -53,3 +53,9 @@ nav ul a:hover {
 .highlighted-budget-item {
     border-bottom: 2px solid rgb(55 60 63);
 }
+
+
+
+.collapsible-body {
+    border-top: none !important;
+}
