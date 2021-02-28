@@ -32,7 +32,8 @@ var MYFIN = {
     APP_THEMES: {
         DARK_BLUE: "DARK_BLUE",
         DARK_GRAY: "DARK_GRAY",
-    }
+    },
+    TRX_FETCH_LIMIT: 300,
 }
 
 var EXTERNAL_ACCOUNT_LABEL = "** Conta Externa **"

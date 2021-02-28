@@ -1,7 +1,7 @@
 "use strict";
 
 var TransactionServices = {
-    getAllTransactions: (successCallback, errorCallback) => {
+    getAllTransactions: (trxLimit, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "trxs/"
         $.ajax({
             async: true,
@@ -12,7 +12,7 @@ var TransactionServices = {
                 authusername: Cookies.get("username"),
                 sessionkey: Cookies.get("sessionkey"),
             },
-            data: {},
+            data: {trx_limit: trxLimit},
             url: pageUrl,
             success: function (response) {
                 if (successCallback) successCallback(response)
@@ -150,7 +150,7 @@ var TransactionServices = {
         });
     },*/
     editTransaction: (trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp,
-                                          is_split, split_amount, split_category, split_entity, split_type, split_account_from, split_account_to, split_description, successCallback, errorCallback) => {
+                      is_split, split_amount, split_category, split_entity, split_type, split_account_from, split_account_to, split_description, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "trxs/"
 
         $.ajax({
