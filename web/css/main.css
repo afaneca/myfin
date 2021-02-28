@@ -843,3 +843,85 @@ svg:not(:root) {
     /* border: 2px solid var(--main-light-blue); */
     border: none !important;
 }
+
+/* START ACCOUNT GROUPS */
+.acc-group-wrapper {
+    padding: 0 20px;
+    margin-bottom: 80px;
+}
+
+.medium-small {
+    font-size: 3rem;
+}
+
+.list {
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 1fr;
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+    /*max-width: 500px;*/
+}
+
+.list-item {
+    background-color: var(--main-dark-background);
+    display: flex;
+    padding: 0.5em;
+    margin-bottom: 20px;
+}
+
+.list-content {
+    width: 100%;
+}
+
+@media only screen and (max-width: 1620px) {
+    .list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (max-width: 300px) {
+    .list {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+.accounts-account-group-total-wrapper {
+    float: right;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 20px;
+    font-size: small;
+}
+
+.account-groups-total-balance-value {
+    font-weight: bold;
+    font-size: large;
+}
+
+/* END ACCOUNT GROUPS */
+
+/* START CUSTOM SCROLLBAR */
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* END CUSTOM SCROLLBAR */

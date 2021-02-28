@@ -1,8 +1,87 @@
 <div id="page-wrapper">
     <div class="card-panel">
         <span class="main-accent-color">Contas</span><br>
-        <a class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;" onClick="Accounts.addNewAccount()"><i
+        <a class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"
+           onClick="Accounts.addNewAccount()"><i
                 class="material-icons left">add_circle</i>Adicionar Conta</a>
+
+        <ul class="list">
+            <!--Operating Funds-->
+            <li class="list-item">
+                <div class="list-content" style="position: relative;">
+                    <div id="acc-operating-funds-wrapper" class="acc-group-wrapper"
+                         style="position:relative;">
+                        <h5 class="valign-wrapper"><i class="grey-text medium-small material-icons">account_balance</i>&nbspFundo
+                            de Maneio</h5>
+                        <div id="acc-operating-funds-accs-wrapper">
+                            <div style="text-align: center;"><p>Não possui atualmente qualquer conta neste grupo.</p>
+                                <pre>Pode adicionar uma nova conta <a onClick="Accounts.addNewAccount()" style="cursor:pointer;">aqui</a>.</pre>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="accounts-account-group-total-wrapper">
+                        TOTAL: <span id="account-group-operating-funds-total-balance-value" class="account-groups-total-balance-value">0.00€</span>
+                    </div>
+                </div>
+            </li>
+            <!--Credits-->
+            <li class="list-item">
+                <div class="list-content" style="position: relative;">
+                    <div id="acc-credits-wrapper" class="acc-group-wrapper"
+                         style="position:relative;">
+                        <h5 class="valign-wrapper"><i class="grey-text medium-small material-icons">account_balance</i>&nbspCréditos
+                        </h5>
+                        <div id="acc-credits-accs-wrapper">
+                            <div style="text-align: center;"><p>Não possui atualmente qualquer conta neste grupo.</p>
+                                <p>Pode adicionar uma nova conta <a onClick="Accounts.addNewAccount()" style="cursor:pointer;">aqui</a>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accounts-account-group-total-wrapper">
+                        TOTAL: <span id="account-group-credits-total-balance-value" class="account-groups-total-balance-value">0.00€</span>
+                    </div>
+                </div>
+            </li>
+            <!--Investments-->
+            <li class="list-item">
+                <div class="list-content" style="position: relative;">
+                    <div id="acc-investments-wrapper" class="acc-group-wrapper"
+                         style="position:relative;">
+                        <h5 class="valign-wrapper"><i class="grey-text medium-small material-icons">account_balance</i>&nbspInvestimentos
+                        </h5>
+                        <div id="acc-investments-accs-wrapper">
+                            <div style="text-align: center;"><p>Não possui atualmente qualquer conta neste grupo.</p>
+                                <p>Pode adicionar uma nova conta <a onClick="Accounts.addNewAccount()" style="cursor:pointer;">aqui</a>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accounts-account-group-total-wrapper">
+                        TOTAL: <span id="account-group-investments-total-balance-value" class="account-groups-total-balance-value">0.00€</span>
+                    </div>
+                </div>
+            </li>
+            <!--Others-->
+            <li class="list-item">
+                <div class="list-content" style="position: relative;">
+                    <div id="acc-others-wrapper" class="acc-group-wrapper"
+                         style="position:relative;">
+                        <h5 class="valign-wrapper"><i class="grey-text medium-small material-icons">account_balance</i>&nbspOutras
+                        </h5>
+                        <div id="acc-others-accs-wrapper">
+                            <div style="text-align: center;"><p>Não possui atualmente qualquer conta neste grupo.</p>
+                                <p>Pode adicionar uma nova conta <a onClick="Accounts.addNewAccount()" style="cursor:pointer;">aqui</a>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accounts-account-group-total-wrapper">
+                        TOTAL: <span id="account-group-others-total-balance-value" class="account-groups-total-balance-value">0.00€</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <hr>
         <div id="table-wrapper">
 
         </div>
@@ -12,10 +91,9 @@
 </div>
 
 
-
 <script>
     $(document).ready(function () {
         DialogUtils.initStandardModal()
         Accounts.init()
-    });   
+    });
 </script>
