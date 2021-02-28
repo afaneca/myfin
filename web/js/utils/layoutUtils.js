@@ -37,7 +37,10 @@ var LayoutUtils = {
     },
     getCurrentThemeName: () => {
         return LocalDataManager.getCurrentTheme() ? LocalDataManager.getCurrentTheme() : MYFIN.APP_THEMES.DARK_GRAY
-    }
+    },
+    scrollToWithAnimation: (elementLocator, scrollInterval = 500) => {
+        $('html, body').animate({ scrollTop: $(elementLocator).offset().top}, scrollInterval);
+    },
 }
 
 //# sourceURL=js/utils/layoutUtils.js

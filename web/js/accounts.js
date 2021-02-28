@@ -9,13 +9,85 @@ var Accounts = {
         AccountServices.getAllAccounts((response) => {
                 LoadingManager.hideLoading()
                 LocalDataManager.setUserAccounts(response)
-
+                const operatingFundAccs = response.filter(function (acc) {
+                    return (acc.type === account_types_tag.CHEAC || acc.type === account_types_tag.SAVAC
+                        || acc.type === account_types_tag.MEALAC || acc.type === account_types_tag.WALLET)
+                        && acc.status === MYFIN.TRX_STATUS.ACTIVE
+                });
+                const investmentAccs = response.filter(function (acc) {
+                    return acc.type === account_types_tag.INVAC && acc.status === MYFIN.TRX_STATUS.ACTIVE
+                });
+                const creditAccs = response.filter(function (acc) {
+                    return acc.type === account_types_tag.CREAC && acc.status === MYFIN.TRX_STATUS.ACTIVE
+                });
+                const otherAccs = response.filter(function (acc) {
+                    return acc.type !== account_types_tag.CHEAC && acc.type !== account_types_tag.SAVAC
+                        && acc.type !== account_types_tag.MEALAC && acc.type !== account_types_tag.WALLET
+                        && acc.type !== account_types_tag.CREAC && acc.type !== account_types_tag.INVAC
+                        && acc.status === MYFIN.TRX_STATUS.ACTIVE
+                });
+                Accounts.populateOperatingFundsGroup(operatingFundAccs)
+                Accounts.populateInvestmentsGroup(investmentAccs)
+                Accounts.populateCreditsGroup(creditAccs)
+                Accounts.populateOthersGroup(otherAccs)
                 Accounts.initTable(response)
             },
             (error) => {
                 LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
+    },
+    populateOperatingFundsGroup: (accs) => {
+        if (!accs || accs.length === 0) return
+        let html = ""
+        let totalBalance = 0
+
+        for (let acc of accs) {
+            html += `<p>${acc.name}<span style="float:right">${StringUtils.formatMoney(acc.balance)}</span></p><hr>`
+            totalBalance += parseFloat(acc.balance)
+        }
+
+        $("#acc-operating-funds-accs-wrapper").html(html)
+        $("#account-group-operating-funds-total-balance-value").html(StringUtils.formatMoney(totalBalance))
+    },
+    populateInvestmentsGroup: (accs) => {
+        if (!accs || accs.length === 0) return
+        let html = ""
+        let totalBalance = 0
+
+        for (let acc of accs) {
+            html += `<p>${acc.name}<span style="float:right">${StringUtils.formatMoney(acc.balance)}</span></p><hr>`
+            totalBalance += parseFloat(acc.balance)
+        }
+
+        $("#acc-investments-accs-wrapper").html(html)
+        $("#account-group-investments-total-balance-value").html(StringUtils.formatMoney(totalBalance))
+    },
+    populateCreditsGroup: (accs) => {
+        if (!accs || accs.length === 0) return
+        let html = ""
+        let totalBalance = 0
+
+        for (let acc of accs) {
+            html += `<p>${acc.name}<span style="float:right">${StringUtils.formatMoney(acc.balance)}</span></p><hr>`
+            totalBalance += parseFloat(acc.balance)
+        }
+
+        $("#acc-credits-accs-wrapper").html(html)
+        $("#account-group-credits-total-balance-value").html(StringUtils.formatMoney(totalBalance))
+    },
+    populateOthersGroup: (accs) => {
+        if (!accs || accs.length === 0) return
+        let html = ""
+        let totalBalance = 0
+
+        for (let acc of accs) {
+            html += `<p>${acc.name}<span style="float:right">${StringUtils.formatMoney(acc.balance)}</span></p><hr>`
+            totalBalance += parseFloat(acc.balance)
+        }
+
+        $("#acc-others-accs-wrapper").html(html)
+        $("#account-group-others-total-balance-value").html(StringUtils.formatMoney(totalBalance))
     },
     initTable: (accountsList) => {
         $("#table-wrapper").html(Accounts.renderAccountsTable(accountsList))
@@ -115,7 +187,7 @@ var Accounts = {
                 </div>
                 `;
 
-        /* 
+        /*
          <div class="input-field col s6">
                     <i class="material-icons prefix">date_range</i>
                     <input id="account_add_datepicker" type="text" class="datepicker">
@@ -354,7 +426,7 @@ var Accounts = {
                 LoadingManager.hideLoading()
                 DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
             })
-    }
+    },
 }
 
 //# sourceURL=js/accounts.js

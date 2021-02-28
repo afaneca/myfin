@@ -452,7 +452,7 @@ var ImportTransactions = {
         let txt = `
                 <h4>Concluir Importação?</h4>
                 <p>Transações Importadas: ${trxCnt}</p>
-                <p>Novo saldo da conta ${accountName}: ${StringUtils.formatStringToCurrency(newBalanceCalc)}</p>
+                <p>Novo saldo da conta ${accountName}: ${StringUtils.formatMoney(newBalanceCalc)}</p>
                 `;
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
