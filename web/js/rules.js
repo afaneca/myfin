@@ -234,7 +234,7 @@ var Rules = {
                             <label>Descrição</label>
                         </div>
                         <div class="input-field col s10">
-                            <input id="value-input-description" type="text" placeholder="Texto da descrição..."
+                            <input id="value-input-description" type="text" maxlength="45" placeholder="Texto da descrição..."
                                     ${(matcher_description_value) ? 'value="' + matcher_description_value + '"' : ''}
                                    ${(!matcher_description_operator || matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''} />
                         </div>
