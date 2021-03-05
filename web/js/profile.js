@@ -75,7 +75,14 @@ var Profile = {
                             <input name="theme-group" type="radio" value="${MYFIN.APP_THEMES.DARK_BLUE}"  ${(currentTheme === MYFIN.APP_THEMES.DARK_BLUE) ? " checked " : ""} />
                             <span>Dark Blue</span>
                         </label>
-                    </p>`
+                    </p>
+                   <p>
+                        <label>
+                            <input name="theme-group" type="radio" value="${MYFIN.APP_THEMES.LIGHT}"  ${(currentTheme === MYFIN.APP_THEMES.LIGHT) ? " checked " : ""} />
+                            <span>Light</span>
+                        </label>
+                    </p>
+                   `
 
         $("#change-theme-radio-group-wrapper").html(html)
         $("#change-theme-btn").on("click", () => {

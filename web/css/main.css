@@ -157,7 +157,7 @@ a > .material-icons, td > .material-icons, div.card-quick-actions > span > .mate
 
 .card-panel {
     /*background: var(--light-grey);*/
-    background: var(--main-dark-on-dark-background);
+    background: var(--main-card-background);
 }
 
 .top-nav {
@@ -180,7 +180,7 @@ nav ul a:hover {
     width: var(--sidebar_width_percentage);
     float: left;
     margin-top: 0px;
-    background: var(--main-dark-on-dark-background);
+    background: var(--main-sidebar-background);
 }
 
 .side-nav-menu li {

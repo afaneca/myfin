@@ -144,11 +144,11 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
         }
@@ -283,11 +283,11 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
         }
@@ -464,11 +464,11 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
         }
@@ -564,11 +564,11 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
         }

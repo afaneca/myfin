@@ -114,14 +114,14 @@ var chartUtils = {
             legend: {
                 display: false,
                 labels: {
-                    fontColor: 'white'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
                 }
             },
             title: {
                 display: true,
                 text: "Overview Mensal",
                 position: "bottom",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
             },
             tooltips: {
                 callbacks: {
@@ -165,11 +165,11 @@ var chartUtils = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'white'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
                 }
             },
             tooltips: {
@@ -225,7 +225,7 @@ var chartUtils = {
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
             tooltips: {
@@ -291,11 +291,11 @@ var chartUtils = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: 'white'
+                fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
             tooltips: {

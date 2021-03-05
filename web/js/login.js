@@ -217,7 +217,7 @@ function resetSession() {
     Cookies.remove("sessionkey");
     Cookies.remove("username");
     Cookies.remove("trustlimit");
-    LocalDataManager.clearLocalData();
+    LocalDataManager.clearLocalSessionData();
 
     if (window.location.pathname.split("/").pop() != "login.html") // if we're not in the login page
         window.location = configs.defaultApp + ".html"; // redirect to login page
