@@ -259,6 +259,11 @@ nav ul a:hover {
     cursor: pointer;
 }
 
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #5a5a5a !important;
+    transition: 0.3s;
+}
+
 /* CONSTANTS */
 
 .main-blue-background-bg {

@@ -25,6 +25,8 @@ var LayoutUtils = {
                 LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.DARK_GRAY)
                 break;
             case MYFIN.APP_THEMES.LIGHT:
+                // unload dark gray theme css
+                $("link[href='" + MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY + "']").remove();
                 // load dark gray theme css
                 $('head').append('<link type="text/css" rel="stylesheet" href="' + MYFIN.APP_THEMES_CSS_PATH.LIGHT + '" id="removable-css">')
                 LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.LIGHT)

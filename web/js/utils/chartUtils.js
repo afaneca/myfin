@@ -90,7 +90,7 @@ var chartUtils = {
                 backgroundColor: [
                     gradientStroke,
                     /*'#d5d5d5',*/
-                    LayoutUtils.getCSSVariableValue('--main-dark-background')
+                    LayoutUtils.getCSSVariableValue('--main-body-background')
                     /*'#1f2029'*/
                 ],
                 borderWidth: 0,
