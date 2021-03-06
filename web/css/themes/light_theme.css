@@ -16,6 +16,12 @@
     background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px);
 }*/
 
+hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgb(115 110 110 / 0%), rgb(25 25 25 / 22%), rgb(150 142 142 / 0%));
+}
+
 a.blue-gradient-bg > i.material-icons, a.green-gradient-bg > i.material-icons, a.orange-gradient-bg > i.material-icons {
     color: white !important;
 }
