@@ -16,6 +16,10 @@
     background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px);
 }*/
 
+.datepicker-table tr {
+    border: none !important;
+}
+
 hr {
     border: 0;
     height: 1px;
