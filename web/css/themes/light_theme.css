@@ -4,12 +4,16 @@
 
     --main-light-gray-color: #dedfe0;
     --main-accent-color: var(--main-light-blue);
-    --main-body-background: var(--main-light-gray-color);
+    --main-body-background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px); /*var(--main-light-gray-color);*/
     --main-sidebar-background: white;
     --main-card-background: white;
     --main-modal-background: white;
     --main-disabled-color: var(--light-grey);
 }
+
+/*body {
+    background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px);
+}*/
 
 nav, nav ul a {
     color: rgb(0 0 0 / 70%) !important;
@@ -65,4 +69,28 @@ table.dataTable tbody tr {
 
 #side-nav-logo-img {
     content: url("../../img/logo/logo_transparent_bg_v2.png");
+}
+
+.z-depth-1, nav, .card-panel, .card, .toast, .btn, .btn-large, .btn-small, .btn-floating, .dropdown-content, .collapsible, .sidenav {
+    -webkit-box-shadow: 0 0px 0px 0 rgb(0 0 0 / 14%), 0 1px 1px -2px rgb(0 0 0 / 12%), 0 1px 4px 0 rgb(0 0 0 / 20%);
+    box-shadow: 0 0px 0px 0 rgb(0 0 0 / 14%), 0 1px 1px -2px rgb(0 0 0 / 12%), 0 1px 4px 0 rgb(0 0 0 / 20%);
+}
+
+.collapsible-header {
+    /*background: none !important;*/
+    background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px);
+}
+
+.collapsible-body {
+    /*background: none !important;*/
+    background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px);
+    border-top: none !important;
+}
+
+.dropdown-content {
+    background-color: #e6e6e6 !important;
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #dedfe0 !important;
 }
