@@ -27,6 +27,7 @@
     --main-card-background: var(--main-dark-on-dark-background);
     --main-modal-background: var(--main-dark-background);
     --main-disabled-color: var(--light-grey);
+    --main-dashboard-angular-chart-background: var(--main-body-background);
 
 }
 

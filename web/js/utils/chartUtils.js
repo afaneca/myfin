@@ -90,7 +90,7 @@ var chartUtils = {
                 backgroundColor: [
                     gradientStroke,
                     /*'#d5d5d5',*/
-                    LayoutUtils.getCSSVariableValue('--main-body-background')
+                    LayoutUtils.getCSSVariableValue('--main-dashboard-angular-chart-background')
                     /*'#1f2029'*/
                 ],
                 borderWidth: 0,

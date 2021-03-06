@@ -1,6 +1,6 @@
 :root {
-    --main-text-color: rgb(0 0 0 / 70%) !important;
-    --main-text-headline-color: rgb(0 0 0 / 70%) !important;
+    --main-text-color: rgb(0 0 0 / 90%) !important;
+    --main-text-headline-color: rgb(0 0 0 / 100%) !important;
 
     --main-light-gray-color: #dedfe0;
     --main-accent-color: var(--main-light-blue);
@@ -9,14 +9,27 @@
     --main-card-background: white;
     --main-modal-background: white;
     --main-disabled-color: var(--light-grey);
+    --main-dashboard-angular-chart-background: var(--main-light-gray-color);
 }
 
 /*body {
     background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px);
 }*/
 
+a.blue-gradient-bg > i.material-icons, a.green-gradient-bg > i.material-icons, a.orange-gradient-bg > i.material-icons {
+    color: white !important;
+}
+
+.side-nav-menu-active > i.material-icons {
+    color: white !important;
+}
+
+.material-icons.no-accent-color {
+    color: white !important;
+}
+
 nav, nav ul a {
-    color: rgb(0 0 0 / 70%) !important;
+    color: rgb(0 0 0 / 90%) !important;
 }
 
 .side-nav-menu-active {
@@ -61,6 +74,10 @@ table.dataTable tbody tr {
 
 .monthpicker_input {
     color: #4c4c4c;
+}
+
+.select2-dropdown {
+    background-color: #e6e6e6;
 }
 
 #side-nav-logo-img {
