@@ -151,6 +151,18 @@ var Stats = {
                     fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {
@@ -290,6 +302,18 @@ var Stats = {
                     fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {
@@ -471,6 +495,18 @@ var Stats = {
                     fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {
@@ -571,6 +607,18 @@ var Stats = {
                     fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {

@@ -28,8 +28,8 @@ var Dashboard = {
         if (!budgetedAmount) budgetedAmount = 0
         if (!realAmount) realAmount = 0
 
-        $("#chart-monthly-overview-real-amount").text(StringUtils.formatStringToCurrency(Math.abs(realAmount)))
-        $("#chart-monthly-overview-budgeted-amount").text(StringUtils.formatStringToCurrency(Math.abs(budgetedAmount)))
+        $("#chart-monthly-overview-real-amount").text(StringUtils.formatMoney(Math.abs(realAmount)))
+        $("#chart-monthly-overview-budgeted-amount").text(StringUtils.formatMoney(Math.abs(budgetedAmount)))
 
         let maxValue = Math.abs(budgetedAmount) - Math.abs(realAmount)
         if (maxValue < 0) maxValue = 0

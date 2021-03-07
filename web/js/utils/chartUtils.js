@@ -129,7 +129,7 @@ var chartUtils = {
                         return data['labels'][tooltipItem[0]['index']];
                     },
                     label: (tooltipItem, data) => {
-                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
                     },
                     afterLabel: (tooltipItem, data) => {
                         var dataset = data['datasets'][0]
@@ -178,7 +178,7 @@ var chartUtils = {
                         return data['labels'][tooltipItem[0]['index']];
                     },
                     label: (tooltipItem, data) => {
-                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
                     },
                     afterLabel: (tooltipItem, data) => {
                         var dataset = data['datasets'][0]
@@ -234,7 +234,7 @@ var chartUtils = {
                         return data['labels'][tooltipItem[0]['index']];
                     },
                     label: (tooltipItem, data) => {
-                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
                     },
                     afterLabel: (tooltipItem, data) => {
                         var dataset = data['datasets'][0]
@@ -304,7 +304,7 @@ var chartUtils = {
                         return data['labels'][tooltipItem[0]['index']];
                     },
                     label: (tooltipItem, data) => {
-                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
                     },
                     afterLabel: (tooltipItem, data) => {
                         var dataset = data['datasets'][0]

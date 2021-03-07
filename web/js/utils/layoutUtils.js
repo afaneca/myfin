@@ -20,8 +20,10 @@ var LayoutUtils = {
                 break;
             case MYFIN.APP_THEMES.DARK_GRAY:
             default:
+                // unload light theme css
+                $("link[href='" + MYFIN.APP_THEMES_CSS_PATH.LIGHT + "']").remove()
                 // load dark gray theme css
-                $('head').append('<link type="text/css" rel="stylesheet" href="' + MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY + '" id="bremovable-css">')
+                $('head').append('<link type="text/css" rel="stylesheet" href="' + MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY + '" id="removable-css">')
                 LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.DARK_GRAY)
                 break;
             case MYFIN.APP_THEMES.LIGHT:
