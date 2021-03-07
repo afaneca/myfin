@@ -27,6 +27,7 @@
     --main-card-background: var(--main-dark-on-dark-background);
     --main-modal-background: var(--main-dark-background);
     --main-disabled-color: var(--light-grey);
+    --main-dashboard-angular-chart-background: var(--main-body-background);
 
 }
 
@@ -157,7 +158,7 @@ a > .material-icons, td > .material-icons, div.card-quick-actions > span > .mate
 
 .card-panel {
     /*background: var(--light-grey);*/
-    background: var(--main-dark-on-dark-background);
+    background: var(--main-card-background);
 }
 
 .top-nav {
@@ -180,7 +181,7 @@ nav ul a:hover {
     width: var(--sidebar_width_percentage);
     float: left;
     margin-top: 0px;
-    background: var(--main-dark-on-dark-background);
+    background: var(--main-sidebar-background);
 }
 
 .side-nav-menu li {
@@ -257,6 +258,11 @@ nav ul a:hover {
 
 .table-action-icons {
     cursor: pointer;
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #5a5a5a !important;
+    transition: 0.3s;
 }
 
 /* CONSTANTS */

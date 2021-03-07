@@ -144,13 +144,25 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {
@@ -283,13 +295,25 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {
@@ -464,13 +488,25 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {
@@ -564,13 +600,25 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {

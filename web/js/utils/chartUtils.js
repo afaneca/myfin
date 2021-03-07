@@ -90,7 +90,7 @@ var chartUtils = {
                 backgroundColor: [
                     gradientStroke,
                     /*'#d5d5d5',*/
-                    LayoutUtils.getCSSVariableValue('--main-dark-background')
+                    LayoutUtils.getCSSVariableValue('--main-dashboard-angular-chart-background')
                     /*'#1f2029'*/
                 ],
                 borderWidth: 0,
@@ -114,14 +114,14 @@ var chartUtils = {
             legend: {
                 display: false,
                 labels: {
-                    fontColor: 'white'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
                 }
             },
             title: {
                 display: true,
                 text: "Overview Mensal",
                 position: "bottom",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
             },
             tooltips: {
                 callbacks: {
@@ -129,7 +129,7 @@ var chartUtils = {
                         return data['labels'][tooltipItem[0]['index']];
                     },
                     label: (tooltipItem, data) => {
-                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
                     },
                     afterLabel: (tooltipItem, data) => {
                         var dataset = data['datasets'][0]
@@ -165,11 +165,11 @@ var chartUtils = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'white'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
                 }
             },
             tooltips: {
@@ -178,7 +178,7 @@ var chartUtils = {
                         return data['labels'][tooltipItem[0]['index']];
                     },
                     label: (tooltipItem, data) => {
-                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
                     },
                     afterLabel: (tooltipItem, data) => {
                         var dataset = data['datasets'][0]
@@ -225,7 +225,7 @@ var chartUtils = {
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
             tooltips: {
@@ -234,7 +234,7 @@ var chartUtils = {
                         return data['labels'][tooltipItem[0]['index']];
                     },
                     label: (tooltipItem, data) => {
-                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
                     },
                     afterLabel: (tooltipItem, data) => {
                         var dataset = data['datasets'][0]
@@ -291,11 +291,11 @@ var chartUtils = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: 'white'
+                fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
             tooltips: {
@@ -304,7 +304,7 @@ var chartUtils = {
                         return data['labels'][tooltipItem[0]['index']];
                     },
                     label: (tooltipItem, data) => {
-                        return StringUtils.formatStringToCurrency(data['datasets'][0]['data'][tooltipItem['index']])
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
                     },
                     afterLabel: (tooltipItem, data) => {
                         var dataset = data['datasets'][0]

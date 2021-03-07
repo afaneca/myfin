@@ -1,9 +1,9 @@
 "use strict";
 
 var Transactions = {
-    getTransactions: () => {
+    getTransactions: (fetchLimit = MYFIN.TRX_FETCH_LIMIT) => {
         LoadingManager.showLoading()
-        TransactionServices.getAllTransactions(
+        TransactionServices.getAllTransactions(fetchLimit,
             (response) => {
                 // SUCCESS
                 LoadingManager.hideLoading();
@@ -16,7 +16,8 @@ var Transactions = {
             })
     },
     initTables: (dataset) => {
-        $("#table-transactions-wrapper").html(Transactions.renderTable(dataset))
+        $("#table-transactions-wrapper").html(Transactions.renderTable(dataset)
+            + `<p class="right-align grey-text text-accent-4 projections-table-footnotes" style="font-size: small">* Por defeito, esta pesquisa apenas devolve as últimas ${MYFIN.TRX_FETCH_LIMIT} transações.<br><a onclick="Transactions.getTransactions(999999999999999)" style="cursor:pointer;">Clique aqui para recuperar a lista completa.</a></p>`)
         tableUtils.setupStaticTable("#transactions-table");
         LoadingManager.hideLoading()
     },

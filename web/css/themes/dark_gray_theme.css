@@ -16,6 +16,10 @@ table.dataTable thead th, table.dataTable thead td {
     border-bottom: 1px solid white; /*var(--main-light-green);*/
 }
 
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #5a5a5a !important;
+}
+
 /*
 .select2-container--default .select2-selection--single {
     background-color: var(--main-dark-background);
@@ -53,7 +57,6 @@ nav ul a:hover {
 .highlighted-budget-item {
     border-bottom: 2px solid rgb(55 60 63);
 }
-
 
 
 .collapsible-body {

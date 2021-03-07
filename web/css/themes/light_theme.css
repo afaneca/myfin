@@ -1,0 +1,123 @@
+:root {
+    --main-text-color: rgb(0 0 0 / 90%) !important;
+    --main-text-headline-color: rgb(0 0 0 / 100%) !important;
+
+    --main-light-gray-color: #dedfe0;
+    --main-accent-color: var(--main-light-blue);
+    --main-body-background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px); /*var(--main-light-gray-color);*/
+    --main-sidebar-background: white;
+    --main-card-background: white;
+    --main-modal-background: white;
+    --main-disabled-color: var(--light-grey);
+    --main-dashboard-angular-chart-background: var(--main-light-gray-color);
+}
+
+/*body {
+    background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px);
+}*/
+
+.datepicker-table tr {
+    border: none !important;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgb(115 110 110 / 0%), rgb(25 25 25 / 22%), rgb(150 142 142 / 0%));
+}
+
+a.blue-gradient-bg > i.material-icons, a.green-gradient-bg > i.material-icons, a.orange-gradient-bg > i.material-icons {
+    color: white !important;
+}
+
+.side-nav-menu-active > i.material-icons {
+    color: white !important;
+}
+
+.material-icons.no-accent-color {
+    color: white !important;
+}
+
+nav, nav ul a {
+    color: rgb(0 0 0 / 90%) !important;
+}
+
+.side-nav-menu-active {
+    color: white !important;
+}
+
+table.dataTable.display tbody tr.odd {
+    background-color: var(--main-body-background);
+}
+
+table.dataTable.display tbody tr.even {
+    background-color: var(--main-card-background);
+}
+
+tr {
+    border-bottom: 1px solid #a6a6b1 !important;
+}
+
+table.dataTable tbody tr {
+    background-color: #ffffff !important;
+}
+
+.select2-container--default .select2-selection--single {
+    background-color: #e6e6e6 !important;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color: #f7f7f7 !important;
+}
+
+.select2-container--default .select2-results__group {
+    background: #bbb9b9 !important;
+}
+
+#modded .progress span {
+    color: #4c4c4c;
+}
+
+#modded .progress {
+    background: #dedfe0 !important;
+}
+
+.monthpicker_input {
+    color: #4c4c4c;
+}
+
+.select2-dropdown {
+    background-color: #e6e6e6;
+}
+
+#side-nav-logo-img {
+    content: url("../../img/logo/logo_transparent_bg_v2.png");
+}
+
+.z-depth-1, nav, .card-panel, .card, .toast, .btn, .btn-large, .btn-small, .btn-floating, .dropdown-content, .collapsible, .sidenav {
+    -webkit-box-shadow: 0 0px 0px 0 rgb(0 0 0 / 14%), 0 1px 1px -2px rgb(0 0 0 / 12%), 0 1px 4px 0 rgb(0 0 0 / 20%);
+    box-shadow: 0 0px 0px 0 rgb(0 0 0 / 14%), 0 1px 1px -2px rgb(0 0 0 / 12%), 0 1px 4px 0 rgb(0 0 0 / 20%);
+}
+
+.list-item {
+    background-color: #f5f5f57d;
+}
+
+.collapsible-header {
+    /*background: none !important;*/
+    background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px);
+}
+
+.collapsible-body {
+    /*background: none !important;*/
+    background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px);
+    border-top: none !important;
+}
+
+.dropdown-content {
+    background-color: #e6e6e6 !important;
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #dedfe0 !important;
+}

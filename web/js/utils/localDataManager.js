@@ -18,6 +18,9 @@ var LocalDataManager = {
     clearLocalData: () => {
         return window.localStorage.clear()
     },
+    clearLocalSessionData: () => {
+      window.localStorage.removeItem(USER_ACCOUNTS_TAG)
+    },
 
     // ACCOUNTS DATA
     getUserAccounts: () => {

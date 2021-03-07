@@ -57,7 +57,7 @@ var Budgets = {
         return `
             <tr data-id='${budget.budget_id}' class="${(budget.month == currentMonth && budget.year == currentYear) ? 'highlighted-budget-item' : ''}">
                 <td>${budget.month}/${budget.year}</td>
-                <td>${budget.observations}</td>
+                <td style="cursor: pointer;" onclick="Budgets.goToBudget(${budget.budget_id}, ${budget.is_open})">${budget.observations}</td>
                 <td>${StringUtils.formatStringToCurrency(budget.debit_amount)}</td>
                 <td>${StringUtils.formatStringToCurrency(budget.credit_amount)}</td>
                 <td>${Budgets.buildBudgetBalanceRow(budget.balance_value, budget.balance_change_percentage, (budget.month == currentMonth && budget.year == currentYear))}</td>
