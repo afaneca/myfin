@@ -40,14 +40,10 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             /* if (isset($status))
                 switch ($status) {
@@ -92,7 +88,7 @@ class Budgets
                 $budget["debit_amount"] = $budgetSums["balance_debit"];
             }
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $budgetsArr);
         } catch (BadInputValidationException $e) {
@@ -121,14 +117,11 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
             $budgetsArr = BudgetModel::getWhere(["users_user_id" => $userID], ["month", "year", "budget_id"]);
 
             // orders the list DESC by year, then month
@@ -139,7 +132,7 @@ class Budgets
             });
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $budgetsArr);
         } catch (BadInputValidationException $e) {
@@ -170,14 +163,11 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
 
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
 
             $list = BudgetModel::getWhere(["users_user_id" => $userID, "budget_id" => $budgetID], ["observations", "month", "year"])[0];
@@ -195,11 +185,7 @@ class Budgets
                 // TODO: map 'D' & 'C' in categories to 'I' & 'E'
                 $type = ($category["type"] == 'D') ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
 
-                /* echo $monthToUse . "\n";
-                 echo $yearToUser . "\n";
-                 echo $type . "\n";
-                 die();*/
-                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser, true)[0];
                 $current_amount_credit = $calculatedAmounts["category_balance_credit"];
                 $current_amount_debit = $calculatedAmounts["category_balance_debit"];
                 $category["current_amount_credit"] = abs(Input::convertIntegerToFloat($current_amount_credit));
@@ -217,7 +203,7 @@ class Budgets
             ]);*/
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $list);
         } catch (BadInputValidationException $e) {
@@ -295,14 +281,10 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             // ADD BUDGET
             $budgetID = BudgetModel::insert([
@@ -311,7 +293,7 @@ class Budgets
                 "observations" => $observations,
                 "is_open" => true,
                 "users_user_id" => $userID
-            ]);
+            ], true);
 
 
             // ADD CAT VALUES TO BUDGET CATEGORIES
@@ -321,10 +303,10 @@ class Budgets
                 $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
                 $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
 
-                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit);
+                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit, true);
             }
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, ["budget_id" => $budgetID]);
         } catch (BadInputValidationException $e) {
@@ -355,12 +337,14 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
+            $userID = UserModel::getUserIdByName($authusername, true);
 
-            BudgetHasCategoriesModel::delete(["budgets_budget_id" => $budgetID, "budgets_users_user_id" => $userID]);
-            BudgetModel::delete(["budget_id" => $budgetID, "users_user_id" => $userID]);
+            BudgetHasCategoriesModel::delete(["budgets_budget_id" => $budgetID, "budgets_users_user_id" => $userID], true);
+            BudgetModel::delete(["budget_id" => $budgetID, "users_user_id" => $userID], true);
 
-
+            $db->getDB()->commit();
             return sendResponse($response, EnsoShared::$REST_OK, "Budget successfully removed.");
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
@@ -394,14 +378,10 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             // EDIT BUDGET
             BudgetModel::editWhere(
@@ -411,7 +391,7 @@ class Budgets
                     "year" => $year,
                     "observations" => $observations,
                     "users_user_id" => $userID
-                ]
+                ], true
             );
 
 
@@ -429,10 +409,10 @@ class Budgets
                 $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
                 $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
 
-                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit);
+                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit, true);
             }
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Budget successfully updated!");
         } catch (BadInputValidationException $e) {
@@ -465,24 +445,20 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             // ADD BUDGET
             BudgetModel::editWhere(
                 ["budget_id" => $budgetID],
                 [
                     "is_open" => $isOpen
-                ]
+                ], true
             );
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Budget successfully updated!");
         } catch (BadInputValidationException $e) {
