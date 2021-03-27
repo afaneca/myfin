@@ -33,23 +33,12 @@ class Transactions
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
-
-            /* echo "1";
-            die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
-
-            /* $accsArr = AccountModel::getWhere(
-            ["users_user_id" => $userID],
-            ["account_id", "name", "type", "description"]
-
-            ); */
-
-            $trxArr = TransactionModel::getAllTransactionsForUser($userID, $trxLimit, false);
-
-            /* $db->getDB()->commit(); */
+            $userID = UserModel::getUserIdByName($authusername, true);
+            $trxArr = TransactionModel::getAllTransactionsForUser($userID, $trxLimit, true);
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $trxArr);
         } catch (BadInputValidationException $e) {
@@ -90,23 +79,13 @@ class Transactions
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
+            $userID = UserModel::getUserIdByName($authusername, true);
+            $trxArr = TransactionModel::getAllTransactionsForUserInMonthAndCategory($userID, $month, $year, $catID, $type, true);
 
-            /* echo "1";
-            die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
-
-            /* $accsArr = AccountModel::getWhere(
-            ["users_user_id" => $userID],
-            ["account_id", "name", "type", "description"]
-
-            ); */
-
-            $trxArr = TransactionModel::getAllTransactionsForUserInMonthAndCategory($userID, $month, $year, $catID, $type, false);
-
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $trxArr);
         } catch (BadInputValidationException $e) {
@@ -137,11 +116,10 @@ class Transactions
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             $outgoingArr = array();
             $outgoingArr['entities'] = array();
@@ -172,7 +150,7 @@ class Transactions
             $outgoingArr['accounts'] = AccountModel::getWhere(["users_user_id" => $userID, "status" => DEFAULT_ACCOUNT_ACTIVE_STATUS], ["account_id", "name", "type"]);
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $outgoingArr);
         } catch (BadInputValidationException $e) {
@@ -241,19 +219,9 @@ class Transactions
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
-
-            /* echo "1";
-            die(); */
-            //$userID = UserModel::getUserIdByName($authusername, false);
-
-            /* $accsArr = AccountModel::getWhere(
-            ["users_user_id" => $userID],
-            ["account_id", "name", "type", "description"]
-
-            ); */
 
             TransactionModel::insert([
                 "date_timestamp" => $date_timestamp,
@@ -264,29 +232,29 @@ class Transactions
                 "accounts_account_from_id" => $accountFrom,
                 "accounts_account_to_id" => $accountTo,
                 "categories_category_id" => $categoryID
-            ]);
+            ], true);
 
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
-                    AccountModel::changeBalance($userID, $accountTo, $amount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $accountTo, $amount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    AccountModel::changeBalance($userID, $accountFrom, -$amount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($userID, $accountFrom, -$amount, false);
-                    AccountModel::changeBalance($userID, $accountTo, $amount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
+                    AccountModel::changeBalance($userID, $accountTo, $amount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true);
                     break;
             }
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Transaction added successfully!");
         } catch (BadInputValidationException $e) {
@@ -318,13 +286,10 @@ class Transactions
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
-
-            /* echo "1";
-            die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
 
             $trxObj = TransactionModel::getWhere(
@@ -346,29 +311,29 @@ class Transactions
 
             TransactionModel::delete([
                 "transaction_id" => $trxID
-            ]);
+            ], true);
 
             // Remove the effect of $oldAmount
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, false);
-                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, true);
+                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true);
                     break;
             }
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Transaction Removed!");
         } catch (BadInputValidationException $e) {
@@ -486,20 +451,10 @@ class Transactions
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
-
-            /* echo "1";
-            die(); */
-            //$userID = UserModel::getUserIdByName($authusername, false);
-
-            /* $accsArr = AccountModel::getWhere(
-            ["users_user_id" => $userID],
-            ["account_id", "name", "type", "description"]
-
-            ); */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             $trxObj = TransactionModel::getWhere(
                 [
@@ -529,23 +484,23 @@ class Transactions
                 "accounts_account_from_id" => $accountFrom,
                 "accounts_account_to_id" => $accountTo,
                 "categories_category_id" => $categoryID
-            ]);
+            ], true);
 
             // Remove the effect of $oldAmount
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, true);
                     //AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, false);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, true);
                     //AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, false);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, false);
-                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, false);
+                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, true);
+                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, true);
                     /*AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, false);
                     AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, false);*/
                     break;
@@ -555,19 +510,19 @@ class Transactions
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($userID, $accountTo, $amount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $accountTo, $amount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($userID, $accountFrom, -$amount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($userID, $accountFrom, -$amount, false);
-                    AccountModel::changeBalance($userID, $accountTo, +$amount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
+                    AccountModel::changeBalance($userID, $accountTo, +$amount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
                     break;
             }
 
@@ -581,29 +536,29 @@ class Transactions
                     "accounts_account_from_id" => $split_accountFromID,
                     "accounts_account_to_id" => $split_accountToID,
                     "categories_category_id" => $split_cat_id
-                ]);
+                ], true);
             }
 
             switch ($split_type) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($userID, $split_accountToID, $split_amount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $split_accountToID, $split_amount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($userID, $accountFrom, -$split_amount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $accountFrom, -$split_amount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($userID, $split_accountFromID, -$split_amount, false);
-                    AccountModel::changeBalance($userID, $split_accountToID, +$split_amount, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, false);
+                    AccountModel::changeBalance($userID, $split_accountFromID, -$split_amount, true);
+                    AccountModel::changeBalance($userID, $split_accountToID, +$split_amount, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
+                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
                     break;
             }
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Transaction updated successfully!");
         } catch (BadInputValidationException $e) {
@@ -633,12 +588,13 @@ class Transactions
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
             }
 
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
-            //$outgoingArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
-            $outgoingArr = AccountModel::getAllAccountsForUserWithAmounts($userID, true);
-            /* $db->getDB()->commit(); */
+            $outgoingArr = AccountModel::getAllAccountsForUserWithAmounts($userID, true, true);
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $outgoingArr);
         } catch (BadInputValidationException $e) {
@@ -677,8 +633,10 @@ class Transactions
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
             }
 
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
 
             $outgoingArr = [];
@@ -692,7 +650,7 @@ class Transactions
             foreach ($trxList as $trx) {
                 $trx["accounts_account_from_id"] = ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? null : $accountID;
                 $trx["accounts_account_to_id"] = ($trx["type"] != DEFAULT_TYPE_INCOME_TAG) ? null : $accountID;
-                $foundRule = RuleModel::getRuleForTransaction($userID, $trx);
+                $foundRule = RuleModel::getRuleForTransaction($userID, $trx, true);
                 /*print_r($foundRule);
                 die();*/
                 $outgoingArr["fillData"][] = [
@@ -721,7 +679,7 @@ class Transactions
             $outgoingArr["entities"] = EntityModel::getWhere(["users_user_id" => $userID], ["entity_id", "name"]);
             $outgoingArr["accounts"] = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
 
-            /* $db->getDB()->commit(); */
+             $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $outgoingArr);
         } catch (BadInputValidationException $e) {
@@ -756,8 +714,10 @@ class Transactions
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
             }
 
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
             $importedTrxsCnt = 0;
 
             foreach ($trxList as $trx) {
@@ -784,29 +744,29 @@ class Transactions
                     "accounts_account_from_id" => $accountFrom,
                     "accounts_account_to_id" => $accountTo,
                     "categories_category_id" => $categoryID
-                ]);
+                ], true);
 
 
                 switch ($type) {
                     case DEFAULT_TYPE_INCOME_TAG:
                         AccountModel::changeBalance($userID, $accountTo, $amount, true);
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, false);
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true);
                         break;
                     case DEFAULT_TYPE_EXPENSE_TAG:
                         AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, false);
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true);
                         break;
                     case DEFAULT_TYPE_TRANSFER_TAG:
                         AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
                         AccountModel::changeBalance($userID, $accountTo, $amount, true);
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, false);
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, false);
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true);
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true);
                         break;
                 }
             }
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "$importedTrxsCnt transactions successfully imported!");
         } catch (BadInputValidationException $e) {
