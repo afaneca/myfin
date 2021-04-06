@@ -15,6 +15,7 @@ var Rules = {
                 // SUCCESS
                 LoadingManager.hideLoading()
                 accountsList1 = resp.accounts
+                LocalDataManager.setUserAccounts(accountsList1)
                 entitiesList1 = resp.entities
                 categoriesList1 = resp.categories
                 Rules.initRulesTable(resp.rules)

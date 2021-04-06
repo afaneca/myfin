@@ -27,23 +27,15 @@ class Accounts
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
 
-            /* echo "1";
-            die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
-            /* $accsArr = AccountModel::getWhere(
-            ["users_user_id" => $userID],
-            ["account_id", "name", "type", "description"]
+            $accsArr = AccountModel::getAllAccountsForUserWithAmounts($userID, false, true);
 
-            ); */
-
-            $accsArr = AccountModel::getAllAccountsForUserWithAmounts($userID);
-
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $accsArr);
         } catch (BadInputValidationException $e) {
@@ -92,13 +84,11 @@ class Accounts
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
 
-            /* echo "1";
-            die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             $accountID = AccountModel::insert([
                 "name" => $name,
@@ -110,14 +100,14 @@ class Accounts
                 "current_balance" => $currentBalance,
                 "created_timestamp" => time(),
                 "color_gradient" => $colorGradient,
-            ], false);
+            ], true);
 
 
             $currentMonth = date("n");
             $currentYear = date("Y");
 
 
-            AccountModel::addBalanceSnapshot($accountID, $currentMonth, $currentYear, false);
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth, $currentYear, true);
             if ($currentMonth < 12) {
                 $currentMonth2 = $currentMonth + 1;
                 $currentYear2 = $currentYear;
@@ -125,17 +115,8 @@ class Accounts
                 $currentYear2 = $currentYear + 1;
                 $currentMonth2 = 1;
             }
-            AccountModel::addBalanceSnapshot($accountID, $currentMonth2, $currentYear2, false);
-
-            /*  BalanceModel::insert(
-                  [
-                      "date_timestamp" => time(),
-                      "amount" => $currentBalance,
-                      "accounts_account_id" => intval($accountID)
-                  ],
-                  false
-              );*/
-            /* $db->getDB()->commit(); */
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth2, $currentYear2, true);
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "New account added!");
         } catch (BadInputValidationException $e) {
@@ -169,13 +150,10 @@ class Accounts
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
-
-            /* echo "1";
-            die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             TransactionModel::delete([
                 "accounts_account_from_id" => $accountID
@@ -185,18 +163,14 @@ class Accounts
                 "accounts_account_to_id" => $accountID
             ]);
 
-            /*BalanceModel::delete([
-                "accounts_account_id" => $accountID
-            ], false);*/
-
-            AccountModel::removeBalanceSnapshotsForAccount($accountID, false);
+            AccountModel::removeBalanceSnapshotsForAccount($accountID, true);
 
             AccountModel::delete([
                 "account_id" => $accountID,
                 "users_user_id" => $userID,
-            ], false);
+            ], true);
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Account Removed!");
         } catch (BadInputValidationException $e) {
@@ -245,14 +219,9 @@ class Accounts
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-                false
-            );
-            $db->getDB()->beginTransaction(); */
-
-            /* echo "1";
-            die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
 
             AccountModel::editWhere(
@@ -270,13 +239,13 @@ class Accounts
                     "updated_timestamp" => time(),
                     "color_gradient" => $colorGradient,
                 ],
-                false
+                true
             );
 
             $currentMonth = date("n");
             $currentYear = date("Y");
 
-            AccountModel::addBalanceSnapshot($accountID, $currentMonth, $currentYear, false);
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth, $currentYear, true);
             if ($currentMonth < 12) {
                 $currentMonth2 = $currentMonth + 1;
                 $currentYear2 = $currentYear;
@@ -284,7 +253,7 @@ class Accounts
                 $currentYear2 = $currentYear + 1;
                 $currentMonth2 = 1;
             }
-            AccountModel::addBalanceSnapshot($accountID, $currentMonth2, $currentYear2, false);
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth2, $currentYear2, true);
 
             if ($currentMonth < 12) {
                 $currentMonth3 = $currentMonth2 + 1;
@@ -293,15 +262,9 @@ class Accounts
                 $currentYear3 = $currentYear2 + 1;
                 $currentMonth3 = 1;
             }
-            AccountModel::addBalanceSnapshot($accountID, $currentMonth3, $currentYear3, false);
+            AccountModel::addBalanceSnapshot($accountID, $currentMonth3, $currentYear3, true);
 
-            /*BalanceModel::insert([
-                "accounts_account_id" => $accountID,
-                "date_timestamp" => time(),
-                "amount" => $currentBalance
-            ]);*/
-
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Account Updated!");
         } catch (BadInputValidationException $e) {
@@ -334,20 +297,14 @@ class Accounts
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-                false
-            );
-            $db->getDB()->beginTransaction(); */
+            $userID = UserModel::getUserIdByName($authusername, true);
 
-            /* echo "1";
-            die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $outArr = AccountModel::getBalancesSnapshotForUser($userID, true);
 
-            $outArr = AccountModel::getBalancesSnapshotForUser($userID, false);
-            /* $db->getDB()->commit(); */
-
-
+            $db->getDB()->commit();
             return sendResponse($response, EnsoShared::$REST_OK, $outArr);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());

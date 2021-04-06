@@ -32,7 +32,7 @@ var ImportTransactions = {
                 ImportTransactionsServices.doImportTransactionsStep0(
                     (resp) => {
                         // SUCCESS
-                        LocalDataManager.setUserAccounts(resp)
+                        //LocalDataManager.setUserAccounts(resp)
                         ImportTransactions.renderAccountSelect(resp)
                         $("#continue_import_btn").removeAttr('disabled')
                     }, (err) => {
