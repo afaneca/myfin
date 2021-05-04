@@ -18,6 +18,10 @@ var MYFIN = {
         ACTIVE: "Ativa",
         INACTIVE: "Inativa"
     },
+    TRX_TYPE_LABEL: {
+        DEBIT: "Débito",
+        CREDIT: "Crédito"
+    },
     RULES_OPERATOR: {
         DEFAULT_RULES_OPERATOR_IGNORE: "IG",
         DEFAULT_RULES_OPERATOR_EQUALS: "EQ",
