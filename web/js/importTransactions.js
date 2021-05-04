@@ -17,6 +17,7 @@ const FIELD_MAPPING = {
     AMOUNT: 'amount',
     CREDIT: 'credit',
     DEBIT: 'debit',
+    TYPE: 'type'
 }
 
 var ImportTransactions = {
@@ -94,6 +95,7 @@ var ImportTransactions = {
                         <option value="${column}_${FIELD_MAPPING.AMOUNT}">Montante</option>
                         <option value="${column}_${FIELD_MAPPING.CREDIT}">Crédito</option>
                         <option value="${column}_${FIELD_MAPPING.DEBIT}">Débito</option>
+                        <option value="${column}_${FIELD_MAPPING.TYPE}">Tipo</option>
                     </select>
                 </th>
             `)
@@ -135,11 +137,12 @@ var ImportTransactions = {
         let amountColumn;
         let creditColumn;
         let debitColumn;
+        let typeColumn;
 
 
         /**
          * There must be ONE column for each of the following
-         * fields: DATE, DESCRIPTION & AMOUNT (or CREDIT/DEBIT)
+         * fields: DATE, DESCRIPTION & AMOUNT (or CREDIT/DEBIT or TYPE & AMOUNT)
          */
 
         selects.each(function () {
@@ -194,12 +197,21 @@ var ImportTransactions = {
                         return;
                     }
                     break;
-
+                case FIELD_MAPPING.TYPE:
+                    if (!typeColumn)
+                        typeColumn = currentColumn
+                    else {
+                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
+                        IMPORT_STEP--
+                        return;
+                    }
+                    break;
             }
         })
 
 
-        if (!dateColumn || !descriptionColumn || (!amountColumn && !creditColumn && !debitColumn)) {
+        if (!dateColumn || !descriptionColumn || (!amountColumn && !creditColumn && !debitColumn && !typeColumn)
+            || (typeColumn && !amountColumn)) {
             DialogUtils.showErrorMessage("Por favor, selecione todos os campos necessários!")
             IMPORT_STEP--
             return;
@@ -210,9 +222,9 @@ var ImportTransactions = {
             return;
         }
         trxAccountSelector.attr('disabled', 'disabled')
-        ImportTransactions.consolidateStep0Data(dateColumn, descriptionColumn, amountColumn, creditColumn, debitColumn)
+        ImportTransactions.consolidateStep0Data(dateColumn, descriptionColumn, amountColumn, creditColumn, debitColumn, typeColumn)
     },
-    consolidateStep0Data: (dateColumn, descriptionColumn, amountColumn, creditColumn, debitColumn) => {
+    consolidateStep0Data: (dateColumn, descriptionColumn, amountColumn, creditColumn, debitColumn, typeColumn) => {
         let trx = {
             date: undefined,
             description: undefined,
@@ -223,7 +235,7 @@ var ImportTransactions = {
 
         importedObjData.data.forEach((row) => {
             let new_trx = Object.assign({}, trx)
-            let amountAndTypeInferred = ImportTransactions.inferTrxAmountAndType(row, amountColumn, creditColumn, debitColumn)
+            let amountAndTypeInferred = ImportTransactions.inferTrxAmountAndType(row, amountColumn, creditColumn, debitColumn, typeColumn)
 
             new_trx.date = DateUtils.convertDateToUnixTimestamp(row[dateColumn])
             new_trx.description = row[descriptionColumn]
@@ -236,21 +248,31 @@ var ImportTransactions = {
 
         ImportTransactions.doImportTransactionsStep1(trxList)
     },
-    inferTrxAmountAndType: (row, amountColumn, creditColumn, debitColumn) => {
+    inferTrxAmountAndType: (row, amountColumn, creditColumn, debitColumn, typeColumn) => {
         let amount
         let type
 
-        if (amountColumn) {
+        if (amountColumn && !typeColumn) {
             amount = StringUtils.convertStringToFloat(row[amountColumn])
             type = (amount > 0) ? MYFIN.TRX_TYPES.INCOME : MYFIN.TRX_TYPES.EXPENSE
-        } else if (creditColumn) {
+        } else if (creditColumn && !typeColumn) {
             amount = StringUtils.convertStringToFloat(row[creditColumn])
             type = MYFIN.TRX_TYPES.INCOME
         }
 
-        if (!amount && debitColumn) {
+        if (!amount && debitColumn && !typeColumn) {
             amount = StringUtils.convertStringToFloat(row[debitColumn])
             type = MYFIN.TRX_TYPES.EXPENSE
+        } else if (!amount && amountColumn && typeColumn) {
+            amount = StringUtils.convertStringToFloat(row[amountColumn])
+            switch (row[typeColumn]) {
+                case MYFIN.TRX_TYPE_LABEL.DEBIT:
+                    type = MYFIN.TRX_TYPES.EXPENSE
+                    break;
+                case MYFIN.TRX_TYPE_LABEL.CREDIT:
+                    type = MYFIN.TRX_TYPES.INCOME
+                    break;
+            }
         }
 
         return {amount: Math.abs(amount), type: type}
