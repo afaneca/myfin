@@ -363,14 +363,61 @@ var Stats = {
       `
     },
     transformList: list => {
+        let cLabels = []
+        let cAggData = []
+        let accsList = []
+        let extraChartData = []
+
+        accsList = LocalDataManager.getUserAccounts()
+
+        for (const elem of list) {
+            const genKey = `${elem.month}/${elem.year}`
+            cLabels.push(genKey)
+
+            for (const acc of elem.account_snapshots) {
+                let fullAccount = accsList.filter((ac) => {
+                    return ac.account_id == acc.account_id
+                })[0]
+                let extraDataObj = extraChartData.filter(e => e.account_id == acc.account_id)[0]
+                if (!extraDataObj) {
+                    // record doesn't exist
+                    extraChartData.push(
+                        {
+                            account_id: acc.account_id,
+                            data: [acc.balance],
+                            label: fullAccount.name,
+                            borderColor: chartUtils.getPieChartColorsList()[0],
+                            fill: true,
+                            hidden: true,
+                        },
+                    )
+                } else {
+                    // record exists already. Just update its data
+                    extraDataObj.data.push(acc.balance)
+                }
+
+            }
+
+            let aggregateBalance = elem.account_snapshots.reduce((acc, item) => {
+                return acc + StringUtils.convertFloatToInteger(item.balance)
+            }, 0)
+            cAggData.push(StringUtils.convertIntegerToFloat(aggregateBalance))
+        }
+
+        Stats.setupPatrimonyLineChart(cAggData, cLabels, extraChartData)
+        Stats.setupPatrimonyTable(cAggData.slice().reverse(), cLabels.slice().reverse())
+        tableUtils.setupStaticTable("#ev-pat-table")
+
+    },
+    /*transformList: list => {
         let tempList = []
         let cLabels = []
         let cData = []
         let accsList = []
         let extraChartData = []
-        /**
+        /!**
          * [account_id] = { }
-         */
+         *!/
         accsList = LocalDataManager.getUserAccounts()
 
 
@@ -431,10 +478,11 @@ var Stats = {
         }
 
         //chartUtils.setupSimpleLineChart("chart_pie_patrimony_evolution", cData, cLabels, "asdfsa")
+        debugger
         Stats.setupPatrimonyLineChart(cData["sum"], cLabels, extraChartData)
         Stats.setupPatrimonyTable(cData["sum"].slice().reverse(), cLabels.slice().reverse())
         tableUtils.setupStaticTable("#ev-pat-table")
-    },
+    },*/
     setupPatrimonyTable: (sumArr, sumLabels) => {
         $("#patrimony-table").html(Stats.renderPatrimonyTable(sumArr, sumLabels))
     },
