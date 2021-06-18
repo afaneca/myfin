@@ -201,7 +201,7 @@ class AccountModel extends Entity
     }
 
     public
-    static function getBalancesSnapshotForUser($userID, $transactional = false)
+    static function deprecated_getBalancesSnapshotForUser($userID, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
@@ -227,6 +227,110 @@ class AccountModel extends Entity
         } catch (Exception $e) {
             return $e;
         }
+    }
+
+    public
+    static function getBalancesSnapshotForUser($userID, $transactional = false)
+    {
+        $firstUserTransactionDate = self::getFirstUserTransactionDate($userID, $transactional);
+        $firstMonth = intval($firstUserTransactionDate["month"]);
+        $firstYear = intval($firstUserTransactionDate["year"]);
+
+
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+
+        $monthsArr = array();
+        $accsArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"], false);
+        while (AccountModel::monthIsEqualOrPriorTo($firstMonth, $firstYear, $currentMonth, $currentYear)) {
+            array_push($monthsArr, [
+                "month" => $firstMonth,
+                "year" => $firstYear,
+                "account_snapshots" => AccountModel::getAllBalancesSnapshotsForMonthForUser($userID, $firstMonth, $firstYear, $accsArr, $transactional)
+            ]);
+
+
+            // increment month
+            if ($firstMonth < 12) {
+                $firstMonth++;
+            } else {
+                $firstMonth = 1;
+                $firstYear++;
+            }
+            /*if (!AccountModel::monthIsEqualOrPriorTo($firstMonth, $firstYear, $currentMonth, $currentYear)) {
+                break;
+            }*/
+        }
+
+        return $monthsArr;
+
+
+        /*$db = new EnsoDB($transactional);
+
+        $sql = "SELECT date_timestamp, MONTH(FROM_UNIXTIME(date_timestamp)) as 'month', YEAR(FROM_UNIXTIME(date_timestamp)) as 'year', entities.users_user_id" .
+            "FROM myfin_prod.transactions left join entities " .
+            "on entities_entity_id = entities.entity_id " .
+            "where users_user_id = :userId " .
+            "order by date_timestamp ASC LIMIT 1";
+
+
+        $values = array();
+        $values[':userID'] = $userID;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return self::transformBalanceSnapshotsList($db->fetchAll());
+        } catch (Exception $e) {
+            return $e;
+        }*/
+    }
+
+    private static function getAllBalancesSnapshotsForMonthForUser($userID, $month, $year, $accsArr, $transactional = false)
+    {
+        $accSnapshots = array();
+        foreach ($accsArr as $acc) {
+            $balance = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $month, $year, $transactional);
+            array_push($accSnapshots, [
+                "account_id" => $acc["account_id"],
+                "balance" => ($balance["balance"]) ?: "0"
+            ]);
+        }
+
+        return $accSnapshots;
+    }
+
+
+    private static function monthIsEqualOrPriorTo(int $firstMonth, int $firstYear, int $currentMonth, int $currentYear): bool
+    {
+        return ($currentYear > $firstYear || ($firstYear == $currentYear && $currentMonth >= $firstMonth));
+    }
+
+    public static function getFirstUserTransactionDate($userID, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT date_timestamp, MONTH(FROM_UNIXTIME(date_timestamp)) as 'month', YEAR(FROM_UNIXTIME(date_timestamp)) as 'year', entities.users_user_id " .
+            "FROM transactions left join entities " .
+            "on entities_entity_id = entities.entity_id " .
+            "where users_user_id = :userID " .
+            "order by date_timestamp ASC LIMIT 1";
+
+
+        $values = array();
+        $values[':userID'] = $userID;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetch();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    private static function transformBalanceSnapshotsList($fetchAll)
+    {
     }
 
     public
@@ -259,9 +363,7 @@ class AccountModel extends Entity
     public
     static function getBalancesSnapshotForMonthForUser($userID, $month, $year, $transactional = false)
     {
-
         /*echo "Get balance snapshot for month $month and year $year for user $userID";*/
-
         /*$db = new EnsoDB($transactional);
 
         $sql = "SELECT sum(balance) as 'totalBalance' " .
@@ -287,6 +389,8 @@ class AccountModel extends Entity
 
         $totalBalance = 0;
         $accsArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"], $transactional);
+        /*$accsArr = AccountModel::getAllAccountsForUserWithAmounts($userID, false, $transactional);*/
+
 
         foreach ($accsArr as $acc) {
             $balanceSnapshotAtMonth = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $month, $year, $transactional)["balance"];
@@ -299,6 +403,7 @@ class AccountModel extends Entity
         /*die();*/
         return $totalBalance;
     }
+
 
     public static function recalculateIterativelyBalanceForAccount($accountID, $fromDate, $toDate, $transactional = false)
     {
@@ -318,6 +423,7 @@ class AccountModel extends Entity
             $priorMonthsBalance = 0;
 
         /*echo("\nprior months balance: $priorMonthsBalance\n");*/
+
 
         AccountModel::addCustomBalanceSnapshot($accountID, $beginMonth, $beginYear,
             $priorMonthsBalance, $transactional);
@@ -393,6 +499,8 @@ class AccountModel extends Entity
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 11) ? $month + 2 : 1, ($month < 11) ? $year : $year + 1, $initialBalance, $transactional);
         }
         /*die();*/
+
+        return $initialBalance;
     }
 
     private static function getAllTransactionsForAccountBetweenDates($accountID, $fromDate, $toDate, bool $transactional)
@@ -419,6 +527,16 @@ class AccountModel extends Entity
         }
     }
 
+    public static function setNewAccountBalance($accountId, $balance, bool $transactional = false)
+    {
+
+        AccountModel::editWhere([
+            "account_id" => $accountId
+        ], [
+            "current_balance" => (int)$balance
+        ], $transactional);
+    }
+
     private static function removeBalanceSnapshotsForAccountBetweenMonths($accountID, string $month1, string $year1, string $month2, string $year2, bool $transactional)
     {
         $db = new EnsoDB($transactional);
@@ -443,5 +561,6 @@ class AccountModel extends Entity
             return $e;
         }
     }
+
 
 }

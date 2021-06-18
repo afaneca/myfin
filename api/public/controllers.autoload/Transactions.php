@@ -238,18 +238,22 @@ class Transactions
 
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
-                    AccountModel::changeBalance($userID, $accountTo, $amount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true);
+                    AccountModel::setNewAccountBalance($accountTo,
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                        true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true);
+                    AccountModel::setNewAccountBalance($accountTo,
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                        true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
-                    AccountModel::changeBalance($userID, $accountTo, $amount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true);
+                    AccountModel::setNewAccountBalance($accountTo,
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                        true);
+                    AccountModel::setNewAccountBalance($accountFrom,
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                        true);
                     break;
             }
 
@@ -317,19 +321,24 @@ class Transactions
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true);
+                    AccountModel::setNewAccountBalance($oldAccountTo,
+                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
+                        true);
+
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true);
+                    AccountModel::setNewAccountBalance($oldAccountFrom,
+                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
+                        true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, true);
-                    AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true);
+                    AccountModel::setNewAccountBalance($oldAccountFrom,
+                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
+                        true);
+                    AccountModel::setNewAccountBalance($oldAccountTo,
+                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
+                        true);
                     break;
             }
 
@@ -486,6 +495,7 @@ class Transactions
                 "categories_category_id" => $categoryID
             ], true);
 
+
             // Remove the effect of $oldAmount
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
@@ -510,19 +520,28 @@ class Transactions
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($userID, $accountTo, $amount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
+                    //AccountModel::changeBalance($userID, $accountTo, $amount, true);
+                    AccountModel::setNewAccountBalance($accountTo,
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                        true);
+
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
+                    //AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
+                    AccountModel::setNewAccountBalance($accountFrom,
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                        true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
-                    AccountModel::changeBalance($userID, $accountTo, +$amount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
+                    //AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
+                    //AccountModel::changeBalance($userID, $accountTo, +$amount, true);
+                    AccountModel::setNewAccountBalance($accountTo,
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                        true);
+                    AccountModel::setNewAccountBalance($accountFrom,
+                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                        true);
                     break;
             }
 
@@ -542,19 +561,23 @@ class Transactions
             switch ($split_type) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::changeBalance($userID, $split_accountToID, $split_amount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
+                    AccountModel::setNewAccountBalance($split_accountToID,
+                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true), true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::changeBalance($userID, $accountFrom, -$split_amount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
+                    /*AccountModel::changeBalance($userID, $accountFrom, -$split_amount, true);*/
+                    AccountModel::setNewAccountBalance($split_accountFromID,
+                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
+                            true), true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::changeBalance($userID, $split_accountFromID, -$split_amount, true);
-                    AccountModel::changeBalance($userID, $split_accountToID, +$split_amount, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
-                    AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true);
+                    AccountModel::setNewAccountBalance($split_accountToID,
+                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
+                            true), true);
+                    AccountModel::setNewAccountBalance($split_accountFromID,
+                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
+                            true), true);
                     break;
             }
 
@@ -679,7 +702,7 @@ class Transactions
             $outgoingArr["entities"] = EntityModel::getWhere(["users_user_id" => $userID], ["entity_id", "name"]);
             $outgoingArr["accounts"] = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
 
-             $db->getDB()->commit();
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $outgoingArr);
         } catch (BadInputValidationException $e) {
@@ -694,7 +717,8 @@ class Transactions
     /**
      * Imports transactions in bulk
      */
-    public static function importTransactionsStep2(Request $request, Response $response, $args)
+    public static function
+    importTransactionsStep2(Request $request, Response $response, $args)
     {
         try {
             $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
@@ -749,18 +773,22 @@ class Transactions
 
                 switch ($type) {
                     case DEFAULT_TYPE_INCOME_TAG:
-                        AccountModel::changeBalance($userID, $accountTo, $amount, true);
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true);
+                        AccountModel::setNewAccountBalance($accountTo,
+                            AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                            true);
                         break;
                     case DEFAULT_TYPE_EXPENSE_TAG:
-                        AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true);
+                        AccountModel::setNewAccountBalance($accountFrom,
+                            AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                            true);
                         break;
                     case DEFAULT_TYPE_TRANSFER_TAG:
-                        AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
-                        AccountModel::changeBalance($userID, $accountTo, $amount, true);
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true);
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true);
+                        AccountModel::setNewAccountBalance($accountTo,
+                            AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                            true);
+                        AccountModel::setNewAccountBalance($accountFrom,
+                            AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                            true);
                         break;
                 }
             }
