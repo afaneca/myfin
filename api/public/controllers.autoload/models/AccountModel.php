@@ -319,6 +319,7 @@ class AccountModel extends Entity
 
         /*echo("\nprior months balance: $priorMonthsBalance\n");*/
 
+
         AccountModel::addCustomBalanceSnapshot($accountID, $beginMonth, $beginYear,
             $priorMonthsBalance, $transactional);
 
@@ -393,6 +394,8 @@ class AccountModel extends Entity
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 11) ? $month + 2 : 1, ($month < 11) ? $year : $year + 1, $initialBalance, $transactional);
         }
         /*die();*/
+
+        return $initialBalance;
     }
 
     private static function getAllTransactionsForAccountBetweenDates($accountID, $fromDate, $toDate, bool $transactional)
@@ -417,6 +420,16 @@ class AccountModel extends Entity
         } catch (Exception $e) {
             return $e;
         }
+    }
+
+    public static function setNewAccountBalance($accountId, $balance, bool $transactional = false)
+    {
+
+        AccountModel::editWhere([
+            "account_id" => $accountId
+        ], [
+            "current_balance" => (int)$balance
+        ], $transactional);
     }
 
     private static function removeBalanceSnapshotsForAccountBetweenMonths($accountID, string $month1, string $year1, string $month2, string $year2, bool $transactional)
