@@ -661,7 +661,7 @@ var Stats = {
                         return data['labels'][tooltipItem[0]['index']];
                     },
                     label: (tooltipItem, data) => {
-                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                        return StringUtils.formatMoney(tooltipItem.value/*data['datasets'][0]['data'][tooltipItem['index']]*/)
                     },
                     afterLabel: (tooltipItem, data) => {
                     }
