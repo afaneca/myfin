@@ -243,7 +243,7 @@ class Transactions
                         true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    AccountModel::setNewAccountBalance($accountTo,
+                    AccountModel::setNewAccountBalance($accountFrom,
                         AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
                         true);
                     break;
