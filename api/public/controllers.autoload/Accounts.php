@@ -316,6 +316,54 @@ class Accounts
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    /**
+     * Recalculate all user accounts balance
+     */
+    public static function
+    recalculateAllUserAccountsBalances(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            $db = new EnsoDB(false);
+            $db->getDB()->beginTransaction();
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            $userAccounts = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"]);
+
+
+            foreach ($userAccounts as $account) {
+                AccountModel::setNewAccountBalance($account["account_id"],
+                    AccountModel::recalculateIterativelyBalanceForAccount($account["account_id"], 0, time() + 1, false),
+                    false);
+            }
+
+
+            $db->getDB()->commit();
+
+            return sendResponse($response, EnsoShared::$REST_OK, "All balances successfully recalculated!");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/accounts/', 'Accounts::getAllAccountsForUser');
@@ -324,3 +372,4 @@ $app->delete('/accounts/', 'Accounts::removeAccount');
 $app->put('/accounts/', 'Accounts::editAccount');
 
 $app->get('/accounts/stats/balance-snapshots/', 'Accounts::getUserAccountsBalanceSnapshot');
+$app->get('/accounts/recalculate-balance/all', 'Accounts::recalculateAllUserAccountsBalances');

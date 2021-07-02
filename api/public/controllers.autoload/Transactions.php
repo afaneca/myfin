@@ -243,7 +243,7 @@ class Transactions
                         true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    AccountModel::setNewAccountBalance($accountTo,
+                    AccountModel::setNewAccountBalance($accountFrom,
                         AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
                         true);
                     break;
@@ -816,3 +816,4 @@ $app->put('/trxs/', 'Transactions::editTransaction');
 $app->post('/trxs/import/step0', 'Transactions::importTransactionsStep0');
 $app->post('/trxs/import/step1', 'Transactions::importTransactionsStep1');
 $app->post('/trxs/import/step2', 'Transactions::importTransactionsStep2');
+
