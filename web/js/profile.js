@@ -89,7 +89,21 @@ var Profile = {
             const selectedTheme = $("input:radio[name ='theme-group']:checked").val()
             LayoutUtils.changeTheme(selectedTheme)
         })
-    }
+    },
+    askForRecalculationOfAllAccountsBalances: () => {
+        LoadingManager.showLoading()
+        AccountServices.recalculateAllUserAccountsBalances(
+            (resp) => {
+                // SUCCESS
+                LoadingManager.hideLoading()
+                DialogUtils.showSuccessMessage("Tarefa concluída com sucesso!")
+            }, (err) => {
+                // FAILURE
+                LoadingManager.hideLoading()
+                DialogUtils.showErrorMessage("Aconteceu algo de errado. Por favor, tente novamente.")
+            }
+        )
+    },
 }
 
 

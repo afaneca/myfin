@@ -408,7 +408,7 @@ class AccountModel extends Entity
     public static function recalculateIterativelyBalanceForAccount($accountID, $fromDate, $toDate, $transactional = false)
     {
         /*
-         * Given that I'm unable to know the balance of an account at a specific time (only at the end of each month),
+         * Given that I'm unable to know the balance of an account at any specific time (only at the end of each month),
          * I will need to recalculate from the beginning of the month relative to $fromDate all the way to the end of
          * month associated with $toDate.
         */
@@ -465,11 +465,11 @@ class AccountModel extends Entity
          * Loop through all of the months that are being recalculated to clean up the data
          * Very important in case there are months with no transactions at all
          */
-        $month1 = date("m", $fromDate);
+        /*$month1 = date("m", $fromDate);
         $year1 = date("Y", $fromDate);
         $month2 = date("m", $toDate);
         $year2 = date("Y", $toDate);
-        //AccountModel::removeBalanceSnapshotsForAccountBetweenMonths($accountID, $month1, $year1, $month2, $year2, $transactional);
+        AccountModel::removeBalanceSnapshotsForAccountBetweenMonths($accountID, $month1, $year1, $month2, $year2, $transactional);*/
 
         foreach ($trxList as $trx) {
             $trxDate = $trx["date_timestamp"];
