@@ -1,5 +1,6 @@
 <?php
 
+require_once 'consts.php';
 
 class BudgetModel extends Entity
 {
@@ -150,14 +151,14 @@ class BudgetModel extends Entity
         return (($finalBalance - $initialBalance) / (abs($initialBalance)) * 100);
     }
 
-    public static function getSumAmountsForBudget($userID, $budget)
+    public static function getSumAmountsForBudget($userID, $budget, $transactional = false)
     {
         $budgetID = $budget["budget_id"];
         $month = intval($budget["month"]);
         $year = intval($budget["year"]);
         $isOpen = intval($budget["is_open"]);
 
-        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, $transactional);
 
         $balance_credit = $balance_debit = 0;
 
@@ -250,7 +251,7 @@ class BudgetHasCategoriesModel extends Entity
     }
 
     /**
-     * Gets all categories for the user, with planned & current amounts related to a specific budget
+     * Gets all (active) categories for the user, with planned & current amounts related to a specific budget
      */
     public static function getAllCategoriesForBudget($userID, $budgetID, $transactional = false)
     {
@@ -260,11 +261,13 @@ class BudgetHasCategoriesModel extends Entity
             "FROM " .
             "(SELECT * FROM budgets_has_categories WHERE budgets_users_user_id = :userID AND (budgets_budget_id = :budgetID)) b " .
             "RIGHT JOIN categories ON categories.category_id = b.categories_category_id " .
-            "WHERE users_user_id = :userID";
+            "WHERE users_user_id = :userID " .
+            "AND status = :status";
 
         $values = array();
         $values[':userID'] = $userID;
         $values[':budgetID'] = $budgetID;
+        $values[':status'] = DEFAULT_CATEGORY_ACTIVE_STATUS;
 
 
         try {
