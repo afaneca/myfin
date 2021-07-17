@@ -20,6 +20,15 @@ const FIELD_MAPPING = {
     TYPE: 'type'
 }
 
+const IMPORT_TRX_FIELD_HEADER_VARIATIONS = {
+    DATE: ["date", "data", "data da operação", "data de operação", "data do movimento", "data de movimento", "data valor", "data operação"],
+    DESCRIPTION: ["description", "descrição", "descrição da operação", "descrição de operação", "descrição do movimento", "descrição de movimento", "movimento"],
+    AMOUNT: ["amount", "montante", "valor", "montante (eur)", "montante(eur)", "montante(€)", "montante (€)"],
+    CREDIT: ["credit", "crédito", "receita"],
+    DEBIT: ["debit", "débito", "despesa"],
+    TYPE: ["type", "tipo", "tipo de operação", "tipo de movimento", "tipo de transação"]
+}
+
 var ImportTransactions = {
     importFromClipboardWasClicked: () => {
         IMPORT_STEP = 0
@@ -34,6 +43,7 @@ var ImportTransactions = {
                     (resp) => {
                         // SUCCESS
                         //LocalDataManager.setUserAccounts(resp)
+                        selectedAccountID = null
                         ImportTransactions.renderAccountSelect(resp)
                         $("#continue_import_btn").removeAttr('disabled')
                     }, (err) => {
@@ -85,17 +95,39 @@ var ImportTransactions = {
 
         // SELECTORS IN HEADER
         var headerRow = $('<tr />')
+
+        function checkIfTextIsAssociatedWithHeaderLabel(headerLabel, targetFieldMapping) {
+            switch (targetFieldMapping) {
+                case FIELD_MAPPING.DATE:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.DATE.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.CREDIT:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.CREDIT.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.DEBIT:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.DEBIT.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.TYPE:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.TYPE.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.AMOUNT:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.AMOUNT.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.DESCRIPTION:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.DESCRIPTION.includes(headerLabel.toLowerCase())
+            }
+
+            return false;
+        }
+
         for (var column = 0; column < nColumns; column++) {
+            let headerLabel = rows[0].split("\t")[column].replace("\r", "")
+
             headerRow.append(`
                 <th data-id="${column}"> 
                     <select id="field-mapping-${column}" class="field-mapping-select">
                         <option value="${column}_${FIELD_MAPPING.IGNORE}">Ignorar</option>
-                        <option value="${column}_${FIELD_MAPPING.DATE}">Data (DD-MM-YYYY)</option>
-                        <option value="${column}_${FIELD_MAPPING.DESCRIPTION}">Descrição</option>
-                        <option value="${column}_${FIELD_MAPPING.AMOUNT}">Montante</option>
-                        <option value="${column}_${FIELD_MAPPING.CREDIT}">Crédito</option>
-                        <option value="${column}_${FIELD_MAPPING.DEBIT}">Débito</option>
-                        <option value="${column}_${FIELD_MAPPING.TYPE}">Tipo</option>
+                        <option value="${column}_${FIELD_MAPPING.DATE}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.DATE) ? " selected " : ""}>Data (DD-MM-YYYY)</option>
+                        <option value="${column}_${FIELD_MAPPING.DESCRIPTION}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.DESCRIPTION) ? " selected " : ""}>Descrição</option>
+                        <option value="${column}_${FIELD_MAPPING.AMOUNT}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.AMOUNT) ? " selected " : ""}>Montante</option>
+                        <option value="${column}_${FIELD_MAPPING.CREDIT}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.CREDIT) ? " selected " : ""}>Crédito</option>
+                        <option value="${column}_${FIELD_MAPPING.DEBIT}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.DEBIT) ? " selected " : ""}>Débito</option>
+                        <option value="${column}_${FIELD_MAPPING.TYPE}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.TYPE) ? " selected " : ""}>Tipo</option>
                     </select>
                 </th>
             `)
@@ -123,7 +155,7 @@ var ImportTransactions = {
     },
     continueImportWasClicked: () => {
         ++IMPORT_STEP
-
+        debugger
         if (IMPORT_STEP == 1) {
             ImportTransactions.consolidateStep0()
         } else if (IMPORT_STEP > 1) {
