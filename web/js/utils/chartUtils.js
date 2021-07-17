@@ -646,4 +646,11 @@ var chartUtils = {
         });
         chart.update();
     },
+    getTrendLineObject: () => {
+        return {
+            style: "rgb(66, 87, 255, 0.3)",
+            lineStyle: "dotted|solid",
+            width: 2
+        }
+    }
 }
