@@ -171,8 +171,9 @@ var Stats = {
                 data: chartData,
                 label: "Evolução de Despesa",
                 borderColor: "#3e95cd",
-                fill: true
-            }
+                fill: true,
+                trendlineLinear: chartUtils.getTrendLineObject()
+            },
             ]
         };
 
@@ -322,7 +323,8 @@ var Stats = {
                 data: chartData,
                 label: "Evolução de Receita Por Categoria",
                 borderColor: "#3e95cd",
-                fill: true
+                fill: true,
+                trendlineLinear: chartUtils.getTrendLineObject()
             }
             ]
         };
