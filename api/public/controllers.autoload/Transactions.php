@@ -805,6 +805,49 @@ class Transactions
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function getTransactionsForUserByPage(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            if ($request->getQueryParams() != null && array_key_exists('page_size', $request->getQueryParams())) {
+                $pageSize = Input::validate($request->getQueryParams()['page_size'], Input::$INT, 4);
+            } else {
+                $pageSize = DEFAULT_TRANSACTIONS_FETCH_LIMIT;
+            }
+
+            $page = Input::validate($args['page'], Input::$INT, 5);
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
+
+            $userID = UserModel::getUserIdByName($authusername, true);
+            $trxArr = TransactionModel::getTransactionsForUserByPage($userID, $page, $pageSize, true);
+            $db->getDB()->commit();
+
+            return sendResponse($response, EnsoShared::$REST_OK, $trxArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/trxs/', 'Transactions::getAllTransactionsForUser');
@@ -816,4 +859,5 @@ $app->put('/trxs/', 'Transactions::editTransaction');
 $app->post('/trxs/import/step0', 'Transactions::importTransactionsStep0');
 $app->post('/trxs/import/step1', 'Transactions::importTransactionsStep1');
 $app->post('/trxs/import/step2', 'Transactions::importTransactionsStep2');
+$app->get('/trxs/page/{page}', 'Transactions::getTransactionsForUserByPage');
 
