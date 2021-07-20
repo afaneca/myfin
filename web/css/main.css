@@ -20,6 +20,7 @@
     --main-dark-on-dark-background: #1f2029;
     --main-text-color: rgba(255, 255, 255, 0.7);
     --main-text-headline-color: white;
+    --main-light-gray-color: #515558;
 
     --main-accent-color: var(--main-light-blue);
     --main-body-background: var(--main-dark-background);
@@ -522,8 +523,8 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
 /* Tooltip container */
 .tooltip {
     position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    display: block;
+    /*border-bottom: 1px dotted black; !* If you want dots under the hoverable text *!*/
 }
 
 /* Tooltip text */
@@ -532,7 +533,7 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
     /*width: 120px;*/
     background-color: #555;
     color: #fff;
-    text-align: center;
+    /*text-align: center;*/
     padding: 10px;
     border-radius: 6px;
 
@@ -547,6 +548,9 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
     /* Fade in tooltip */
     opacity: 0;
     transition: opacity 0.3s;
+
+    font-size: smaller;
+    width: 100%;
 }
 
 /* Tooltip arrow */
