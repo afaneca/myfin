@@ -1,6 +1,7 @@
 :root {
     /* Dark Gray theme */
     --main-dark-background: #2f3437;
+    --main-light-gray-color: #515558;
     --main-dark-on-dark-background: #373c3f;
 }
 

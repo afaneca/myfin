@@ -137,13 +137,13 @@ var BudgetDetails = {
             <tbody>
                 ${BudgetDetails.buildTotalsRow(isCredit)}
                 ${categoriesArr.filter((cat) => {
-                    if (IS_OPEN)
-                        return cat.status === MYFIN.CATEGORY_STATUS.ACTIVE
-                    else
-                        return (parseFloat(cat.current_amount_credit) !== 0
-                            || parseFloat(cat.current_amount_debit) !== 0)
-        
-                }).map(cat => BudgetDetails.renderInputRow(cat, isCredit)).join("")}
+            if (IS_OPEN)
+                return cat.status === MYFIN.CATEGORY_STATUS.ACTIVE
+            else
+                return (parseFloat(cat.current_amount_credit) !== 0
+                    || parseFloat(cat.current_amount_debit) !== 0)
+
+        }).map(cat => BudgetDetails.renderInputRow(cat, isCredit)).join("")}
                 
             </tbody>
         </table>
@@ -152,8 +152,8 @@ var BudgetDetails = {
     buildTotalsRow: isCredit => {
         if (isCredit) {
             return `
-                <tr style="text-decoration: underline;">
-                    <td>TOTAL:</td>
+                <tr style="text-decoration: none; background: var(--main-light-gray-color);">
+                    <td>TOTAL</td>
                     <td><span id="table_total_credit_expected">0.0€</span></td>
                     <td><span id="table_total_credit_current">0.0€</span></td>
                 </tr>
@@ -161,8 +161,8 @@ var BudgetDetails = {
         }
 
         return `
-                <tr style="text-decoration: underline;">
-                    <td>TOTAL:</td>
+                <tr style="text-decoration: none; background: var(--main-light-gray-color);">
+                    <td>TOTAL</td>
                     <td><span id="table_total_debit_expected">0.0€</span></td>
                     <td><span id="table_total_debit_current">0.0€</span></td>
                 </tr>
@@ -172,8 +172,22 @@ var BudgetDetails = {
         return `
             <tr>
                 <td style="padding:0px !important;"><div class="tooltip" onClick="BudgetDetails.onCategoryTooltipClick(${cat.category_id}, ${isCredit})">
-                        ${cat.name}
-                        <span class="tooltiptext">${cat.description}</span>
+                        <span style="border-bottom: 1px dotted black;">${cat.name}</span>
+                        <div class="tooltiptext">
+                        <span class="center-align" style="margin: 10px 0;font-style: italic;"><center>${(cat.description) ? cat.description : "Sem descrição"}</center></span><hr>
+                        <div class="row">
+                            <div class="col s8">Mês Anterior</div>
+                            <div class="col s4 right-align white-text"><strong class="white-text">${StringUtils.formatMoney(isCredit ? cat.avg_previous_month_credit : cat.avg_previous_month_debit)}</strong></div>
+                        </div>
+                        <div class="row">
+                            <div class="col s8">Média 12 meses</div>
+                            <div class="col s4 right-align white-text"><strong class="white-text">${StringUtils.formatMoney(isCredit ? cat.avg_12_months_credit : cat.avg_12_months_debit)}</strong></div>
+                        </div>
+                        <div class="row">
+                            <div class="col s8">Média Global</div>
+                            <div class="col s4 right-align"><strong class="white-text">${StringUtils.formatMoney(isCredit ? cat.avg_lifetime_credit : cat.avg_lifetime_debit)}</strong></div>
+                        </div></div>
+                        
                     </div>
                  </td>
                 <td style="padding:0px !important;"><div class="input-field inline tooltip">
