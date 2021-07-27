@@ -52,6 +52,7 @@ class Stats
             $budgetID = BudgetModel::getWhere(["month" => $month, "year" => $year, "users_user_id" => $userID])[0]["budget_id"];
 
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+            $list["last_update_timestamp"] = intval(UserModel::getWhere(["user_id" => $userID], ["last_update_timestamp"])[0]["last_update_timestamp"]);
 
             foreach ($list["categories"] as &$category) {
                 $monthToUse = $month; //$list["month"];

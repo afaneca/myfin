@@ -72,7 +72,7 @@ class UserModel extends Entity
     {
         UserModel::editWhere(
             [
-                "user_id" => $userID
+                "user_id" => $userId
             ],
             [
                 "last_update_timestamp" => $timestamp
