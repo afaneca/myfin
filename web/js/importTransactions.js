@@ -155,7 +155,6 @@ var ImportTransactions = {
     },
     continueImportWasClicked: () => {
         ++IMPORT_STEP
-        debugger
         if (IMPORT_STEP == 1) {
             ImportTransactions.consolidateStep0()
         } else if (IMPORT_STEP > 1) {
@@ -176,20 +175,19 @@ var ImportTransactions = {
          * There must be ONE column for each of the following
          * fields: DATE, DESCRIPTION & AMOUNT (or CREDIT/DEBIT or TYPE & AMOUNT)
          */
-
+        let hasDuplicatedFieldsGlobal;
         selects.each(function () {
             let selectedVal = $(this).val()
             let currentColumn = selectedVal.split("_")[0]
             let selectedField = selectedVal.split("_")[1]
 
+            let hasDuplicatedFields;
             switch (selectedField) {
                 case FIELD_MAPPING.DATE:
                     if (!dateColumn)
                         dateColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
 
                     break;
@@ -197,51 +195,48 @@ var ImportTransactions = {
                     if (!amountColumn)
                         amountColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
                     break;
                 case FIELD_MAPPING.DESCRIPTION:
                     if (!descriptionColumn)
                         descriptionColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
                     break;
                 case FIELD_MAPPING.CREDIT:
                     if (!creditColumn)
                         creditColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
                     break;
                 case FIELD_MAPPING.DEBIT:
                     if (!debitColumn)
                         debitColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
                     break;
                 case FIELD_MAPPING.TYPE:
                     if (!typeColumn)
                         typeColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
                     break;
             }
+
+            if (hasDuplicatedFields) {
+                hasDuplicatedFieldsGlobal = true
+                IMPORT_STEP--
+                DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
+                return;
+            }
         })
 
-
+        if (hasDuplicatedFieldsGlobal) return;
         if (!dateColumn || !descriptionColumn || (!amountColumn && !creditColumn && !debitColumn && !typeColumn)
             || (typeColumn && !amountColumn)) {
             DialogUtils.showErrorMessage("Por favor, selecione todos os campos necessários!")

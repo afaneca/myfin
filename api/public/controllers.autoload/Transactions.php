@@ -235,6 +235,7 @@ class Transactions
             ], true);
 
             $userID = UserModel::getUserIdByName($authusername, true);
+            UserModel::setLastUpdateTimestamp($userID, time(), true);
 
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
@@ -341,7 +342,7 @@ class Transactions
                         true);
                     break;
             }
-
+            UserModel::setLastUpdateTimestamp($userID, time(), true);
             $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Transaction Removed!");
@@ -580,7 +581,7 @@ class Transactions
                             true), true);
                     break;
             }
-
+            UserModel::setLastUpdateTimestamp($userID, time(), true);
             $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Transaction updated successfully!");
@@ -793,7 +794,7 @@ class Transactions
                 }
             }
 
-
+            UserModel::setLastUpdateTimestamp($userID, time(), true);
             $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "$importedTrxsCnt transactions successfully imported!");

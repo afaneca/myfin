@@ -156,7 +156,7 @@ var Dashboard = {
         StatServices.getDashboardExpensesIncomeDistributionStats(month, year,
             (resp) => {
                 // SUCCESS
-
+                Dashboard.setupLastUpdateTimestamp(resp["last_update_timestamp"])
                 const allCategories = resp.categories
 
                 let totalExpensesRealAmount = 0
@@ -212,6 +212,11 @@ var Dashboard = {
         Dashboard.setupDebtDistributionChart()
         Dashboard.setupInvestmentDistributionChart()
         Dashboard.setupIncomeExpensesDistributionChart()
+    },
+    setupLastUpdateTimestamp: (timestamp) => {
+        if (timestamp == "0") return "N/D"
+        const formattedTime = DateUtils.convertUnixTimestampToEuropeanDateTimeFormat(timestamp)
+        $("#dashboard-last-update-timestamp-value").text(formattedTime)
     }
 }
 
