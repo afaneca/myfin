@@ -154,9 +154,7 @@ var ImportTransactions = {
         $("p#import_notes").show()
     },
     continueImportWasClicked: () => {
-        debugger
         ++IMPORT_STEP
-        debugger
         if (IMPORT_STEP == 1) {
             ImportTransactions.consolidateStep0()
         } else if (IMPORT_STEP > 1) {

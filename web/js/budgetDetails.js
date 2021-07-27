@@ -71,8 +71,8 @@ var BudgetDetails = {
             BudgetDetails.setMonthPickerValue(month, year)
             BudgetDetails.setInitialBalance(BUDGET_INITIAL_BALANCE)
             BudgetDetails.setObservations(observations)
-            BudgetDetails.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false)
-            BudgetDetails.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true)
+            BudgetDetails.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false, `${DateUtils.getMonthsFullName(month)} ${year - 1}`)
+            BudgetDetails.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true, `${DateUtils.getMonthsFullName(month)} ${year - 1}`)
             BudgetDetails.setupInputListenersAndUpdateSummary("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
             BudgetDetails.updateSummaryValues("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
         }, (err) => {
@@ -95,8 +95,8 @@ var BudgetDetails = {
             const creditCategories = resp['categories'].filter((cat) => cat.type === 'C');
 
             BudgetDetails.setInitialBalance(resp.initial_balance)
-            BudgetDetails.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false)
-            BudgetDetails.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true)
+            BudgetDetails.setupBudgetInputs("#new-budget-debit-inputs", allCategories, false, `${DateUtils.getMonthsFullName(DateUtils.getCurrentMonth())} ${DateUtils.getCurrentYear() - 1}`)
+            BudgetDetails.setupBudgetInputs("#new-budget-credit-inputs", allCategories, true, `${DateUtils.getMonthsFullName(DateUtils.getCurrentMonth())} ${DateUtils.getCurrentYear() - 1}`)
 
             BudgetDetails.setupInputListenersAndUpdateSummary("#estimated_expenses_value", "#estimated_income_value", "#estimated_balance_value")
         }, (err) => {
@@ -105,8 +105,8 @@ var BudgetDetails = {
             DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
         })
     },
-    setupBudgetInputs: (selectorID, categoriesArr, isCredit) => {
-        $(selectorID).html(BudgetDetails.buildBudgetInputs(categoriesArr, isCredit))
+    setupBudgetInputs: (selectorID, categoriesArr, isCredit, sameMonthLastYearLabel) => {
+        $(selectorID).html(BudgetDetails.buildBudgetInputs(categoriesArr, isCredit, sameMonthLastYearLabel))
         //ProgressBarUtils.setupProgressBar(".cat_progressbar_1", 13)
 
         let incomeAcc = 0, expensesAcc = 0
@@ -126,7 +126,7 @@ var BudgetDetails = {
         $("#table_total_credit_current").text(StringUtils.formatStringToCurrency(incomeAcc))
         $("#table_total_debit_current").text(StringUtils.formatStringToCurrency(expensesAcc))
     },
-    buildBudgetInputs: (categoriesArr, isCredit) => {
+    buildBudgetInputs: (categoriesArr, isCredit, sameMonthLastYearLabel) => {
         return `
         <table class="responsive-table">
             <thead>
@@ -143,7 +143,7 @@ var BudgetDetails = {
                 return (parseFloat(cat.current_amount_credit) !== 0
                     || parseFloat(cat.current_amount_debit) !== 0)
 
-        }).map(cat => BudgetDetails.renderInputRow(cat, isCredit)).join("")}
+        }).map(cat => BudgetDetails.renderInputRow(cat, isCredit, sameMonthLastYearLabel)).join("")}
                 
             </tbody>
         </table>
@@ -168,13 +168,17 @@ var BudgetDetails = {
                 </tr>
             `
     },
-    renderInputRow: (cat, isCredit) => {
+    renderInputRow: (cat, isCredit, sameMonthLastYearLabel) => {
         return `
             <tr>
                 <td style="padding:0px !important;"><div class="tooltip" onClick="BudgetDetails.onCategoryTooltipClick(${cat.category_id}, ${isCredit})">
                         <span style="border-bottom: 1px dotted black;">${cat.name}</span>
                         <div class="tooltiptext">
                         <span class="center-align" style="margin: 10px 0;font-style: italic;"><center>${(cat.description) ? cat.description : "Sem descrição"}</center></span><hr>
+                        <div class="row">
+                            <div class="col s8">${sameMonthLastYearLabel}</div>
+                            <div class="col s4 right-align white-text"><strong class="white-text">${StringUtils.formatMoney(isCredit ? cat.avg_same_month_previous_year_credit : cat.avg_same_month_previous_year_debit)}</strong></div>
+                        </div>
                         <div class="row">
                             <div class="col s8">Mês Anterior</div>
                             <div class="col s4 right-align white-text"><strong class="white-text">${StringUtils.formatMoney(isCredit ? cat.avg_previous_month_credit : cat.avg_previous_month_debit)}</strong></div>

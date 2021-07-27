@@ -1,14 +1,14 @@
 "use strict";
-
+const monthsShort = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+const monthsFull = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 var DateUtils = {
     /**
      * Returns in DD/MMM/YYYY format (ex: 03/abr/2020)
      */
     convertUnixTimestampToDateString: (UNIX_timestamp) => {
         const a = new Date(UNIX_timestamp * 1000);
-        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         const year = a.getFullYear();
-        const month = months[a.getMonth()];
+        const month = monthsShort[a.getMonth()];
         const monthNumber = a.getMonth() - 1;
         const date = a.getDate();
         const hour = a.getHours();
@@ -24,9 +24,8 @@ var DateUtils = {
      */
     convertUnixTimestampToDateFormat: (UNIX_timestamp) => {
         const a = new Date(UNIX_timestamp * 1000);
-        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         const year = a.getFullYear();
-        const month = months[a.getMonth()];
+        const month = monthsShort[a.getMonth()];
         const monthNumber = a.getMonth() - 1;
         const date = a.getDate();
         const hour = a.getHours();
@@ -43,9 +42,8 @@ var DateUtils = {
      */
     convertUnixTimestampToEuropeanDateFormat: (UNIX_timestamp) => {
         const a = new Date(UNIX_timestamp * 1000);
-        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         const year = a.getFullYear();
-        const month = months[a.getMonth()];
+        const month = monthsShort[a.getMonth()];
         const monthNumber = a.getMonth() - 1;
         const date = a.getDate();
         const hour = a.getHours();
@@ -62,9 +60,8 @@ var DateUtils = {
      */
     convertUnixTimestampToEuropeanDateTimeFormat: (UNIX_timestamp) => {
         const a = new Date(UNIX_timestamp * 1000);
-        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         const year = a.getFullYear();
-        const month = months[a.getMonth()];
+        const month = monthsShort[a.getMonth()];
         const monthNumber = a.getMonth() - 1;
         const date = a.getDate();
         const hour = a.getHours();
@@ -81,6 +78,20 @@ var DateUtils = {
     }, */
     convertDateToUnixTimestamp: (dateStr, dateFormat = "DD/MM/YYYY") => {
         return moment(dateStr + " 09:00", dateFormat + " HH:mm").tz('UTC').unix().valueOf()
+    },
+    getMonthsFullName: (monthNumber) => {
+        return monthsFull[monthNumber - 1]
+    },
+    getMonthsShortName: (monthNumber) => {
+        return monthsShort[monthNumber - 1]
+    },
+    getCurrentMonth: () => {
+        const a = new Date();
+        return a.getMonth() + 1
+    },
+    getCurrentYear: () => {
+        const a = new Date();
+        return a.getFullYear()
     }
 }
 //# sourceURL=js/utils/stringUtils.js

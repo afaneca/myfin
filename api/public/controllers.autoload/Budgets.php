@@ -180,24 +180,28 @@ class Budgets
 
             foreach ($list["categories"] as &$category) {
                 $monthToUse = $list["month"];
-                $yearToUser = $list["year"];
+                $yearToUse = $list["year"];
                 $currentMonth = date('M');
                 $currentYear = date('Y');
 
                 // TODO: map 'D' & 'C' in categories to 'I' & 'E'
                 $type = ($category["type"] == 'D') ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
 
-                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser, true)[0];
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse, true)[0];
                 $current_amount_credit = $calculatedAmounts["category_balance_credit"];
                 $current_amount_debit = $calculatedAmounts["category_balance_debit"];
                 $category["current_amount_credit"] = abs(Input::convertIntegerToFloat($current_amount_credit));
                 $category["current_amount_debit"] = abs(Input::convertIntegerToFloat($current_amount_debit));
 
                 $previousMonth = ($monthToUse > 1) ? $monthToUse - 1 : 12;
-                $previousMonthsYear = ($monthToUse > 1) ? $yearToUser : $yearToUser - 1;
+                $previousMonthsYear = ($monthToUse > 1) ? $yearToUse : $yearToUse - 1;
                 $previousMonthAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $previousMonth, $previousMonthsYear, true)[0];
                 $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_credit"]));
                 $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_debit"]));
+
+                $sameMonthPreviousYearAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse - 1, true)[0];
+                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_credit"]));
+                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_debit"]));
 
                 $last12MonthsAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLast12Months($category["category_id"], true)[0];
                 $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_credit"]));
@@ -209,7 +213,7 @@ class Budgets
             }
 
             // we need to also add uncategorized transactions to the calculations
-            /*$uncategorizedTrxAmounts = BudgetHasCategoriesModel::getAmountForUncategorizedTransactionsInMonth($monthToUse, $yearToUser)[0];
+            /*$uncategorizedTrxAmounts = BudgetHasCategoriesModel::getAmountForUncategorizedTransactionsInMonth($monthToUse, $yearToUse)[0];
             array_push($list["categories"], [
                 "category_id" => -1,
                 "current_amount_credit" => abs(Input::convertIntegerToFloat($uncategorizedTrxAmounts["category_balance_credit"])),
@@ -261,13 +265,17 @@ class Budgets
 
             foreach ($catsArr as &$category) {
                 $monthToUse = date('m');
-                $yearToUser = date('Y');
+                $yearToUse = date('Y');
 
                 $previousMonth = ($monthToUse > 1) ? $monthToUse - 1 : 12;
-                $previousMonthsYear = ($monthToUse > 1) ? $yearToUser : $yearToUser - 1;
+                $previousMonthsYear = ($monthToUse > 1) ? $yearToUse : $yearToUse - 1;
                 $previousMonthAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $previousMonth, $previousMonthsYear, true)[0];
                 $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_credit"]));
                 $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_debit"]));
+
+                $sameMonthPreviousYearAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse - 1, true)[0];
+                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_credit"]));
+                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_debit"]));
 
                 $last12MonthsAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLast12Months($category["category_id"], true)[0];
                 $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_credit"]));
