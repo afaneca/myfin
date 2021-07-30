@@ -10,7 +10,7 @@ const SessionManager = require("../utils/sessionManager")
 exports.findAll = async (req, res, next) => {
     /* const title = req.query.title;
     var condition = title ? { title: { [Op.like]: `%${title}%` } } : null; */
-    SessionManager.checkIfSessionKeyIsValid("", "tony", true, false)
+    await SessionManager.checkIfSessionKeyIsValid("", "tony", true, false)
     User.findAll()
         .then(data => {
             if (data)
@@ -33,8 +33,8 @@ exports.findOne = (req, res, next) => {
                 res.send(data)
             else next(APIError.notFound("User not found"))
         }).catch(err => {
-            next(APIError.internalServerError())
-        })
+        next(APIError.internalServerError())
+    })
 }
 
 // CREATE
@@ -50,10 +50,10 @@ exports.createOne = async (req, res, next) => {
         user.password = encryptUtils.hashPassword(user.password)
         User.create(user)
             .then(data => {
-                res.send(data)
+                res.send(data) // TODO - check what response body to send
             }).catch(err => {
-                next(APIError.internalServerError())
-            })
+            next(APIError.internalServerError())
+        })
 
     } catch (err) {
         next(APIError.internalServerError())
@@ -69,9 +69,8 @@ const attemptLoginSchema = joi.object({
 exports.attemptLogin = async (req, res, next) => {
     try {
         const userData = await attemptLoginSchema.validateAsync(req.body)
-
-        const condition = { username: { [Op.like]: `${userData.username}` } }
-        User.findOne({ where: condition })
+        const condition = {username: {[Op.like]: `${userData.username}`}}
+        User.findOne({where: condition})
             .then(data => {
                 if (data) {
                     const isValid = encryptUtils.verifyPassword(userData.password, data.password)
@@ -86,11 +85,20 @@ exports.attemptLogin = async (req, res, next) => {
                 }
 
             }).catch(err => {
-                next(APIError.internalServerError())
-            })
+            next(APIError.internalServerError())
+        })
     } catch (err) {
         next(APIError.internalServerError())
     }
+}
 
+exports.checkSessionValidity = async (req, res, next) => {
+    try {
+        const key = req.get("sessionkey")
+        const username = req.get("authusername")
+        const sessionKeyIsValid = await SessionManager.checkIfSessionKeyIsValid(key, username)
+    } catch (err) {
+        next(APIError.internalServerError())
+    }
 }
 
