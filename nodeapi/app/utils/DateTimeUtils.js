@@ -1,6 +1,6 @@
 const dayjs = require('dayjs')
 const DateTimeUtils = {
-    getCurrentUnixTimestamp:() => {
+    getCurrentUnixTimestamp: () => {
         return Math.floor(Date.now() / 1000);
     },
 }

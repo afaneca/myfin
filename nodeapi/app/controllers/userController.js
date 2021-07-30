@@ -68,7 +68,7 @@ const attemptLoginSchema = joi.object({
 })
 exports.attemptLogin = async (req, res, next) => {
     try {
-        const mobile = req.get("mobile") || false
+        const mobile = req.get("mobile") === "true"
         const userData = await attemptLoginSchema.validateAsync(req.body)
         const condition = {username: {[Op.like]: `${userData.username}`}}
         User.findOne({where: condition})
@@ -76,10 +76,15 @@ exports.attemptLogin = async (req, res, next) => {
                 if (data) {
                     const isValid = encryptUtils.verifyPassword(userData.password, data.password)
                     if (isValid) {
-                        if(mobile){
-                            data.sessionkey_mobile = SessionManager.generateNewSessionKeyForUser(userData.username, mobile)
-                        } else
-                            data.sessionkey = SessionManager.generateNewSessionKeyForUser(userData.username, mobile)
+                        const newSessionData = SessionManager.generateNewSessionKeyForUser(userData.username, mobile)
+                        if (mobile) {
+                            data.sessionkey_mobile = newSessionData.sessionkey
+                            data.trustlimit_mobile = newSessionData.trustlimit
+                        } else{
+                            data.sessionkey = newSessionData.sessionkey
+                            data.trustlimit = newSessionData.trustlimit
+                        }
+
                         res.send(data)
                     } else {
                         next(APIError.notAuthorized("Wrong Credentials"))
