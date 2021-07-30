@@ -5,23 +5,18 @@ const DateTimeUtils = require("./DateTimeUtils")
 const APIError = require("../errorHandling/apiError");
 const {where} = require("sequelize");
 const {generateUuid} = require("./CryptoUtils");
+const Logger = require("../utils/Logger")
 
 const checkIfSessionKeyIsValid = async (key, username, renewTrustLimit = true, mobile = false) => {
-    let renewTime = '+30 minutes';
-    if (mobile) renewTime = '+1 month';
-
     const userData = await _checkIfUserExists(username, key)
     if (userData) {
-        // User exists, check if trustimit has expired
+        // User exists, check if trustlimit has expired
         if (_checkIfTrustLimitHasExpired(mobile ? userData.trustlimit_mobile : userData.trustlimit))
             throw APIError.notAuthorized("Session is not valid.")
         if (renewTrustLimit) extendUserSession(username, mobile)
         return true
-        /*console.log("USER EXISTS.");
-        console.log("Current trustlimit: " + userData.trustlimit)
-        console.log("New trustlimit: " + userData.trustlimit + renewTime)*/
     } else {
-        console.log("USER AND/OR SESSION NOT FOUND");
+        Logger.addLog("USER AND/OR SESSION NOT FOUND");
         throw APIError.notFound()
     }
 
@@ -55,8 +50,6 @@ const _checkIfUserExists = (username, key) => {
 
 const _checkIfTrustLimitHasExpired = (trustlimit) => {
     const currentUnixTime = DateTimeUtils.getCurrentUnixTimestamp();
-    console.debug("current unixtime: " + currentUnixTime)
-    console.debug("trustlimit: " + trustlimit)
     return currentUnixTime >= trustlimit
 }
 

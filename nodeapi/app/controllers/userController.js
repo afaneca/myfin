@@ -5,6 +5,7 @@ const joi = require('joi')
 const encryptUtils = require("../utils/CryptoUtils.js");
 const APIError = require("../errorHandling/apiError");
 const SessionManager = require("../utils/sessionManager")
+const CommonsController = require("./commonsController")
 
 // GET ALL
 exports.findAll = async (req, res, next) => {
@@ -80,7 +81,7 @@ exports.attemptLogin = async (req, res, next) => {
                         if (mobile) {
                             data.sessionkey_mobile = newSessionData.sessionkey
                             data.trustlimit_mobile = newSessionData.trustlimit
-                        } else{
+                        } else {
                             data.sessionkey = newSessionData.sessionkey
                             data.trustlimit = newSessionData.trustlimit
                         }
@@ -103,9 +104,7 @@ exports.attemptLogin = async (req, res, next) => {
 
 exports.checkSessionValidity = async (req, res, next) => {
     try {
-        const key = req.get("sessionkey")
-        const username = req.get("authusername")
-        const sessionKeyIsValid = await SessionManager.checkIfSessionKeyIsValid(key, username)
+        await CommonsController.checkAuthSessionValidity(req)
         res.send("OK")
     } catch (err) {
         next(err || APIError.internalServerError())
