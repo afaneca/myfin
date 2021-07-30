@@ -4,8 +4,8 @@ module.exports = app => {
     // USERS ROUTES
     const users = require("../controllers/userController")
     var usersRouter = express.Router()
-    usersRouter.get("/", users.findAll)
-    usersRouter.get("/:id", users.findOne)
+    /*usersRouter.get("/", users.findAll)
+    usersRouter.get("/:id", users.findOne)*/
     usersRouter.post("/", users.createOne)
     
     // AUTH ROUTES

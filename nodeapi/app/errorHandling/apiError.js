@@ -9,15 +9,15 @@ class APIError {
     }
 
     static notAuthorized(msg) {
-        return new APIError(401, msg);
+        return new APIError(401, msg || "The owner of this request is not authorized to do so.");
     }
 
     static forbidden(msg) {
-        return new APIError(403, msg);
+        return new APIError(403, msg || "The owner of this request is not authorized to do so.");
     }
 
     static notFound(msg) {
-        return new APIError(404, msg);
+        return new APIError(404, msg || "The requested resource could not be found.");
     }
 
     static notAcceptable(msg) {

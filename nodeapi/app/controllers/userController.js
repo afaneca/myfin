@@ -47,6 +47,7 @@ const createUserSchema = joi.object({
 })
 exports.createOne = async (req, res, next) => {
     try {
+        await CommonsController.checkAuthSessionValidity(req)
         const user = await createUserSchema.validateAsync(req.body)
         user.password = encryptUtils.hashPassword(user.password)
         User.create(user)
@@ -57,7 +58,7 @@ exports.createOne = async (req, res, next) => {
         })
 
     } catch (err) {
-        next(APIError.internalServerError())
+        next(err || APIError.internalServerError())
     }
 }
 
