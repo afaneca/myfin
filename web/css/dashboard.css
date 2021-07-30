@@ -7,3 +7,8 @@
     color: black;
     transition: 0.25s;
 }
+
+#dashboard-last-update-timestamp {
+    color: var(--main-text-color);
+    font-size: small;
+}

@@ -1,9 +1,9 @@
 "use strict";
 
 var Transactions = {
-    getTransactions: () => {
+    getTransactions: (fetchLimit = MYFIN.TRX_FETCH_LIMIT) => {
         LoadingManager.showLoading()
-        TransactionServices.getAllTransactions(
+        TransactionServices.getAllTransactions(fetchLimit,
             (response) => {
                 // SUCCESS
                 LoadingManager.hideLoading();
@@ -16,7 +16,8 @@ var Transactions = {
             })
     },
     initTables: (dataset) => {
-        $("#table-transactions-wrapper").html(Transactions.renderTable(dataset))
+        $("#table-transactions-wrapper").html(Transactions.renderTable(dataset)
+            + `<p class="right-align grey-text text-accent-4 projections-table-footnotes" style="font-size: small">* Por defeito, esta pesquisa apenas devolve as últimas ${MYFIN.TRX_FETCH_LIMIT} transações.<br><a onclick="Transactions.getTransactions(999999999999999)" style="cursor:pointer;">Clique aqui para recuperar a lista completa.</a></p>`)
         tableUtils.setupStaticTable("#transactions-table");
         LoadingManager.hideLoading()
     },
@@ -45,7 +46,7 @@ var Transactions = {
             <tr data-id='$trx.transaction_id'>
                 <td>${DateUtils.convertUnixTimestampToDateString(trx.date_timestamp)}</td>
                 <td>${Transactions.formatTypeToString(trx.type, trx.account_from_name, trx.account_to_name)}</td>
-                <td>${Transactions.formatCurrencyColumn(trx.type, StringUtils.formatStringToCurrency(trx.amount))}</td>
+                <td>${Transactions.formatCurrencyColumn(trx.type, StringUtils.formatMoney(trx.amount))}</td>
                 <td>${trx.description}</td>
                 <td>${(trx.entity_name) ? trx.entity_name : "<span class='medium-gray-color'>Sem Entidade</span>"}</td>
                 <td>${(trx.category_name) ? trx.category_name : "<span class='medium-gray-color'>Sem Categoria</span>"}</td>
@@ -62,7 +63,7 @@ var Transactions = {
                 return `<span style="height: auto !important;" class='badge green-text text-accent-6'>${formattedCurrencyString}</span></span>`
                 break;
             case 'E':
-                return `<span style="height: auto !important;" class='badge pink-text text-accent-2'>${formattedCurrencyString}</span>`
+                return `<span style="height: auto !important;" class='badge pink-text text-accent-1'>${formattedCurrencyString}</span>`
                 break;
             case 'T':
             default:
@@ -71,7 +72,7 @@ var Transactions = {
         }
     },
     formatTypeToString: (type, acc_from, acc_to) => {
-        //'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-2'
+        //'badge green lighten-5 green-text text-accent-4' : 'badge pink lighten-5 pink-text text-accent-1'
         let str = type;
 
         if (!acc_from || acc_from == "") acc_from = `<span style="color:gray">Conta Externa</span>`
@@ -84,7 +85,7 @@ var Transactions = {
                 return `<span style="height: auto !important;" class='badge green lighten-5 green-text text-accent-6'>(${acc_from} ⮕ ${acc_to})</span></span>`
                 break;
             case 'E':
-                return `<span style="height: auto !important;" class='badge pink lighten-5 pink-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`
+                return `<span style="height: auto !important;" class='badge pink lighten-5 pink-text text-accent-1'>(${acc_from} ⮕ ${acc_to})</span>`
                 break;
             case 'T':
                 return `<spa style="height: auto !important;"n class='badge brown darken-2 white-text text-accent-2'>(${acc_from} ⮕ ${acc_to})</span>`

@@ -14,6 +14,7 @@ class CategoryModel extends Entity
         "type",
         "description",
         "users_user_id",
-        "color_gradient"
+        "color_gradient",
+        "status"
     ];
 }

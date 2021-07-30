@@ -17,6 +17,16 @@ const FIELD_MAPPING = {
     AMOUNT: 'amount',
     CREDIT: 'credit',
     DEBIT: 'debit',
+    TYPE: 'type'
+}
+
+const IMPORT_TRX_FIELD_HEADER_VARIATIONS = {
+    DATE: ["date", "data", "data da operação", "data de operação", "data do movimento", "data de movimento", "data valor", "data operação"],
+    DESCRIPTION: ["description", "descrição", "descrição da operação", "descrição de operação", "descrição do movimento", "descrição de movimento", "movimento"],
+    AMOUNT: ["amount", "montante", "valor", "montante (eur)", "montante(eur)", "montante(€)", "montante (€)"],
+    CREDIT: ["credit", "crédito", "receita"],
+    DEBIT: ["debit", "débito", "despesa"],
+    TYPE: ["type", "tipo", "tipo de operação", "tipo de movimento", "tipo de transação"]
 }
 
 var ImportTransactions = {
@@ -32,7 +42,8 @@ var ImportTransactions = {
                 ImportTransactionsServices.doImportTransactionsStep0(
                     (resp) => {
                         // SUCCESS
-                        LocalDataManager.setUserAccounts(resp)
+                        //LocalDataManager.setUserAccounts(resp)
+                        selectedAccountID = null
                         ImportTransactions.renderAccountSelect(resp)
                         $("#continue_import_btn").removeAttr('disabled')
                     }, (err) => {
@@ -84,16 +95,39 @@ var ImportTransactions = {
 
         // SELECTORS IN HEADER
         var headerRow = $('<tr />')
+
+        function checkIfTextIsAssociatedWithHeaderLabel(headerLabel, targetFieldMapping) {
+            switch (targetFieldMapping) {
+                case FIELD_MAPPING.DATE:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.DATE.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.CREDIT:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.CREDIT.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.DEBIT:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.DEBIT.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.TYPE:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.TYPE.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.AMOUNT:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.AMOUNT.includes(headerLabel.toLowerCase())
+                case FIELD_MAPPING.DESCRIPTION:
+                    return IMPORT_TRX_FIELD_HEADER_VARIATIONS.DESCRIPTION.includes(headerLabel.toLowerCase())
+            }
+
+            return false;
+        }
+
         for (var column = 0; column < nColumns; column++) {
+            let headerLabel = rows[0].split("\t")[column].replace("\r", "")
+
             headerRow.append(`
                 <th data-id="${column}"> 
                     <select id="field-mapping-${column}" class="field-mapping-select">
                         <option value="${column}_${FIELD_MAPPING.IGNORE}">Ignorar</option>
-                        <option value="${column}_${FIELD_MAPPING.DATE}">Data (DD-MM-YYYY)</option>
-                        <option value="${column}_${FIELD_MAPPING.DESCRIPTION}">Descrição</option>
-                        <option value="${column}_${FIELD_MAPPING.AMOUNT}">Montante</option>
-                        <option value="${column}_${FIELD_MAPPING.CREDIT}">Crédito</option>
-                        <option value="${column}_${FIELD_MAPPING.DEBIT}">Débito</option>
+                        <option value="${column}_${FIELD_MAPPING.DATE}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.DATE) ? " selected " : ""}>Data (DD-MM-YYYY)</option>
+                        <option value="${column}_${FIELD_MAPPING.DESCRIPTION}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.DESCRIPTION) ? " selected " : ""}>Descrição</option>
+                        <option value="${column}_${FIELD_MAPPING.AMOUNT}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.AMOUNT) ? " selected " : ""}>Montante</option>
+                        <option value="${column}_${FIELD_MAPPING.CREDIT}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.CREDIT) ? " selected " : ""}>Crédito</option>
+                        <option value="${column}_${FIELD_MAPPING.DEBIT}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.DEBIT) ? " selected " : ""}>Débito</option>
+                        <option value="${column}_${FIELD_MAPPING.TYPE}" ${checkIfTextIsAssociatedWithHeaderLabel(headerLabel, FIELD_MAPPING.TYPE) ? " selected " : ""}>Tipo</option>
                     </select>
                 </th>
             `)
@@ -121,7 +155,6 @@ var ImportTransactions = {
     },
     continueImportWasClicked: () => {
         ++IMPORT_STEP
-
         if (IMPORT_STEP == 1) {
             ImportTransactions.consolidateStep0()
         } else if (IMPORT_STEP > 1) {
@@ -135,26 +168,26 @@ var ImportTransactions = {
         let amountColumn;
         let creditColumn;
         let debitColumn;
+        let typeColumn;
 
 
         /**
          * There must be ONE column for each of the following
-         * fields: DATE, DESCRIPTION & AMOUNT (or CREDIT/DEBIT)
+         * fields: DATE, DESCRIPTION & AMOUNT (or CREDIT/DEBIT or TYPE & AMOUNT)
          */
-
+        let hasDuplicatedFieldsGlobal;
         selects.each(function () {
             let selectedVal = $(this).val()
             let currentColumn = selectedVal.split("_")[0]
             let selectedField = selectedVal.split("_")[1]
 
+            let hasDuplicatedFields;
             switch (selectedField) {
                 case FIELD_MAPPING.DATE:
                     if (!dateColumn)
                         dateColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
 
                     break;
@@ -162,44 +195,50 @@ var ImportTransactions = {
                     if (!amountColumn)
                         amountColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
                     break;
                 case FIELD_MAPPING.DESCRIPTION:
                     if (!descriptionColumn)
                         descriptionColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
                     break;
                 case FIELD_MAPPING.CREDIT:
                     if (!creditColumn)
                         creditColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
                     break;
                 case FIELD_MAPPING.DEBIT:
                     if (!debitColumn)
                         debitColumn = currentColumn
                     else {
-                        DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
-                        IMPORT_STEP--
-                        return;
+                        hasDuplicatedFields = true
                     }
                     break;
+                case FIELD_MAPPING.TYPE:
+                    if (!typeColumn)
+                        typeColumn = currentColumn
+                    else {
+                        hasDuplicatedFields = true
+                    }
+                    break;
+            }
 
+            if (hasDuplicatedFields) {
+                hasDuplicatedFieldsGlobal = true
+                IMPORT_STEP--
+                DialogUtils.showErrorMessage("Por favor, não selecione campos duplicados!")
+                return;
             }
         })
 
-
-        if (!dateColumn || !descriptionColumn || (!amountColumn && !creditColumn && !debitColumn)) {
+        if (hasDuplicatedFieldsGlobal) return;
+        if (!dateColumn || !descriptionColumn || (!amountColumn && !creditColumn && !debitColumn && !typeColumn)
+            || (typeColumn && !amountColumn)) {
             DialogUtils.showErrorMessage("Por favor, selecione todos os campos necessários!")
             IMPORT_STEP--
             return;
@@ -210,9 +249,9 @@ var ImportTransactions = {
             return;
         }
         trxAccountSelector.attr('disabled', 'disabled')
-        ImportTransactions.consolidateStep0Data(dateColumn, descriptionColumn, amountColumn, creditColumn, debitColumn)
+        ImportTransactions.consolidateStep0Data(dateColumn, descriptionColumn, amountColumn, creditColumn, debitColumn, typeColumn)
     },
-    consolidateStep0Data: (dateColumn, descriptionColumn, amountColumn, creditColumn, debitColumn) => {
+    consolidateStep0Data: (dateColumn, descriptionColumn, amountColumn, creditColumn, debitColumn, typeColumn) => {
         let trx = {
             date: undefined,
             description: undefined,
@@ -223,7 +262,7 @@ var ImportTransactions = {
 
         importedObjData.data.forEach((row) => {
             let new_trx = Object.assign({}, trx)
-            let amountAndTypeInferred = ImportTransactions.inferTrxAmountAndType(row, amountColumn, creditColumn, debitColumn)
+            let amountAndTypeInferred = ImportTransactions.inferTrxAmountAndType(row, amountColumn, creditColumn, debitColumn, typeColumn)
 
             new_trx.date = DateUtils.convertDateToUnixTimestamp(row[dateColumn])
             new_trx.description = row[descriptionColumn]
@@ -236,21 +275,31 @@ var ImportTransactions = {
 
         ImportTransactions.doImportTransactionsStep1(trxList)
     },
-    inferTrxAmountAndType: (row, amountColumn, creditColumn, debitColumn) => {
+    inferTrxAmountAndType: (row, amountColumn, creditColumn, debitColumn, typeColumn) => {
         let amount
         let type
 
-        if (amountColumn) {
+        if (amountColumn && !typeColumn) {
             amount = StringUtils.convertStringToFloat(row[amountColumn])
             type = (amount > 0) ? MYFIN.TRX_TYPES.INCOME : MYFIN.TRX_TYPES.EXPENSE
-        } else if (creditColumn) {
+        } else if (creditColumn && !typeColumn) {
             amount = StringUtils.convertStringToFloat(row[creditColumn])
             type = MYFIN.TRX_TYPES.INCOME
         }
 
-        if (!amount && debitColumn) {
+        if (!amount && debitColumn && !typeColumn) {
             amount = StringUtils.convertStringToFloat(row[debitColumn])
             type = MYFIN.TRX_TYPES.EXPENSE
+        } else if (!amount && amountColumn && typeColumn) {
+            amount = StringUtils.convertStringToFloat(row[amountColumn])
+            switch (row[typeColumn]) {
+                case MYFIN.TRX_TYPE_LABEL.DEBIT:
+                    type = MYFIN.TRX_TYPES.EXPENSE
+                    break;
+                case MYFIN.TRX_TYPE_LABEL.CREDIT:
+                    type = MYFIN.TRX_TYPES.INCOME
+                    break;
+            }
         }
 
         return {amount: Math.abs(amount), type: type}
@@ -452,7 +501,7 @@ var ImportTransactions = {
         let txt = `
                 <h4>Concluir Importação?</h4>
                 <p>Transações Importadas: ${trxCnt}</p>
-                <p>Novo saldo da conta ${accountName}: ${StringUtils.formatStringToCurrency(newBalanceCalc)}</p>
+                <p>Novo saldo da conta ${accountName}: ${StringUtils.formatMoney(newBalanceCalc)}</p>
                 `;
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>

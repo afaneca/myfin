@@ -5,6 +5,25 @@
         <ul class="collapsible">
             <li>
                 <div class="collapsible-header"><i
+                        class="material-icons">color_lens</i>Alterar Tema
+                </div>
+                <div class="collapsible-body">
+                    <div class="row">
+                        <p>Selecione uma das opções de aparência abaixo:</p>
+                        <div id="change-theme-radio-group-wrapper"></div>
+                        <button id="change-theme-btn"
+                                class="waves-effect waves-light btn right-align green-gradient-bg"
+                                style="float:right;" type="submit" name="action">Alterar Tema
+                            <i class="material-icons no-accent-color right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header"><i
                         class="material-icons">edit</i>Alterar Password
                 </div>
                 <div class="collapsible-body">
@@ -52,6 +71,24 @@
                         <li><b>Nr. de contas criadas:</b> <span id="counter_created_accounts"></span></li>
                         <li><b>Nr. de orçamentos criadas:</b> <span id="counter_created_budgets"></span></li>
                         <li><b>Nr. de regras criadas:</b> <span id="counter_created_rules"></span></li>
+                    </ul>
+
+                </div>
+            </li>
+        </ul>
+
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header"><i
+                        class="material-icons">adb
+                </i>Utilitários
+                </div>
+                <div class="collapsible-body">
+                    <ul>
+                        <li>
+                            <b><a onClick="Profile.askForRecalculationOfAllAccountsBalances()" style="cursor:pointer;">Recalcular
+                                saldos de
+                                todas as contas</a></b></li>
                     </ul>
 
                 </div>

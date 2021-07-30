@@ -40,14 +40,10 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             /* if (isset($status))
                 switch ($status) {
@@ -92,7 +88,7 @@ class Budgets
                 $budget["debit_amount"] = $budgetSums["balance_debit"];
             }
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $budgetsArr);
         } catch (BadInputValidationException $e) {
@@ -121,14 +117,11 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            $db->getDB()->beginTransaction(); */
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
             $budgetsArr = BudgetModel::getWhere(["users_user_id" => $userID], ["month", "year", "budget_id"]);
 
             // orders the list DESC by year, then month
@@ -139,7 +132,7 @@ class Budgets
             });
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $budgetsArr);
         } catch (BadInputValidationException $e) {
@@ -170,14 +163,11 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
 
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
 
             $list = BudgetModel::getWhere(["users_user_id" => $userID, "budget_id" => $budgetID], ["observations", "month", "year"])[0];
@@ -190,24 +180,40 @@ class Budgets
 
             foreach ($list["categories"] as &$category) {
                 $monthToUse = $list["month"];
-                $yearToUser = $list["year"];
+                $yearToUse = $list["year"];
+                $currentMonth = date('M');
+                $currentYear = date('Y');
 
                 // TODO: map 'D' & 'C' in categories to 'I' & 'E'
                 $type = ($category["type"] == 'D') ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
 
-                /* echo $monthToUse . "\n";
-                 echo $yearToUser . "\n";
-                 echo $type . "\n";
-                 die();*/
-                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse, true)[0];
                 $current_amount_credit = $calculatedAmounts["category_balance_credit"];
                 $current_amount_debit = $calculatedAmounts["category_balance_debit"];
                 $category["current_amount_credit"] = abs(Input::convertIntegerToFloat($current_amount_credit));
                 $category["current_amount_debit"] = abs(Input::convertIntegerToFloat($current_amount_debit));
+
+                $previousMonth = ($monthToUse > 1) ? $monthToUse - 1 : 12;
+                $previousMonthsYear = ($monthToUse > 1) ? $yearToUse : $yearToUse - 1;
+                $previousMonthAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $previousMonth, $previousMonthsYear, true)[0];
+                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_credit"]));
+                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_debit"]));
+
+                $sameMonthPreviousYearAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse - 1, true)[0];
+                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_credit"]));
+                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_debit"]));
+
+                $last12MonthsAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLast12Months($category["category_id"], true)[0];
+                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_credit"]));
+                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_debit"]));
+
+                $lifetimeAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLifetime($category["category_id"], true)[0];
+                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_credit"]));
+                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_debit"]));
             }
 
             // we need to also add uncategorized transactions to the calculations
-            /*$uncategorizedTrxAmounts = BudgetHasCategoriesModel::getAmountForUncategorizedTransactionsInMonth($monthToUse, $yearToUser)[0];
+            /*$uncategorizedTrxAmounts = BudgetHasCategoriesModel::getAmountForUncategorizedTransactionsInMonth($monthToUse, $yearToUse)[0];
             array_push($list["categories"], [
                 "category_id" => -1,
                 "current_amount_credit" => abs(Input::convertIntegerToFloat($uncategorizedTrxAmounts["category_balance_credit"])),
@@ -217,7 +223,7 @@ class Budgets
             ]);*/
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $list);
         } catch (BadInputValidationException $e) {
@@ -255,7 +261,30 @@ class Budgets
             $userID = UserModel::getUserIdByName($authusername, false);
 
 
-            $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type", "description"]);
+            $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type", "description", "status"]);
+
+            foreach ($catsArr as &$category) {
+                $monthToUse = date('m');
+                $yearToUse = date('Y');
+
+                $previousMonth = ($monthToUse > 1) ? $monthToUse - 1 : 12;
+                $previousMonthsYear = ($monthToUse > 1) ? $yearToUse : $yearToUse - 1;
+                $previousMonthAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $previousMonth, $previousMonthsYear, true)[0];
+                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_credit"]));
+                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_debit"]));
+
+                $sameMonthPreviousYearAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse - 1, true)[0];
+                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_credit"]));
+                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_debit"]));
+
+                $last12MonthsAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLast12Months($category["category_id"], true)[0];
+                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_credit"]));
+                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_debit"]));
+
+                $lifetimeAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLifetime($category["category_id"], true)[0];
+                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_credit"]));
+                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_debit"]));
+            }
 
             $list['categories'] = $catsArr;
             $list['initial_balance'] = "-";
@@ -295,14 +324,10 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             // ADD BUDGET
             $budgetID = BudgetModel::insert([
@@ -311,7 +336,7 @@ class Budgets
                 "observations" => $observations,
                 "is_open" => true,
                 "users_user_id" => $userID
-            ]);
+            ], true);
 
 
             // ADD CAT VALUES TO BUDGET CATEGORIES
@@ -321,10 +346,10 @@ class Budgets
                 $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
                 $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
 
-                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit);
+                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit, true);
             }
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, ["budget_id" => $budgetID]);
         } catch (BadInputValidationException $e) {
@@ -355,12 +380,14 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
+            $userID = UserModel::getUserIdByName($authusername, true);
 
-            BudgetHasCategoriesModel::delete(["budgets_budget_id" => $budgetID, "budgets_users_user_id" => $userID]);
-            BudgetModel::delete(["budget_id" => $budgetID, "users_user_id" => $userID]);
+            BudgetHasCategoriesModel::delete(["budgets_budget_id" => $budgetID, "budgets_users_user_id" => $userID], true);
+            BudgetModel::delete(["budget_id" => $budgetID, "users_user_id" => $userID], true);
 
-
+            $db->getDB()->commit();
             return sendResponse($response, EnsoShared::$REST_OK, "Budget successfully removed.");
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
@@ -394,14 +421,10 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             // EDIT BUDGET
             BudgetModel::editWhere(
@@ -411,7 +434,7 @@ class Budgets
                     "year" => $year,
                     "observations" => $observations,
                     "users_user_id" => $userID
-                ]
+                ], true
             );
 
 
@@ -429,10 +452,10 @@ class Budgets
                 $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
                 $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
 
-                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit);
+                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit, true);
             }
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Budget successfully updated!");
         } catch (BadInputValidationException $e) {
@@ -465,24 +488,20 @@ class Budgets
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
 
-            /* echo "1";
-            die(); */
-
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             // ADD BUDGET
             BudgetModel::editWhere(
                 ["budget_id" => $budgetID],
                 [
                     "is_open" => $isOpen
-                ]
+                ], true
             );
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Budget successfully updated!");
         } catch (BadInputValidationException $e) {

@@ -13,7 +13,8 @@ class UserModel extends Entity
         "sessionkey",
         "trustlimit",
         "trustlimit_mobile",
-        "sessionkey_mobile"
+        "sessionkey_mobile",
+        "last_update_timestamp"
     ];
 
 
@@ -65,5 +66,17 @@ class UserModel extends Entity
 
             return false;
         }
+    }
+
+    public static function setLastUpdateTimestamp($userId, $timestamp, $transactional = false)
+    {
+        UserModel::editWhere(
+            [
+                "user_id" => $userId
+            ],
+            [
+                "last_update_timestamp" => $timestamp
+            ], $transactional
+        );
     }
 }

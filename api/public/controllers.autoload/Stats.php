@@ -52,6 +52,7 @@ class Stats
             $budgetID = BudgetModel::getWhere(["month" => $month, "year" => $year, "users_user_id" => $userID])[0]["budget_id"];
 
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+            $list["last_update_timestamp"] = intval(UserModel::getWhere(["user_id" => $userID], ["last_update_timestamp"])[0]["last_update_timestamp"]);
 
             foreach ($list["categories"] as &$category) {
                 $monthToUse = $month; //$list["month"];
@@ -257,11 +258,11 @@ class Stats
             $userID = UserModel::getUserIdByName($authusername, false);
             $currentMonth = $date = date('m');
             $currentYear = $date = date('Y');
-            $nextMonth = ($currentMonth < 12) ? $currentMonth + 1 : 1;
-            $nextMonthsYear = ($currentMonth < 12) ? $currentYear : $currentYear + 1;
+            /*$nextMonth = ($currentMonth < 12) ? $currentMonth + 1 : 1;
+            $nextMonthsYear = ($currentMonth < 12) ? $currentYear : $currentYear + 1;*/
 
 
-            $budgetsList = BudgetModel::getBudgetsUntilCertainMonth($userID, $nextMonth, $nextMonthsYear, "DESC");
+            $budgetsList = BudgetModel::getBudgetsUntilCertainMonth($userID, $currentMonth, $currentYear, "DESC");
 
             $outputArr = [];
             foreach ($budgetsList as &$budget) {
@@ -340,11 +341,11 @@ class Stats
             $userID = UserModel::getUserIdByName($authusername, false);
             $currentMonth = $date = date('m');
             $currentYear = $date = date('Y');
-            $nextMonth = ($currentMonth < 12) ? $currentMonth + 1 : 1;
-            $nextMonthsYear = ($currentMonth < 12) ? $currentYear : $currentYear + 1;
+            /*$nextMonth = ($currentMonth < 12) ? $currentMonth + 1 : 1;
+            $nextMonthsYear = ($currentMonth < 12) ? $currentYear : $currentYear + 1;*/
 
 
-            $budgetsList = BudgetModel::getBudgetsUntilCertainMonth($userID, $nextMonth, $nextMonthsYear, "DESC");
+            $budgetsList = BudgetModel::getBudgetsUntilCertainMonth($userID, $currentMonth, $currentYear, "DESC");
 
             $outputArr = [];
             foreach ($budgetsList as &$budget) {

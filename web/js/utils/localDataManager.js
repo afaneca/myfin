@@ -1,6 +1,7 @@
 "use strict";
 
 const USER_ACCOUNTS_TAG = "USER_ACCOUNTS_TAG"
+const CURRENT_THEME_TAG = "CURRENT_THEME_TAG"
 
 var LocalDataManager = {
 
@@ -16,6 +17,9 @@ var LocalDataManager = {
     },
     clearLocalData: () => {
         return window.localStorage.clear()
+    },
+    clearLocalSessionData: () => {
+      window.localStorage.removeItem(USER_ACCOUNTS_TAG)
     },
 
     // ACCOUNTS DATA
@@ -38,7 +42,13 @@ var LocalDataManager = {
         })
     },
 
-    // ...
+    // THEME
+    setCurrentTheme: (theme) => {
+        return LocalDataManager.setLocalItem(CURRENT_THEME_TAG, theme)
+    },
+    getCurrentTheme: () => {
+        return LocalDataManager.getLocalItem(CURRENT_THEME_TAG)
+    }
 
 }
 

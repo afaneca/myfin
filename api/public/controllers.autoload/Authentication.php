@@ -40,12 +40,9 @@ class Authentication
             $userID = UserModel::getUserIdByName($username, true);
             $accountsArr = AccountModel::getAllAccountsForUserWithAmounts($userID); //AccountModel::getWhere(["users_user_id" => $userID]);
 
-            /*foreach ($accountsArr as $acc) {
-                $acc["current_balance"] = Input::convertIntegerToFloat($acc["current_balance"]);
-            }*/
 
             $db->getDB()->commit();
-            //EnsoLogsModel::addEnsoLog($username, "Logged in.", EnsoLogsModel::$INFORMATIONAL, 'Authentication');
+
 
             return sendResponse($response, EnsoShared::$REST_OK, ["sessionkey" => $auth_key, "username" => $username, "trustlimit" => $trustlimit, "accounts" => $accountsArr]);
         } catch (InputException $e) {

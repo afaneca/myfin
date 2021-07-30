@@ -14,6 +14,14 @@ var MYFIN = {
         ACTIVE: "Ativa",
         INACTIVE: "Inativa"
     },
+    CATEGORY_STATUS: {
+        ACTIVE: "Ativa",
+        INACTIVE: "Inativa"
+    },
+    TRX_TYPE_LABEL: {
+        DEBIT: "Débito",
+        CREDIT: "Crédito"
+    },
     RULES_OPERATOR: {
         DEFAULT_RULES_OPERATOR_IGNORE: "IG",
         DEFAULT_RULES_OPERATOR_EQUALS: "EQ",
@@ -21,6 +29,17 @@ var MYFIN = {
         DEFAULT_RULES_OPERATOR_CONTAINS: "CONTAINS",
         DEFAULT_RULES_OPERATOR_NOT_CONTAINS: "NOTCONTAINS"
     },
+    APP_THEMES_CSS_PATH: {
+        DARK_BLUE: "./css/main.css",
+        DARK_GRAY: "./css/themes/dark_gray_theme.css",
+        LIGHT: "./css/themes/light_theme.css",
+    },
+    APP_THEMES: {
+        DARK_BLUE: "DARK_BLUE",
+        DARK_GRAY: "DARK_GRAY",
+        LIGHT: "LIGHT",
+    },
+    TRX_FETCH_LIMIT: 300,
 }
 
 var EXTERNAL_ACCOUNT_LABEL = "** Conta Externa **"

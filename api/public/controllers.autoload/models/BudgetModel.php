@@ -1,5 +1,6 @@
 <?php
 
+require_once 'consts.php';
 
 class BudgetModel extends Entity
 {
@@ -150,14 +151,14 @@ class BudgetModel extends Entity
         return (($finalBalance - $initialBalance) / (abs($initialBalance)) * 100);
     }
 
-    public static function getSumAmountsForBudget($userID, $budget)
+    public static function getSumAmountsForBudget($userID, $budget, $transactional = false)
     {
         $budgetID = $budget["budget_id"];
         $month = intval($budget["month"]);
         $year = intval($budget["year"]);
         $isOpen = intval($budget["is_open"]);
 
-        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, $transactional);
 
         $balance_credit = $balance_debit = 0;
 
@@ -250,21 +251,23 @@ class BudgetHasCategoriesModel extends Entity
     }
 
     /**
-     * Gets all categories for the user, with planned & current amounts related to a specific budget
+     * Gets all (active) categories for the user, with planned & current amounts related to a specific budget
      */
     public static function getAllCategoriesForBudget($userID, $budgetID, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT users_user_id, category_id, name, type, description, color_gradient, budgets_budget_id, truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit, truncate((coalesce(planned_amount_debit, 0) / 100), 2) as planned_amount_debit, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
+        $sql = "SELECT users_user_id, category_id, name, status, type, description, color_gradient, budgets_budget_id, truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit, truncate((coalesce(planned_amount_debit, 0) / 100), 2) as planned_amount_debit, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
             "FROM " .
             "(SELECT * FROM budgets_has_categories WHERE budgets_users_user_id = :userID AND (budgets_budget_id = :budgetID)) b " .
             "RIGHT JOIN categories ON categories.category_id = b.categories_category_id " .
-            "WHERE users_user_id = :userID";
+            "WHERE users_user_id = :userID " .
+            "AND status = :status";
 
         $values = array();
         $values[':userID'] = $userID;
         $values[':budgetID'] = $budgetID;
+        $values[':status'] = DEFAULT_CATEGORY_ACTIVE_STATUS;
 
 
         try {
@@ -345,6 +348,82 @@ class BudgetHasCategoriesModel extends Entity
         $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
         $values[':endTimestamp'] = $endTimestamp->getTimestamp();
 
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    public static function getAverageAmountForCategoryInLast12Months($category_id, $transactional = false)
+    {
+        $listOfAccountsToExclude = AccountModel::getWhere(["exclude_from_budgets" => true]);
+        if (!$listOfAccountsToExclude || sizeof($listOfAccountsToExclude) == 0) {
+            $accsExclusionSQLExcerptAccountsTo = " 1 = 1 ";
+            $accsExclusionSQLExcerptAccountsFrom = " 1 = 1 ";
+        } else {
+            $accountsToExcludeListInSQL = BudgetHasCategoriesModel::buildSQLForExcludedAccountsList($listOfAccountsToExclude);
+            $accsExclusionSQLExcerptAccountsTo = "accounts_account_to_id NOT IN $accountsToExcludeListInSQL ";
+            $accsExclusionSQLExcerptAccountsFrom = "accounts_account_from_id NOT IN $accountsToExcludeListInSQL ";
+        }
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT avg(category_balance_credit) as 'category_balance_credit', avg(category_balance_debit) as 'category_balance_debit' FROM(SELECT sum(if(type = 'I' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsTo), amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsFrom), amount, 0)) as 'category_balance_debit', MONTH(FROM_UNIXTIME(date_timestamp)) as 'month', YEAR(FROM_UNIXTIME(date_timestamp)) as 'year' " .
+            "FROM transactions " .
+            "WHERE categories_category_id = :cat_id " .
+            /*"AND TIMESTAMPDIFF(MONTH, FROM_UNIXTIME(date_timestamp), FROM_UNIXTIME(UNIX_TIMESTAMP())) < 13 " .*/
+            " AND date_timestamp > UNIX_TIMESTAMP(DATE_SUB(DATE_FORMAT(NOW() ,'%Y-%m-01'), INTERVAL 12 month)) " .
+            "GROUP BY month, year ) a";
+
+        /*$tz = new DateTimeZone('UTC');
+        $previousYear = intval($year - 1);
+        $beginTimestamp = new DateTime("$previousYear-$month-01", $tz);
+        $endTimestampUnformatted = new DateTime("$year-$month-01", $tz);
+        $endTimestamp = new DateTime($endTimestampUnformatted->format('Y-m-t 23:59:59'), $tz);*/
+
+        $values = array();
+        $values[':cat_id'] = $category_id;
+        /*$values[':beginMonth'] = intval($month);
+        $values[':beginYear'] = intval($year);
+        $values[':previousYear'] = intval($year) - 1;*/
+        /*$values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
+        $values[':endTimestamp'] = $endTimestamp->getTimestamp();*/
+
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    public static function getAverageAmountForCategoryInLifetime($category_id, $transactional = false)
+    {
+        $listOfAccountsToExclude = AccountModel::getWhere(["exclude_from_budgets" => true]);
+        if (!$listOfAccountsToExclude || sizeof($listOfAccountsToExclude) == 0) {
+            $accsExclusionSQLExcerptAccountsTo = " 1 = 1 ";
+            $accsExclusionSQLExcerptAccountsFrom = " 1 = 1 ";
+        } else {
+            $accountsToExcludeListInSQL = BudgetHasCategoriesModel::buildSQLForExcludedAccountsList($listOfAccountsToExclude);
+            $accsExclusionSQLExcerptAccountsTo = "accounts_account_to_id NOT IN $accountsToExcludeListInSQL ";
+            $accsExclusionSQLExcerptAccountsFrom = "accounts_account_from_id NOT IN $accountsToExcludeListInSQL ";
+        }
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT avg(category_balance_credit) as 'category_balance_credit', avg(category_balance_debit) as 'category_balance_debit' FROM(SELECT sum(if(type = 'I' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsTo), amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsFrom), amount, 0)) as 'category_balance_debit', MONTH(FROM_UNIXTIME(date_timestamp)) as 'month', YEAR(FROM_UNIXTIME(date_timestamp)) as 'year' " .
+            "FROM transactions " .
+            "WHERE categories_category_id = :cat_id " .
+            "GROUP BY month, year ) a";
+
+        $values = array();
+        $values[':cat_id'] = $category_id;
 
         try {
             $db->prepare($sql);

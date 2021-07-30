@@ -28,8 +28,8 @@ var Dashboard = {
         if (!budgetedAmount) budgetedAmount = 0
         if (!realAmount) realAmount = 0
 
-        $("#chart-monthly-overview-real-amount").text(StringUtils.formatStringToCurrency(Math.abs(realAmount)))
-        $("#chart-monthly-overview-budgeted-amount").text(StringUtils.formatStringToCurrency(Math.abs(budgetedAmount)))
+        $("#chart-monthly-overview-real-amount").text(StringUtils.formatMoney(Math.abs(realAmount)))
+        $("#chart-monthly-overview-budgeted-amount").text(StringUtils.formatMoney(Math.abs(budgetedAmount)))
 
         let maxValue = Math.abs(budgetedAmount) - Math.abs(realAmount)
         if (maxValue < 0) maxValue = 0
@@ -77,7 +77,7 @@ var Dashboard = {
             <tr data-id='${mov.transaction_id}'>
                 <td>${DateUtils.convertUnixTimestampToDateString(mov.date_timestamp)}</td>
                 <td>${mov.description}</td>
-                <td>${Dashboard.formatCurrencyColumn(mov.type, StringUtils.formatStringToCurrency(mov.amount))}</td>
+                <td>${Dashboard.formatCurrencyColumn(mov.type, StringUtils.formatMoney(mov.amount))}</td>
             </tr>
         `
     },
@@ -87,7 +87,7 @@ var Dashboard = {
                 return `<span style="height: auto !important;" class='badge green-text text-accent-6'>${formattedCurrencyString}</span></span>`
                 break;
             case 'E':
-                return `<span style="height: auto !important;" class='badge pink-text text-accent-2'>${formattedCurrencyString}</span>`
+                return `<span style="height: auto !important;" class='badge pink-text text-accent-1'>${formattedCurrencyString}</span>`
                 break;
             case 'T':
             default:
@@ -156,7 +156,7 @@ var Dashboard = {
         StatServices.getDashboardExpensesIncomeDistributionStats(month, year,
             (resp) => {
                 // SUCCESS
-
+                Dashboard.setupLastUpdateTimestamp(resp["last_update_timestamp"])
                 const allCategories = resp.categories
 
                 let totalExpensesRealAmount = 0
@@ -212,6 +212,11 @@ var Dashboard = {
         Dashboard.setupDebtDistributionChart()
         Dashboard.setupInvestmentDistributionChart()
         Dashboard.setupIncomeExpensesDistributionChart()
+    },
+    setupLastUpdateTimestamp: (timestamp) => {
+        if (timestamp == "0") return "N/D"
+        const formattedTime = DateUtils.convertUnixTimestampToEuropeanDateTimeFormat(timestamp)
+        $("#dashboard-last-update-timestamp-value").text(formattedTime)
     }
 }
 

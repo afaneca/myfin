@@ -144,13 +144,25 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {
@@ -159,8 +171,9 @@ var Stats = {
                 data: chartData,
                 label: "Evolução de Despesa",
                 borderColor: "#3e95cd",
-                fill: true
-            }
+                fill: true,
+                trendlineLinear: chartUtils.getTrendLineObject()
+            },
             ]
         };
 
@@ -194,7 +207,7 @@ var Stats = {
         return `
         <tr>
             <td>${monthData.month}/${monthData.year}</td>
-            <td>${StringUtils.formatStringToCurrency(monthData.value)}</td>
+            <td>${StringUtils.formatMoney(monthData.value)}</td>
             <td>${(!oldMonth) ? "-" : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
         </tr>
       `
@@ -283,13 +296,25 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']])
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {
@@ -298,7 +323,8 @@ var Stats = {
                 data: chartData,
                 label: "Evolução de Receita Por Categoria",
                 borderColor: "#3e95cd",
-                fill: true
+                fill: true,
+                trendlineLinear: chartUtils.getTrendLineObject()
             }
             ]
         };
@@ -333,20 +359,67 @@ var Stats = {
         return `
         <tr>
             <td>${monthData.month}/${monthData.year}</td>
-            <td>${StringUtils.formatStringToCurrency(monthData.value)}</td>
+            <td>${StringUtils.formatMoney(monthData.value)}</td>
             <td>${(!oldMonth) ? "-" : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
         </tr>
       `
     },
     transformList: list => {
+        let cLabels = []
+        let cAggData = []
+        let accsList = []
+        let extraChartData = []
+
+        accsList = LocalDataManager.getUserAccounts()
+
+        for (const elem of list) {
+            const genKey = `${elem.month}/${elem.year}`
+            cLabels.push(genKey)
+
+            for (const acc of elem.account_snapshots) {
+                let fullAccount = accsList.filter((ac) => {
+                    return ac.account_id == acc.account_id
+                })[0]
+                let extraDataObj = extraChartData.filter(e => e.account_id == acc.account_id)[0]
+                if (!extraDataObj) {
+                    // record doesn't exist
+                    extraChartData.push(
+                        {
+                            account_id: acc.account_id,
+                            data: [acc.balance],
+                            label: fullAccount.name,
+                            borderColor: chartUtils.getPieChartColorsList()[0],
+                            fill: true,
+                            hidden: true,
+                        },
+                    )
+                } else {
+                    // record exists already. Just update its data
+                    extraDataObj.data.push(acc.balance)
+                }
+
+            }
+
+            let aggregateBalance = elem.account_snapshots.reduce((acc, item) => {
+                return acc + StringUtils.convertFloatToInteger(item.balance)
+            }, 0)
+            cAggData.push(StringUtils.convertIntegerToFloat(aggregateBalance))
+        }
+
+        Stats.setupPatrimonyLineChart(cAggData, cLabels, extraChartData)
+        Stats.setupPatrimonyTable(cAggData.slice().reverse(), cLabels.slice().reverse())
+        tableUtils.setupStaticTable("#ev-pat-table")
+
+    },
+    /*transformList: list => {
         let tempList = []
         let cLabels = []
         let cData = []
         let accsList = []
         let extraChartData = []
-        /**
+        /!**
          * [account_id] = { }
-         */
+         *!/
         accsList = LocalDataManager.getUserAccounts()
 
 
@@ -407,10 +480,11 @@ var Stats = {
         }
 
         //chartUtils.setupSimpleLineChart("chart_pie_patrimony_evolution", cData, cLabels, "asdfsa")
+        debugger
         Stats.setupPatrimonyLineChart(cData["sum"], cLabels, extraChartData)
         Stats.setupPatrimonyTable(cData["sum"].slice().reverse(), cLabels.slice().reverse())
         tableUtils.setupStaticTable("#ev-pat-table")
-    },
+    },*/
     setupPatrimonyTable: (sumArr, sumLabels) => {
         $("#patrimony-table").html(Stats.renderPatrimonyTable(sumArr, sumLabels))
     },
@@ -436,9 +510,9 @@ var Stats = {
         return `
         <tr>
             <td>${label}</td>
-            <td>${(starValue) ? StringUtils.formatStringToCurrency(starValue) : "-"}</td>
-            <td>${StringUtils.formatStringToCurrency(endValue)}</td>
-            <td>${(starValue) ? StringUtils.formatStringToCurrency(endValue - starValue) : "-"}</td>
+            <td>${(starValue) ? StringUtils.formatMoney(starValue) : "-"}</td>
+            <td>${StringUtils.formatMoney(endValue)}</td>
+            <td>${(starValue) ? StringUtils.formatMoney(endValue - starValue) : "-"}</td>
             <td>${(starValue) ? Stats.calculateGrowthPercentage(starValue, endValue) : "-"}</td>
         </tr>
       `
@@ -450,7 +524,7 @@ var Stats = {
         if (percentageChange == 0)
             return `<span>${percentageChange}%</span>`;
         else if (percentageChange < 0)
-            return `<span class="badge pink-text text-accent-2">${percentageChange}%</span>`;
+            return `<span class="badge pink-text text-accent-1">${percentageChange}%</span>`;
         else {
             return `<span class="badge green-text text-accent-4">${percentageChange}%</span>`;
         }
@@ -464,42 +538,35 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(tooltipItem.value/*data['datasets'][0]['data'][tooltipItem['index']]*/)
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
-
-        /*let extraChartData = [
-            {
-                data: chartData,
-                label: "v1",
-                borderColor: "#3e95cd",
-                fill: true
-            },
-            {
-                data: chartData,
-                label: "v2",
-                borderColor: "#3e95cd",
-                fill: true
-            },
-        ]*/
 
         var data = {
             labels: chartLabels,
-            /* datasets: [{
-                data: [0, 10, 20, 30, 100, 40, 56, 60, 70, 91, 300],
-                backgroundColor: chartUtils.getPieChartColorsList()
-
-            }] */
             datasets: [{
                 data: chartData,
                 label: "Acumulado",
                 borderColor: "#3e95cd",
-                fill: true
+                fill: true,
+                /*lineTension: 0,*/
             },
                 ...extraChartData
             ]
@@ -559,9 +626,9 @@ var Stats = {
         return `
         <tr>
             <td>${budget.month}/${budget.year}</td>
-            <td>${StringUtils.formatStringToCurrency(budget.planned_initial_balance)}</td>
-            <td>${StringUtils.formatStringToCurrency(budget.planned_final_balance)}</td>
-            <td>${StringUtils.formatStringToCurrency(budget.planned_final_balance_assets_only/*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/)}</td>
+            <td>${StringUtils.formatMoney(budget.planned_initial_balance)}</td>
+            <td>${StringUtils.formatMoney(budget.planned_final_balance)}</td>
+            <td>${StringUtils.formatMoney(budget.planned_final_balance_assets_only/*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/)}</td>
             <td>${(budget.planned_initial_balance) ? Stats.calculateGrowthPercentage(budget.planned_initial_balance, budget.planned_final_balance) : "-"}</td>
         </tr>
       `
@@ -583,13 +650,25 @@ var Stats = {
                 display: true,
                 text: chartTitle,
                 position: "top",
-                fontColor: "white"
+                fontColor: LayoutUtils.getCSSVariableValue("--main-headline-text-color")
             },
             legend: {
                 labels: {
-                    fontColor: 'rgba(255, 255, 255, 0.7)'
+                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-color")
                 }
             },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: (tooltipItem, data) => {
+                        return StringUtils.formatMoney(tooltipItem.value/*data['datasets'][0]['data'][tooltipItem['index']]*/)
+                    },
+                    afterLabel: (tooltipItem, data) => {
+                    }
+                }
+            }
         }
 
         var data = {

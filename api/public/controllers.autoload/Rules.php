@@ -44,7 +44,7 @@ class Rules
             }
             $outputArr["categories"] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name"]);
             $outputArr["entities"] = EntityModel::getWhere(["users_user_id" => $userID], ["entity_id", "name"]);
-            $outputArr["accounts"] = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "name"]);
+            $outputArr["accounts"] = AccountModel::getAllAccountsForUserWithAmounts($userID, false, false);
 
 
             /* $db->getDB()->commit(); */

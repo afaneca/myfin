@@ -22,6 +22,27 @@ var AccountServices = {
             }
         });
     },
+    recalculateAllUserAccountsBalances: (successCallback, errorCallback) => {
+        var pageUrl = REST_SERVER_PATH + "accounts/recalculate-balance/all"
+        $.ajax({
+            async: true,
+            type: "GET",
+            dataType: "json",
+            cache: false,
+            headers: {
+                authusername: Cookies.get("username"),
+                sessionkey: Cookies.get("sessionkey"),
+            },
+            data: {},
+            url: pageUrl,
+            success: function (response) {
+                if (successCallback) successCallback(response)
+            },
+            error: function (response) {
+                if (errorCallback) errorCallback(response)
+            }
+        });
+    },
     addAccount: (name, description, type, exclude_from_budgets, status, current_balance, color_gradient, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "accounts/"
 

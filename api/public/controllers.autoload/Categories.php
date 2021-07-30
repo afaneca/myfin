@@ -45,12 +45,12 @@ class Categories
             if (isset($type)) {
                 $catsArr = CategoryModel::getWhere(
                     ["users_user_id" => $userID, "type" => $type],
-                    ["category_id", "name", "type", "description", "color_gradient"]
+                    ["category_id", "name", "type", "description", "color_gradient", "status"]
                 );
             } else {
                 $catsArr = CategoryModel::getWhere(
                     ["users_user_id" => $userID],
-                    ["category_id", "name", "type", "description", "color_gradient"]
+                    ["category_id", "name", "type", "description", "color_gradient", "status"]
                 );
             }
 
@@ -91,6 +91,15 @@ class Categories
                 $type = "M"; // MIXED
             }
 
+            if (array_key_exists('status', $request->getParsedBody())) {
+                $status = Input::validate($request->getParsedBody()['status'], Input::$STRICT_STRING);
+                if ($status != DEFAULT_CATEGORY_ACTIVE_STATUS && $status != DEFAULT_CATEGORY_INACTIVE_STATUS) {
+                    $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
+                }
+            } else {
+                $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
+            }
+
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
@@ -110,6 +119,7 @@ class Categories
                 "description" => $description,
                 "users_user_id" => $userID,
                 "color_gradient" => $colorGradient,
+                "status" => $status
             ], false);
 
 
@@ -201,6 +211,15 @@ class Categories
                 $newType = "M"; // MIXED
             }
 
+            if (array_key_exists('new_status', $request->getParsedBody())) {
+                $status = Input::validate($request->getParsedBody()['new_status'], Input::$STRING);
+                if ($status != DEFAULT_CATEGORY_ACTIVE_STATUS && $status != DEFAULT_CATEGORY_INACTIVE_STATUS) {
+                    $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
+                }
+            } else {
+                $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
+            }
+
             /* Auth - token validation */
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
@@ -222,7 +241,8 @@ class Categories
                     "name" => $newName,
                     "description" => $newDescription,
                     "type" => $newType,
-                    "color_gradient" => $newColorGradient
+                    "color_gradient" => $newColorGradient,
+                    "status" => $status
                 ],
                 false
             );

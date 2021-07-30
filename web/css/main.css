@@ -7,6 +7,7 @@
 
 :root {
     --main-green: #009688;
+    --main-light-green: #4ca341;
     --dark-grey: #262626;
     --light-grey: #f3f3f3;
     --medium-grey: #938f8f;
@@ -19,6 +20,7 @@
     --main-dark-on-dark-background: #1f2029;
     --main-text-color: rgba(255, 255, 255, 0.7);
     --main-text-headline-color: white;
+    --main-light-gray-color: #515558;
 
     --main-accent-color: var(--main-light-blue);
     --main-body-background: var(--main-dark-background);
@@ -26,12 +28,17 @@
     --main-card-background: var(--main-dark-on-dark-background);
     --main-modal-background: var(--main-dark-background);
     --main-disabled-color: var(--light-grey);
+    --main-dashboard-angular-chart-background: var(--main-body-background);
 
 }
 
 body {
     background: var(--main-body-background);
     overflow: visible !important;
+}
+
+body.noScroll {
+    overflow: hidden !important;
 }
 
 hr {
@@ -152,7 +159,7 @@ a > .material-icons, td > .material-icons, div.card-quick-actions > span > .mate
 
 .card-panel {
     /*background: var(--light-grey);*/
-    background: var(--main-dark-on-dark-background);
+    background: var(--main-card-background);
 }
 
 .top-nav {
@@ -175,7 +182,7 @@ nav ul a:hover {
     width: var(--sidebar_width_percentage);
     float: left;
     margin-top: 0px;
-    background: var(--main-dark-on-dark-background);
+    background: var(--main-sidebar-background);
 }
 
 .side-nav-menu li {
@@ -234,6 +241,12 @@ nav ul a:hover {
     }
 }
 
+@media only screen and (max-height: 750px) {
+    .modal {
+        top: 0% !important;
+    }
+}
+
 .main-progress-bar {
     /* padding: 10px; */
     float: right;
@@ -246,6 +259,11 @@ nav ul a:hover {
 
 .table-action-icons {
     cursor: pointer;
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #5a5a5a !important;
+    transition: 0.3s;
 }
 
 /* CONSTANTS */
@@ -505,8 +523,8 @@ nav ul a:hover {
 /* Tooltip container */
 .tooltip {
     position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    display: block;
+    /*border-bottom: 1px dotted black; !* If you want dots under the hoverable text *!*/
 }
 
 /* Tooltip text */
@@ -515,7 +533,7 @@ nav ul a:hover {
     /*width: 120px;*/
     background-color: #555;
     color: #fff;
-    text-align: center;
+    /*text-align: center;*/
     padding: 10px;
     border-radius: 6px;
 
@@ -530,6 +548,9 @@ nav ul a:hover {
     /* Fade in tooltip */
     opacity: 0;
     transition: opacity 0.3s;
+
+    font-size: smaller;
+    width: 100%;
 }
 
 /* Tooltip arrow */
@@ -693,7 +714,7 @@ table.dataTable.order-column tbody tr > .sorting_1, table.dataTable.order-column
 .select2-container--default .select2-selection--single {
     background-color: #0a0b0d8f;
     height: 2.5rem;
-    cursor: not-allowed;
+    cursor: default;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
@@ -759,7 +780,7 @@ table.dataTable.order-column tbody tr > .sorting_1, table.dataTable.order-column
 
 /* MATERIALIZE SELECT */
 .dropdown-content {
-    background-color: #15161b;
+    background-color: var(--main-dark-background);
 }
 
 .dropdown-content li > a, .dropdown-content li > span {
@@ -819,3 +840,98 @@ svg:not(:root) {
 }
 
 /* END DATEPICKER */
+
+[type="radio"]:checked + span:after, [type="radio"].with-gap:checked + span:after {
+    background-color: var(--main-light-blue);
+    background: -webkit-linear-gradient(
+            45deg, #43a047, #1de9b6) !important;
+    background: linear-gradient(
+            45deg, #43a047, #1de9b6) !important;
+}
+
+[type="radio"]:checked + span:after, [type="radio"].with-gap:checked + span:before, [type="radio"].with-gap:checked + span:after {
+    /* border: 2px solid var(--main-light-blue); */
+    border: none !important;
+}
+
+/* START ACCOUNT GROUPS */
+.acc-group-wrapper {
+    padding: 0 20px;
+    margin-bottom: 80px;
+}
+
+.medium-small {
+    font-size: 3rem;
+}
+
+.list {
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 1fr;
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
+    /*max-width: 500px;*/
+}
+
+.list-item {
+    background-color: var(--main-dark-background);
+    display: flex;
+    padding: 0.5em;
+    margin-bottom: 20px;
+}
+
+.list-content {
+    width: 100%;
+}
+
+@media only screen and (max-width: 1620px) {
+    .list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (max-width: 300px) {
+    .list {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+.accounts-account-group-total-wrapper {
+    float: right;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 20px;
+    font-size: small;
+}
+
+.account-groups-total-balance-value {
+    font-weight: bold;
+    font-size: large;
+}
+
+/* END ACCOUNT GROUPS */
+
+/* START CUSTOM SCROLLBAR */
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* END CUSTOM SCROLLBAR */
