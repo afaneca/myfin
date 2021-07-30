@@ -26,6 +26,9 @@ module.exports = (sequelize, Sequelize) => {
         sessionkey_mobile: {
             type: Sequelize.BIGINT
         },
+        last_update_timestamp: {
+            type: Sequelize.BIGINT
+        }
     });
 
     return User;
