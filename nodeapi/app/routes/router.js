@@ -12,6 +12,9 @@ module.exports = app => {
     const authRoutes = express.Router()
     authRoutes.post("/", users.attemptLogin)
 
+    const validityRoutes = express.Router()
+    validityRoutes.post("/", users.checkSessionValidity)
+
 
 
 
@@ -19,8 +22,6 @@ module.exports = app => {
     // ACCOUNTS ROUTES
     //const users = require("../controllers/userController")
     const accountsRouter = express.Router()
-
-    // AUTHENTICATION ROUTES
 
     // BUDGETS ROUTES
 
@@ -36,5 +37,6 @@ module.exports = app => {
 
     app.use("/users", usersRouter)
     app.use("/auth", authRoutes)
+    app.use("/validity", validityRoutes)
     app.use("/accounts", accountsRouter)
 }

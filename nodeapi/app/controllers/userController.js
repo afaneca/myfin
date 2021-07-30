@@ -2,7 +2,7 @@ const db = require("../models");
 const User = db.users;
 const Op = db.Sequelize.Op;
 const joi = require('joi')
-const encryptUtils = require("../utils/encryptUtils.js");
+const encryptUtils = require("../utils/CryptoUtils.js");
 const APIError = require("../errorHandling/apiError");
 const SessionManager = require("../utils/sessionManager")
 
@@ -68,6 +68,7 @@ const attemptLoginSchema = joi.object({
 })
 exports.attemptLogin = async (req, res, next) => {
     try {
+        const mobile = req.get("mobile") || false
         const userData = await attemptLoginSchema.validateAsync(req.body)
         const condition = {username: {[Op.like]: `${userData.username}`}}
         User.findOne({where: condition})
@@ -75,8 +76,11 @@ exports.attemptLogin = async (req, res, next) => {
                 if (data) {
                     const isValid = encryptUtils.verifyPassword(userData.password, data.password)
                     if (isValid) {
+                        if(mobile){
+                            data.sessionkey_mobile = SessionManager.generateNewSessionKeyForUser(userData.username, mobile)
+                        } else
+                            data.sessionkey = SessionManager.generateNewSessionKeyForUser(userData.username, mobile)
                         res.send(data)
-                        // TODO 
                     } else {
                         next(APIError.notAuthorized("Wrong Credentials"))
                     }
@@ -97,8 +101,9 @@ exports.checkSessionValidity = async (req, res, next) => {
         const key = req.get("sessionkey")
         const username = req.get("authusername")
         const sessionKeyIsValid = await SessionManager.checkIfSessionKeyIsValid(key, username)
+        res.send("OK")
     } catch (err) {
-        next(APIError.internalServerError())
+        next(err || APIError.internalServerError())
     }
 }
 

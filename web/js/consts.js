@@ -51,7 +51,7 @@ var FRONT_SERVER_PATH =
     window.location.hostname +
     window.location.pathname;
 //var REST_SERVER_PATH = RemoveLastDirectoryPartOf(RemoveLastDirectoryPartOf(FRONT_SERVER_PATH)) + "/api/index.php/"
-var REST_SERVER_PATH = "https://api.myfin.test/";
+var REST_SERVER_PATH = "https://nodeapi.myfin.test/";
 
 
 //# sourceURL=consts.js
