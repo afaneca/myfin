@@ -6,6 +6,7 @@ const encryptUtils = require("../utils/CryptoUtils.js");
 const APIError = require("../errorHandling/apiError");
 const SessionManager = require("../utils/sessionManager")
 const CommonsController = require("./commonsController")
+const Logger = require("../utils/Logger");
 
 // GET ALL
 exports.findAll = async (req, res, next) => {
@@ -52,11 +53,11 @@ exports.createOne = async (req, res, next) => {
         user.password = encryptUtils.hashPassword(user.password)
         User.create(user)
             .then(data => {
-                res.send(data) // TODO - check what response body to send
+                res.send(data)
             }).catch(err => {
+            Logger.addLog(err)
             next(APIError.internalServerError())
         })
-
     } catch (err) {
         next(err || APIError.internalServerError())
     }

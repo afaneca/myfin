@@ -15,10 +15,6 @@ module.exports = app => {
     const validityRoutes = express.Router()
     validityRoutes.post("/", users.checkSessionValidity)
 
-
-
-
-
     // ACCOUNTS ROUTES
     //const users = require("../controllers/userController")
     const accountsRouter = express.Router()
