@@ -1,8 +1,7 @@
-const dayjs = require('dayjs')
-const DateTimeUtils = {
-    getCurrentUnixTimestamp: () => {
-        return Math.floor(Date.now() / 1000);
-    },
-}
+/* const dayjs = require('dayjs'); */
 
-module.exports = DateTimeUtils
+const DateTimeUtils = {
+  getCurrentUnixTimestamp: () => Math.floor(Date.now() / 1000),
+};
+
+export default DateTimeUtils;

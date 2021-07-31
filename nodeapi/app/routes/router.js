@@ -1,38 +1,40 @@
-module.exports = app => {
-    const express = require("express")
+import express from 'express';
+import { attemptLogin, checkSessionValidity, createOne } from '../controllers/userController.js';
 
-    // USERS ROUTES
-    const users = require("../controllers/userController")
-    var usersRouter = express.Router()
-    /*usersRouter.get("/", users.findAll)
-    usersRouter.get("/:id", users.findOne)*/
-    usersRouter.post("/", users.createOne)
-    
-    // AUTH ROUTES
-    const authRoutes = express.Router()
-    authRoutes.post("/", users.attemptLogin)
+const router = (app) => {
+// USERS ROUTES
+  const usersRouter = express.Router();
+  /* usersRouter.get("/", users.findAll)
+    usersRouter.get("/:id", users.findOne) */
+  usersRouter.post('/', createOne);
 
-    const validityRoutes = express.Router()
-    validityRoutes.post("/", users.checkSessionValidity)
+  // AUTH ROUTES
+  const authRoutes = express.Router();
+  authRoutes.post('/', attemptLogin);
 
-    // ACCOUNTS ROUTES
-    //const users = require("../controllers/userController")
-    const accountsRouter = express.Router()
+  const validityRoutes = express.Router();
+  validityRoutes.post('/', checkSessionValidity);
 
-    // BUDGETS ROUTES
+  // ACCOUNTS ROUTES
+  // const users = require("../controllers/userController")
+  const accountsRouter = express.Router();
 
-    // CATEGORIES ROUTES
+  // BUDGETS ROUTES
 
-    // ENTITIES ROUTES
+  // CATEGORIES ROUTES
 
-    // RULES ROUTES
+  // ENTITIES ROUTES
 
-    // STATS ROUTES
+  // RULES ROUTES
 
-    // TRANSACTIONS ROUTES
+  // STATS ROUTES
 
-    app.use("/users", usersRouter)
-    app.use("/auth", authRoutes)
-    app.use("/validity", validityRoutes)
-    app.use("/accounts", accountsRouter)
-}
+  // TRANSACTIONS ROUTES
+
+  app.use('/users', usersRouter);
+  app.use('/auth', authRoutes);
+  app.use('/validity', validityRoutes);
+  app.use('/accounts', accountsRouter);
+};
+
+export default router;
