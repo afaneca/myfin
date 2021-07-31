@@ -1,10 +1,8 @@
 import joi from 'joi';
-import * as cryptoUtils from '../utils/CryptoUtils.js';
 import APIError from '../errorHandling/apiError.js';
 import Logger from '../utils/Logger.js';
-import SessionManager from '../utils/sessionManager.js';
 import CommonsController from './commonsController.js';
-import UserService from '../services/userServices.js';
+import UserService from '../services/userService.js';
 
 // GET ALL
 /* const findAll = async (req, res, next) => {

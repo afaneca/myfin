@@ -130,4 +130,4 @@ var AccountServices = {
     },
 }
 
-//# sourceURL=js/services/accountServices.js
+//# sourceURL=js/services/accountService.js

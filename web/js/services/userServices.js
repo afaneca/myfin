@@ -49,4 +49,4 @@ var UserServices = {
     },
 }
 
-//# sourceURL=js/actions/userServices.js
+//# sourceURL=js/actions/userService.js

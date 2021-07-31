@@ -43,13 +43,19 @@ const userService = {
         } else {
           throw APIError.notAuthorized('User Not Found');
         }
-        Logger.addLog('-----------------');
-        Logger.addStringifiedLog(data);
         return data;
       })
       .catch((err) => {
         throw err;
       });
+  },
+  getUserIdFromUsername: async (username) => {
+    const condition = { username: { [Op.like]: `${username}` } };
+    return User.findOne({
+      where: condition,
+      attributes: ['user_id'],
+    })
+      .then((data) => data.user_id);
   },
 };
 
