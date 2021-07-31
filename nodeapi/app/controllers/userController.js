@@ -1,14 +1,10 @@
 import joi from 'joi';
-import db from '../models/index.js';
 import * as cryptoUtils from '../utils/CryptoUtils.js';
 import APIError from '../errorHandling/apiError.js';
 import Logger from '../utils/Logger.js';
 import SessionManager from '../utils/sessionManager.js';
 import CommonsController from './commonsController.js';
-import dbConfig from '../config/db.config.js';
-
-const User = db.users;
-const { Op } = db.Sequelize;
+import UserService from '../services/userServices.js';
 
 // GET ALL
 /* const findAll = async (req, res, next) => {
@@ -55,16 +51,12 @@ const createOne = async (req, res, next) => {
   try {
     await CommonsController.checkAuthSessionValidity(req);
     const user = await createUserSchema.validateAsync(req.body);
-    user.password = cryptoUtils.hashPassword(user.password);
-    User.create(user)
+    await UserService.createUser(user)
       .then((data) => {
-        res.send(data);
-      })
-      .catch((err) => {
-        Logger.addLog(err);
-        next(APIError.internalServerError());
+        res.send(`User ${data.username} successfully created`);
       });
   } catch (err) {
+    Logger.addLog(err);
     next(err || APIError.internalServerError());
   }
 };
@@ -82,39 +74,18 @@ const attemptLogin = async (req, res, next) => {
   try {
     const mobile = req.get('mobile') === 'true';
     const userData = await attemptLoginSchema.validateAsync(req.body);
-    const condition = { username: { [Op.like]: `${userData.username}` } };
-    User.findOne({ where: condition })
-      .then((data) => {
-        if (data) {
-          const isValid = cryptoUtils.verifyPassword(userData.password, data.password);
-          if (isValid) {
-            const newSessionData = SessionManager.generateNewSessionKeyForUser(userData.username,
-              mobile);
-            if (mobile) {
-              // eslint-disable-next-line no-param-reassign
-              data.sessionkey_mobile = newSessionData.sessionkey;
-              // eslint-disable-next-line no-param-reassign
-              data.trustlimit_mobile = newSessionData.trustlimit;
-            } else {
-              // eslint-disable-next-line no-param-reassign
-              data.sessionkey = newSessionData.sessionkey;
-              // eslint-disable-next-line no-param-reassign
-              data.trustlimit = newSessionData.trustlimit;
-            }
-            res.send(data);
-          } else {
-            next(APIError.notAuthorized('Wrong Credentials'));
-          }
-        } else {
-          next(APIError.notAuthorized('User Not Found'));
-        }
+    await UserService.attemptLogin(userData.username, userData.password,
+      mobile)
+      .then((sessionData) => {
+        Logger.addLog('-----------------');
+        Logger.addStringifiedLog(sessionData);
+        res.send(sessionData);
       })
       .catch((err) => {
-        Logger.addLog(err);
-        next(APIError.internalServerError());
+        throw err;
       });
   } catch (err) {
-    next(APIError.internalServerError());
+    next(err || APIError.internalServerError());
   }
 };
 
@@ -123,6 +94,7 @@ const checkSessionValidity = async (req, res, next) => {
     await CommonsController.checkAuthSessionValidity(req);
     res.send('OK');
   } catch (err) {
+    Logger.addLog(err);
     next(err || APIError.internalServerError());
   }
 };
