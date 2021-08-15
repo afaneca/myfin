@@ -27,6 +27,6 @@ db.sequelize = sequelize;
 db.users = userModel(sequelize, Sequelize);
 db.accounts = accountModel(sequelize, Sequelize);
 
-db.users.hasMany(db.accounts);
+/*db.users.hasMany(db.accounts);*/
 
 export default db;

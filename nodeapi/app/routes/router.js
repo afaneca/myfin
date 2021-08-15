@@ -1,6 +1,6 @@
 import express from 'express';
 import { attemptLogin, checkSessionValidity, createOne } from '../controllers/userController.js';
-import { createAccount } from '../controllers/accountController.js';
+import { createAccount, getAllAccountsForUser } from '../controllers/accountController.js';
 
 const router = (app) => {
 // USERS ROUTES
@@ -20,6 +20,7 @@ const router = (app) => {
   // const users = require("../controllers/userController")
   const accountsRoutes = express.Router();
   accountsRoutes.post('/', createAccount);
+  accountsRoutes.get('/', getAllAccountsForUser);
 
   // BUDGETS ROUTES
 

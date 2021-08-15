@@ -32,7 +32,6 @@ const createAccountSchema = joi.object({
 const createAccount = async (req, res, next) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
-    Logger.addStringifiedLog(sessionData);
     const account = await createAccountSchema.validateAsync(req.body);
     await AccountService.createAccount(account, sessionData.userId)
       .then((data) => {
@@ -44,6 +43,18 @@ const createAccount = async (req, res, next) => {
   }
 };
 
+const getAllAccountsForUser = async (req, res, next) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const accsList = await AccountService.getAccountsForUserWithAmounts(sessionData.userId);
+    res.send(accsList);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export {
   createAccount,
+  getAllAccountsForUser,
 };

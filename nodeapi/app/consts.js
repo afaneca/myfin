@@ -1,4 +1,4 @@
-module.exports = {
+const HTTP_STATUS_CODE = {
   HTTP_STATUS_CODE_OK: 200,
   HTTP_STATUS_CODE_CREATED: 201,
   HTTP_STATUS_CODE_BAD_REQUEST: 400,
@@ -7,9 +7,30 @@ module.exports = {
   HTTP_STATUS_CODE_NOT_FOUND: 404,
   HTTP_STATUS_CODE_INTERNAL_SERVER_ERROR: 500,
   HTTP_STATUS_CODE_NOT_IMPLEMENTED: 501,
+};
+const MYFIN = {
   TABLE_USERS: 'users',
   TABLE_USER_NOTES_JOIN: 'user_has_notes',
   TABLE_NOTES: 'note',
   TABLE_CATEGORIES: 'category',
   TABLE_NOTE_CATEGORIES_JOIN: 'note_has_categories',
+  TRX_TYPES: {
+    INCOME: 'I',
+    EXPENSE: 'E',
+    TRANSFER: 'T',
+  },
+  ACCOUNT_STATUS: {
+    ACTIVE: 'Ativa',
+    INACTIVE: 'Inativa',
+  },
+  CATEGORY_STATUS: {
+    ACTIVE: 'Ativa',
+    INACTIVE: 'Inativa',
+  },
+  TRX_TYPE_LABEL: {
+    DEBIT: 'Débito',
+    CREDIT: 'Crédito',
+  },
 };
+
+export { HTTP_STATUS_CODE, MYFIN };
