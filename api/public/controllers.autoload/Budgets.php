@@ -86,6 +86,7 @@ class Budgets
                 $budgetSums = BudgetModel::getSumAmountsForBudget($userID, $budget);
                 $budget["credit_amount"] = $budgetSums["balance_credit"];
                 $budget["debit_amount"] = $budgetSums["balance_debit"];
+                $budget["savings_rate_percentage"] = (doubleval($budget["balance_value"]) / doubleval($budget["credit_amount"])) * 100;
             }
 
             $db->getDB()->commit();
