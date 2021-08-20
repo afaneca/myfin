@@ -123,8 +123,8 @@ var BudgetDetails = {
                 expensesAcc += parseFloat(inputValue)
         })
 
-        $("#table_total_credit_current").text(StringUtils.formatStringToCurrency(incomeAcc))
-        $("#table_total_debit_current").text(StringUtils.formatStringToCurrency(expensesAcc))
+        $("#table_total_credit_current").text(StringUtils.formatMoney(incomeAcc))
+        $("#table_total_debit_current").text(StringUtils.formatMoney(expensesAcc))
     },
     buildBudgetInputs: (categoriesArr, isCredit, sameMonthLastYearLabel) => {
         return `
@@ -279,16 +279,16 @@ var BudgetDetails = {
         })
 
 
-        $("#table_total_credit_expected").text(StringUtils.formatStringToCurrency(incomeAcc))
-        $("#table_total_debit_expected").text(StringUtils.formatStringToCurrency(expensesAcc))
+        $("#table_total_credit_expected").text(StringUtils.formatMoney(incomeAcc))
+        $("#table_total_debit_expected").text(StringUtils.formatMoney(expensesAcc))
 
         balance = incomeAcc - expensesAcc
 
 
-        $(expensesID).text(StringUtils.formatStringToCurrency(expensesAcc))
-        $(incomeID).text(StringUtils.formatStringToCurrency(incomeAcc))
-        $(balanceID).text(StringUtils.formatStringToCurrency(balance))
-        $("#estimated_closing_balance_value_amount").text(StringUtils.formatStringToCurrency((parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
+        $(expensesID).text(StringUtils.formatMoney(expensesAcc))
+        $(incomeID).text(StringUtils.formatMoney(incomeAcc))
+        $(balanceID).text(StringUtils.formatMoney(balance))
+        $("#estimated_closing_balance_value_amount").text(StringUtils.formatMoney((parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
         $("#estimated_closing_balance_value_percentage").text(BudgetDetails.calculatePercentageIncrease(BUDGET_INITIAL_BALANCE, (parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))))
     },
     calculatePercentageIncrease: (val1, val2) => {
@@ -300,7 +300,7 @@ var BudgetDetails = {
         })
     },
     setInitialBalance: value => {
-        $("span#estimated_initial_balance_value").text(StringUtils.formatStringToCurrency(value))
+        $("span#estimated_initial_balance_value").text(StringUtils.formatMoney(value))
     },
     setObservations: value => {
         $("textarea#budget_observations").text(value)
