@@ -348,7 +348,7 @@ class Accounts
 
             foreach ($userAccounts as $account) {
                 AccountModel::setNewAccountBalance($account["account_id"],
-                    AccountModel::recalculateIterativelyBalanceForAccount($account["account_id"], 0, time() + 1, false),
+                    AccountModel::recalculateBalanceForAccountIncrementally($account["account_id"], 0, time() + 1, false),
                     false);
             }
 

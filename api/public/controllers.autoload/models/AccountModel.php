@@ -405,7 +405,7 @@ class AccountModel extends Entity
     }
 
 
-    public static function recalculateIterativelyBalanceForAccount($accountID, $fromDate, $toDate, $transactional = false)
+    public static function recalculateBalanceForAccountIncrementally($accountID, $fromDate, $toDate, $transactional = false)
     {
         /*
          * Given that I'm unable to know the balance of an account at any specific time (only at the end of each month),
@@ -477,7 +477,7 @@ class AccountModel extends Entity
             $year = date('Y', $trxDate);
 
             $trxType = $trx["type"];
-            $trxAmount = Input::convertFloatToInteger($trx["amount"]);
+            $trxAmount = $trx["amount"];
 
             if ($trxType == DEFAULT_TYPE_EXPENSE_TAG
                 || ($trxType == DEFAULT_TYPE_TRANSFER_TAG && $trx["accounts_account_from_id"]
@@ -507,7 +507,7 @@ class AccountModel extends Entity
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT transaction_id, transactions.date_timestamp, (transactions.amount / 100) as amount, transactions.type, transactions.description, accounts_account_from_id, accounts_account_to_id " .
+        $sql = "SELECT transaction_id, transactions.date_timestamp, transactions.amount as amount, transactions.type, transactions.description, accounts_account_from_id, accounts_account_to_id " .
             "FROM transactions " .
             "WHERE date_timestamp BETWEEN :fromDate AND :toDate " .
             "AND( accounts_account_from_id = :accID OR accounts_account_to_id = :accID) " .
