@@ -240,20 +240,20 @@ class Transactions
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     AccountModel::setNewAccountBalance($accountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, true),
                         true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     AccountModel::setNewAccountBalance($accountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, true),
                         true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
                     AccountModel::setNewAccountBalance($accountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, true),
                         true);
                     AccountModel::setNewAccountBalance($accountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, true),
                         true);
                     break;
             }
@@ -323,22 +323,22 @@ class Transactions
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
                     AccountModel::setNewAccountBalance($oldAccountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
                         true);
 
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
                     AccountModel::setNewAccountBalance($oldAccountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
                         true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
                     AccountModel::setNewAccountBalance($oldAccountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
                         true);
                     AccountModel::setNewAccountBalance($oldAccountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
                         true);
                     break;
             }
@@ -523,7 +523,7 @@ class Transactions
                     // Decrement $oldAmount to level it out
                     //AccountModel::changeBalance($userID, $accountTo, $amount, true);
                     AccountModel::setNewAccountBalance($accountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
                         true);
 
                     break;
@@ -531,17 +531,17 @@ class Transactions
                     // Increment $oldAmount to level it out, by reimbursing the amount
                     //AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
                     AccountModel::setNewAccountBalance($accountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
                         true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
                     //AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
                     //AccountModel::changeBalance($userID, $accountTo, +$amount, true);
                     AccountModel::setNewAccountBalance($accountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
                         true);
                     AccountModel::setNewAccountBalance($accountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
                         true);
                     break;
             }
@@ -563,21 +563,21 @@ class Transactions
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
                     AccountModel::setNewAccountBalance($split_accountToID,
-                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true), true);
+                        AccountModel::recalculateBalanceForAccountIncrementally($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true), true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
                     /*AccountModel::changeBalance($userID, $accountFrom, -$split_amount, true);*/
                     AccountModel::setNewAccountBalance($split_accountFromID,
-                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
+                        AccountModel::recalculateBalanceForAccountIncrementally($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
                             true), true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
                     AccountModel::setNewAccountBalance($split_accountToID,
-                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
+                        AccountModel::recalculateBalanceForAccountIncrementally($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
                             true), true);
                     AccountModel::setNewAccountBalance($split_accountFromID,
-                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
+                        AccountModel::recalculateBalanceForAccountIncrementally($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
                             true), true);
                     break;
             }
@@ -775,20 +775,20 @@ class Transactions
                 switch ($type) {
                     case DEFAULT_TYPE_INCOME_TAG:
                         AccountModel::setNewAccountBalance($accountTo,
-                            AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                            AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, true),
                             true);
                         break;
                     case DEFAULT_TYPE_EXPENSE_TAG:
                         AccountModel::setNewAccountBalance($accountFrom,
-                            AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                            AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, true),
                             true);
                         break;
                     case DEFAULT_TYPE_TRANSFER_TAG:
                         AccountModel::setNewAccountBalance($accountTo,
-                            AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                            AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, true),
                             true);
                         AccountModel::setNewAccountBalance($accountFrom,
-                            AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                            AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, true),
                             true);
                         break;
                 }
