@@ -1,6 +1,7 @@
 import express from 'express';
 import { attemptLogin, checkSessionValidity, createOne } from '../controllers/userController.js';
 import { createAccount, getAllAccountsForUser } from '../controllers/accountController.js';
+import { getTransactionsForUser } from '../controllers/transactionController.js';
 
 const router = (app) => {
 // USERS ROUTES
@@ -33,11 +34,14 @@ const router = (app) => {
   // STATS ROUTES
 
   // TRANSACTIONS ROUTES
+  const trxRoutes = express.Router();
+  trxRoutes.get('/', getTransactionsForUser);
 
   app.use('/users', usersRouter);
   app.use('/auth', authRoutes);
   app.use('/validity', validityRoutes);
   app.use('/accounts', accountsRoutes);
+  app.use('/trxs', trxRoutes);
 };
 
 export default router;
