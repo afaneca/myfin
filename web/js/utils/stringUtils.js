@@ -1,61 +1,80 @@
-"use strict";
+'use strict';
 
 var StringUtils = {
-    formatStringToCurrency: (str) => {
-        return parseFloat(str).toFixed(2) + "€"
-    },
-    formatStringToPercentage: (str) => {
-        return parseFloat(str).toFixed(2) + "%"
-    },
-    escapeHtml: (unsafe) => {
-        return StringUtils.removeLineBreaksFromString(unsafe)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    },
-    normalizeStringForHtml: (str) => {
-        return StringUtils.escapeHtml(StringUtils.removeLineBreaksFromString(str.replace(/\s/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^\wèéòàáùúìí\s]/gi, '').toLowerCase()))
-    },
-    normalizeString: (str) => {
-        return StringUtils.escapeHtml(StringUtils.removeLineBreaksFromString(str.replace(/\s/g, ' ').normalize("NFC").replace(/[\u0300-\u036f]/g, " ")
-            .replace(/[^\wèéòàáùúìí\s]/gi, '')))
-    },
-    getAccountTypeName: (tag) => {
-        return account_types[tag]
-    },
-    removeLineBreaksFromString: (ogStr) => {
-        return (ogStr == null) ? "" : ogStr.replace(/[\r\n]+/gm, "")
-    },
-    convertStringToFloat: (str) => {
-        if (!str) return str
-        return parseFloat(str.replace(".", "").replace(",", "."))
-    },
-    convertFloatToInteger: (floatVal) => {
-        return parseInt(floatVal * 100)
-    },
-    convertIntegerToFloat: (intVal) => {
-        return parseFloat(intVal / 100)
-    },
-    formatMoney: (amount, decimalCount = 2, decimal = ".", thousands = ",", currency = "€") => {
-        try {
-            decimalCount = Math.abs(decimalCount);
-            decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+  formatStringToCurrency: (str) => {
+    return parseFloat(str)
+      .toFixed(2) + '€';
+  },
+  formatStringToPercentage: (str) => {
+    return parseFloat(str)
+      .toFixed(2) + '%';
+  },
+  escapeHtml: (unsafe) => {
+    return StringUtils.removeLineBreaksFromString(unsafe)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  },
+  normalizeStringForHtml: (str) => {
+    return StringUtils.escapeHtml(StringUtils.removeLineBreaksFromString(str.replace(/\s/g, '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\wèéòàáùúìí\s]/gi, '')
+      .toLowerCase()));
+  },
+  normalizeString: (str) => {
+    return StringUtils.escapeHtml(StringUtils.removeLineBreaksFromString(str.replace(/\s/g, ' ')
+      .normalize('NFC')
+      .replace(/[\u0300-\u036f]/g, ' ')
+      .replace(/[^\wèéòàáùúìí\s]/gi, '')));
+  },
+  getAccountTypeName: (tag) => {
+    return account_types[tag];
+  },
+  removeLineBreaksFromString: (ogStr) => {
+    return (ogStr == null) ? '' : ogStr.replace(/[\r\n]+/gm, '');
+  },
+  convertStringToFloat: (str) => {
+    if (!str) return str;
+    if (str.includes(',')) {
+      // It's a PT-pt currency format
+      return parseFloat(str.replace('.', '')
+        .replace(',', '.'));
+    } else {
+      return parseFloat(str);
+    }
 
-            const negativeSign = amount < 0 ? "-" : "";
+  },
+  convertFloatToInteger: (floatVal) => {
+    return parseInt(floatVal * 100);
+  },
+  convertIntegerToFloat: (intVal) => {
+    return parseFloat(intVal / 100);
+  },
+  formatMoney: (amount, decimalCount = 2, decimal = '.', thousands = ',', currency = '€') => {
+    try {
+      decimalCount = Math.abs(decimalCount);
+      decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
 
-            let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-            let j = (i.length > 3) ? i.length % 3 : 0;
+      const negativeSign = amount < 0 ? '-' : '';
 
-            return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "") + "" + currency;
-        } catch (e) {
-            console.log(e)
-            return StringUtils.formatMoney("0", decimalCount, decimal, thousands, currency)
-        }
-    },
-}
+      let i = parseInt(amount = Math.abs(Number(amount) || 0)
+        .toFixed(decimalCount))
+        .toString();
+      let j = (i.length > 3) ? i.length % 3 : 0;
+
+      return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j)
+        .replace(/(\d{3})(?=\d)/g, '$1' + thousands) + (decimalCount ? decimal + Math.abs(amount - i)
+        .toFixed(decimalCount)
+        .slice(2) : '') + '' + currency;
+    } catch (e) {
+      console.log(e);
+      return StringUtils.formatMoney('0', decimalCount, decimal, thousands, currency);
+    }
+  },
+};
 
 /* TYPES OF ACCOUNTS:
 - Checking Accounts (CHEAC)
@@ -67,22 +86,22 @@ var StringUtils = {
 - Other Accounts (OTHAC)
 */
 const account_types = {
-    "CHEAC": "Conta à Ordem",
-    "SAVAC": "Conta Poupança",
-    "INVAC": "Investimento",
-    "CREAC": "Crédito",
-    "MEALAC": "Cartão-Refeição",
-    "WALLET": "Carteira",
-    "OTHAC": "Outra"
-}
+  'CHEAC': 'Conta à Ordem',
+  'SAVAC': 'Conta Poupança',
+  'INVAC': 'Investimento',
+  'CREAC': 'Crédito',
+  'MEALAC': 'Cartão-Refeição',
+  'WALLET': 'Carteira',
+  'OTHAC': 'Outra'
+};
 
 const account_types_tag = {
-    "CHEAC": "CHEAC",
-    "SAVAC": "SAVAC",
-    "INVAC": "INVAC",
-    "CREAC": "CREAC",
-    "MEALAC": "MEALAC",
-    "WALLET": "WALLET",
-    "OTHAC": "OTHAC"
-}
+  'CHEAC': 'CHEAC',
+  'SAVAC': 'SAVAC',
+  'INVAC': 'INVAC',
+  'CREAC': 'CREAC',
+  'MEALAC': 'MEALAC',
+  'WALLET': 'WALLET',
+  'OTHAC': 'OTHAC'
+};
 //# sourceURL=js/utils/stringUtils.js
