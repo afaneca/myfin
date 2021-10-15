@@ -105,7 +105,6 @@ var ImportTransactions = {
     var headerRow = $('<tr />');
 
     function checkIfTextIsAssociatedWithHeaderLabel(headerLabel, targetFieldMapping) {
-      debugger
       switch (targetFieldMapping) {
         case FIELD_MAPPING.DATE:
           return IMPORT_TRX_FIELD_HEADER_VARIATIONS.DATE.includes(headerLabel.toLowerCase());
