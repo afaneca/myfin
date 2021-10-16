@@ -67,7 +67,7 @@ var Dashboard = {
     TransactionServices.getXTransactions(5,
       (list) => {
         // SUCCESS
-        if (list.size > 0) {
+        if (list.length > 0) {
           Dashboard.setupLastMovementsTable(list);
         } else {
           $('.card-panel.last_movements')
