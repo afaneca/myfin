@@ -31,12 +31,12 @@ class Users
 {
     const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
-    /* 
+    /*
     $app->group('/users/{id:[0-9]+}', function (RouteCollectorProxy $group) {
     $group->map(['GET', 'DELETE', 'PATCH', 'PUT'], '', function ($request, $response, $args) {
         // Find, delete, patch or replace user identified by $args['id']
     })->setName('user');
-    
+
     $group->get('/reset-password', function ($request, $response, $args) {
         // Route for /users/{id:[0-9]+}/reset-password
         // Reset the password for user identified by $args['id']

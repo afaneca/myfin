@@ -301,7 +301,10 @@ class Accounts
             $db->getDB()->beginTransaction();
 
             $userID = UserModel::getUserIdByName($authusername, true);
-
+            $userAccountsCount = count(AccountModel::getWhere(["users_user_id" => $userID]));
+            if ($userAccountsCount == 0) {
+                return sendResponse($response, EnsoShared::$REST_OK, null);
+            }
             $outArr = AccountModel::getBalancesSnapshotForUser($userID, true);
 
             $db->getDB()->commit();

@@ -48,8 +48,11 @@ class Stats
 
             $userID = UserModel::getUserIdByName($authusername, false);
 
-
-            $budgetID = BudgetModel::getWhere(["month" => $month, "year" => $year, "users_user_id" => $userID])[0]["budget_id"];
+            $queryResult = BudgetModel::getWhere(["month" => $month, "year" => $year, "users_user_id" => $userID]);
+            if (count($queryResult) == 0) {
+                return sendResponse($response, EnsoShared::$REST_NOT_FOUND, null);
+            }
+            $budgetID = $queryResult[0]["budget_id"];
 
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
             $list["last_update_timestamp"] = intval(UserModel::getWhere(["user_id" => $userID], ["last_update_timestamp"])[0]["last_update_timestamp"]);

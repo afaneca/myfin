@@ -167,6 +167,8 @@
 <script src="./js/utils/progressbarUtils.js"></script>
 <script src="./js/utils/layoutUtils.js"></script>
 
+<script src="./js/components/graphEmptyView.js"></script>
+
 <script src="./js/services/categoryServices.js"></script>
 <script src="./js/services/ruleServices.js"></script>
 <script src="./js/services/budgetServices.js"></script>
@@ -191,11 +193,14 @@
 <script src="./js/profile.js"></script>
 
 <script>
-    $(document).ready(function () {
-        configs.loadFirstView("dashboard");
-        $('.sidenav').sidenav();
-        $(".dropdown-trigger").dropdown();
-        LayoutUtils.changeTheme(LayoutUtils.getCurrentThemeName())
+  $(document)
+    .ready(function () {
+      configs.loadFirstView('dashboard');
+      $('.sidenav')
+        .sidenav();
+      $('.dropdown-trigger')
+        .dropdown();
+      LayoutUtils.changeTheme(LayoutUtils.getCurrentThemeName());
     });
 </script>
 </body>

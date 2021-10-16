@@ -49,7 +49,7 @@
 
     <div class="row">
         <div class="col s4">
-            <div class="card-panel">
+            <div class="card-panel target-goals">
                 <span style="color: var(--main-text-headline-color)">
                     <div>
                         <canvas id="chart-angular-target-goals" width="600" height="400"></canvas>
@@ -61,33 +61,36 @@
             </div>
         </div>
         <div class="col s8">
-            <div class="card-panel">
+            <div class="card-panel last_movements">
                 <span class="white-text">Movimentos Recentes</span> <span class="right-align"
                                                                           style="float:right;"><a
                     href="#!transactions" onclick="configs.goToPage('transactions')">[Ver
                 Mais...]</a></span>
                 <div id="last_movements_table_wrapper">
-
                 </div>
+                <div class="empty-view"></div>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col s6">
-            <div class="card-panel">
+            <div class="card-panel income_distribution">
                 <canvas id="chart_pie_income_distribution" width="600" height="400"></canvas>
+                <div class="empty-view"></div>
             </div>
         </div>
         <div class="col s6">
-            <div class="card-panel">
+            <div class="card-panel spending_distribution">
                 <canvas id="chart_pie_spending_distribution" width="600" height="400"></canvas>
+                <div class="empty-view"></div>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col s6">
-            <div class="card-panel">
+            <div class="card-panel investing_portfolio">
                 <canvas id="chart_pie_investing_portfolio" width="600" height="400"></canvas>
+                <div class="empty-view"></div>
             </div>
             <!--  <script>
                   var dataset2 = [73, 27];
@@ -101,11 +104,12 @@
               </script>-->
         </div>
         <div class="col s6">
-            <div class="card-panel">
+            <div class="card-panel debt-distribution">
                 <canvas id="chart_pie_debt_distribution" width="600" height="400"></canvas>
+                <div class="empty-view"></div>
             </div>
             <script>
-                Dashboard.init()
+              Dashboard.init();
             </script>
         </div>
 
