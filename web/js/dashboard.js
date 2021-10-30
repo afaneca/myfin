@@ -110,14 +110,14 @@ var Dashboard = {
   formatCurrencyColumn: (type, formattedCurrencyString) => {
     switch (type) {
       case 'I':
-        return `<span style="height: auto !important;" class='badge green-text text-accent-6'>${formattedCurrencyString}</span></span>`;
+        return `<span style="height: auto !important;font-size: large;" class='badge green-text text-accent-6'>${formattedCurrencyString}</span></span>`;
         break;
       case 'E':
-        return `<span style="height: auto !important;" class='badge pink-text text-accent-1'>${formattedCurrencyString}</span>`;
+        return `<span style="height: auto !important;font-size: large;" class='badge pink-text text-accent-1'>${formattedCurrencyString}</span>`;
         break;
       case 'T':
       default:
-        return `<spa style="height: auto !important;" class='badge orange-text text-accent-2'>${formattedCurrencyString}</span>`;
+        return `<spa style="height: auto !important;font-size: large;" class='badge orange-text text-accent-2'>${formattedCurrencyString}</span>`;
         break;
     }
   },
