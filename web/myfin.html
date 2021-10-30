@@ -70,8 +70,8 @@
     <nav class="side-nav fixed">
         <div id="side-nav-logo-wrapper">
             <img id="side-nav-logo-img" src="../img/logo/logo_white_font_transparent_bg.png"
-                 onmouseover="this.src='../img/logo/logo_transparent_bg_v2.png';"
-                 onmouseout="this.src='../img/logo/logo_white_font_transparent_bg.png';"/>
+                 onmouseover="onMouseOverLogo(this)"
+                 onmouseout="onMouseOutLogo(this)"/>
         </div>
         <ul class="side-nav-menu">
             <li><a id="menu-item-dashboard"
@@ -201,7 +201,25 @@
       $('.dropdown-trigger')
         .dropdown();
       LayoutUtils.changeTheme(LayoutUtils.getCurrentThemeName());
+
+      // custom logo for light theme
+      if(LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT){
+        $("#side-nav-logo-img").attr("src", "../img/logo/logo_transparent_bg_v2.png")
+      }
     });
+
+  function onMouseOverLogo(element) {
+    if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT) return;
+
+    element.src = '../img/logo/logo_transparent_bg_v2.png';
+  }
+
+  function onMouseOutLogo(element) {
+    if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT){
+      return;
+    }
+    element.src = '../img/logo/logo_white_font_transparent_bg.png';
+  }
 </script>
 </body>
 
