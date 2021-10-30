@@ -68,15 +68,15 @@ var Budgets = {
     return `
             <tr data-id='${budget.budget_id}' class="${(budget.month == currentMonth && budget.year == currentYear) ? 'highlighted-budget-item' : ''}">
                 <td><i class="material-icons">${budget.is_open == true ? 'lock_open' : 'lock'}</i></td>
-                <td>${budget.month}/${budget.year}</td>
+                <td><span style="font-weight: bold;">${DateUtils.getMonthsFullName(budget.month)}</span></br><span style="font-size: small;">${budget.month}/${budget.year}</span></td>
                 <td style="cursor: pointer;" onclick="Budgets.goToBudget(${budget.budget_id}, ${budget.is_open})">${budget.observations}</td>
                 <td>${StringUtils.formatMoney(budget.debit_amount)}</td>
                 <td>${StringUtils.formatMoney(budget.credit_amount)}</td>
                 <td>${Budgets.buildBudgetBalanceRow(budget.balance_value, budget.balance_change_percentage, (budget.month == currentMonth && budget.year == currentYear))}</td>
                 <td>${Budgets.buildBudgetSavingsRateRow(budget.savings_rate_percentage, (budget.month == currentMonth && budget.year == currentYear))}</td>
                 <td>
-                    <i onClick="Budgets.goToBudget(${budget.budget_id}, ${budget.is_open})" class="material-icons table-action-icons">remove_red_eye</i>
-                    <i onClick="Budgets.showRemoveBudgetModal(${budget.budget_id}, ${budget.month}, ${budget.year})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
+                    <i onClick="Budgets.goToBudget(${budget.budget_id}, ${budget.is_open})" class="material-icons table-action-icons" style="font-size: larger;">remove_red_eye</i>
+                    <i onClick="Budgets.showRemoveBudgetModal(${budget.budget_id}, ${budget.month}, ${budget.year})" class="material-icons table-action-icons" style="margin-left:3px;font-size: larger;">delete</i>
                 </td>
             </tr>
         `;
@@ -98,9 +98,9 @@ var Budgets = {
     let strToReturn = '';
 
     if (balanceValue > 0) {
-      strToReturn = `+${StringUtils.formatStringToCurrency(balanceValue)} <span class="${!isCurrentMonth ? 'green-text text-accent-4' : ''}" style="font-size: small;">(+${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
+      strToReturn = `+${StringUtils.formatStringToCurrency(balanceValue)} <span class="${!isCurrentMonth ? 'green-text text-accent-4' : ''}" style="font-size: small;"><br>(+${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
     } else if (balanceValue < 0) {
-      strToReturn = `${StringUtils.formatStringToCurrency(balanceValue)} <span class="${!isCurrentMonth ? 'pink-text text-accent-1' : ''}" style="font-size: small;">(${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
+      strToReturn = `${StringUtils.formatStringToCurrency(balanceValue)} <span class="${!isCurrentMonth ? 'pink-text text-accent-1' : ''}" style="font-size: small;"><br>(${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
     } else {
       strToReturn = `${StringUtils.formatStringToCurrency(balanceValue)} <span class="" style="font-size: small;">(${StringUtils.formatStringToPercentage(balanceChangePercentage)})</span>`;
     }
