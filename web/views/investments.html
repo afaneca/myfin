@@ -1,0 +1,77 @@
+<div id="page-wrapper">
+
+    <div class="card-panel">
+        <span class="main-accent-color">Investimentos</span><br>
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s3"><a href="#tab-inv-dashboard">Resumo</a></li>
+                    <li class="tab col s3"><a href="#tab-inv-assets">Ativos</a></li>
+                    <li class="tab col s3"><a href="#tab-inv-transactions">Transações</a></li>
+                    <li class="tab col s3"><a href="#tab-inv-reports">Relatórios</a></li>
+                </ul>
+            </div>
+
+            <div id="tab-inv-dashboard" class="col s12">
+                <div class="card-panel">
+                    Dasbhoard
+                </div>
+            </div>
+            <div id="tab-inv-assets" class="col s12">
+                <div class="card-panel">
+                    Assets
+                </div>
+            </div>
+            <div id="tab-inv-transactions" class="col s12">
+                <div class="card-panel">
+                    Transactions
+                </div>
+            </div>
+            <div id="tab-inv-reports" class="col s12">
+                <div class="card-panel">
+                    Reports
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+  $(document)
+    .ready(function () {
+      DialogUtils.initStandardModal();
+
+      $('.tabs').tabs({
+        'onShow': (a, b) => {
+          let activeID = $(a)[0]["id"]
+          Investments.changeTabs(activeID)
+        }
+      });
+
+      const argsArr = configs.getUrlArgs();
+      const selectedTab = (argsArr && argsArr.hasOwnProperty('tab')) ? argsArr['tab'] : undefined;
+
+      switch (selectedTab) {
+        case 'dashboard':
+          $('.tabs')
+            .tabs('select', 'tab-inv-dashboard');
+          break;
+        case 'assets':
+          $('.tabs')
+            .tabs('select', 'tab-inv-assets');
+          break;
+        case 'transactions':
+          $('.tabs')
+            .tabs('select', 'tab-inv-transactions');
+          break;
+        case 'reports':
+        default:
+          $('.tabs')
+            .tabs('select', 'tab-inv-reports');
+          break;
+      }
+    });
+</script>
