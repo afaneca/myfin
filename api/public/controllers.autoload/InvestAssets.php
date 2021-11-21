@@ -35,6 +35,14 @@ class InvestAssets
             $res = array();
 
             foreach ($assetsArr as $asset) {
+                $month = date('m', EnsoShared::now());
+                $year = date('Y', EnsoShared::now());
+                $snapshot = InvestAssetEvoSnapshotModel::getAssetSnapshotAtMonth($month, $year, $asset["asset_id"]);
+                $investedValue = Input::convertIntegerToFloat($snapshot ? $snapshot["invested_amount"] : 0);
+                $currentValue = Input::convertIntegerToFloat($snapshot ? $snapshot["current_value"] : 0);
+                $roiValue = $currentValue - $investedValue;
+                $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
+
                 array_push($res, [
                         "asset_id" => $asset["asset_id"],
                         "name" => $asset["name"],
@@ -42,10 +50,10 @@ class InvestAssets
                         "type" => $asset["type"],
                         "units" => floatval($asset["units"]),
                         "broker" => $asset["broker"],
-                        "invested_value" => "0",
-                        "current_value" => "1",
-                        "absolute_roi_value" => "1",
-                        "relative_roi_percentage" => "1",
+                        "invested_value" => $investedValue,
+                        "current_value" => $currentValue,
+                        "absolute_roi_value" => $roiValue,
+                        "relative_roi_percentage" => $roiPercentage,
                     ]
 
                 );
@@ -248,9 +256,49 @@ class InvestAssets
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function updateCurrentAssetValue(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            $assetID = Input::validate($args['id'], Input::$INT, 2);
+            $newValue = Input::validate($request->getParsedBody()["new_value"], Input::$FLOAT, 3);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 4);
+            } else {
+                $mobile = false;
+            }
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            $month = date('m', EnsoShared::now());
+            $year = date('Y', EnsoShared::now());
+            $units = InvestAssetModel::getWhere(["users_user_id" => $userID, "asset_id" => $assetID], ["units"])[0]["units"];
+
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($month, $year, $assetID, $units, $newValue);
+
+            return sendResponse($response, EnsoShared::$REST_OK, "Asset value successfully updated!");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/invest/assets/', 'InvestAssets::getAllAssetsForUser');
 $app->post('/invest/assets/', 'InvestAssets::addAsset');
 $app->delete('/invest/assets/{id}', 'InvestAssets::removeAsset');
 $app->put('/invest/assets/{id}', 'InvestAssets::editAsset');
+$app->put('/invest/assets/{id}/value', 'InvestAssets::updateCurrentAssetValue');

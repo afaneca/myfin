@@ -26,23 +26,36 @@ var InvestmentAssetsTableFunc = {
     `);
   },
   renderAssetsRow: (asset, editAssetCallback, removeAssetCallback) => {
-
+    debugger
     return `
       <tr data-id='${asset.asset_id}'>
-        <td>${asset.ticker ? asset.ticker : "-"}</td>
+        <td>${asset.ticker ? asset.ticker : '-'}</td>
         <td>${asset.name}</td>
         <td>${asset.type}</td>
-        <td>${asset.broker ? asset.broker : "-"}</td>
+        <td>${asset.broker ? asset.broker : '-'}</td>
         <td>${asset.units}</td>
         <td>${StringUtils.formatStringToCurrency(asset.invested_value)}</td>
         <td>${StringUtils.formatStringToCurrency(asset.current_value)}</td>
-        <td>${StringUtils.formatStringToCurrency(asset.absolute_roi_value)} (${StringUtils.formatStringToPercentage(asset.relative_roi_percentage)})</td>
+        <td>${StringUtils.formatStringToCurrency(asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(asset.relative_roi_percentage)}</td>
         <td>
             <i onClick="Investments.${editAssetCallback.name}(${asset.asset_id}, '${asset.ticker ? asset.ticker : ''}', '${asset.name}', '${asset.type}', '${asset.broker ? asset.broker : ''}')" class="material-icons table-action-icons">create</i>
             <i onClick="Investments.${removeAssetCallback.name}(${asset.asset_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
         </td>
       </tr>
     `;
+  },
+  buildRoiPercentage: (percentage) => {
+    let strToReturn = '';
+
+    if (percentage > 0) {
+      strToReturn = `<span class='green-text text-accent-4' style="font-size: small;">+${StringUtils.formatStringToPercentage(percentage)}</span>`;
+    } else if (percentage < 0) {
+      strToReturn = `<span class='pink-text text-accent-1' style="font-size: small;">${StringUtils.formatStringToPercentage(percentage)}</span>`;
+    } else {
+      strToReturn = `<span class="" style="font-size: small;">${StringUtils.formatStringToPercentage(percentage)}</span>`;
+    }
+
+    return `(${strToReturn})`;
   },
 
 };
