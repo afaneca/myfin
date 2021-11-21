@@ -8,7 +8,7 @@ require_once './consts.php';
 
 class InvestAssets
 {
-    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     public static function getAllAssetsForUser(Request $request, Response $response, $args)
     {
@@ -32,7 +32,25 @@ class InvestAssets
 
             $assetsArr = InvestAssetModel::getAllAssetsForUser($userID);
 
-            return sendResponse($response, EnsoShared::$REST_OK, $assetsArr);
+            $res = array();
+
+            foreach ($assetsArr as $asset) {
+                array_push($res, [
+                        "asset_id" => $asset["asset_id"],
+                        "name" => $asset["name"],
+                        "ticker" => $asset["ticker"],
+                        "type" => $asset["type"],
+                        "units" => floatval($asset["units"]),
+                        "invested_value" => "0",
+                        "current_value" => "1",
+                        "absolute_roi_value" => "1",
+                        "relative_roi_percentage" => "1",
+                    ]
+
+                );
+            }
+
+            return sendResponse($response, EnsoShared::$REST_OK, $res);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
         } catch (AuthenticationException $e) {
@@ -56,16 +74,15 @@ class InvestAssets
 
             $name = Input::validate($request->getParsedBody()['name'], Input::$STRING, 3);
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 4);
-            $units = Input::validate($request->getParsedBody()['units'], Input::$FLOAT, 5);
 
             if (array_key_exists('ticker', $request->getParsedBody())) {
-                $ticker = Input::validate($request->getParsedBody()['ticker'], Input::$STRING, 6);
+                $ticker = Input::validate($request->getParsedBody()['ticker'], Input::$STRING, 5);
             } else {
                 $ticker = "";
             }
 
             if (array_key_exists('broker', $request->getParsedBody())) {
-                $broker = Input::validate($request->getParsedBody()['broker'], Input::$STRING, 7);
+                $broker = Input::validate($request->getParsedBody()['broker'], Input::$STRING, 6);
             } else {
                 $broker = "";
             }
@@ -95,7 +112,7 @@ class InvestAssets
             $assetID = InvestAssetModel::insert([
                 "name" => $name,
                 "ticker" => $ticker,
-                "units" => $units,
+                "units" => 0,
                 "type" => $type,
                 "broker" => $broker,
                 "users_user_id" => $userID,
