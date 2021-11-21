@@ -41,6 +41,7 @@ class InvestAssets
                         "ticker" => $asset["ticker"],
                         "type" => $asset["type"],
                         "units" => floatval($asset["units"]),
+                        "broker" => $asset["broker"],
                         "invested_value" => "0",
                         "current_value" => "1",
                         "absolute_roi_value" => "1",
@@ -134,7 +135,122 @@ class InvestAssets
         }
     }
 
+    public static function removeAsset(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            $assetID = Input::validate($args['id'], Input::$INT, 2);
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            InvestAssetModel::delete([
+                "users_user_id" => $userID,
+                "asset_id" => $assetID,
+            ]);
+
+            return sendResponse($response, EnsoShared::$REST_OK, "Asset successfully removed!");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    public static function editAsset(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+            } else {
+                $mobile = false;
+            }
+            $assetID = Input::validate($args['id'], Input::$INT, 2);
+            $name = Input::validate($request->getParsedBody()['name'], Input::$STRING, 3);
+            $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 4);
+
+            if (array_key_exists('ticker', $request->getParsedBody())) {
+                $ticker = Input::validate($request->getParsedBody()['ticker'], Input::$STRING, 5);
+            } else {
+                $ticker = "";
+            }
+
+            if (array_key_exists('broker', $request->getParsedBody())) {
+                $broker = Input::validate($request->getParsedBody()['broker'], Input::$STRING, 6);
+            } else {
+                $broker = "";
+            }
+
+            if (
+                $type !== DEFAULT_ASSETS_TYPE_PPR && $type !== DEFAULT_ASSETS_TYPE_ETF
+                && $type !== DEFAULT_ASSETS_TYPE_CRYPTO && $type !== DEFAULT_ASSETS_TYPE_FIXED_INCOME
+                && $type !== DEFAULT_ASSETS_TYPE_INDEX_FUNDS
+                && $type !== DEFAULT_ASSETS_TYPE_INVESTMENT_FUNDS
+                && $type !== DEFAULT_ASSETS_TYPE_P2P
+                && $type !== DEFAULT_ASSETS_TYPE_STOCKS
+            ) {
+                throw new BadValidationTypeException("Asset type not valid!");
+            }
+
+            /* Auth - token validation */ {
+                if (!self::DEBUG_MODE) {
+                    AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+                }
+            }
+
+            /* Execute Operations */
+            /*$db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();*/
+            $userID = UserModel::getUserIdByName($authusername/*, true*/);
+
+            InvestAssetModel::editWhere(
+                [
+                    'users_user_id' => $userID,
+                    'asset_id' => $assetID,
+                ],
+                [
+                    "name" => $name,
+                    "ticker" => $ticker,
+                    "units" => 0,
+                    "type" => $type,
+                    "broker" => $broker,
+                    "users_user_id" => $userID,
+                    "updated_at" => time(),
+                ]/*, true*/);
+
+            /*$db->getDB()->commit();*/
+
+            return sendResponse($response, EnsoShared::$REST_OK, "Account updated!");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (BadValidationTypeException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->__toString());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/invest/assets/', 'InvestAssets::getAllAssetsForUser');
 $app->post('/invest/assets/', 'InvestAssets::addAsset');
+$app->delete('/invest/assets/{id}', 'InvestAssets::removeAsset');
+$app->put('/invest/assets/{id}', 'InvestAssets::editAsset');

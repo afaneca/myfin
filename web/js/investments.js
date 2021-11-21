@@ -21,13 +21,42 @@ var Investments = {
       });
   },
   editAssetClicked: (assetId, ticker, name, type, broker) => {
-    debugger
+    InvestAssetsModalFunc.showEditAssetModal('#modal-global', assetId, ticker, name, type, broker, Investments.editAsset);
   },
   removeAssetClicked: (assetId) => {
     InvestAssetsModalFunc.showRemoveAssetConfirmationModal('#modal-global', assetId, Investments.removeAsset);
   },
+  editAsset: (assetId, ticker, name, type, broker) => {
+    LoadingManager.showLoading();
+    InvestServices.editAsset(assetId, ticker, name, type, broker,
+      (res) => {
+        // SUCCESS
+        LoadingManager.hideLoading();
+        $('#modal-global')
+          .modal('close');
+        Investments.changeTabs('tab-inv-assets');
+      }, (err) => {
+        // FAILURE
+        LoadingManager.hideLoading();
+        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
+      }
+    );
+  },
   removeAsset: assetId => {
-    debugger
+    LoadingManager.showLoading();
+    InvestServices.deleteAsset(assetId,
+      (res) => {
+        // SUCCESS
+        LoadingManager.hideLoading();
+        $('#modal-global')
+          .modal('close');
+        Investments.changeTabs('tab-inv-assets');
+      }, (err) => {
+        // FAILURE
+        LoadingManager.hideLoading();
+        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
+      }
+    );
   },
   changeTabs: activeID => {
     switch (activeID) {

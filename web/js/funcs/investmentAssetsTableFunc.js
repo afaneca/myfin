@@ -29,16 +29,16 @@ var InvestmentAssetsTableFunc = {
 
     return `
       <tr data-id='${asset.asset_id}'>
-        <td>${asset.ticker}</td>
+        <td>${asset.ticker ? asset.ticker : "-"}</td>
         <td>${asset.name}</td>
         <td>${asset.type}</td>
-        <td>${asset.broker}</td>
+        <td>${asset.broker ? asset.broker : "-"}</td>
         <td>${asset.units}</td>
-        <td>${asset.invested_value}</td>
-        <td>${asset.current_value}</td>
-        <td>${asset.absolute_roi_value} (${asset.relative_roi_percentage})</td>
+        <td>${StringUtils.formatStringToCurrency(asset.invested_value)}</td>
+        <td>${StringUtils.formatStringToCurrency(asset.current_value)}</td>
+        <td>${StringUtils.formatStringToCurrency(asset.absolute_roi_value)} (${StringUtils.formatStringToPercentage(asset.relative_roi_percentage)})</td>
         <td>
-            <i onClick="Investments.${editAssetCallback.name}(${asset.asset_id}, '${asset.ticker ? asset.ticker : null}', '${asset.name}', '${asset.type}', '${asset.broker ? asset.broker : ''}')" class="material-icons table-action-icons">create</i>
+            <i onClick="Investments.${editAssetCallback.name}(${asset.asset_id}, '${asset.ticker ? asset.ticker : ''}', '${asset.name}', '${asset.type}', '${asset.broker ? asset.broker : ''}')" class="material-icons table-action-icons">create</i>
             <i onClick="Investments.${removeAssetCallback.name}(${asset.asset_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
         </td>
       </tr>
