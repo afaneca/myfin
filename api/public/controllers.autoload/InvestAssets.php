@@ -284,6 +284,25 @@ class InvestAssets
             $units = InvestAssetModel::getWhere(["users_user_id" => $userID, "asset_id" => $assetID], ["units"])[0]["units"];
 
             InvestAssetEvoSnapshotModel::updateCurrentAssetValue($month, $year, $assetID, $units, $newValue);
+            // Snapshot next 6 months also, to create a buffer (in case no more snapshots are added till then)
+            $nextMonth = ($month + 1 > 12) ? 1 : ($month + 1);
+            $nextMonthsYear = ($nextMonth > 12) ? $year + 1 : $year;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
 
             return sendResponse($response, EnsoShared::$REST_OK, "Asset value successfully updated!");
         } catch (BadInputValidationException $e) {

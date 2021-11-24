@@ -60,7 +60,7 @@ class InvestAssetEvoSnapshotModel extends Entity
 
         $sql = "INSERT INTO invest_asset_evo_snapshot (month, year, units, invested_amount, current_value, invest_assets_asset_id, created_at, updated_at) " .
             "VALUES (:month, :year, :units, :invested_amount, :current_amount, :invest_assets_asset_id, :created_at, :updated_at) " .
-            "ON DUPLICATE KEY UPDATE units = :units, invested_amount = :invested_amount, current_value = :current_amount, updated_at = :updated_at;";
+            "ON DUPLICATE KEY UPDATE units = :units, invested_amount = :invested_amount, /*current_value = :current_amount,*/ updated_at = :updated_at;";
 
         $values = array();
         $values[':month'] = $month;
@@ -198,7 +198,7 @@ class InvestAssetEvoSnapshotModel extends Entity
 
             $initialSnapshot["units"] = doubleval($initialSnapshot["units"]) + doubleval($changeInUnits);
             $initialSnapshot["invested_amount"] = doubleval($initialSnapshot["invested_amount"]) + doubleval($changeInAmounts);
-            $initialSnapshot["current_value"] = doubleval($initialSnapshot["current_value"]) + doubleval($changeInAmounts);
+            /*$initialSnapshot["current_value"] = doubleval($initialSnapshot["current_value"]) + doubleval($changeInAmounts);*/
 
             /* Automatically add snapshots for current & next 2 months in order to create a buffer*/
             InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $month, $year,
