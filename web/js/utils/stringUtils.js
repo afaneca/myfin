@@ -74,6 +74,10 @@ var StringUtils = {
       return StringUtils.formatMoney('0', decimalCount, decimal, thousands, currency);
     }
   },
+  getInvestingAssetObjectById: id => {
+    return Object.values(MYFIN.INVEST_ASSETS_TYPES)
+      .find(asset => asset.id === id);
+  }
 };
 
 /* TYPES OF ACCOUNTS:

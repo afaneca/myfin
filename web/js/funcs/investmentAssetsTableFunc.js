@@ -26,12 +26,11 @@ var InvestmentAssetsTableFunc = {
     `);
   },
   renderAssetsRow: (asset, editAssetCallback, removeAssetCallback) => {
-    debugger
     return `
       <tr data-id='${asset.asset_id}'>
         <td>${asset.ticker ? asset.ticker : '-'}</td>
         <td>${asset.name}</td>
-        <td>${asset.type}</td>
+        <td>${StringUtils.getInvestingAssetObjectById(asset.type).name}</td>
         <td>${asset.broker ? asset.broker : '-'}</td>
         <td>${asset.units}</td>
         <td>${StringUtils.formatStringToCurrency(asset.invested_value)}</td>
