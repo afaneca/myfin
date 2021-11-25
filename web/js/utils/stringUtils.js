@@ -77,7 +77,11 @@ var StringUtils = {
   getInvestingAssetObjectById: id => {
     return Object.values(MYFIN.INVEST_ASSETS_TYPES)
       .find(asset => asset.id === id);
-  }
+  },
+  getInvestingTransactionsTypeObjectById: id => {
+    return Object.values(MYFIN.INVEST_TRX_TYPES)
+      .find(type => type.id === id);
+  },
 };
 
 /* TYPES OF ACCOUNTS:

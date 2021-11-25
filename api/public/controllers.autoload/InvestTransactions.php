@@ -28,7 +28,7 @@ class InvestTransactions
 
             /* Execute Operations */
             $userID = UserModel::getUserIdByName($authusername, false);
-            $res = "";
+            $res = InvestTransactionModel::getAllTransactionsForUser($userID);
 
             return sendResponse($response, EnsoShared::$REST_OK, $res);
         } catch (BadInputValidationException $e) {

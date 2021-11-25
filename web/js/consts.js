@@ -74,6 +74,16 @@ var MYFIN = {
       name: 'Stocks'
     },
   },
+  INVEST_TRX_TYPES: {
+    BUY: {
+      id: 'B',
+      name: 'Buy',
+    },
+    SELL: {
+      id: 'S',
+      name: 'Sell',
+    }
+  }
 };
 
 var EXTERNAL_ACCOUNT_LABEL = '** Conta Externa **';

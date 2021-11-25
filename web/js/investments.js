@@ -1,8 +1,12 @@
 'use strict';
 
 var Investments = {
-  addNewAsset: () => {
+  addNewAssetClicked: () => {
     InvestAssetsModalFunc.buildAddNewAccountModal('#modal-global', Investments.addAsset);
+  },
+  addNewTransactionClicked: () => {
+    // TODO get assets list first
+    /*InvestTransactionsModalFunc.buildAddNewTransactionModal('#modal-global', Investments.addTransaction);*/
   },
   addAsset: (name, ticker, type, broker) => {
     LoadingManager.showLoading();
@@ -58,6 +62,9 @@ var Investments = {
       }
     );
   },
+  /*
+  * TABS LISTENER
+  * */
   changeTabs: activeID => {
     switch (activeID) {
       case 'tab-inv-dashboard':
@@ -78,12 +85,16 @@ var Investments = {
         window.history.replaceState(null, null, '#!investments?tab=assets');
         break;
       case 'tab-inv-transactions':
-        /*Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution');
-        $('#chart_pie_cat_expenses_evolution')
-          .remove();
-        $('#canvas_chart_expenses_evo_wrapper')
-          .append(' <canvas id="chart_pie_cat_expenses_evolution" width="800" height="300"></canvas>');
-        Stats.initExpensesPerCatEvolution();*/
+        LoadingManager.showLoading();
+        InvestServices.getAllTransactions((res) => {
+          // SUCCESS
+          LoadingManager.hideLoading();
+          Investments.initTabTransactions(res);
+        }, (err) => {
+          // FAILURE
+          LoadingManager.hideLoading();
+          DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
+        });
         window.history.replaceState(null, null, '#!investments?tab=transactions');
         break;
       case 'tab-inv-reports':
@@ -105,6 +116,18 @@ var Investments = {
 
     tableUtils.setupStaticTable('#assets-table');
     LoadingManager.hideLoading();
+  },
+  initTabTransactions: (trxList) => {
+    InvestmentTransactionsTableFunc.renderTransactionsTable(trxList, '#table-wrapper-transactions', Investments.editTransactionClicked, Investments.removeTransactionClicked);
+
+    tableUtils.setupStaticTable('#transactions-table');
+    LoadingManager.hideLoading();
+  },
+  editTransactionClicked: () => {
+
+  },
+  removeTransactionClicked: () => {
+
   },
 };
 
