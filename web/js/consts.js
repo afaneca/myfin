@@ -77,11 +77,11 @@ var MYFIN = {
   INVEST_TRX_TYPES: {
     BUY: {
       id: 'B',
-      name: 'Buy',
+      name: 'Compra',
     },
     SELL: {
       id: 'S',
-      name: 'Sell',
+      name: 'Venda',
     }
   }
 };

@@ -38,6 +38,14 @@ class InvestAssetModel extends Entity
     /**
      * @throws InexistentAttributeProvidedException
      */
+    public static function getAllAssetsSummaryForUser($userID)
+    {
+        return InvestAssetModel::getWhere(["users_user_id" => $userID,], ["asset_id", "name", "ticker", "type"]);
+    }
+
+    /**
+     * @throws InexistentAttributeProvidedException
+     */
     public static function incrementUnitsInAsset($assetId, $changeInUnits, $transactional = false): float
     {
         $asset = InvestAssetModel::getWhere(["asset_id" => $assetId], ["units"])[0];

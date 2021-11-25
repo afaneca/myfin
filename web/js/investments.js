@@ -5,8 +5,33 @@ var Investments = {
     InvestAssetsModalFunc.buildAddNewAccountModal('#modal-global', Investments.addAsset);
   },
   addNewTransactionClicked: () => {
-    // TODO get assets list first
-    /*InvestTransactionsModalFunc.buildAddNewTransactionModal('#modal-global', Investments.addTransaction);*/
+    LoadingManager.showLoading();
+    InvestServices.getAllAssetsSummary((res) => {
+      // SUCCESS
+      LoadingManager.hideLoading();
+      InvestTransactionsModalFunc.buildAddNewTransactionModal('#modal-global', res, Investments.addTransaction);
+    }, (err) => {
+      // FAILURE
+      LoadingManager.hideLoading();
+      DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
+    });
+
+  },
+  addTransaction: (date, units, amount, type, observations, assetId) => {
+    LoadingManager.showLoading();
+    InvestServices.addTransaction(date, observations = "", amount, parseFloat(units), assetId, type,
+      (res) => {
+        // SUCCESS
+        DialogUtils.showSuccessMessage('Transação adicionada com sucesso!');
+        $('#modal-global')
+          .modal('close');
+        Investments.changeTabs('tab-inv-transactions');
+        LoadingManager.hideLoading();
+      }, (err) => {
+        // FAILURE
+        LoadingManager.hideLoading();
+        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
+      });
   },
   addAsset: (name, ticker, type, broker) => {
     LoadingManager.showLoading();
