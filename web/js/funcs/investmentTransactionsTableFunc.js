@@ -37,7 +37,7 @@ var InvestmentTransactionsTableFunc = {
         <td>${StringUtils.formatMoney(trx.total_price)}</td>
         <td>${trx.note ? trx.note : '-'}</td>
         <td>
-            <i onClick="Investments.${editTrxCallback.name}(${trx.transaction_id}, '${trx.ticker ? trx.ticker : ''}', '${trx.name}', '${trx.type}', '${trx.broker ? trx.broker : ''}')" class="material-icons table-action-icons">create</i>
+            <i onClick="Investments.${editTrxCallback.name}(${trx.transaction_id}, '${trx.date_timestamp}', '${trx.trx_type}', '${trx.total_price}', '${trx.name}', '${trx.asset_type}', '${trx.ticker}', '${trx.broker}', '${trx.units}', '${trx.note}', '${trx.asset_id}')" class="material-icons table-action-icons">create</i>
             <i onClick="Investments.${removeTrxCallback.name}(${trx.transaction_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
         </td>
       </tr>

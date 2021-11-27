@@ -186,6 +186,34 @@ var InvestServices = {
       }
     });
   },
+  editTransaction: (trxId, date_timestamp, note, total_price, units, asset_id, type, successCallback, errorCallback) => {
+    const pageUrl = `${REST_SERVER_PATH}invest/trx/${trxId}`;
+    $.ajax({
+      async: true,
+      type: 'PUT',
+      dataType: 'json',
+      cache: false,
+      headers: {
+        authusername: Cookies.get('username'),
+        sessionkey: Cookies.get('sessionkey'),
+      },
+      data: {
+        date_timestamp,
+        note,
+        total_price,
+        units,
+        asset_id,
+        type,
+      },
+      url: pageUrl,
+      success: (res) => {
+        if (successCallback) successCallback(res);
+      },
+      error: (err) => {
+        if (errorCallback) errorCallback(err);
+      }
+    });
+  },
 };
 
 //# sourceURL=js/services/investServices.js

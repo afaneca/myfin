@@ -79,4 +79,26 @@ class InvestAssetModel extends Entity
             return $e;
         }
     }
+
+    public static function getTransactionForUser($trxID, $userID, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT * " .
+            "FROM invest_transactions " .
+            "INNER JOIN invest_assets ON invest_assets_asset_id = invest_assets.asset_id " .
+            "WHERE  transaction_id = :trxId AND users_user_id = :userId ";
+
+        $values = array();
+        $values[':trxId'] = $trxID;
+        $values[':userId'] = $userID;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 }
