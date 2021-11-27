@@ -436,7 +436,6 @@ var Stats = {
       }, 0);
       cAggData.push(StringUtils.convertIntegerToFloat(aggregateBalance));
     }
-
     Stats.setupPatrimonyLineChart(cAggData, cLabels, extraChartData);
     Stats.setupPatrimonyTable(cAggData.slice()
       .reverse(), cLabels.slice()
@@ -565,6 +564,7 @@ var Stats = {
     }
   },
   setupPatrimonyLineChart: (chartData, chartLabels, extraChartData) => {
+    debugger
     var ctx = document.getElementById('chart_pie_patrimony_evolution')
       .getContext('2d');
 

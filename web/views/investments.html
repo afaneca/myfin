@@ -14,8 +14,47 @@
             </div>
 
             <div id="tab-inv-dashboard" class="col s12">
-                <div class="card-panel">
-                    Dasbhoard
+                <div id="top-banner_wrapper" class=""
+                     style="height: 230px;margin-top: 10px;text-align: center;align-content: center;">
+                    <!--<div class="col s4 left-align">
+
+                    </div>-->
+                    <div class="col s4 no-margins">
+                        <!--<canvas id="dashboard_assets_distribution_line_chart" style="" width="600px"
+                                height="250"></canvas>-->
+                        <div id="dashboard_assets_distribution_pie_chart" style="height: 300px;"></div>
+                    </div>
+                    <div class="col s8 no-margins">
+                        <canvas id="dashboard_evolution_line_chart" style="margin: 0px;" width="400px"
+                                height="150"></canvas>
+                    </div>
+                </div>
+
+                <div class="col s12">
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value">100€</p>
+                            <p class="invest-dashboard-top-panel-description">Total Investido</p>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value">100€</p>
+                            <p class="invest-dashboard-top-panel-description">Valor Atual</p>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value">+100€ (7.54%)</p>
+                            <p class="invest-dashboard-top-panel-description">ROI 2021</p>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value">+100€ (7.54%)</p>
+                            <p class="invest-dashboard-top-panel-description">ROI Global</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="tab-inv-assets" class="col s12">
@@ -52,6 +91,7 @@
     <script src="../js/funcs/investAssetsModalFunc.js"></script>
     <script src="../js/funcs/investmentTransactionsTableFunc.js"></script>
     <script src="../js/funcs/investTransactionsModalFunc.js"></script>
+    <script src="../js/funcs/investmentDashboardChartsFunc.js"></script>
     <script>
       $(document)
         .ready(function () {

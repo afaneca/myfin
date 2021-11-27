@@ -18,7 +18,7 @@
     /* Dark theme */
     --main-dark-background: #15161b;
     --main-dark-on-dark-background: #1f2029;
-    --main-text-color: rgba(255, 255, 255, 0.7);
+    --main-text-color: #ffffff;
     --main-text-headline-color: white;
     --main-light-gray-color: #515558;
 
@@ -935,3 +935,11 @@ svg:not(:root) {
 }
 
 /* END CUSTOM SCROLLBAR */
+
+.no-margins {
+    margin: 0px !important;
+}
+
+.no-paddings {
+    padding: 0px; !important;
+}
