@@ -19,7 +19,7 @@ var Investments = {
   },
   addTransaction: (date, units, amount, type, observations, assetId) => {
     LoadingManager.showLoading();
-    InvestServices.addTransaction(date, observations = "", amount, parseFloat(units), assetId, type,
+    InvestServices.addTransaction(date, observations = '', amount, parseFloat(units), assetId, type,
       (res) => {
         // SUCCESS
         DialogUtils.showSuccessMessage('Transação adicionada com sucesso!');
@@ -151,8 +151,24 @@ var Investments = {
   editTransactionClicked: () => {
 
   },
-  removeTransactionClicked: () => {
-
+  removeTransactionClicked: (assetId) => {
+    InvestTransactionsModalFunc.showRemoveTrxConfirmationModal('#modal-global', assetId, Investments.removeTransaction);
+  },
+  removeTransaction: (trxId) => {
+    LoadingManager.showLoading();
+    InvestServices.deleteTransaction(trxId,
+      (res) => {
+        // SUCCESS
+        LoadingManager.hideLoading();
+        $('#modal-global')
+          .modal('close');
+        Investments.changeTabs('tab-inv-transactions');
+      }, (err) => {
+        // FAILURE
+        LoadingManager.hideLoading();
+        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
+      }
+    );
   },
 };
 

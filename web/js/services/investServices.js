@@ -165,6 +165,27 @@ var InvestServices = {
       }
     });
   },
+  deleteTransaction: (trxId, successCallback, errorCallback) => {
+    const pageUrl = `${REST_SERVER_PATH}invest/trx/${trxId}`;
+    $.ajax({
+      async: true,
+      type: 'DELETE',
+      dataType: 'json',
+      cache: false,
+      headers: {
+        authusername: Cookies.get('username'),
+        sessionkey: Cookies.get('sessionkey'),
+      },
+      data: {},
+      url: pageUrl,
+      success: (res) => {
+        if (successCallback) successCallback(res);
+      },
+      error: (err) => {
+        if (errorCallback) errorCallback(err);
+      }
+    });
+  },
 };
 
 //# sourceURL=js/services/investServices.js
