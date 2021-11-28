@@ -23,11 +23,14 @@ class InvestAssetEvoSnapshotModel extends Entity
             " VALUES(:month, :year, :units, :investedAmount, :currentValue, :assetID, :createdAt, :updatedAt) " .
             " ON DUPLICATE KEY UPDATE current_value = :currentValue, updated_at = :updatedAt";
 
+        $latestSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($assetID, $month, $year, $transactional);
+        if ($latestSnapshot) $latestSnapshot = $latestSnapshot[0];
+
         $values = array();
         $values[':month'] = $month;
         $values[':year'] = $year;
         $values[':units'] = $units;
-        $values[':investedAmount'] = 0;
+        $values[':investedAmount'] = $latestSnapshot ? $latestSnapshot["invested_amount"] : 0;
         $values[':currentValue'] = Input::convertFloatToInteger($newValue);
         $values[':assetID'] = $assetID;
         $values[':createdAt'] = EnsoShared::now();
@@ -91,7 +94,7 @@ class InvestAssetEvoSnapshotModel extends Entity
         $month = date('m', $unixDate);
         $year = date('Y', $unixDate);
 
-        $snapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($assetID, $transactional);
+        $snapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($assetID, null, null, $transactional);
 
         if ($snapshot && $snapshot[0]["month"] == $month && $snapshot[0]["year"] == $year) {
             // Snapshot exists -> update it
@@ -123,11 +126,39 @@ class InvestAssetEvoSnapshotModel extends Entity
         }
     }
 
-    public static function getLatestSnapshotForAsset($assetId, $transactional = false)
+    public static function getLatestSnapshotForAsset($assetId, $maxMonth, $maxYear, $transactional = false)
     {
-        $snapshot = InvestAssetEvoSnapshotModel::getWhere(["invest_assets_asset_id" => $assetId]);
-        if (!$snapshot || count($snapshot) < 1) return null;
-        return $snapshot;
+        if (!$maxMonth) {
+            $maxMonth = date('m', time());
+        }
+        if (!$maxYear) {
+            $maxYear = date('Y', time());
+        }
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT * FROM invest_asset_evo_snapshot " .
+            "WHERE invest_assets_asset_id = :assetId " .
+            "AND (year < :maxYear OR (year = :maxYear AND month <= :maxMonth)) " .
+            "ORDER BY YEAR DESC, MONTH DESC LIMIT 1";
+
+        $values = array();
+        $values[':assetId'] = $assetId;
+        $values[':maxYear'] = $maxYear;
+        $values[':maxMonth'] = $maxMonth;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            $snapshot = $db->fetchAll();
+
+            /* $snapshot = InvestAssetEvoSnapshotModel::getWhere(["invest_assets_asset_id" => $assetId]);*/
+            if (!$snapshot || count($snapshot) < 1) return null;
+            return $snapshot;
+
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     public static function recalculateSnapshotForAssetsIncrementally($assetId, $fromDate, $toDate, $transactional = false)
@@ -143,11 +174,16 @@ class InvestAssetEvoSnapshotModel extends Entity
         $beginMonth = date('m', $fromDate);
         $beginYear = date('Y', $fromDate);
 
-        $priorMonthsSnapshot = InvestAssetEvoSnapshotModel::getAssetSnapshotAtMonth(($beginMonth > 2) ? ($beginMonth - 2) : 1,
-            ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $assetId, $transactional);
+        /*$priorMonthsSnapshot = InvestAssetEvoSnapshotModel::getAssetSnapshotAtMonth(($beginMonth > 2) ? ($beginMonth - 2) : 1,
+            ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $assetId, $transactional);*/
+        $priorMonthsSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($assetId, ($beginMonth > 2) ? ($beginMonth - 2) : 1,
+            ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $transactional);
+
 
         if (!$priorMonthsSnapshot)
             $priorMonthsSnapshot = ["units" => 0, "current_value" => 0, "invested_amount" => 0];
+        else
+            $priorMonthsSnapshot = $priorMonthsSnapshot[0];
 
         InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $beginMonth, $beginYear,
             $priorMonthsSnapshot["units"], $priorMonthsSnapshot["invested_amount"], $priorMonthsSnapshot["current_value"], $transactional);

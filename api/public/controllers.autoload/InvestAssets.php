@@ -36,7 +36,7 @@ class InvestAssets
             foreach ($assetsArr as $asset) {
                 $month = date('m', EnsoShared::now());
                 $year = date('Y', EnsoShared::now());
-                $snapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"]);
+                $snapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], null, null);
                 if ($snapshot) $snapshot = $snapshot[0];
                 $investedValue = Input::convertIntegerToFloat($snapshot ? $snapshot["invested_amount"] : 0);
                 $currentValue = Input::convertIntegerToFloat($snapshot ? $snapshot["current_value"] : 0);

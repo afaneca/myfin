@@ -27,7 +27,7 @@ class InvestTransactionModel extends Entity
         $db = new EnsoDB($transactional);
         $sql = "SELECT transaction_id, date_timestamp, invest_transactions.type as 'trx_type', invest_assets.type as 'asset_type', note, (total_price/100) as 'total_price', invest_transactions.units, invest_assets_asset_id, name, ticker, broker, invest_assets.asset_id " .
             "FROM invest_transactions INNER JOIN invest_assets ON invest_assets.asset_id = invest_assets_asset_id " .
-            "WHERE users_user_id = :userID;";
+            "WHERE users_user_id = :userID ORDER BY date_timestamp DESC;";
 
         $values = array();
         $values[":userID"] = $userID;
