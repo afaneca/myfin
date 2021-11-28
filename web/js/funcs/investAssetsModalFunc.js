@@ -160,7 +160,46 @@ var InvestAssetsModalFunc = {
           }
         }
       });
-  }
+  },
+  showUpdateCurrentValueModal: (modalDivID, assetId, name, currentValue, conclusionCallback) => {
+    $(modalDivID)
+      .modal('open');
+    let html = `
+      <h4 class="col s8">Valorização atual do investimento em ${name}</h4>
+      <br>
+      <div class="row">
+          <form class="col s12">
+              <div class="input-field col s4">
+              <i class="material-icons prefix">euro_symbol</i>
+                  <input id="asset_value" type="number" class="validate" value="${currentValue}">
+                  <label class="active" for="asset_value">Valor atual</label>
+              </div>
+          </form>
+      </div>
+    `;
+
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
+    <a id="edit_asset_btn"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Atualizar</a>`;
+
+    $(`${modalDivID} .modal-content`)
+      .html(html);
+    $(`${modalDivID} .modal-footer`)
+      .html(actionLinks);
+
+    $('#edit_asset_btn')
+      .click(() => {
+        if (conclusionCallback) {
+          const value = $('#asset_value')
+            .val();
+
+          if (ValidationUtils.checkIfFieldsAreFilled([value])) {
+            conclusionCallback(assetId, value);
+          } else {
+            DialogUtils.showErrorMessage('Por favor preencha todos os campos obrigatórios e tente novamente.');
+          }
+        }
+      });
+  },
 };
 
 //# sourceURL=js/funcs/investAssetsModalFunc.js

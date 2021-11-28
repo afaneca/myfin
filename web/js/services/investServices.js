@@ -235,6 +235,27 @@ var InvestServices = {
       }
     });
   },
+  updateAssetValue: (assetId, new_value, successCallback, errorCallback) => {
+    const pageUrl = `${REST_SERVER_PATH}invest/assets/${assetId}/value`;
+    $.ajax({
+      async: true,
+      type: 'PUT',
+      dataType: 'json',
+      cache: false,
+      headers: {
+        authusername: Cookies.get('username'),
+        sessionkey: Cookies.get('sessionkey'),
+      },
+      data: { new_value },
+      url: pageUrl,
+      success: (res) => {
+        if (successCallback) successCallback(res);
+      },
+      error: (err) => {
+        if (errorCallback) errorCallback(err);
+      }
+    });
+  },
 };
 
 //# sourceURL=js/services/investServices.js

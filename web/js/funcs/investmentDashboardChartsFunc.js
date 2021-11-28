@@ -72,7 +72,7 @@ var InvestmentDashboardChartsFunc = {
       labelColor: LayoutUtils.getCurrentThemeName() === MYFIN.APP_THEMES.LIGHT ? "#2f2d2d" : "#ffffff",
       resize: true,
       formatter: (y, data) => {
-        return y + '%';
+        return parseFloat(y).toFixed(2) + '%';
       }
     });
   },

@@ -1,7 +1,7 @@
 'use strict';
 
 var InvestmentAssetsTableFunc = {
-  renderAssetsTable: (assets, containerId, editAssetCallback, removeAssetCallback) => {
+  renderAssetsTable: (assets, containerId, editAssetCallback, removeAssetCallback, updateValueCallback) => {
     $(containerId)
       .html(`
       <table id="assets-table" class="display browser-defaults" style="width:100%">
@@ -19,13 +19,13 @@ var InvestmentAssetsTableFunc = {
             </tr>
         </thead>
         <tbody>
-            ${assets.map(asset => InvestmentAssetsTableFunc.renderAssetsRow(asset, editAssetCallback, removeAssetCallback))
+            ${assets.map(asset => InvestmentAssetsTableFunc.renderAssetsRow(asset, editAssetCallback, removeAssetCallback, updateValueCallback))
         .join('')}
         </tbody>
       </table>
     `);
   },
-  renderAssetsRow: (asset, editAssetCallback, removeAssetCallback) => {
+  renderAssetsRow: (asset, editAssetCallback, removeAssetCallback, updateValueCallback) => {
     return `
       <tr data-id='${asset.asset_id}'>
         <td>${asset.ticker ? asset.ticker : '-'}</td>
@@ -33,9 +33,9 @@ var InvestmentAssetsTableFunc = {
         <td>${StringUtils.getInvestingAssetObjectById(asset.type).name}</td>
         <td>${asset.broker ? asset.broker : '-'}</td>
         <td>${asset.units}</td>
-        <td>${StringUtils.formatStringToCurrency(asset.invested_value)}</td>
-        <td>${StringUtils.formatStringToCurrency(asset.current_value)}</td>
-        <td>${StringUtils.formatStringToCurrency(asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(asset.relative_roi_percentage)}</td>
+        <td>${StringUtils.formatMoney(asset.invested_value)}</td>
+        <td>${StringUtils.formatMoney(asset.current_value)}<i style="font-size: larger;color: var(--main-accent-color) !important;margin-left: 5px;vertical-align: text-bottom;" onClick="Investments.${updateValueCallback.name}(${asset.asset_id}, '${asset.name}', '${asset.current_value}')" class="material-icons table-action-icons">monetization_on</i></td>
+        <td>${StringUtils.formatMoney(asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(asset.relative_roi_percentage)}</td>
         <td>
             <i onClick="Investments.${editAssetCallback.name}(${asset.asset_id}, '${asset.ticker ? asset.ticker : ''}', '${asset.name}', '${asset.type}', '${asset.broker ? asset.broker : ''}')" class="material-icons table-action-icons">create</i>
             <i onClick="Investments.${removeAssetCallback.name}(${asset.asset_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
