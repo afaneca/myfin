@@ -1,4 +1,4 @@
-<div id="page-wrapper">
+<div id="page-wrapper" xmlns="http://www.w3.org/1999/html">
 
     <div class="card-panel">
         <span class="main-accent-color">Investimentos</span><br>
@@ -33,25 +33,31 @@
                 <div class="col s12">
                     <div class="col s3">
                         <div class="card-panel invest-dashboard-top-panel">
-                            <p class="invest-dashboard-top-panel-value">100€</p>
+                            <p class="invest-dashboard-top-panel-value" id="invest-dashboard-top-panel-invested-value">
+                                -€</p>
                             <p class="invest-dashboard-top-panel-description">Total Investido</p>
                         </div>
                     </div>
                     <div class="col s3">
                         <div class="card-panel invest-dashboard-top-panel">
-                            <p class="invest-dashboard-top-panel-value">100€</p>
+                            <p class="invest-dashboard-top-panel-value" id="invest-dashboard-top-panel-current-value">
+                                -€</p>
                             <p class="invest-dashboard-top-panel-description">Valor Atual</p>
                         </div>
                     </div>
                     <div class="col s3">
                         <div class="card-panel invest-dashboard-top-panel">
-                            <p class="invest-dashboard-top-panel-value">+100€ (7.54%)</p>
+                            <p class="invest-dashboard-top-panel-value"><span
+                                    id="invest-dashboard-top-panel-roi-current-year-value">-€</span> (<span
+                                    id="invest-dashboard-top-panel-roi-current-year-percentage">-%</span>)</p>
                             <p class="invest-dashboard-top-panel-description">ROI 2021</p>
                         </div>
                     </div>
                     <div class="col s3">
                         <div class="card-panel invest-dashboard-top-panel">
-                            <p class="invest-dashboard-top-panel-value">+100€ (7.54%)</p>
+                            <p class="invest-dashboard-top-panel-value"><span
+                                    id="invest-dashboard-top-panel-roi-global-value">-€</span> (<span
+                                    id="invest-dashboard-top-panel-roi-global-percentage">-%</span>)</p>
                             <p class="invest-dashboard-top-panel-description">ROI Global</p>
                         </div>
                     </div>

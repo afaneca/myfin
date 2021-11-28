@@ -345,6 +345,96 @@ class InvestAssets
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+
+    public static function getAssetStatsForUser(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            $assetsArr = InvestAssetModel::getAllAssetsForUser($userID);
+
+            $fullAssetsDetailsArr = array();
+
+            $fullInvestedValue = 0;
+            $fullCurrentValue = 0;
+            $currentValuesByAssetType = []; // ex: ["ETF" => "1030.42"]
+            foreach ($assetsArr as $asset) {
+                $month = date('m', EnsoShared::now());
+                $year = date('Y', EnsoShared::now());
+                $snapshot = InvestAssetEvoSnapshotModel::getAssetSnapshotAtMonth($month, $year, $asset["asset_id"]);
+                $investedValue = Input::convertIntegerToFloat($snapshot ? $snapshot["invested_amount"] : 0);
+                $currentValue = Input::convertIntegerToFloat($snapshot ? $snapshot["current_value"] : 0);
+                $roiValue = $currentValue - $investedValue;
+                $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
+
+                $fullInvestedValue += $investedValue;
+                $fullCurrentValue += $currentValue;
+
+                if (array_key_exists($asset["type"], $currentValuesByAssetType)) {
+                    // Key already exists in array -> increment value
+                    $currentValuesByAssetType[$asset["type"]] += $currentValue;
+                } else {
+                    // Key doesn't exist in array - add key and value
+                    $currentValuesByAssetType[$asset["type"]] = $currentValue;
+                }
+
+                array_push($fullAssetsDetailsArr, [
+                        "asset_id" => $asset["asset_id"],
+                        "name" => $asset["name"],
+                        "ticker" => $asset["ticker"],
+                        "type" => $asset["type"],
+                        "units" => floatval($asset["units"]),
+                        "broker" => $asset["broker"],
+                        "invested_value" => $investedValue,
+                        "current_value" => $currentValue,
+                        "absolute_roi_value" => $roiValue,
+                        "relative_roi_percentage" => $roiPercentage,
+                    ]
+
+                );
+            }
+
+            $res["total_invested_value"] = $fullInvestedValue;
+            $res["total_current_value"] = $fullCurrentValue;
+            $res["global_roi_value"] = $fullCurrentValue - $fullInvestedValue;
+            $res["global_roi_percentage"] = ($res["global_roi_value"] / $fullInvestedValue) * 100;
+            $res["current_year_roi_value"] = 0;
+            $res["current_year_roi_percentage"] = 0;
+
+            $res["current_value_distribution"] = array();
+
+            foreach ($currentValuesByAssetType as $assetType => $value) {
+                $totalValue = $res["total_current_value"];
+                $percentage = ($value / $totalValue) * 100;
+                array_push($res["current_value_distribution"],
+                    [$assetType => $percentage]);
+            }
+
+            return sendResponse($response, EnsoShared::$REST_OK, $res);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/invest/assets/', 'InvestAssets::getAllAssetsForUser');
@@ -353,3 +443,4 @@ $app->delete('/invest/assets/{id}', 'InvestAssets::removeAsset');
 $app->put('/invest/assets/{id}', 'InvestAssets::editAsset');
 $app->put('/invest/assets/{id}/value', 'InvestAssets::updateCurrentAssetValue');
 $app->get('/invest/assets/summary', 'InvestAssets::getAllAssetsSummaryForUser');
+$app->get('/invest/assets/stats', 'InvestAssets::getAssetStatsForUser');
