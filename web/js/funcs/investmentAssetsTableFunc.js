@@ -24,6 +24,7 @@ var InvestmentAssetsTableFunc = {
         </tbody>
       </table>
     `);
+    $('.tooltipped').tooltip();
   },
   renderAssetsRow: (asset, editAssetCallback, removeAssetCallback, updateValueCallback) => {
     return `
@@ -34,7 +35,7 @@ var InvestmentAssetsTableFunc = {
         <td>${asset.broker ? asset.broker : '-'}</td>
         <td>${asset.units}</td>
         <td>${StringUtils.formatMoney(asset.invested_value)}</td>
-        <td>${StringUtils.formatMoney(asset.current_value)}<i style="font-size: larger;color: var(--main-accent-color) !important;margin-left: 5px;vertical-align: text-bottom;" onClick="Investments.${updateValueCallback.name}(${asset.asset_id}, '${asset.name}', '${asset.current_value}')" class="material-icons table-action-icons">monetization_on</i></td>
+        <td>${StringUtils.formatMoney(asset.current_value)}<i style="font-size: larger;color: var(--main-accent-color) !important;margin-left: 5px;vertical-align: text-bottom;" onClick="Investments.${updateValueCallback.name}(${asset.asset_id}, '${asset.name}', '${asset.current_value}')" class="material-icons table-action-icons tooltipped" data-position="right" data-tooltip="Atualizar Valor">monetization_on</i></td>
         <td>${StringUtils.formatMoney(asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(asset.relative_roi_percentage)}</td>
         <td>
             <i onClick="Investments.${editAssetCallback.name}(${asset.asset_id}, '${asset.ticker ? asset.ticker : ''}', '${asset.name}', '${asset.type}', '${asset.broker ? asset.broker : ''}')" class="material-icons table-action-icons">create</i>

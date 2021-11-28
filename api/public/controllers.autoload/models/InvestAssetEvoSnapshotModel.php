@@ -211,6 +211,28 @@ class InvestAssetEvoSnapshotModel extends Entity
         }
 
         return $initialSnapshot;
+    }
 
+    public static function getAllAssetSnapshotsForUser($userId, $transactional = false)
+    {
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT month, year, invest_asset_evo_snapshot.units, (invested_amount/100) as 'invested_amount', (current_value/100) as 'current_value', invest_assets_asset_id as 'asset_id', name as 'asset_name', ticker as 'asset_ticker', broker as 'asset_broker' " .
+            "FROM invest_asset_evo_snapshot INNER JOIN invest_assets ON invest_assets.asset_id = invest_assets_asset_id " .
+            "WHERE users_user_id = :userId AND year < :currentYear OR (year = :currentYear AND month <= :currentMonth) ORDER BY year ASC, month ASC;";
+
+        $values = array();
+        $values[':userId'] = $userId;
+        $values[':currentMonth'] = date('m', time());
+        $values[':currentYear'] = date('Y', time());
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
     }
 }

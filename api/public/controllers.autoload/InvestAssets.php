@@ -406,7 +406,6 @@ class InvestAssets
                         "absolute_roi_value" => $roiValue,
                         "relative_roi_percentage" => $roiPercentage,
                     ]
-
                 );
             }
 
@@ -416,6 +415,7 @@ class InvestAssets
             $res["global_roi_percentage"] = ($res["global_roi_value"] / $fullInvestedValue) * 100;
             $res["current_year_roi_value"] = 0;
             $res["current_year_roi_percentage"] = 0;
+            $res["monthly_snapshots"] = InvestAssetEvoSnapshotModel::getAllAssetSnapshotsForUser($userID, false);
 
             $res["current_value_distribution"] = array();
 
