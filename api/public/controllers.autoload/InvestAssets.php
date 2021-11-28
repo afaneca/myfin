@@ -36,7 +36,8 @@ class InvestAssets
             foreach ($assetsArr as $asset) {
                 $month = date('m', EnsoShared::now());
                 $year = date('Y', EnsoShared::now());
-                $snapshot = InvestAssetEvoSnapshotModel::getAssetSnapshotAtMonth($month, $year, $asset["asset_id"]);
+                $snapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"]);
+                if ($snapshot) $snapshot = $snapshot[0];
                 $investedValue = Input::convertIntegerToFloat($snapshot ? $snapshot["invested_amount"] : 0);
                 $currentValue = Input::convertIntegerToFloat($snapshot ? $snapshot["current_value"] : 0);
                 $roiValue = $currentValue - $investedValue;
@@ -162,6 +163,14 @@ class InvestAssets
 
             /* Execute Operations */
             $userID = UserModel::getUserIdByName($authusername, false);
+
+            if (!InvestAssetModel::exists(["users_user_id" => $userID, "asset_id" => $assetID,])) {
+                throw new BadInputValidationException("Asset not found!");
+            }
+
+            InvestAssetEvoSnapshotModel::delete(
+                ["invest_assets_asset_id" => $assetID]
+            );
 
             InvestAssetModel::delete([
                 "users_user_id" => $userID,
@@ -374,6 +383,13 @@ class InvestAssets
             $fullInvestedValue = 0;
             $fullCurrentValue = 0;
             $currentValuesByAssetType = []; // ex: ["ETF" => "1030.42"]
+
+            // Current year's data
+            $currentMonth = date('m', time());
+            $currentYear = date('Y', time());
+            $yearlyInvestedValue = 0;
+            $yearlyCurrentValue = 0;
+
             foreach ($assetsArr as $asset) {
                 $month = date('m', EnsoShared::now());
                 $year = date('Y', EnsoShared::now());
@@ -385,6 +401,12 @@ class InvestAssets
 
                 $fullInvestedValue += $investedValue;
                 $fullCurrentValue += $currentValue;
+
+                // Current year's data
+                if ($month === $currentMonth && $year === $currentYear) {
+                    $yearlyInvestedValue += $investedValue;
+                    $yearlyCurrentValue += $currentValue;
+                }
 
                 if (array_key_exists($asset["type"], $currentValuesByAssetType)) {
                     // Key already exists in array -> increment value
@@ -412,16 +434,17 @@ class InvestAssets
             $res["total_invested_value"] = $fullInvestedValue;
             $res["total_current_value"] = $fullCurrentValue;
             $res["global_roi_value"] = $fullCurrentValue - $fullInvestedValue;
-            $res["global_roi_percentage"] = ($res["global_roi_value"] / $fullInvestedValue) * 100;
-            $res["current_year_roi_value"] = 0;
-            $res["current_year_roi_percentage"] = 0;
+            $res["global_roi_percentage"] = ($fullInvestedValue != 0) ? ($res["global_roi_value"] / $fullInvestedValue) * 100 : "-";
+
+            $res["current_year_roi_value"] = $yearlyCurrentValue - $yearlyInvestedValue;
+            $res["current_year_roi_percentage"] = ($yearlyInvestedValue != 0) ? ($res["current_year_roi_value"] / $yearlyInvestedValue) * 100 : "-";
             $res["monthly_snapshots"] = InvestAssetEvoSnapshotModel::getAllAssetSnapshotsForUser($userID, false);
 
             $res["current_value_distribution"] = array();
 
             foreach ($currentValuesByAssetType as $assetType => $value) {
                 $totalValue = $res["total_current_value"];
-                $percentage = ($value / $totalValue) * 100;
+                $percentage = ($totalValue != 0) ? ($value / $totalValue) * 100 : "-";
                 array_push($res["current_value_distribution"],
                     [$assetType => $percentage]);
             }

@@ -145,9 +145,14 @@ var Investments = {
       }
     },
     buildDashboardEvolutionLineChart: (snapshotsList) => {
-      /*const chartLabels = ['11/2021', '12/2021', '01/2022', '02/2022', '03/2022', '04/2022', '05/2022'];
-      const chartData = ['0', '100', '75', '125', '230', '99', '300'];
-      const extraChartData = [];*/
+      if (!snapshotsList || !snapshotsList.length) {
+        $('#dashboard_evolution_line_chart')
+          .hide();
+        $('#evo-line-chart')
+          .find('.empty-view')
+          .html(GraphEmptyViewComponent.buildDefaultGraphEmptyView());
+      }
+
       const chartLabels = [];
       const aggData = []; // ex: aggData["asset"] => sum of values
 
@@ -182,6 +187,14 @@ var Investments = {
         .text(StringUtils.formatStringToPercentage(res['global_roi_percentage']));
     },
     buildDashboardAssetsDistributionPieChart: (canvasId, assetDistribution) => {
+      if (!assetDistribution || !assetDistribution.length) {
+        $('#' + canvasId)
+          .hide();
+        $('#assets-dist-pie-chart')
+          .find('.empty-view')
+          .html(GraphEmptyViewComponent.buildDefaultGraphEmptyView());
+      }
+
       let assetDistributionChartData = [];
       assetDistribution.forEach((value, index) => {
         assetDistributionChartData.push({
