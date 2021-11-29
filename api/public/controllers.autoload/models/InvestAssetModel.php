@@ -38,6 +38,14 @@ class InvestAssetModel extends Entity
     /**
      * @throws InexistentAttributeProvidedException
      */
+    public static function getAssetForUser($userID, $assetId)
+    {
+        return InvestAssetModel::getWhere(["users_user_id" => $userID,"asset_id" => $assetId]);
+    }
+
+    /**
+     * @throws InexistentAttributeProvidedException
+     */
     public static function getAllAssetsSummaryForUser($userID)
     {
         return InvestAssetModel::getWhere(["users_user_id" => $userID,], ["asset_id", "name", "ticker", "type"]);

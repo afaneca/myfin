@@ -104,7 +104,7 @@ var InvestTransactionsModalFunc = {
     renderAssetsSelectOption: (asset, defaultAssetId = undefined) => `
     <option value="${asset.asset_id}" ${(defaultAssetId && asset.asset_id === defaultAssetId) ? 'selected' : ''}>${asset.name}</option>
   `,
-    showRemoveTrxConfirmationModal: (modalDivId, trxId, removeTrxCallback) => {
+    showRemoveTrxConfirmationModal: (modalDivId, trxId, assetId, removeTrxCallback) => {
       $('#modal-global')
         .modal('open');
       let txt = `
@@ -117,7 +117,7 @@ var InvestTransactionsModalFunc = {
       `;
 
       let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a onClick="Investments.${removeTrxCallback.name}(${trxId})"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
+            <a onClick="Investments.${removeTrxCallback.name}(${trxId}, '${assetId}')"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`;
       $('#modal-global .modal-content')
         .html(txt);
       $('#modal-global .modal-footer')

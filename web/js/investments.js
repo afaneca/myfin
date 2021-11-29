@@ -23,10 +23,20 @@ var Investments = {
         (res) => {
           // SUCCESS
           DialogUtils.showSuccessMessage('Transação adicionada com sucesso!');
-          $('#modal-global')
+          /*$('#modal-global')
             .modal('close');
-          Investments.changeTabs('tab-inv-transactions');
-          LoadingManager.hideLoading();
+          Investments.changeTabs('tab-inv-transactions');*/
+
+          InvestServices.getAssetDetails(assetId,
+            (assetDetails) => {
+              // SUCCESS
+              LoadingManager.hideLoading();
+              Investments.updateAssetValueClicked(assetId, assetDetails.name, assetDetails.current_value);
+            }, (err2) => {
+              // FAILURE
+              LoadingManager.hideLoading();
+              DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
+            });
         }, (err) => {
           // FAILURE
           LoadingManager.hideLoading();
@@ -227,8 +237,8 @@ var Investments = {
       });
 
     },
-    removeTransactionClicked: (assetId) => {
-      InvestTransactionsModalFunc.showRemoveTrxConfirmationModal('#modal-global', assetId, Investments.removeTransaction);
+    removeTransactionClicked: (trxId, assetId) => {
+      InvestTransactionsModalFunc.showRemoveTrxConfirmationModal('#modal-global', trxId, assetId, Investments.removeTransaction);
     },
     updateAssetValueClicked: (assetId, name, currentValue) => {
       InvestAssetsModalFunc.showUpdateCurrentValueModal('#modal-global', assetId, name, currentValue, Investments.updateAssetValue);
@@ -248,15 +258,25 @@ var Investments = {
           DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
         });
     },
-    removeTransaction: (trxId) => {
+    removeTransaction: (trxId, assetId) => {
       LoadingManager.showLoading();
       InvestServices.deleteTransaction(trxId,
         (res) => {
           // SUCCESS
-          LoadingManager.hideLoading();
+          /*LoadingManager.hideLoading();
           $('#modal-global')
             .modal('close');
-          Investments.changeTabs('tab-inv-transactions');
+          Investments.changeTabs('tab-inv-transactions');*/
+          InvestServices.getAssetDetails(assetId,
+            (assetDetails) => {
+              // SUCCESS
+              LoadingManager.hideLoading();
+              Investments.updateAssetValueClicked(assetId, assetDetails.name, assetDetails.current_value);
+            }, (err2) => {
+              // FAILURE
+              LoadingManager.hideLoading();
+              DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
+            });
         }, (err) => {
           // FAILURE
           LoadingManager.hideLoading();
@@ -269,10 +289,20 @@ var Investments = {
       InvestServices.editTransaction(trxId, date_timestamp, note, totalPrice, units, assetId, type,
         (res) => {
           // SUCCESS
-          LoadingManager.hideLoading();
+          /*LoadingManager.hideLoading();
           $('#modal-global')
             .modal('close');
-          Investments.changeTabs('tab-inv-transactions');
+          Investments.changeTabs('tab-inv-transactions');*/
+          InvestServices.getAssetDetails(assetId,
+            (assetDetails) => {
+              // SUCCESS
+              LoadingManager.hideLoading();
+              Investments.updateAssetValueClicked(assetId, assetDetails.name, assetDetails.current_value);
+            }, (err2) => {
+              // FAILURE
+              LoadingManager.hideLoading();
+              DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
+            });
         }, (err) => {
           // FAILURE
           LoadingManager.hideLoading();
