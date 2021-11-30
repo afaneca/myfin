@@ -1,0 +1,134 @@
+<div id="page-wrapper" xmlns="http://www.w3.org/1999/html">
+
+    <div class="card-panel">
+        <span class="main-accent-color">Investimentos <b>(beta)</b></span><br>
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s3"><a href="#tab-inv-dashboard">Resumo</a></li>
+                    <li class="tab col s3"><a href="#tab-inv-assets">Ativos</a></li>
+                    <li class="tab col s3"><a href="#tab-inv-transactions">Transações</a></li>
+                    <li class="tab col s3"><a href="#tab-inv-reports">Relatórios</a></li>
+                </ul>
+            </div>
+
+            <div id="tab-inv-dashboard" class="col s12">
+                <div id="top-banner_wrapper" class=""
+                     style="height: 230px;margin-top: 10px;text-align: center;align-content: center;">
+                    <div class="col s4 no-margins" id="assets-dist-pie-chart">
+                        <div id="dashboard_assets_distribution_pie_chart" style="height: 300px; margin-top: 10px;"></div>
+                        <div class="card-panel empty-view hide"></div>
+                    </div>
+                    <div class="col s8 no-margins" id="evo-line-chart">
+                        <canvas id="dashboard_evolution_line_chart" style="margin: 0px;" width="400px"
+                                height="130"></canvas>
+                        <div class="card-panel empty-view hide"></div>
+                    </div>
+                </div>
+
+                <div class="col s12">
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value" id="invest-dashboard-top-panel-invested-value">
+                                -€</p>
+                            <p class="invest-dashboard-top-panel-description">Total Investido</p>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value" id="invest-dashboard-top-panel-current-value">
+                                -€</p>
+                            <p class="invest-dashboard-top-panel-description">Valor Atual</p>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value"><span
+                                    id="invest-dashboard-top-panel-roi-current-year-value">-€</span> (<span
+                                    id="invest-dashboard-top-panel-roi-current-year-percentage">-%</span>)</p>
+                            <p class="invest-dashboard-top-panel-description">ROI 2021</p>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value"><span
+                                    id="invest-dashboard-top-panel-roi-global-value">-€</span> (<span
+                                    id="invest-dashboard-top-panel-roi-global-percentage">-%</span>)</p>
+                            <p class="invest-dashboard-top-panel-description">ROI Global</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="tab-inv-assets" class="col s12">
+                <div class="card-panel">
+                    <a class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"
+                       onClick="Investments.addNewAssetClicked()"><i
+                            class="material-icons left">add_circle</i>Adicionar Ativo</a>
+                    <!--<hr>-->
+                    <div id="table-wrapper"></div>
+                </div>
+            </div>
+            <div id="tab-inv-transactions" class="col s12">
+                <div class="card-panel">
+                    <div class="card-panel">
+                        <a class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"
+                           onClick="Investments.addNewTransactionClicked()"><i
+                                class="material-icons left">add_circle</i>Adicionar Transação</a>
+                        <!--<hr>-->
+                        <div id="table-wrapper-transactions"></div>
+                    </div>
+                </div>
+                <div id="tab-inv-reports" class="col s12">
+                    <div class="card-panel">
+                        Reports
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/funcs/investmentAssetsTableFunc.js"></script>
+    <script src="../js/funcs/investAssetsModalFunc.js"></script>
+    <script src="../js/funcs/investmentTransactionsTableFunc.js"></script>
+    <script src="../js/funcs/investTransactionsModalFunc.js"></script>
+    <script src="../js/funcs/investmentDashboardChartsFunc.js"></script>
+    <script>
+      $(document)
+        .ready(function () {
+          DialogUtils.initStandardModal();
+
+          $('.tabs')
+            .tabs({
+              'onShow': (a, b) => {
+                let activeID = $(a)[0]['id'];
+                Investments.changeTabs(activeID);
+              }
+            });
+
+          const argsArr = configs.getUrlArgs();
+          const selectedTab = (argsArr && argsArr.hasOwnProperty('tab')) ? argsArr['tab'] : undefined;
+
+          switch (selectedTab) {
+            case 'dashboard':
+            default:
+              $('.tabs')
+                .tabs('select', 'tab-inv-dashboard');
+              break;
+            case 'assets':
+              $('.tabs')
+                .tabs('select', 'tab-inv-assets');
+              break;
+            case 'transactions':
+              $('.tabs')
+                .tabs('select', 'tab-inv-transactions');
+              break;
+            case 'reports':
+              $('.tabs')
+                .tabs('select', 'tab-inv-reports');
+              break;
+          }
+        });
+    </script>

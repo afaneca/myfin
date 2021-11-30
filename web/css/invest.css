@@ -1,0 +1,15 @@
+.invest-dashboard-top-panel {
+    text-align: center;
+    color: var(--main-text-color);
+    padding: 10px;
+}
+
+.invest-dashboard-top-panel-value {
+    font-size: xx-large;
+    margin-top: 0px;
+}
+
+.invest-dashboard-top-panel-description {
+    margin-top: -25px;
+    margin-bottom: 0px;
+}

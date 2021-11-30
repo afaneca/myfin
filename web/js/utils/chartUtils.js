@@ -169,7 +169,7 @@ var chartUtils = {
             },
             legend: {
                 labels: {
-                    fontColor: LayoutUtils.getCSSVariableValue("--main-text-headline-color")
+                    fontColor: LayoutUtils.getCurrentThemeName() === MYFIN.APP_THEMES.LIGHT ? "#000000" : "#ffffff"
                 }
             },
             tooltips: {

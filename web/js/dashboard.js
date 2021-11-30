@@ -288,7 +288,6 @@ var Dashboard = {
       });
   },
   refreshDashboard: (newMonth) => {
-    // TODO DASHBOARD: setup refresh of data
     Dashboard.setupLastTransactionsTable();
     Dashboard.setupDebtDistributionChart();
     Dashboard.setupInvestmentDistributionChart();
