@@ -12,14 +12,6 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Schema myfin
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `myfin` DEFAULT CHARACTER SET utf8 ;
--- -----------------------------------------------------
--- Schema myfin
--- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema myfin
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `myfin` DEFAULT CHARACTER SET latin1 ;
 USE `myfin` ;
 
 -- -----------------------------------------------------
@@ -36,8 +28,8 @@ CREATE TABLE IF NOT EXISTS `myfin`.`users` (
                                                `trustlimit_mobile` INT NULL,
                                                `last_update_timestamp` BIGINT NULL DEFAULT 0,
                                                PRIMARY KEY (`user_id`),
-                                               UNIQUE INDEX `username_UNIQUE` (`username` ASC),
-                                               UNIQUE INDEX `email_UNIQUE` (`email` ASC))
+                                               UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
+                                               UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8;
 
@@ -54,8 +46,8 @@ CREATE TABLE IF NOT EXISTS `myfin`.`categories` (
                                                     `color_gradient` VARCHAR(45) NULL DEFAULT NULL,
                                                     `status` VARCHAR(45) NULL DEFAULT 'Ativa',
                                                     PRIMARY KEY (`category_id`),
-                                                    INDEX `fk_category_users_idx` (`users_user_id` ASC),
-                                                    UNIQUE INDEX `uq_name_type_user_id` (`users_user_id` ASC, `type` ASC, `name` ASC),
+                                                    INDEX `fk_category_users_idx` (`users_user_id` ASC) VISIBLE,
+                                                    UNIQUE INDEX `uq_name_type_user_id` (`users_user_id` ASC, `type` ASC, `name` ASC) VISIBLE,
                                                     CONSTRAINT `fk_category_users`
                                                         FOREIGN KEY (`users_user_id`)
                                                             REFERENCES `myfin`.`users` (`user_id`)
@@ -80,9 +72,9 @@ CREATE TABLE IF NOT EXISTS `myfin`.`accounts` (
                                                   `updated_timestamp` BIGINT NULL,
                                                   `color_gradient` VARCHAR(45) NULL DEFAULT NULL,
                                                   PRIMARY KEY (`account_id`),
-                                                  UNIQUE INDEX `account_id_UNIQUE` (`account_id` ASC),
-                                                  UNIQUE INDEX `name_UNIQUE` (`name` ASC, `users_user_id` ASC),
-                                                  INDEX `fk_accounts_users1_idx` (`users_user_id` ASC),
+                                                  UNIQUE INDEX `account_id_UNIQUE` (`account_id` ASC) VISIBLE,
+                                                  UNIQUE INDEX `name_UNIQUE` (`name` ASC, `users_user_id` ASC) VISIBLE,
+                                                  INDEX `fk_accounts_users1_idx` (`users_user_id` ASC) VISIBLE,
                                                   CONSTRAINT `fk_accounts_users1`
                                                       FOREIGN KEY (`users_user_id`)
                                                           REFERENCES `myfin`.`users` (`user_id`)
@@ -100,9 +92,9 @@ CREATE TABLE IF NOT EXISTS `myfin`.`entities` (
                                                   `name` VARCHAR(255) NOT NULL,
                                                   `users_user_id` BIGINT NOT NULL,
                                                   PRIMARY KEY (`entity_id`),
-                                                  UNIQUE INDEX `entity_id_UNIQUE` (`entity_id` ASC),
-                                                  UNIQUE INDEX `name_UNIQUE` (`name` ASC, `users_user_id` ASC),
-                                                  INDEX `fk_entities_users1_idx` (`users_user_id` ASC),
+                                                  UNIQUE INDEX `entity_id_UNIQUE` (`entity_id` ASC) VISIBLE,
+                                                  UNIQUE INDEX `name_UNIQUE` (`name` ASC, `users_user_id` ASC) VISIBLE,
+                                                  INDEX `fk_entities_users1_idx` (`users_user_id` ASC) VISIBLE,
                                                   CONSTRAINT `fk_entities_users1`
                                                       FOREIGN KEY (`users_user_id`)
                                                           REFERENCES `myfin`.`users` (`user_id`)
@@ -126,10 +118,10 @@ CREATE TABLE IF NOT EXISTS `myfin`.`transactions` (
                                                       `accounts_account_to_id` BIGINT NULL,
                                                       `categories_category_id` BIGINT NULL,
                                                       PRIMARY KEY (`transaction_id`),
-                                                      UNIQUE INDEX `transaction_id_UNIQUE` (`transaction_id` ASC),
-                                                      INDEX `fk_transactions_entities2_idx` (`entities_entity_id` ASC),
-                                                      INDEX `fk_transactions_accounts1_idx` (`accounts_account_from_id` ASC),
-                                                      INDEX `fk_transactions_categories1_idx` (`categories_category_id` ASC),
+                                                      UNIQUE INDEX `transaction_id_UNIQUE` (`transaction_id` ASC) VISIBLE,
+                                                      INDEX `fk_transactions_entities2_idx` (`entities_entity_id` ASC) VISIBLE,
+                                                      INDEX `fk_transactions_accounts1_idx` (`accounts_account_from_id` ASC) VISIBLE,
+                                                      INDEX `fk_transactions_categories1_idx` (`categories_category_id` ASC) VISIBLE,
                                                       CONSTRAINT `fk_transactions_entities2`
                                                           FOREIGN KEY (`entities_entity_id`)
                                                               REFERENCES `myfin`.`entities` (`entity_id`)
@@ -160,9 +152,9 @@ CREATE TABLE IF NOT EXISTS `myfin`.`budgets` (
                                                  `initial_balance` BIGINT NULL,
                                                  `users_user_id` BIGINT NOT NULL,
                                                  PRIMARY KEY (`budget_id`, `users_user_id`),
-                                                 UNIQUE INDEX `budget_id_UNIQUE` (`budget_id` ASC),
-                                                 INDEX `fk_budgets_users1_idx` (`users_user_id` ASC),
-                                                 UNIQUE INDEX `uq_month_year_user` (`month` ASC, `year` ASC, `users_user_id` ASC),
+                                                 UNIQUE INDEX `budget_id_UNIQUE` (`budget_id` ASC) VISIBLE,
+                                                 INDEX `fk_budgets_users1_idx` (`users_user_id` ASC) VISIBLE,
+                                                 UNIQUE INDEX `uq_month_year_user` (`month` ASC, `year` ASC, `users_user_id` ASC) VISIBLE,
                                                  CONSTRAINT `fk_budgets_users1`
                                                      FOREIGN KEY (`users_user_id`)
                                                          REFERENCES `myfin`.`users` (`user_id`)
@@ -181,8 +173,8 @@ CREATE TABLE IF NOT EXISTS `myfin`.`budgets_has_categories` (
                                                                 `planned_amount` BIGINT NOT NULL DEFAULT 0,
                                                                 `current_amount` BIGINT NOT NULL DEFAULT 0,
                                                                 PRIMARY KEY (`budgets_budget_id`, `budgets_users_user_id`, `categories_category_id`),
-                                                                INDEX `fk_budgets_has_categories_categories1_idx` (`categories_category_id` ASC),
-                                                                INDEX `fk_budgets_has_categories_budgets1_idx` (`budgets_budget_id` ASC, `budgets_users_user_id` ASC),
+                                                                INDEX `fk_budgets_has_categories_categories1_idx` (`categories_category_id` ASC) VISIBLE,
+                                                                INDEX `fk_budgets_has_categories_budgets1_idx` (`budgets_budget_id` ASC, `budgets_users_user_id` ASC) VISIBLE,
                                                                 CONSTRAINT `fk_budgets_has_categories_budgets1`
                                                                     FOREIGN KEY (`budgets_budget_id` , `budgets_users_user_id`)
                                                                         REFERENCES `myfin`.`budgets` (`budget_id` , `users_user_id`)
@@ -206,7 +198,7 @@ CREATE TABLE IF NOT EXISTS `myfin`.`balances_snapshot` (
                                                            `balance` BIGINT NOT NULL DEFAULT 0,
                                                            `created_timestamp` BIGINT NOT NULL,
                                                            `updated_timestamp` BIGINT NULL,
-                                                           INDEX `fk_balances_snapshot_accounts1_idx` (`accounts_account_id` ASC),
+                                                           INDEX `fk_balances_snapshot_accounts1_idx` (`accounts_account_id` ASC) VISIBLE,
                                                            PRIMARY KEY (`accounts_account_id`, `month`, `year`),
                                                            CONSTRAINT `fk_balances_snapshot_accounts1`
                                                                FOREIGN KEY (`accounts_account_id`)
@@ -238,7 +230,7 @@ CREATE TABLE IF NOT EXISTS `myfin`.`rules` (
                                                `assign_type` VARCHAR(45) NULL,
                                                `users_user_id` BIGINT NOT NULL,
                                                PRIMARY KEY (`rule_id`, `users_user_id`),
-                                               INDEX `fk_rules_users1_idx` (`users_user_id` ASC),
+                                               INDEX `fk_rules_users1_idx` (`users_user_id` ASC) VISIBLE,
                                                CONSTRAINT `fk_rules_users1`
                                                    FOREIGN KEY (`users_user_id`)
                                                        REFERENCES `myfin`.`users` (`user_id`)
@@ -246,211 +238,96 @@ CREATE TABLE IF NOT EXISTS `myfin`.`rules` (
                                                        ON UPDATE NO ACTION)
     ENGINE = InnoDB;
 
-USE `myfin` ;
 
 -- -----------------------------------------------------
--- Table `myfin`.`users`
+-- Table `myfin`.`invest_assets`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`users` (
-                                                    `user_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-                                                    `username` VARCHAR(45) NOT NULL,
-                                                    `password` TEXT NOT NULL,
-                                                    `email` VARCHAR(45) NOT NULL,
-                                                    `sessionkey` TEXT NULL DEFAULT NULL,
-                                                    `sessionkey_mobile` TEXT NULL DEFAULT NULL,
-                                                    `trustlimit` INT(11) NULL DEFAULT NULL,
-                                                    `trustlimit_mobile` INT(11) NULL DEFAULT NULL,
-                                                    `last_update_timestamp` BIGINT(20) NULL DEFAULT '0',
-                                                    PRIMARY KEY (`user_id`),
-                                                    UNIQUE INDEX `username_UNIQUE` (`username` ASC),
-                                                    UNIQUE INDEX `email_UNIQUE` (`email` ASC))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 8
-    DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `myfin`.`accounts`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`accounts` (
-                                                       `account_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-                                                       `name` VARCHAR(255) NOT NULL,
-                                                       `type` VARCHAR(45) NOT NULL,
-                                                       `description` MEDIUMTEXT NULL DEFAULT NULL,
-                                                       `exclude_from_budgets` TINYINT(1) NOT NULL,
-                                                       `status` VARCHAR(45) NOT NULL,
-                                                       `users_user_id` BIGINT(20) NOT NULL,
-                                                       `current_balance` BIGINT(20) NULL DEFAULT '0',
-                                                       `created_timestamp` BIGINT(20) NULL DEFAULT NULL,
-                                                       `updated_timestamp` BIGINT(20) NULL DEFAULT NULL,
-                                                       `color_gradient` VARCHAR(45) NULL DEFAULT NULL,
-                                                       PRIMARY KEY (`account_id`),
-                                                       UNIQUE INDEX `account_id_UNIQUE` (`account_id` ASC),
-                                                       UNIQUE INDEX `name_UNIQUE` (`name` ASC, `users_user_id` ASC),
-                                                       INDEX `fk_accounts_users1_idx` (`users_user_id` ASC),
-                                                       CONSTRAINT `fk_accounts_users1`
+CREATE TABLE IF NOT EXISTS `myfin`.`invest_assets` (
+                                                       `asset_id` BIGINT NOT NULL AUTO_INCREMENT,
+                                                       `name` VARCHAR(75) NOT NULL,
+                                                       `ticker` VARCHAR(45) NULL,
+                                                       `units` DECIMAL(16,6) ZEROFILL NOT NULL,
+                                                       `type` VARCHAR(75) NOT NULL,
+                                                       `broker` VARCHAR(45) NULL,
+                                                       `created_at` BIGINT NOT NULL,
+                                                       `updated_at` BIGINT NULL,
+                                                       `users_user_id` BIGINT NOT NULL,
+                                                       PRIMARY KEY (`asset_id`),
+                                                       UNIQUE INDEX `asset_id_UNIQUE` (`asset_id` ASC) VISIBLE,
+                                                       INDEX `fk_invest_assets_users1_idx` (`users_user_id` ASC) VISIBLE,
+                                                       UNIQUE INDEX `users_user_id_type_name_unique` (`name` ASC, `type` ASC, `users_user_id` ASC) VISIBLE,
+                                                       CONSTRAINT `fk_invest_assets_users1`
                                                            FOREIGN KEY (`users_user_id`)
                                                                REFERENCES `myfin`.`users` (`user_id`)
                                                                ON DELETE NO ACTION
                                                                ON UPDATE NO ACTION)
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 73
-    DEFAULT CHARACTER SET = utf8;
+    ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `myfin`.`balances`
+-- Table `myfin`.`invest_transactions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`balances` (
-                                                       `balance_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-                                                       `date_timestamp` BIGINT(20) NOT NULL,
-                                                       `amount` DOUBLE NOT NULL,
-                                                       `accounts_account_id` BIGINT(20) NOT NULL,
-                                                       PRIMARY KEY (`balance_id`),
-                                                       INDEX `fk_balances_accounts1_idx` (`accounts_account_id` ASC))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 4
-    DEFAULT CHARACTER SET = utf8;
+CREATE TABLE IF NOT EXISTS `myfin`.`invest_transactions` (
+                                                             `transaction_id` BIGINT NOT NULL AUTO_INCREMENT,
+                                                             `date_timestamp` BIGINT NOT NULL,
+                                                             `type` ENUM('B', 'S') NOT NULL,
+                                                             `note` VARCHAR(100) NULL,
+                                                             `total_price` BIGINT NOT NULL,
+                                                             `units` DECIMAL(16,6) NOT NULL,
+                                                             `invest_assets_asset_id` BIGINT NOT NULL,
+                                                             `created_at` BIGINT NOT NULL,
+                                                             `updated_at` BIGINT NOT NULL,
+                                                             PRIMARY KEY (`transaction_id`),
+                                                             UNIQUE INDEX `transaction_id_UNIQUE` (`transaction_id` ASC) VISIBLE,
+                                                             INDEX `fk_invest_transactions_invest_assets1_idx` (`invest_assets_asset_id` ASC) VISIBLE,
+                                                             CONSTRAINT `fk_invest_transactions_invest_assets1`
+                                                                 FOREIGN KEY (`invest_assets_asset_id`)
+                                                                     REFERENCES `myfin`.`invest_assets` (`asset_id`)
+                                                                     ON DELETE NO ACTION
+                                                                     ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `myfin`.`balances_snapshot`
+-- Table `myfin`.`invest_asset_evo_snapshot`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`balances_snapshot` (
-                                                                `accounts_account_id` BIGINT(20) NOT NULL,
-                                                                `month` INT(11) NOT NULL,
-                                                                `year` INT(11) NOT NULL,
-                                                                `balance` BIGINT(20) NOT NULL DEFAULT '0',
-                                                                `created_timestamp` BIGINT(20) NOT NULL,
-                                                                `updated_timestamp` BIGINT(20) NULL DEFAULT NULL,
-                                                                PRIMARY KEY (`accounts_account_id`, `month`, `year`),
-                                                                INDEX `fk_balances_snapshot_accounts1_idx` (`accounts_account_id` ASC))
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8;
+CREATE TABLE IF NOT EXISTS `myfin`.`invest_asset_evo_snapshot` (
+                                                                   `month` INT NOT NULL,
+                                                                   `year` INT NOT NULL,
+                                                                   `units` DECIMAL(16,6) ZEROFILL NOT NULL,
+                                                                   `invested_amount` BIGINT NOT NULL,
+                                                                   `current_value` BIGINT NOT NULL,
+                                                                   `invest_assets_asset_id` BIGINT NOT NULL,
+                                                                   `created_at` BIGINT NOT NULL,
+                                                                   `updated_at` BIGINT NOT NULL,
+                                                                   UNIQUE INDEX `uq_month_year_invest_assets_asset_id` (`month` ASC, `year` ASC, `invest_assets_asset_id` ASC) VISIBLE,
+                                                                   INDEX `fk_invest_asset_evo_snapshot_invest_assets1_idx` (`invest_assets_asset_id` ASC) VISIBLE,
+                                                                   CONSTRAINT `fk_invest_asset_evo_snapshot_invest_assets1`
+                                                                       FOREIGN KEY (`invest_assets_asset_id`)
+                                                                           REFERENCES `myfin`.`invest_assets` (`asset_id`)
+                                                                           ON DELETE NO ACTION
+                                                                           ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `myfin`.`budgets`
+-- Table `myfin`.`invest_desired_allocations`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`budgets` (
-                                                      `budget_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-                                                      `month` INT(11) NOT NULL,
-                                                      `year` INT(11) NOT NULL,
-                                                      `observations` MEDIUMTEXT NULL DEFAULT NULL,
-                                                      `is_open` TINYINT(1) NOT NULL,
-                                                      `initial_balance` BIGINT(20) NULL DEFAULT NULL,
-                                                      `users_user_id` BIGINT(20) NOT NULL,
-                                                      PRIMARY KEY (`budget_id`, `users_user_id`),
-                                                      UNIQUE INDEX `budget_id_UNIQUE` (`budget_id` ASC),
-                                                      UNIQUE INDEX `uq_month_year_user` (`month` ASC, `year` ASC, `users_user_id` ASC),
-                                                      INDEX `fk_budgets_users1_idx` (`users_user_id` ASC))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 28
-    DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `myfin`.`budgets_has_categories`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`budgets_has_categories` (
-                                                                     `budgets_budget_id` BIGINT(20) NOT NULL,
-                                                                     `budgets_users_user_id` BIGINT(20) NOT NULL,
-                                                                     `categories_category_id` BIGINT(20) NOT NULL,
-                                                                     `planned_amount_credit` BIGINT(20) NOT NULL DEFAULT '0',
-                                                                     `current_amount` BIGINT(20) NOT NULL DEFAULT '0',
-                                                                     `planned_amount_debit` BIGINT(20) NOT NULL DEFAULT '0',
-                                                                     PRIMARY KEY (`budgets_budget_id`, `budgets_users_user_id`, `categories_category_id`),
-                                                                     INDEX `fk_budgets_has_categories_categories1_idx` (`categories_category_id` ASC),
-                                                                     INDEX `fk_budgets_has_categories_budgets1_idx` (`budgets_budget_id` ASC, `budgets_users_user_id` ASC))
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `myfin`.`categories`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`categories` (
-                                                         `category_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-                                                         `name` VARCHAR(255) NOT NULL,
-                                                         `type` CHAR(1) NOT NULL,
-                                                         `users_user_id` BIGINT(20) NOT NULL,
-                                                         `description` MEDIUMTEXT NULL DEFAULT NULL,
-                                                         `color_gradient` VARCHAR(45) NULL DEFAULT NULL,
-                                                         `status` VARCHAR(45) NOT NULL DEFAULT 'Ativa',
-                                                         PRIMARY KEY (`category_id`),
-                                                         UNIQUE INDEX `uq_name_type_user_id` (`users_user_id` ASC, `type` ASC, `name` ASC),
-                                                         INDEX `fk_category_users_idx` (`users_user_id` ASC))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 57
-    DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `myfin`.`entities`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`entities` (
-                                                       `entity_id` INT(11) NOT NULL AUTO_INCREMENT,
-                                                       `name` VARCHAR(255) NOT NULL,
-                                                       `users_user_id` BIGINT(20) NOT NULL,
-                                                       PRIMARY KEY (`entity_id`),
-                                                       UNIQUE INDEX `entity_id_UNIQUE` (`entity_id` ASC),
-                                                       UNIQUE INDEX `name_UNIQUE` (`name` ASC, `users_user_id` ASC),
-                                                       INDEX `fk_entities_users1_idx` (`users_user_id` ASC),
-                                                       INDEX `name` (`name` ASC))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 180
-    DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `myfin`.`rules`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`rules` (
-                                                    `rule_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-                                                    `matcher_description_operator` VARCHAR(45) NULL DEFAULT NULL,
-                                                    `matcher_description_value` VARCHAR(45) NULL DEFAULT NULL,
-                                                    `matcher_amount_operator` VARCHAR(45) NULL DEFAULT NULL,
-                                                    `matcher_amount_value` BIGINT(20) NULL DEFAULT NULL,
-                                                    `matcher_type_operator` VARCHAR(45) NULL DEFAULT NULL,
-                                                    `matcher_type_value` VARCHAR(45) NULL DEFAULT NULL,
-                                                    `matcher_account_to_id_operator` VARCHAR(45) NULL DEFAULT NULL,
-                                                    `matcher_account_to_id_value` BIGINT(20) NULL DEFAULT NULL,
-                                                    `matcher_account_from_id_operator` VARCHAR(45) NULL DEFAULT NULL,
-                                                    `matcher_account_from_id_value` BIGINT(20) NULL DEFAULT NULL,
-                                                    `assign_category_id` BIGINT(20) NULL DEFAULT NULL,
-                                                    `assign_entity_id` BIGINT(20) NULL DEFAULT NULL,
-                                                    `assign_account_to_id` BIGINT(20) NULL DEFAULT NULL,
-                                                    `assign_account_from_id` BIGINT(20) NULL DEFAULT NULL,
-                                                    `assign_type` VARCHAR(45) NULL DEFAULT NULL,
-                                                    `users_user_id` BIGINT(20) NOT NULL,
-                                                    PRIMARY KEY (`rule_id`, `users_user_id`),
-                                                    INDEX `fk_rules_users1_idx` (`users_user_id` ASC))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 76
-    DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `myfin`.`transactions`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `myfin`.`transactions` (
-                                                           `transaction_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-                                                           `date_timestamp` BIGINT(20) NOT NULL,
-                                                           `amount` BIGINT(20) NOT NULL,
-                                                           `type` CHAR(1) NOT NULL,
-                                                           `description` MEDIUMTEXT NULL DEFAULT NULL,
-                                                           `entities_entity_id` INT(11) NULL DEFAULT NULL,
-                                                           `accounts_account_from_id` BIGINT(20) NULL DEFAULT NULL,
-                                                           `accounts_account_to_id` BIGINT(20) NULL DEFAULT NULL,
-                                                           `categories_category_id` BIGINT(20) NULL DEFAULT NULL,
-                                                           PRIMARY KEY (`transaction_id`),
-                                                           UNIQUE INDEX `transaction_id_UNIQUE` (`transaction_id` ASC),
-                                                           INDEX `fk_transactions_entities2_idx` (`entities_entity_id` ASC),
-                                                           INDEX `fk_transactions_accounts1_idx` (`accounts_account_from_id` ASC),
-                                                           INDEX `fk_transactions_categories1_idx` (`categories_category_id` ASC))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 1275
-    DEFAULT CHARACTER SET = utf8;
+CREATE TABLE IF NOT EXISTS `myfin`.`invest_desired_allocations` (
+                                                                    `desired_allocations_id` BIGINT NOT NULL AUTO_INCREMENT,
+                                                                    `type` VARCHAR(75) NOT NULL,
+                                                                    `alloc_percentage` FLOAT NULL,
+                                                                    `users_user_id` BIGINT NOT NULL,
+                                                                    PRIMARY KEY (`desired_allocations_id`, `type`),
+                                                                    UNIQUE INDEX `type_UNIQUE` (`type` ASC) VISIBLE,
+                                                                    INDEX `fk_invest_desired_allocations_users1_idx` (`users_user_id` ASC) VISIBLE,
+                                                                    UNIQUE INDEX `desired_allocations_id_UNIQUE` (`desired_allocations_id` ASC) VISIBLE,
+                                                                    CONSTRAINT `fk_invest_desired_allocations_users1`
+                                                                        FOREIGN KEY (`users_user_id`)
+                                                                            REFERENCES `myfin`.`users` (`user_id`)
+                                                                            ON DELETE NO ACTION
+                                                                            ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
