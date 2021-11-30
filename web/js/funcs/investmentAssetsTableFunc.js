@@ -48,14 +48,14 @@ var InvestmentAssetsTableFunc = {
     let strToReturn = '';
 
     if (percentage > 0) {
-      strToReturn = `<span class='green-text text-accent-4' style="font-size: small;">+${StringUtils.formatStringToPercentage(percentage)}</span>`;
+      strToReturn = `<span class='green-text text-accent-4' style="font-size: small;">(+${StringUtils.formatStringToPercentage(percentage)})</span>`;
     } else if (percentage < 0) {
-      strToReturn = `<span class='pink-text text-accent-1' style="font-size: small;">${StringUtils.formatStringToPercentage(percentage)}</span>`;
+      strToReturn = `<span class='pink-text text-accent-1' style="font-size: small;">(${StringUtils.formatStringToPercentage(percentage)})</span>`;
     } else {
       strToReturn = `<span class="" style="font-size: small;">${StringUtils.formatStringToPercentage(percentage)}</span>`;
     }
 
-    return `(${strToReturn})`;
+    return `${strToReturn}`;
   },
 
 };

@@ -109,4 +109,35 @@ class InvestAssetModel extends Entity
             return $e;
         }
     }
+
+    /*SELECT SUM(CASE WHEN type = 'S' THEN total_price * -1 ELSE total_price END) as 'invested_balance'
+FROM myfin_prod.invest_transactions
+WHERE invest_assets_asset_id = 18
+AND date_timestamp BETWEEN 0 and 1*/
+    public static function getInvestedBalanceBetweenDatesForAsset($assetId, $beginTimestamp, $endTimestamp, $transactional = false)
+    {
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT (SUM(CASE WHEN type = 'S' THEN total_price * -1 ELSE total_price END) / 100) as 'invested_balance' " .
+            "FROM invest_transactions " .
+            "WHERE invest_assets_asset_id = :assetId AND date_timestamp BETWEEN :date1 and :date2";
+
+        $values = array();
+        $values[':assetId'] = $assetId;
+        $values[':date1'] = $beginTimestamp;
+        $values[':date2'] = $endTimestamp;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+
+            $result = $db->fetchAll();
+
+            if (!$result) return 0;
+            return $result[0]["invested_balance"];
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 }

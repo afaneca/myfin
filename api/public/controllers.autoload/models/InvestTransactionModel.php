@@ -59,6 +59,33 @@ class InvestTransactionModel extends Entity
         } catch (Exception $e) {
             return $e;
         }
+    }
 
+    public static function getCombinedInvestedBalanceBetweenDatesForUser($userId, $beginTimestamp, $endTimestamp, $transactional = false)
+    {
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT (SUM(CASE WHEN invest_transactions.type = 'S' THEN total_price * -1 ELSE total_price END)/100) as 'invested_balance' " .
+            "FROM invest_transactions " .
+            "INNER JOIN invest_assets ON invest_assets_asset_id = asset_id " .
+            "WHERE users_user_id = :userId AND date_timestamp BETWEEN :date1 and :date2";
+
+        $values = array();
+        $values[':userId'] = $userId;
+        $values[':date1'] = $beginTimestamp;
+        $values[':date2'] = $endTimestamp;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+
+            $result = $db->fetchAll();
+
+            if (!$result) return 0;
+            return floatval($result[0]["invested_balance"]);
+        } catch (Exception $e) {
+            return $e;
+        }
     }
 }

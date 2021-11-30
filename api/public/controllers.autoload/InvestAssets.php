@@ -383,12 +383,11 @@ class InvestAssets
             $fullInvestedValue = 0;
             $fullCurrentValue = 0;
             $currentValuesByAssetType = []; // ex: ["ETF" => "1030.42"]
+            $lastYearsValue = 0; // the value of all assets combined at last day of previous year
 
             // Current year's data
             $currentMonth = date('m', time());
             $currentYear = date('Y', time());
-            $yearlyInvestedValue = 0;
-            $yearlyCurrentValue = 0;
 
             foreach ($assetsArr as $asset) {
                 $month = date('m', EnsoShared::now());
@@ -399,14 +398,13 @@ class InvestAssets
                 $roiValue = $currentValue - $investedValue;
                 $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
 
+                $lastYearsSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], 1, $currentYear - 1);
+                if ($lastYearsSnapshot) {
+                    $lastYearsValue += floatval($lastYearsSnapshot[0]["current_value"]);
+                }
+
                 $fullInvestedValue += $investedValue;
                 $fullCurrentValue += $currentValue;
-
-                // Current year's data
-                if ($month === $currentMonth && $year === $currentYear) {
-                    $yearlyInvestedValue += $investedValue;
-                    $yearlyCurrentValue += $currentValue;
-                }
 
                 if (array_key_exists($asset["type"], $currentValuesByAssetType)) {
                     // Key already exists in array -> increment value
@@ -436,8 +434,15 @@ class InvestAssets
             $res["global_roi_value"] = $fullCurrentValue - $fullInvestedValue;
             $res["global_roi_percentage"] = ($fullInvestedValue != 0) ? ($res["global_roi_value"] / $fullInvestedValue) * 100 : "-";
 
-            $res["current_year_roi_value"] = $yearlyCurrentValue - $yearlyInvestedValue;
-            $res["current_year_roi_percentage"] = ($yearlyInvestedValue != 0) ? ($res["current_year_roi_value"] / $yearlyInvestedValue) * 100 : "-";
+
+            $yearStart = strtotime("01-01-$currentYear");
+            $currentYearInvestedBalance = InvestTransactionModel::getCombinedInvestedBalanceBetweenDatesForUser($userID, $yearStart, time(), false); // the amount invested in the current year
+            $res["kkkkkkk"] = $currentYearInvestedBalance;
+
+            $expectedBreakEvenValue = $lastYearsValue + $currentYearInvestedBalance; // If the user had a 0% profit, this would be the current portfolio value
+
+            $res["current_year_roi_value"] = $fullCurrentValue - $expectedBreakEvenValue;
+            $res["current_year_roi_percentage"] = ($expectedBreakEvenValue != 0) ? ($res["current_year_roi_value"] / $expectedBreakEvenValue) * 100 : "-";
             $res["monthly_snapshots"] = InvestAssetEvoSnapshotModel::getAllAssetSnapshotsForUser($userID, false);
 
             $res["current_value_distribution"] = array();
