@@ -436,7 +436,6 @@ var Stats = {
       }, 0);
       cAggData.push(StringUtils.convertIntegerToFloat(aggregateBalance));
     }
-
     Stats.setupPatrimonyLineChart(cAggData, cLabels, extraChartData);
     Stats.setupPatrimonyTable(cAggData.slice()
       .reverse(), cLabels.slice()
