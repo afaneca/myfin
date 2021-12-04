@@ -291,7 +291,7 @@ var ImportTransactions = {
     let amount;
     let type;
 
-    if (amountColumn && !typeColumn) {
+    if (row[amountColumn] && amountColumn && !typeColumn) {
       amount = StringUtils.convertStringToFloat(row[amountColumn].replace(/ /g, ''));
       type = (amount > 0) ? MYFIN.TRX_TYPES.INCOME : MYFIN.TRX_TYPES.EXPENSE;
     } else if (creditColumn && !typeColumn) {
