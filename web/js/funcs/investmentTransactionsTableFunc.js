@@ -34,7 +34,10 @@ var InvestmentTransactionsTableFunc = {
         <td>${InvestmentTransactionsTableFunc.renderTrxTypeRow(trx.trx_type)}</td>
         <td>${trx.units} ${trx.ticker ? trx.ticker : ''}</td>
         <td>${trx.broker ? trx.broker : '-'}</td>
-        <td>${StringUtils.formatMoney(trx.total_price)}</td>
+        <td>${StringUtils.formatMoney(trx.total_price)}
+          <br>
+          <span class="" style="font-size: small;font-style: italic;">${StringUtils.formatMoney(trx.total_price / trx.units)} por unidade</span>
+        </td>
         <td>${trx.note ? trx.note : '-'}</td>
         <td>
             <i onClick="Investments.${editTrxCallback.name}(${trx.transaction_id}, '${trx.date_timestamp}', '${trx.trx_type}', '${trx.total_price}', '${trx.name}', '${trx.asset_type}', '${trx.ticker}', '${trx.broker}', '${trx.units}', '${trx.note}', '${trx.asset_id}')" class="material-icons table-action-icons">create</i>
