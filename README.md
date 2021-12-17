@@ -42,12 +42,12 @@ Here are the main features of MyFin:
 - **Budgets** - Taking a Boonzi-style approach to budgeting, our budget tool allows you to budget for your future, month by month
 - **Stats** - this one's for the data nerds. Here you have an overview of your patrimony's evolution across each month and get a forecast of your financial future for the years to come 
 - **Account Management** - Change your password, etc...
+- **Investing** - keeping track of your investments (currently in beta!)
 ## Roadmap
 Here's some of the features currently in development or planned for the near future:
 - **Goals** - Record and keep track of your goals to keep yourself motivated at all times
 - **Better Account Management** - allowing the user to change its data (email, profile photo...)
 - **Better Stats** - add more complex & interesting stats
-- **Investing** - add a module specific to keeping track of your investments
 - & much more...
 
 # Getting Started
