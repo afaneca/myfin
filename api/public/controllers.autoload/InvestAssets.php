@@ -402,7 +402,7 @@ class InvestAssets
 
                 $roiValue = $currentValue - $investedValue;
                 $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
-
+                $asset["relative_roi_percentage"] = $roiPercentage;
                 $lastYearsSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], 1, $currentYear - 1);
                 if ($lastYearsSnapshot) {
                     $lastYearsValue += floatval($lastYearsSnapshot[0]["current_value"]);
@@ -461,7 +461,9 @@ class InvestAssets
             usort($assetsArr, function ($first, $second) {
                 return $first["absolute_roi_value"] < $second["absolute_roi_value"];
             });
-            $res["top_performing_assets"] = array_slice($assetsArr, 0, 3);
+            $res["top_performing_assets"] = /*array_slice(*/
+                $assetsArr/*, 0, 3)*/
+            ;
             return sendResponse($response, EnsoShared::$REST_OK, $res);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());

@@ -86,69 +86,120 @@
                     </div>
                 </div>
             </div>
-            <div id="tab-inv-reports" class="col s12">
+            <div id="tab-inv-reports">
                 <div class="row">
+                    <!---->
                     <div class="col s12" style="margin-top:20px;">
+                        <p><b style="font-size: x-large;">Distribuição</b></p>
+                        <div class="col s6 no-margins" id="reports-dist-pie-chart">
+                            <div id="reports_assets_distribution_pie_chart"
+                                 style="height: 300px; margin-top: 10px;"></div>
+                            <div class="card-panel empty-view hide"></div>
+                        </div>
+                        <div class="col s6 no-margins" id="reports-inv-dist-pie-chart">
+                            <div id="reports_investments_distribution_pie_chart"
+                                 style="height: 300px; margin-top: 10px;"></div>
+                            <div class="card-panel empty-view hide"></div>
+                        </div>
+                    </div>
+                    <!---->
+                    <div class="col s12" style="margin-top:35px;">
+                        <p><b style="font-size: x-large;">Retornos por Ativo (ROI)</b></p>
+                        <div id="roi_by_asset_table_wrapper"></div>
+                    </div>
+                    <!---->
+                    <div class="col s12" style="margin-top:35px;">
+                        <p><b style="font-size: x-large;">Retornos por Classe de Ativo (ROI)</b></p>
+                        <p><i>Em breve...</i></p>
+                        <!--<table>
+                            <thead>
+                            <tr>
+                                <th>Ativo</th>
+                                <th>Classe de Ativo</th>
+                                <th>Valor Investido</th>
+                                <th>Valor Atual</th>
+                                <th>ROI Ano Atual</th>
+                                <th>ROI Global</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Bitcoin</td>
+                                <td>Crypto</td>
+                                <td>1 000€</td>
+                                <td>1 200€</td>
+                                <td>250€ (10.43%)</td>
+                                <td>750€ (23.71%)</td>
+                            </tr>
+                            <tr>
+                                <td>PPR AR</td>
+                                <td>PPR</td>
+                                <td>1 000€</td>
+                                <td>1 200€</td>
+                                <td>250€ (10.43%)</td>
+                                <td>750€ (23.71%)</td>
+                            </tr>
+                            </tbody>
+                        </table>-->
+                    </div>
+                    <!---->
+                    <div class="col s12" style="margin-top:35px;">
                         <!--<h5 style="text-transform: uppercase;font-weight: bold;">
                             <span class="green-gradient-bg" style="/* background: #4caf50; */padding: 4px;">Top de performance</span></h5>
                         <hr class="green-gradient-bg" style="background: white;height: 2px;margin-top: -5px;text-transform: capitalize;">-->
-                        <b>Evolução do Portefólio</b>
+                        <b style="font-size: x-large;">Evolução do Portefólio</b>
                         <div class="col s12 no-margins" id="evo-line-chart">
                             <canvas id="dashboard_evolution_line_chart" style="margin: 0px;" width="400px"
                                     height="130"></canvas>
                             <div class="card-panel empty-view hide"></div>
                         </div>
-
                     </div>
-                    <br>
-                    <br>
-                    <b>Distribuição</b>
-                    <br>
-                    <b>Retornos (ROI)</b>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="../js/funcs/investmentAssetsTableFunc.js"></script>
-    <script src="../js/funcs/investAssetsModalFunc.js"></script>
-    <script src="../js/funcs/investmentTransactionsTableFunc.js"></script>
-    <script src="../js/funcs/investTransactionsModalFunc.js"></script>
-    <script src="../js/funcs/investmentDashboardChartsFunc.js"></script>
-    <script>
-      $(document)
-        .ready(function () {
-          DialogUtils.initStandardModal();
+<script src="../js/funcs/investmentAssetsTableFunc.js"></script>
+<script src="../js/funcs/investAssetsModalFunc.js"></script>
+<script src="../js/funcs/investmentTransactionsTableFunc.js"></script>
+<script src="../js/funcs/investTransactionsModalFunc.js"></script>
+<script src="../js/funcs/investmentDashboardChartsFunc.js"></script>
+<script src="../js/funcs/investmentReportsTableFunc.js"></script>
+<script>
+  $(document)
+    .ready(function () {
+      DialogUtils.initStandardModal();
 
-          $('.tabs')
-            .tabs({
-              'onShow': (a, b) => {
-                let activeID = $(a)[0]['id'];
-                Investments.changeTabs(activeID);
-              }
-            });
-
-          const argsArr = configs.getUrlArgs();
-          const selectedTab = (argsArr && argsArr.hasOwnProperty('tab')) ? argsArr['tab'] : undefined;
-
-          switch (selectedTab) {
-            case 'dashboard':
-            default:
-              $('.tabs')
-                .tabs('select', 'tab-inv-dashboard');
-              break;
-            case 'assets':
-              $('.tabs')
-                .tabs('select', 'tab-inv-assets');
-              break;
-            case 'transactions':
-              $('.tabs')
-                .tabs('select', 'tab-inv-transactions');
-              break;
-            case 'reports':
-              $('.tabs')
-                .tabs('select', 'tab-inv-reports');
-              break;
+      $('.tabs')
+        .tabs({
+          'onShow': (a, b) => {
+            let activeID = $(a)[0]['id'];
+            Investments.changeTabs(activeID);
           }
         });
-    </script>
+
+      const argsArr = configs.getUrlArgs();
+      const selectedTab = (argsArr && argsArr.hasOwnProperty('tab')) ? argsArr['tab'] : undefined;
+
+      switch (selectedTab) {
+        case 'dashboard':
+        default:
+          $('.tabs')
+            .tabs('select', 'tab-inv-dashboard');
+          break;
+        case 'assets':
+          $('.tabs')
+            .tabs('select', 'tab-inv-assets');
+          break;
+        case 'transactions':
+          $('.tabs')
+            .tabs('select', 'tab-inv-transactions');
+          break;
+        case 'reports':
+          $('.tabs')
+            .tabs('select', 'tab-inv-reports');
+          break;
+      }
+    });
+</script>
