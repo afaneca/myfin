@@ -24,7 +24,8 @@ var InvestmentAssetsTableFunc = {
         </tbody>
       </table>
     `);
-    $('.tooltipped').tooltip();
+    $('.tooltipped')
+      .tooltip();
   },
   renderAssetsRow: (asset, editAssetCallback, removeAssetCallback, updateValueCallback) => {
     return `

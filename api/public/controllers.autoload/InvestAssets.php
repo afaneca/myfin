@@ -389,12 +389,17 @@ class InvestAssets
             $currentMonth = date('m', time());
             $currentYear = date('Y', time());
 
-            foreach ($assetsArr as $asset) {
+            foreach ($assetsArr as &$asset) {
                 $month = date('m', EnsoShared::now());
                 $year = date('Y', EnsoShared::now());
                 $snapshot = InvestAssetEvoSnapshotModel::getAssetSnapshotAtMonth($month, $year, $asset["asset_id"]);
                 $investedValue = Input::convertIntegerToFloat($snapshot ? $snapshot["invested_amount"] : 0);
                 $currentValue = Input::convertIntegerToFloat($snapshot ? $snapshot["current_value"] : 0);
+
+                $asset["invested_amount"] = $investedValue;
+                $asset["current_value"] = $currentValue;
+                $asset["absolute_roi_value"] = $currentValue - $investedValue;
+
                 $roiValue = $currentValue - $investedValue;
                 $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
 
@@ -437,7 +442,6 @@ class InvestAssets
 
             $yearStart = strtotime("01-01-$currentYear");
             $currentYearInvestedBalance = InvestTransactionModel::getCombinedInvestedBalanceBetweenDatesForUser($userID, $yearStart, time(), false); // the amount invested in the current year
-            $res["kkkkkkk"] = $currentYearInvestedBalance;
 
             $expectedBreakEvenValue = $lastYearsValue + $currentYearInvestedBalance; // If the user had a 0% profit, this would be the current portfolio value
 
@@ -453,7 +457,11 @@ class InvestAssets
                 array_push($res["current_value_distribution"],
                     [$assetType => $percentage]);
             }
-
+            // Sort assets array by absolute roi value (DESC)
+            usort($assetsArr, function ($first, $second) {
+                return $first["absolute_roi_value"] < $second["absolute_roi_value"];
+            });
+            $res["top_performing_assets"] = array_slice($assetsArr, 0, 3);
             return sendResponse($response, EnsoShared::$REST_OK, $res);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());

@@ -17,14 +17,20 @@
                 <div id="top-banner_wrapper" class=""
                      style="height: 230px;margin-top: 10px;text-align: center;align-content: center;">
                     <div class="col s4 no-margins" id="assets-dist-pie-chart">
-                        <div id="dashboard_assets_distribution_pie_chart" style="height: 300px; margin-top: 10px;"></div>
+                        <div id="dashboard_assets_distribution_pie_chart"
+                             style="height: 300px; margin-top: 10px;"></div>
                         <div class="card-panel empty-view hide"></div>
                     </div>
-                    <div class="col s8 no-margins" id="evo-line-chart">
+                    <div class="col s8">
+                        <b>Melhores Desempenhos</b>
+                        <div id="invest-reports-top-performing-wrapper" style="text-align:left;"></div>
+                    </div>
+
+                    <!--<div class="col s8 no-margins" id="evo-line-chart">
                         <canvas id="dashboard_evolution_line_chart" style="margin: 0px;" width="400px"
                                 height="130"></canvas>
                         <div class="card-panel empty-view hide"></div>
-                    </div>
+                    </div>-->
                 </div>
 
                 <div class="col s12">
@@ -79,13 +85,27 @@
                         <div id="table-wrapper-transactions"></div>
                     </div>
                 </div>
-                <div id="tab-inv-reports" class="col s12">
-                    <div class="card-panel">
-                        Reports
+            </div>
+            <div id="tab-inv-reports" class="col s12">
+                <div class="row">
+                    <div class="col s12" style="margin-top:20px;">
+                        <!--<h5 style="text-transform: uppercase;font-weight: bold;">
+                            <span class="green-gradient-bg" style="/* background: #4caf50; */padding: 4px;">Top de performance</span></h5>
+                        <hr class="green-gradient-bg" style="background: white;height: 2px;margin-top: -5px;text-transform: capitalize;">-->
+                        <b>Evolução do Portefólio</b>
+                        <div class="col s12 no-margins" id="evo-line-chart">
+                            <canvas id="dashboard_evolution_line_chart" style="margin: 0px;" width="400px"
+                                    height="130"></canvas>
+                            <div class="card-panel empty-view hide"></div>
+                        </div>
+
                     </div>
+                    <br>
+                    <br>
+                    <b>Distribuição</b>
+                    <br>
+                    <b>Retornos (ROI)</b>
                 </div>
-
-
             </div>
         </div>
     </div>

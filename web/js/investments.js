@@ -107,11 +107,11 @@ var Investments = {
           InvestServices.getAllAssetStats((res) => {
             LoadingManager.hideLoading();
             // SUCCESS
-            Investments.buildDashboardEvolutionLineChart(res['monthly_snapshots']);
+            /*Investments.buildInvestmentsEvolutionLineChart(res['monthly_snapshots']);*/
+            Investments.initTopPerformingAssetsStats(res["top_performing_assets"][0], res["top_performing_assets"][1], res["top_performing_assets"][2], res["total_current_value"]);
             Investments.buildDashboardAssetsDistributionPieChart('dashboard_assets_distribution_pie_chart', res['current_value_distribution']);
             Investments.buildDashboardCards(res);
           });
-
           window.history.replaceState(null, null, '#!investments?tab=dashboard');
           break;
         case 'tab-inv-assets':
@@ -148,13 +148,51 @@ var Investments = {
              .append(' <canvas id="chart_pie_cat_income_evolution" width="800" height="300"></canvas>');
 
            Stats.initIncomePerCatEvolution();*/
+          InvestServices.getAllAssetStats((res) => {
+            LoadingManager.hideLoading();
+            // SUCCESS
+            Investments.buildInvestmentsEvolutionLineChart(res['monthly_snapshots']);
+          });
+
+          /*Investments.initTopPerformingAssetsStats();*/
           window.history.replaceState(null, null, '#!investments?tab=reports');
           break;
         default:
           break;
       }
     },
-    buildDashboardEvolutionLineChart: (snapshotsList) => {
+    initTopPerformingAssetsStats: (asset1, asset2, asset3, totalInvestedValue) => {
+      $('#invest-reports-top-performing-wrapper')
+        .html(`
+          <ul class="collection">
+            <li class="collection-item avatar">
+                <i class="material-icons circle green" style="color:white !important;">looks_one</i>
+                <span class="title" style="font-weight: bold;">${asset1 ? asset1.name : '-'}</span>
+                <p>${asset1 ? StringUtils.getInvestingAssetObjectById(asset1.type).name : '-'}
+                    <br>${(asset1 && totalInvestedValue && totalInvestedValue !== 0) ? StringUtils.formatStringToPercentage((asset1.current_value / totalInvestedValue) * 100) + ' do portefólio' : '-'}
+                <span class="secondary-content" style="font-size: larger;">${asset1 ? StringUtils.formatSignedMoney(asset1.absolute_roi_value) : "-"}</span>
+            </li>
+            <li class="collection-item avatar">
+                <i class="material-icons circle orange" style="color:white !important;">looks_two</i>
+                <span class="title" style="font-weight: bold;">${asset2 ? asset2.name : '-'}</span>
+                <p>${asset2 ? StringUtils.getInvestingAssetObjectById(asset2.type).name : '-'}<br>
+                    ${(asset2 && totalInvestedValue && totalInvestedValue !== 0) ? StringUtils.formatStringToPercentage((asset2.current_value / totalInvestedValue) * 100) + ' do portefólio' : '-'}
+                </p>
+                <!--<a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>-->
+                <span class="secondary-content">${asset2 ? StringUtils.formatSignedMoney(asset2.absolute_roi_value) : "-"}</span>
+            </li>
+            <li class="collection-item avatar">
+                <i class="material-icons circle" style="color:white !important;">looks_3</i>
+                <span class="title" style="font-weight: bold;">${asset3 ? asset3.name : '-'}</span>
+                <p>${asset3 ? StringUtils.getInvestingAssetObjectById(asset3.type).name : '-'}<br>
+                    ${(asset3 && totalInvestedValue && totalInvestedValue !== 0) ? StringUtils.formatStringToPercentage((asset3.current_value / totalInvestedValue) * 100) + ' do portefólio' : '-'}
+                </p>
+                <span class="secondary-content">${asset3 ? StringUtils.formatSignedMoney(asset3.absolute_roi_value) : "-"}</span>
+            </li>
+        </ul>
+    `);
+    },
+    buildInvestmentsEvolutionLineChart: (snapshotsList) => {
       if (!snapshotsList || !snapshotsList.length) {
         $('#dashboard_evolution_line_chart')
           .hide();
@@ -180,7 +218,7 @@ var Investments = {
         aggData[genKey] += parseFloat(current_value);
       }
 
-      InvestmentDashboardChartsFunc.buildDashboardEvolutionLineChart('dashboard_evolution_line_chart', chartLabels, Object.values(aggData), []);
+      InvestmentDashboardChartsFunc.buildInvestmentsvolutionLineChart('dashboard_evolution_line_chart', chartLabels, Object.values(aggData), []);
     },
     buildDashboardCards: (res) => {
       $('#invest-dashboard-top-panel-current-value')
