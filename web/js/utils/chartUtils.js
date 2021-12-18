@@ -397,7 +397,7 @@ var chartUtils = {
             '#795548',
             '#9E9E9E',
             '#607D8B',
-            '#000000'
+            /*'#000000'*/
         ]);
     },
     getPieChartGradientsList: (ctx) => {

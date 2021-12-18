@@ -107,11 +107,11 @@ var Investments = {
           InvestServices.getAllAssetStats((res) => {
             LoadingManager.hideLoading();
             // SUCCESS
-            Investments.buildDashboardEvolutionLineChart(res['monthly_snapshots']);
+            /*Investments.buildInvestmentsEvolutionLineChart(res['monthly_snapshots']);*/
+            Investments.initTopPerformingAssetsStats(res['top_performing_assets'][0], res['top_performing_assets'][1], res['top_performing_assets'][2], res['total_current_value']);
             Investments.buildDashboardAssetsDistributionPieChart('dashboard_assets_distribution_pie_chart', res['current_value_distribution']);
             Investments.buildDashboardCards(res);
           });
-
           window.history.replaceState(null, null, '#!investments?tab=dashboard');
           break;
         case 'tab-inv-assets':
@@ -141,20 +141,60 @@ var Investments = {
           window.history.replaceState(null, null, '#!investments?tab=transactions');
           break;
         case 'tab-inv-reports':
-          /* Stats.clearCanvasAndTableWrapper('#chart_pie_cat_income_evolution_table', 'chart_pie_cat_income_evolution');
-           $('#chart_pie_cat_income_evolution')
-             .remove();
-           $('#canvas_chart_income_evo_wrapper')
-             .append(' <canvas id="chart_pie_cat_income_evolution" width="800" height="300"></canvas>');
+          LoadingManager.showLoading();
+          InvestServices.getAllAssetStats((res) => {
+            LoadingManager.hideLoading();
+            // SUCCESS
+            Investments.buildInvestmentsEvolutionLineChart(res['monthly_snapshots']);
+            Investments.buildDashboardAssetsDistributionPieChart('reports_assets_distribution_pie_chart', res['current_value_distribution']);
+            Investments.buildDashboardInvestmentsDistributionPieChart('reports_investments_distribution_pie_chart', res['top_performing_assets'], res['total_current_value']);
+            Investments.buildReportsROIByAssetTable('roi_by_asset_table_wrapper', res['top_performing_assets'], res['total_current_value']);
+          });
 
-           Stats.initIncomePerCatEvolution();*/
+          /*Investments.initTopPerformingAssetsStats();*/
           window.history.replaceState(null, null, '#!investments?tab=reports');
           break;
         default:
           break;
       }
     },
-    buildDashboardEvolutionLineChart: (snapshotsList) => {
+    buildReportsROIByAssetTable: (tableWrapperId, assetsList, totalInvestedValue) => {
+      $(`#${tableWrapperId}`)
+        .html(InvestmentReportsTableFunc.buildReportsROIByAssetTable('table-reports-roi-by-asset', assetsList, totalInvestedValue));
+      tableUtils.setupStaticTable('#table-reports-roi-by-asset');
+      },
+    initTopPerformingAssetsStats: (asset1, asset2, asset3, totalInvestedValue) => {
+      $('#invest-reports-top-performing-wrapper')
+        .html(`
+          <ul class="collection">
+            <li class="collection-item avatar">
+                <i class="material-icons circle green" style="color:white !important;">looks_one</i>
+                <span class="title" style="font-weight: bold;">${asset1 ? asset1.name : '-'}</span>
+                <p>${asset1 ? StringUtils.getInvestingAssetObjectById(asset1.type).name : '-'}
+                    <br>${(asset1 && totalInvestedValue && totalInvestedValue !== 0) ? StringUtils.formatStringToPercentage((asset1.current_value / totalInvestedValue) * 100) + ' do portefólio' : '-'}
+                <span class="secondary-content" style="font-size: larger;">${asset1 ? StringUtils.formatSignedMoney(asset1.absolute_roi_value) : '-'}</span>
+            </li>
+            <li class="collection-item avatar">
+                <i class="material-icons circle orange" style="color:white !important;">looks_two</i>
+                <span class="title" style="font-weight: bold;">${asset2 ? asset2.name : '-'}</span>
+                <p>${asset2 ? StringUtils.getInvestingAssetObjectById(asset2.type).name : '-'}<br>
+                    ${(asset2 && totalInvestedValue && totalInvestedValue !== 0) ? StringUtils.formatStringToPercentage((asset2.current_value / totalInvestedValue) * 100) + ' do portefólio' : '-'}
+                </p>
+                <!--<a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>-->
+                <span class="secondary-content">${asset2 ? StringUtils.formatSignedMoney(asset2.absolute_roi_value) : '-'}</span>
+            </li>
+            <li class="collection-item avatar">
+                <i class="material-icons circle" style="color:white !important;">looks_3</i>
+                <span class="title" style="font-weight: bold;">${asset3 ? asset3.name : '-'}</span>
+                <p>${asset3 ? StringUtils.getInvestingAssetObjectById(asset3.type).name : '-'}<br>
+                    ${(asset3 && totalInvestedValue && totalInvestedValue !== 0) ? StringUtils.formatStringToPercentage((asset3.current_value / totalInvestedValue) * 100) + ' do portefólio' : '-'}
+                </p>
+                <span class="secondary-content">${asset3 ? StringUtils.formatSignedMoney(asset3.absolute_roi_value) : '-'}</span>
+            </li>
+        </ul>
+    `);
+    },
+    buildInvestmentsEvolutionLineChart: (snapshotsList) => {
       if (!snapshotsList || !snapshotsList.length) {
         $('#dashboard_evolution_line_chart')
           .hide();
@@ -180,7 +220,7 @@ var Investments = {
         aggData[genKey] += parseFloat(current_value);
       }
 
-      InvestmentDashboardChartsFunc.buildDashboardEvolutionLineChart('dashboard_evolution_line_chart', chartLabels, Object.values(aggData), []);
+      InvestmentDashboardChartsFunc.buildInvestmentsvolutionLineChart('dashboard_evolution_line_chart', chartLabels, Object.values(aggData), []);
     },
     buildDashboardCards: (res) => {
       $('#invest-dashboard-top-panel-current-value')
@@ -195,6 +235,36 @@ var Investments = {
         .text(StringUtils.formatMoney(res['global_roi_value']));
       $('#invest-dashboard-top-panel-roi-global-percentage')
         .text(StringUtils.formatStringToPercentage(res['global_roi_percentage']));
+    },
+    buildDashboardInvestmentsDistributionPieChart: (canvasId, assetsList, totalInvestmentValue) => {
+      if (!assetsList || !assetsList.length) {
+        $('#' + canvasId)
+          .hide();
+        $('#assets-dist-pie-chart')
+          .find('.empty-view')
+          .html(GraphEmptyViewComponent.buildDefaultGraphEmptyView());
+      }
+
+      let chartData = [];
+      assetsList.forEach((value, index) => {
+        chartData.push({
+          label: value.name,
+          value: (value.current_value / totalInvestmentValue) * 100,
+        });
+      });
+      $('#' + canvasId)
+        .empty();
+      window.morrisObj = new Morris.Donut({
+        element: canvasId,
+        data: chartData,
+        colors: chartUtils.getPieChartColorsList(),
+        labelColor: LayoutUtils.getCurrentThemeName() === MYFIN.APP_THEMES.LIGHT ? '#2f2d2d' : '#ffffff',
+        resize: true,
+        formatter: (y, data) => {
+          return parseFloat(y)
+            .toFixed(2) + '%';
+        }
+      });
     },
     buildDashboardAssetsDistributionPieChart: (canvasId, assetDistribution) => {
       if (!assetDistribution || !assetDistribution.length) {
@@ -212,7 +282,7 @@ var Investments = {
           value: Object.values(value)[0]
         });
       });
-      InvestmentDashboardChartsFunc.buildDashboardAssetsDistributionPieChartv2('dashboard_assets_distribution_pie_chart', assetDistributionChartData);
+      InvestmentDashboardChartsFunc.buildDashboardAssetsDistributionPieChartv2(canvasId, assetDistributionChartData);
     },
     initTabAssets: (assetsList) => {
       InvestmentAssetsTableFunc.renderAssetsTable(assetsList, '#table-wrapper', Investments.editAssetClicked, Investments.removeAssetClicked, Investments.updateAssetValueClicked);

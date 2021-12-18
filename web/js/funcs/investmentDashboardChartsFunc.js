@@ -1,7 +1,7 @@
 'use strict';
 
 var InvestmentDashboardChartsFunc = {
-  buildDashboardEvolutionLineChart: (canvasId, chartLabels, chartData, extraChartData) => {
+  buildInvestmentsvolutionLineChart: (canvasId, chartLabels, chartData, extraChartData) => {
     var ctx = document.getElementById(canvasId)
       .getContext('2d');
 
@@ -9,12 +9,12 @@ var InvestmentDashboardChartsFunc = {
     var customOptions = {
       scales: {
         yAxes: [{
-          gridLines: { display: false, },
-          ticks: { display: false, }
+          gridLines: { display: true, },
+          ticks: { display: true, }
         }],
         xAxes: [{
-          gridLines: { display: false, },
-          ticks: { display: false, }
+          gridLines: { display: true, },
+          ticks: { display: true, }
         }],
       },
       title: {

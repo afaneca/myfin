@@ -941,5 +941,39 @@ svg:not(:root) {
 }
 
 .no-paddings {
-    padding: 0px; !important;
+    padding: 0px;
+!important;
+}
+
+/* Collections */
+.collection .collection-item.avatar {
+    background: var(--main-body-background);
+    border: 0px solid #ffffff47;
+}
+
+.collection-item, .collection {
+    border: 0px solid #ffffff47;
+    border: 0px;
+    box-shadow: 0px 0px 1px 0px black;
+}
+
+.collection-item:hover {
+    background: var(--main-card-background) !important;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.collection .collection-item.avatar .title {
+    font-size: larger;
+    font-weight: 500;
+}
+
+.secondary-content {
+    color: #4caf50;
+    font-weight: 500;
+}
+
+.invest-dashboard-top-panel {
+    background: var(--main-body-background);
+    box-shadow: 0px 0px 1px 0px black;
 }

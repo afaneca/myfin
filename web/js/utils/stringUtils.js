@@ -53,12 +53,15 @@ var StringUtils = {
   convertIntegerToFloat: (intVal) => {
     return parseFloat(intVal / 100);
   },
-  formatMoney: (amount, decimalCount = 2, decimal = '.', thousands = ',', currency = '€') => {
+  formatSignedMoney: (amount, decimalCount = 2, decimal = '.', thousands = ',', currency = '€') => {
+    return StringUtils.formatMoney(amount, decimalCount, decimal, thousands, currency, true);
+  },
+  formatMoney: (amount, decimalCount = 2, decimal = '.', thousands = ',', currency = '€', forceSign = false) => {
     try {
       decimalCount = Math.abs(decimalCount);
       decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
 
-      const negativeSign = amount < 0 ? '-' : '';
+      const negativeSign = amount < 0 ? '-' : (forceSign ? '+' : '');
 
       let i = parseInt(amount = Math.abs(Number(amount) || 0)
         .toFixed(decimalCount))
