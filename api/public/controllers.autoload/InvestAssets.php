@@ -38,8 +38,8 @@ class InvestAssets
                 $year = date('Y', EnsoShared::now());
                 $snapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], null, null);
                 if ($snapshot) $snapshot = $snapshot[0];
-                $investedValue = Input::convertIntegerToFloat($snapshot ? $snapshot["invested_amount"] : 0);
-                $currentValue = Input::convertIntegerToFloat($snapshot ? $snapshot["current_value"] : 0);
+                $investedValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["invested_amount"] : 0);
+                $currentValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["current_value"] : 0);
                 $roiValue = $currentValue - $investedValue;
                 $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
 
@@ -393,8 +393,8 @@ class InvestAssets
                 $month = date('m', EnsoShared::now());
                 $year = date('Y', EnsoShared::now());
                 $snapshot = InvestAssetEvoSnapshotModel::getAssetSnapshotAtMonth($month, $year, $asset["asset_id"]);
-                $investedValue = Input::convertIntegerToFloat($snapshot ? $snapshot["invested_amount"] : 0);
-                $currentValue = Input::convertIntegerToFloat($snapshot ? $snapshot["current_value"] : 0);
+                $investedValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["invested_amount"] : 0);
+                $currentValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["current_value"] : 0);
 
                 $asset["invested_amount"] = $investedValue;
                 $asset["current_value"] = $currentValue;
@@ -403,7 +403,7 @@ class InvestAssets
                 $roiValue = $currentValue - $investedValue;
                 $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
                 $asset["relative_roi_percentage"] = $roiPercentage;
-                $lastYearsSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], 1, $currentYear - 1);
+                $lastYearsSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], 12, $currentYear - 1);
                 if ($lastYearsSnapshot) {
                     $lastYearsValue += floatval($lastYearsSnapshot[0]["current_value"]);
                 }
@@ -443,7 +443,7 @@ class InvestAssets
             $yearStart = strtotime("01-01-$currentYear");
             $currentYearInvestedBalance = InvestTransactionModel::getCombinedInvestedBalanceBetweenDatesForUser($userID, $yearStart, time(), false); // the amount invested in the current year
 
-            $expectedBreakEvenValue = $lastYearsValue + $currentYearInvestedBalance; // If the user had a 0% profit, this would be the current portfolio value
+            $expectedBreakEvenValue = Input::convertIntegerToFloatAmount($lastYearsValue + $currentYearInvestedBalance); // If the user had a 0% profit, this would be the current portfolio value
 
             $res["current_year_roi_value"] = $fullCurrentValue - $expectedBreakEvenValue;
             $res["current_year_roi_percentage"] = ($expectedBreakEvenValue != 0) ? ($res["current_year_roi_value"] / $expectedBreakEvenValue) * 100 : "-";
@@ -505,8 +505,8 @@ class InvestAssets
                 $year = date('Y', EnsoShared::now());
                 $snapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], null, null);
                 if ($snapshot) $snapshot = $snapshot[0];
-                $investedValue = Input::convertIntegerToFloat($snapshot ? $snapshot["invested_amount"] : 0);
-                $currentValue = Input::convertIntegerToFloat($snapshot ? $snapshot["current_value"] : 0);
+                $investedValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["invested_amount"] : 0);
+                $currentValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["current_value"] : 0);
                 $roiValue = $currentValue - $investedValue;
                 $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
 

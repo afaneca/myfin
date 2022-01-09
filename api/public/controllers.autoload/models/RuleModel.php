@@ -83,28 +83,28 @@ class RuleModel extends Entity
                 $ruleValue = $rule["matcher_amount_value"];
 
                 if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
-                    if (RuleModel::contains($ruleValue, Input::convertFloatToInteger($trx["amount"]))) {
+                    if (RuleModel::contains($ruleValue, Input::convertFloatToIntegerAmount($trx["amount"]))) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_CONTAINS) {
-                    if (!RuleModel::contains($ruleValue, Input::convertFloatToInteger($trx["amount"]))) {
+                    if (!RuleModel::contains($ruleValue, Input::convertFloatToIntegerAmount($trx["amount"]))) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
-                    if ($ruleValue == Input::convertFloatToInteger($trx["amount"])) {
+                    if ($ruleValue == Input::convertFloatToIntegerAmount($trx["amount"])) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
-                    if ($ruleValue != Input::convertFloatToInteger($trx["amount"])) {
+                    if ($ruleValue != Input::convertFloatToIntegerAmount($trx["amount"])) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule

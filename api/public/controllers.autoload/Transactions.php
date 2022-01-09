@@ -169,7 +169,7 @@ class Transactions
             $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
-            $amount = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['amount'], Input::$FLOAT, 2));
+            $amount = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['amount'], Input::$FLOAT, 2));
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 3);
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 4);
 
@@ -362,7 +362,7 @@ class Transactions
             $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
-            $amount = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['new_amount'], Input::$FLOAT, 2));
+            $amount = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['new_amount'], Input::$FLOAT, 2));
             $type = Input::validate($request->getParsedBody()['new_type'], Input::$STRICT_STRING, 3);
             $description = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 4);
 
@@ -414,7 +414,7 @@ class Transactions
             }
 
             if (array_key_exists('split_amount', $request->getParsedBody()) && $request->getParsedBody()['split_amount'] !== "") {
-                $split_amount = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['split_amount'], Input::$FLOAT, 13));
+                $split_amount = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['split_amount'], Input::$FLOAT, 13));
             } else {
                 $split_amount = 0;
             }
@@ -747,7 +747,7 @@ class Transactions
 
             foreach ($trxList as $trx) {
                 $date_timestamp = $trx["date_timestamp"];
-                $amount = Input::convertFloatToInteger($trx["amount"]);
+                $amount = Input::convertFloatToIntegerAmount($trx["amount"]);
                 $type = $trx["type"];
                 $description = $trx["description"];
                 $entityID = $trx["entity_id"];

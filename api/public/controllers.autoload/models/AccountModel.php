@@ -416,7 +416,7 @@ class AccountModel extends Entity
         $beginMonth = date('m', $fromDate);
         $beginYear = date('Y', $fromDate);
 
-        $priorMonthsBalance = Input::convertFloatToInteger(AccountModel::getBalanceSnapshotAtMonth($accountID, ($beginMonth > 2) ? ($beginMonth - 2) : 1,
+        $priorMonthsBalance = Input::convertFloatToIntegerAmount(AccountModel::getBalanceSnapshotAtMonth($accountID, ($beginMonth > 2) ? ($beginMonth - 2) : 1,
             ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $transactional)["balance"]);
 
         if (!$priorMonthsBalance)
