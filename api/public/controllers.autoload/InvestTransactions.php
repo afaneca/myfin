@@ -54,7 +54,7 @@ class InvestTransactions
 
             $date = Input::validate($request->getParsedBody()['date_timestamp'], Input::$INT, 3);
             $note = Input::validate($request->getParsedBody()['note'], Input::$STRING, 4);
-            $totalPrice = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['total_price'], Input::$FLOAT, 5));
+            $totalPrice = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['total_price'], Input::$FLOAT, 5));
             $units = Input::validate($request->getParsedBody()['units'], Input::$FLOAT, 6);
             $assetID = Input::validate($request->getParsedBody()['asset_id'], Input::$INT, 7);
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 8);
@@ -170,7 +170,7 @@ class InvestTransactions
             $trxID = Input::validate($args['id'], Input::$INT, 3);
             $date = Input::validate($request->getParsedBody()['date_timestamp'], Input::$INT, 4);
             $note = Input::validate($request->getParsedBody()['note'], Input::$STRING, 5);
-            $totalPrice = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['total_price'], Input::$FLOAT, 6));
+            $totalPrice = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['total_price'], Input::$FLOAT, 6));
             $units = Input::validate($request->getParsedBody()['units'], Input::$FLOAT, 7);
             $assetID = Input::validate($request->getParsedBody()['asset_id'], Input::$INT, 8);
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 9);

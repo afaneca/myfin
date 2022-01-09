@@ -64,7 +64,7 @@ class Accounts
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 5);
             $status = Input::validate($request->getParsedBody()['status'], Input::$STRING, 6);
             $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 7);
-            $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8));
+            $currentBalance = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8));
             $colorGradient = Input::validate($request->getParsedBody()["color_gradient"], Input::$STRICT_STRING, 9);
 
             if (
@@ -200,7 +200,7 @@ class Accounts
             $newDescription = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 6);
             $newStatus = Input::validate($request->getParsedBody()['new_status'], Input::$STRING, 7);
             $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 8);
-            $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9));
+            $currentBalance = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9));
             $colorGradient = Input::validate($request->getParsedBody()["color_gradient"], Input::$STRICT_STRING, 10);
 
             if (

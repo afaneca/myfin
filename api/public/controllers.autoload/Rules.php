@@ -39,7 +39,7 @@ class Rules
             $outputArr["rules"] = RuleModel::getWhere(["users_user_id" => $userID]);
             foreach ($outputArr["rules"] as &$rule) {
                 if ($rule["matcher_amount_value"]) {
-                    $rule["matcher_amount_value"] = Input::convertIntegerToFloat($rule["matcher_amount_value"]);
+                    $rule["matcher_amount_value"] = Input::convertIntegerToFloatAmount($rule["matcher_amount_value"]);
                 }
             }
             $outputArr["categories"] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name"]);
@@ -90,7 +90,7 @@ class Rules
             }
 
             if (array_key_exists('matcher_amount_value', $request->getParsedBody()) && $request->getParsedBody()['matcher_amount_value'] !== "") {
-                $matcherAmountValue = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$FLOAT, 6));
+                $matcherAmountValue = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$FLOAT, 6));
             } else {
                 $matcherAmountValue = null;
             }
@@ -238,7 +238,7 @@ class Rules
             }
 
             if (array_key_exists('matcher_amount_value', $request->getParsedBody()) && $request->getParsedBody()['matcher_amount_value'] !== "") {
-                $matcherAmountValue = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$FLOAT, 6));
+                $matcherAmountValue = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$FLOAT, 6));
             } else {
                 $matcherAmountValue = null;
             }

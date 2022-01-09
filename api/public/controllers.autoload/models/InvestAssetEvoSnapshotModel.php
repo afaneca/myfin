@@ -31,7 +31,7 @@ class InvestAssetEvoSnapshotModel extends Entity
         $values[':year'] = $year;
         $values[':units'] = $units;
         $values[':investedAmount'] = $latestSnapshot ? $latestSnapshot["invested_amount"] : 0;
-        $values[':currentValue'] = Input::convertFloatToInteger($newValue);
+        $values[':currentValue'] = Input::convertFloatToIntegerAmount($newValue);
         $values[':assetID'] = $assetID;
         $values[':createdAt'] = EnsoShared::now();
         $values[':updatedAt'] = EnsoShared::now();

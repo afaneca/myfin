@@ -83,7 +83,7 @@ class BudgetModel extends Entity
             $balance -= $budgetCat["planned_amount_debit"];
         }
 
-        return Input::convertIntegerToFloat($balance);
+        return Input::convertIntegerToFloatAmount($balance);
     }
 
     public static function calculateBudgetBalance($userID, $budget)
@@ -102,8 +102,8 @@ class BudgetModel extends Entity
             $yearToUser = $year;
 
             if ($isOpen) {
-                $amount_credit = abs(Input::convertFloatToInteger($category["planned_amount_credit"]));
-                $amount_debit = abs(Input::convertFloatToInteger($category["planned_amount_debit"]));
+                $amount_credit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_credit"]));
+                $amount_debit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_debit"]));
             } else {
                 $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
                 $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
@@ -127,7 +127,7 @@ class BudgetModel extends Entity
             echo "\n------------------------------------\n";
             die();
         }*/
-        return Input::convertIntegerToFloat($balance);
+        return Input::convertIntegerToFloatAmount($balance);
     }
 
     public static function calculateBudgetBalanceChangePercentage($userID, $budget, $budgetBalance)
@@ -167,8 +167,8 @@ class BudgetModel extends Entity
             $yearToUser = $year;
 
             if ($isOpen) {
-                $amount_credit = abs(Input::convertFloatToInteger($category["planned_amount_credit"]));
-                $amount_debit = abs(Input::convertFloatToInteger($category["planned_amount_debit"]));
+                $amount_credit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_credit"]));
+                $amount_debit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_debit"]));
             } else {
                 $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
                 $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
@@ -178,7 +178,7 @@ class BudgetModel extends Entity
             $balance_debit += $amount_debit;
         }
 
-        return ["balance_credit" => Input::convertIntegerToFloat($balance_credit), "balance_debit" => Input::convertIntegerToFloat($balance_debit)];
+        return ["balance_credit" => Input::convertIntegerToFloatAmount($balance_credit), "balance_debit" => Input::convertIntegerToFloatAmount($balance_debit)];
     }
 
     public static function getBudgetsUntilCertainMonth($userID, int $nextMonth, int $nextMonthsYear, string $orderByDate = "ASC", $transactional = false)

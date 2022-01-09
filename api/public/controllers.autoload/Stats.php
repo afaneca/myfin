@@ -68,8 +68,8 @@ class Stats
                 $current_amount_credit = $current_amounts["category_balance_credit"];
                 $current_amount_debit = $current_amounts["category_balance_debit"];
 
-                $category["current_amount_credit"] = Input::convertIntegerToFloat($current_amount_credit);
-                $category["current_amount_debit"] = Input::convertIntegerToFloat($current_amount_debit);
+                $category["current_amount_credit"] = Input::convertIntegerToFloatAmount($current_amount_credit);
+                $category["current_amount_debit"] = Input::convertIntegerToFloatAmount($current_amount_debit);
             }
 
 
@@ -283,7 +283,7 @@ class Stats
                     $amount_debit = abs($calculatedAmounts["entity_balance_debit"]);
                 }
 
-                $item["value"] = Input::convertIntegerToFloat($amount_debit);
+                $item["value"] = Input::convertIntegerToFloatAmount($amount_debit);
                 array_push($outputArr, $item);
             }
 
@@ -366,7 +366,7 @@ class Stats
                     $amount_debit = abs($calculatedAmounts["entity_balance_debit"]);
                 }
 
-                $item["value"] = Input::convertIntegerToFloat($amount_credit);
+                $item["value"] = Input::convertIntegerToFloatAmount($amount_credit);
                 array_push($outputArr, $item);
             }
 

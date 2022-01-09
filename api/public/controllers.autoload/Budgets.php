@@ -192,26 +192,26 @@ class Budgets
                 $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse, true)[0];
                 $current_amount_credit = $calculatedAmounts["category_balance_credit"];
                 $current_amount_debit = $calculatedAmounts["category_balance_debit"];
-                $category["current_amount_credit"] = abs(Input::convertIntegerToFloat($current_amount_credit));
-                $category["current_amount_debit"] = abs(Input::convertIntegerToFloat($current_amount_debit));
+                $category["current_amount_credit"] = abs(Input::convertIntegerToFloatAmount($current_amount_credit));
+                $category["current_amount_debit"] = abs(Input::convertIntegerToFloatAmount($current_amount_debit));
 
                 $previousMonth = ($monthToUse > 1) ? $monthToUse - 1 : 12;
                 $previousMonthsYear = ($monthToUse > 1) ? $yearToUse : $yearToUse - 1;
                 $previousMonthAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $previousMonth, $previousMonthsYear, true)[0];
-                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_credit"]));
-                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_debit"]));
+                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloatAmount($previousMonthAmounts["category_balance_credit"]));
+                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloatAmount($previousMonthAmounts["category_balance_debit"]));
 
                 $sameMonthPreviousYearAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse - 1, true)[0];
-                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_credit"]));
-                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_debit"]));
+                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloatAmount($sameMonthPreviousYearAmounts["category_balance_credit"]));
+                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloatAmount($sameMonthPreviousYearAmounts["category_balance_debit"]));
 
                 $last12MonthsAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLast12Months($category["category_id"], true)[0];
-                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_credit"]));
-                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_debit"]));
+                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloatAmount($last12MonthsAverageAmounts["category_balance_credit"]));
+                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloatAmount($last12MonthsAverageAmounts["category_balance_debit"]));
 
                 $lifetimeAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLifetime($category["category_id"], true)[0];
-                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_credit"]));
-                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_debit"]));
+                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloatAmount($lifetimeAverageAmounts["category_balance_credit"]));
+                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloatAmount($lifetimeAverageAmounts["category_balance_debit"]));
             }
 
             // we need to also add uncategorized transactions to the calculations
@@ -272,20 +272,20 @@ class Budgets
                 $previousMonth = ($monthToUse > 1) ? $monthToUse - 1 : 12;
                 $previousMonthsYear = ($monthToUse > 1) ? $yearToUse : $yearToUse - 1;
                 $previousMonthAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $previousMonth, $previousMonthsYear, true)[0];
-                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_credit"]));
-                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_debit"]));
+                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloatAmount($previousMonthAmounts["category_balance_credit"]));
+                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloatAmount($previousMonthAmounts["category_balance_debit"]));
 
                 $sameMonthPreviousYearAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse - 1, true)[0];
-                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_credit"]));
-                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_debit"]));
+                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloatAmount($sameMonthPreviousYearAmounts["category_balance_credit"]));
+                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloatAmount($sameMonthPreviousYearAmounts["category_balance_debit"]));
 
                 $last12MonthsAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLast12Months($category["category_id"], true)[0];
-                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_credit"]));
-                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_debit"]));
+                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloatAmount($last12MonthsAverageAmounts["category_balance_credit"]));
+                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloatAmount($last12MonthsAverageAmounts["category_balance_debit"]));
 
                 $lifetimeAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLifetime($category["category_id"], true)[0];
-                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_credit"]));
-                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_debit"]));
+                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloatAmount($lifetimeAverageAmounts["category_balance_credit"]));
+                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloatAmount($lifetimeAverageAmounts["category_balance_debit"]));
             }
 
             $list['categories'] = $catsArr;
@@ -345,8 +345,8 @@ class Budgets
             foreach ($catValuesArr as $item) {
 
                 $catID = $item['category_id'];
-                $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
-                $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
+                $plannedValueCredit = Input::convertFloatToIntegerAmount(floatval($item['planned_value_credit']));
+                $plannedValueDebit = Input::convertFloatToIntegerAmount(floatval($item['planned_value_debit']));
 
                 BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit, true);
             }
@@ -451,8 +451,8 @@ class Budgets
             foreach ($catValuesArr as $item) {
 
                 $catID = $item['category_id'];
-                $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
-                $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
+                $plannedValueCredit = Input::convertFloatToIntegerAmount(floatval($item['planned_value_credit']));
+                $plannedValueDebit = Input::convertFloatToIntegerAmount(floatval($item['planned_value_debit']));
 
                 BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit, true);
             }
