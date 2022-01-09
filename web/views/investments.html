@@ -53,7 +53,7 @@
                             <p class="invest-dashboard-top-panel-value"><span
                                     id="invest-dashboard-top-panel-roi-current-year-value">-€</span> (<span
                                     id="invest-dashboard-top-panel-roi-current-year-percentage">-%</span>)</p>
-                            <p class="invest-dashboard-top-panel-description">ROI 2021</p>
+                            <p class="invest-dashboard-top-panel-description" id="current-year-roi-label">ROI -</p>
                         </div>
                     </div>
                     <div class="col s3">
@@ -178,6 +178,10 @@
             Investments.changeTabs(activeID);
           }
         });
+
+      const currentYear = DateUtils.getCurrentYear();
+      $('#current-year-roi-label')
+        .text(`ROI ${currentYear}`);
 
       const argsArr = configs.getUrlArgs();
       const selectedTab = (argsArr && argsArr.hasOwnProperty('tab')) ? argsArr['tab'] : undefined;
