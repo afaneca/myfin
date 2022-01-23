@@ -467,6 +467,15 @@ class InvestAssets
             $res["top_performing_assets"] = /*array_slice(*/
                 $assetsArr/*, 0, 3)*/
             ;
+
+            $yearOfFirstSnapshotForUser = $currentYear;
+            if (count($res["monthly_snapshots"]) > 0) {
+                $yearOfFirstSnapshotForUser = $res["monthly_snapshots"][0]["year"];
+            }
+            /*$res["AAA_year_of_first_snapshot"] = $yearOfFirstSnapshotForUser;*/
+            $roiByYear = InvestAssetModel::getCombinedROIByYear($userID, $yearOfFirstSnapshotForUser);
+            $res["combined_roi_by_year"] = $roiByYear;
+
             return sendResponse($response, EnsoShared::$REST_OK, $res);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
