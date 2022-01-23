@@ -145,10 +145,12 @@ var Investments = {
           InvestServices.getAllAssetStats((res) => {
             LoadingManager.hideLoading();
             // SUCCESS
+            Investments.buildTopicsIndex();
             Investments.buildInvestmentsEvolutionLineChart(res['monthly_snapshots']);
             Investments.buildDashboardAssetsDistributionPieChart('reports_assets_distribution_pie_chart', res['current_value_distribution']);
             Investments.buildDashboardInvestmentsDistributionPieChart('reports_investments_distribution_pie_chart', res['top_performing_assets'], res['total_current_value']);
             Investments.buildReportsROIByAssetTable('roi_by_asset_table_wrapper', res['top_performing_assets'], res['total_current_value']);
+            Investments.buildRoiByYearTable('table-wrapper-roi-by-year', res['combined_roi_by_year']);
           });
 
           /*Investments.initTopPerformingAssetsStats();*/
@@ -158,11 +160,28 @@ var Investments = {
           break;
       }
     },
+    buildTopicsIndex: () => {
+      $('#topics-index-wrapper')
+        .html(`
+        <center style="padding: 25px;">
+          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;" onclick="LayoutUtils.smoothScrollToDiv('#topic-distribution')">Distribuição</a>
+          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;" onclick="LayoutUtils.smoothScrollToDiv('#topic-roi-by-asset')">Retornos por Ativo (ROI)</a>
+          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;" onclick="LayoutUtils.smoothScrollToDiv('#topic-roi-by-asset-class')">Retornos por Classe de Ativo (ROI)</a>
+          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;"  onclick="LayoutUtils.smoothScrollToDiv('#topic-roi-by-year')">Desempenho Combinado por Ano</a>
+          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;"  onclick="LayoutUtils.smoothScrollToDiv('#topic-evo-chart')">Evolução do Portefólio</a>
+        </center>
+      `);
+    },
+    buildRoiByYearTable: (tableWrapperId, roiByYearList) => {
+      $(`#${tableWrapperId}`)
+        .html(InvestmentReportsTableFunc.buildReportsROIByYearTable('table-reports-roi-by-year', roiByYearList));
+      tableUtils.setupStaticTable('#table-reports-roi-by-year');
+    },
     buildReportsROIByAssetTable: (tableWrapperId, assetsList, totalInvestedValue) => {
       $(`#${tableWrapperId}`)
         .html(InvestmentReportsTableFunc.buildReportsROIByAssetTable('table-reports-roi-by-asset', assetsList, totalInvestedValue));
       tableUtils.setupStaticTable('#table-reports-roi-by-asset');
-      },
+    },
     initTopPerformingAssetsStats: (asset1, asset2, asset3, totalInvestedValue) => {
       $('#invest-reports-top-performing-wrapper')
         .html(`

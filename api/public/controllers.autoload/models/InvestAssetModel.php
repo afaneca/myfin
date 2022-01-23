@@ -40,7 +40,7 @@ class InvestAssetModel extends Entity
      */
     public static function getAssetForUser($userID, $assetId)
     {
-        return InvestAssetModel::getWhere(["users_user_id" => $userID,"asset_id" => $assetId]);
+        return InvestAssetModel::getWhere(["users_user_id" => $userID, "asset_id" => $assetId]);
     }
 
     /**
@@ -139,5 +139,80 @@ AND date_timestamp BETWEEN 0 and 1*/
         } catch (Exception $e) {
             return $e;
         }
+    }
+
+    public static function getTotalInvestmentValueAtDate($userId, $maxMonth, $maxYear, $transactional = false)
+    {
+        if (!$maxMonth) {
+            $maxMonth = date('m', time());
+        }
+        if (!$maxYear) {
+            $maxYear = date('Y', time());
+        }
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT month, year, SUM(current_value) as 'current_value' FROM invest_asset_evo_snapshot " .
+            "INNER JOIN invest_assets ON invest_assets.asset_id = invest_assets_asset_id " .
+            "WHERE users_user_id = :userId " .
+            "AND (year < :maxYear or (year = :maxYear and month <= :maxMonth)) " .
+            "GROUP BY month, year " .
+            "ORDER BY YEAR DESC, MONTH DESC LIMIT 1";
+
+        $values = array();
+        $values[':userId'] = $userId;
+        $values[':maxYear'] = $maxYear;
+        $values[':maxMonth'] = $maxMonth;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            $snapshot = $db->fetchAll();
+
+            /* $snapshot = InvestAssetEvoSnapshotModel::getWhere(["invest_assets_asset_id" => $assetId]);*/
+            if (!$snapshot || count($snapshot) < 1) return 0;
+            return floatval($snapshot[0]["current_value"]);
+
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public static function getCombinedROIByYear($userId, $initialYear, $transactional = false)
+    {
+        $roiByYear = []; //ex: ["2021" => ["invested_in_year"=>"123.23", "value_total_amount"=>"123.23", "roi_amount"=> "123.12", "roi_percentage"=> "12.34 % "]
+        $currentYear = date('Y', time());
+        // 2 - loop through each year
+        $yearInLoop = $initialYear;
+        $lastYearsTotalValue = 0;
+        while ($yearInLoop <= $currentYear) {
+            $roiByYear[$yearInLoop] = [];
+
+            // 3 - if current year, limit by current month
+            $fromDate = strtotime("1-1-$yearInLoop");
+            if ($yearInLoop == $currentYear)
+                $toDate = time();
+            else
+                $toDate = strtotime("31-12-$yearInLoop");
+
+            // 4 - extract data
+            $investedInYearAmount = InvestTransactionModel::getCombinedInvestedBalanceBetweenDatesForUser($userId, $fromDate, $toDate, $transactional);
+            $valueTotalAmount = Input::convertIntegerToFloatAmount(InvestAssetModel::getTotalInvestmentValueAtDate($userId, 12, $yearInLoop, $transactional));
+
+            $expectedBreakEvenValue = $lastYearsTotalValue + $investedInYearAmount; // If the user had a 0% profit, this would be the current portfolio value
+
+            $roiAmount = $valueTotalAmount - $expectedBreakEvenValue;
+            $roiPercentage = ($expectedBreakEvenValue != 0) ? ($roiAmount / $expectedBreakEvenValue) * 100 : "-";;
+
+            array_push($roiByYear[$yearInLoop], [
+                "invested_in_year_amount" => $investedInYearAmount,
+                "value_total_amount" => $valueTotalAmount,
+                "roi_amount" => $roiAmount,
+                "roi_percentage" => $roiPercentage,
+            ]);
+            $lastYearsTotalValue = $valueTotalAmount;
+            $yearInLoop++;
+        }
+        return $roiByYear;
     }
 }

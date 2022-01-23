@@ -2,7 +2,6 @@
 
     <div class="card-panel">
         <span class="main-accent-color">Investimentos <b>(beta)</b></span><br>
-
         <div class="row" style="margin-top: 10px;">
             <div class="col s12">
                 <ul class="tabs">
@@ -87,10 +86,11 @@
                 </div>
             </div>
             <div id="tab-inv-reports">
+                <div id="topics-index-wrapper" style="padding-top: 50px;"></div>
                 <div class="row">
                     <!---->
                     <div class="col s12" style="margin-top:20px;">
-                        <p><b style="font-size: x-large;">Distribuição</b></p>
+                        <p id="topic-distribution"><b style="font-size: x-large;">Distribuição</b></p>
                         <div class="col s6 no-margins" id="reports-dist-pie-chart">
                             <div id="reports_assets_distribution_pie_chart"
                                  style="height: 300px; margin-top: 10px;"></div>
@@ -104,12 +104,12 @@
                     </div>
                     <!---->
                     <div class="col s12" style="margin-top:35px;">
-                        <p><b style="font-size: x-large;">Retornos por Ativo (ROI)</b></p>
+                        <p id="topic-roi-by-asset"><b style="font-size: x-large;">Retornos por Ativo (ROI)</b></p>
                         <div id="roi_by_asset_table_wrapper"></div>
                     </div>
                     <!---->
                     <div class="col s12" style="margin-top:35px;">
-                        <p><b style="font-size: x-large;">Retornos por Classe de Ativo (ROI)</b></p>
+                        <p id="topic-roi-by-asset-class"><b style="font-size: x-large;">Retornos por Classe de Ativo (ROI)</b></p>
                         <p><i>Em breve...</i></p>
                         <!--<table>
                             <thead>
@@ -142,12 +142,16 @@
                             </tbody>
                         </table>-->
                     </div>
+                    <div class="col s12" style="margin-top:35px;">
+                        <p id="topic-roi-by-year"><b style="font-size: x-large;">Desempenho Combinado por Ano</b></p>
+                        <div id="table-wrapper-roi-by-year"></div>
+                    </div>
                     <!---->
                     <div class="col s12" style="margin-top:35px;">
                         <!--<h5 style="text-transform: uppercase;font-weight: bold;">
                             <span class="green-gradient-bg" style="/* background: #4caf50; */padding: 4px;">Top de performance</span></h5>
                         <hr class="green-gradient-bg" style="background: white;height: 2px;margin-top: -5px;text-transform: capitalize;">-->
-                        <b style="font-size: x-large;">Evolução do Portefólio</b>
+                        <p id="topic-evo-chart"><b style="font-size: x-large;">Evolução do Portefólio</b></p>
                         <div class="col s12 no-margins" id="evo-line-chart">
                             <canvas id="dashboard_evolution_line_chart" style="margin: 0px;" width="400px"
                                     height="130"></canvas>
