@@ -31,7 +31,38 @@ var InvestmentReportsTableFunc = {
         </td>
         <td>${StringUtils.formatMoney(asset.current_value)}</td>
         <td>${'<i>Em breve...</i>'}</td>
-        <td>${StringUtils.formatMoney(asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(asset.relative_roi_percentage)}</td>
+        <td>${StringUtils.formatMoney(asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(asset.relative_roi_percentage, true)}</td>
+      </tr>
+    `;
+  },
+  /* ROI BY YEAR TABLE */
+  buildReportsROIByYearTable: (tableId, roiByYearList) => {
+    return `
+      <table id="${tableId}" class="display browser-defaults" style="width:100%">
+        <thead>
+          <tr>
+              <th>Ano</th>
+              <th>Valor Investido</th>
+              <th>Valor Total</th>
+              <th>ROI (€)</th>
+              <th>ROI (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+            ${Object.keys(roiByYearList).map(year => InvestmentReportsTableFunc.renderROIByYearTableRow(year, roiByYearList[year][0]))
+      .join('')}
+        </tbody>
+      </table>
+    `;
+  },
+  renderROIByYearTableRow: (year, roiObj) => {
+    return `
+      <tr>
+        <td>${year}</td>
+        <td>${StringUtils.formatMoney(roiObj.invested_in_year_amount)}</td>
+        <td>${StringUtils.formatMoney(roiObj.value_total_amount)}</td>
+        <td>${StringUtils.formatMoney(roiObj.roi_amount)}</td>
+        <td>${InvestmentAssetsTableFunc.buildRoiPercentage(roiObj.roi_percentage)}</td>
       </tr>
     `;
   },
