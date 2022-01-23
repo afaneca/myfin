@@ -409,21 +409,21 @@ class AccountModel extends Entity
     {
         /*
          * Given that I'm unable to know the balance of an account at any specific time (only at the end of each month),
-         * I will need to recalculate from the beginning of the month relative to $fromDate all the way to the end of
-         * month associated with $toDate.
+         * I will need to recalculate from the beginning of the previous month relative to $fromDate all the way to the end of
+         * month after associated with $toDate.
         */
 
         $beginMonth = date('m', $fromDate);
         $beginYear = date('Y', $fromDate);
 
-        $priorMonthsBalance = Input::convertFloatToIntegerAmount(AccountModel::getBalanceSnapshotAtMonth($accountID, ($beginMonth > 2) ? ($beginMonth - 2) : 1,
+        /*echo "begin month & year::\n$beginMonth\t$beginYear\n";*/
+        $priorMonthsBalance = Input::convertFloatToIntegerAmount(AccountModel::getBalanceSnapshotAtMonth($accountID, ($beginMonth > 2) ? ($beginMonth - 2) : 12 - 2 + (int)$beginMonth,
             ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $transactional)["balance"]);
-
         if (!$priorMonthsBalance)
             $priorMonthsBalance = 0;
 
         /*echo("\nprior months balance: $priorMonthsBalance\n");*/
-
+        /*die();*/
 
         AccountModel::addCustomBalanceSnapshot($accountID, $beginMonth, $beginYear,
             $priorMonthsBalance, $transactional);
@@ -432,21 +432,25 @@ class AccountModel extends Entity
         AccountModel::addCustomBalanceSnapshot($accountID, ($beginMonth < 12) ? $beginMonth + 1 : 1, ($beginMonth < 12) ? $beginYear : $beginYear + 1, $priorMonthsBalance, $transactional);
         AccountModel::addCustomBalanceSnapshot($accountID, ($beginMonth < 11) ? $beginMonth + 2 : 1, ($beginMonth < 11) ? $beginYear : $beginYear + 1, $priorMonthsBalance, $transactional);
 
+        // Decrease begin month by 1
         if ($beginMonth > 1) $beginMonth--;
         else {
-            $beginMonth = 1;
+            $beginMonth = 12;
             $beginYear--;
         }
 
         $endMonth = date('m', $toDate);
         $endYear = date('Y', $toDate);
+        /*echo "end month & year::\n$endMonth\t$endYear\n";*/
 
+        // Increase end month by 1
         if ($endMonth < 12) $endMonth++;
         else {
             $endMonth = 1;
             $endYear++;
         }
-
+        /*echo "beginMonth - 1 = $beginMonth/$beginYear\n";
+        echo "endMonth + 1  = $endMonth/$endYear\n";*/
         $fromDate = strtotime("1-$beginMonth-$beginYear");
         $toDate = strtotime("1-$endMonth-$endYear");
         /*echo("$fromDate\n");
@@ -485,14 +489,12 @@ class AccountModel extends Entity
                 $trxAmount *= -1;
             }
             //print_r($trxList);
-            /*echo("\n#### new transaction of " . Input::convertIntegerToFloat($trxAmount) . " € \n");
-            echo("\ninitial balance before:  " . Input::convertIntegerToFloat($initialBalance));*/
+            /*echo("\n#### new transaction of " . Input::convertIntegerToFloatAmount($trxAmount) . " € on " . gmdate("Y-m-d", $trxDate) . " (type: $trxType)\n");
+            echo("\ninitial balance before:  " . Input::convertIntegerToFloatAmount($initialBalance));*/
             $initialBalance += $trxAmount;
 
-            //die();
-            //AccountModel::addBalanceSnapshot($accountID, $month, $year, $transactional);
-            /*echo("\ninitial balance after: " . Input::convertIntegerToFloat($initialBalance));
-            echo("\n\n--- adding custom balance snapshot to account $accountID, for month $month & year $year, with balance " . Input::convertIntegerToFloat($initialBalance));
+            /*echo("\ninitial balance after: " . Input::convertIntegerToFloatAmount($initialBalance));
+            echo("\n\n--- adding custom balance snapshot to account $accountID, for month $month & year $year, with balance " . Input::convertIntegerToFloatAmount($initialBalance));
             echo("\n\n----------------------------------------------------------------------\n\n");*/
             AccountModel::addCustomBalanceSnapshot($accountID, $month, $year, $initialBalance, $transactional);
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 12) ? $month + 1 : 1, ($month < 12) ? $year : $year + 1, $initialBalance, $transactional);

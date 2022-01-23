@@ -442,8 +442,11 @@ class InvestAssets
 
             $yearStart = strtotime("01-01-$currentYear");
             $currentYearInvestedBalance = InvestTransactionModel::getCombinedInvestedBalanceBetweenDatesForUser($userID, $yearStart, time(), false); // the amount invested in the current year
+            /*$res["AAA_current_year_invested_value"] = $currentYearInvestedBalance;
+            $res["AAA_last_years_value"] = $lastYearsValue;*/
+            $expectedBreakEvenValue = Input::convertIntegerToFloatAmount($lastYearsValue) + $currentYearInvestedBalance; // If the user had a 0% profit, this would be the current portfolio value
 
-            $expectedBreakEvenValue = Input::convertIntegerToFloatAmount($lastYearsValue + $currentYearInvestedBalance); // If the user had a 0% profit, this would be the current portfolio value
+            /*$res["AAA_expected_break_even_value"] = $expectedBreakEvenValue;*/
 
             $res["current_year_roi_value"] = $fullCurrentValue - $expectedBreakEvenValue;
             $res["current_year_roi_percentage"] = ($expectedBreakEvenValue != 0) ? ($res["current_year_roi_value"] / $expectedBreakEvenValue) * 100 : "-";
