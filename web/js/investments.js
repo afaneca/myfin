@@ -19,7 +19,7 @@ var Investments = {
     },
     addTransaction: (date, units, amount, type, observations, assetId) => {
       LoadingManager.showLoading();
-      InvestServices.addTransaction(date, observations = '', amount, parseFloat(units), assetId, type,
+      InvestServices.addTransaction(date, observations, amount, parseFloat(units), assetId, type,
         (res) => {
           // SUCCESS
           DialogUtils.showSuccessMessage('Transação adicionada com sucesso!');

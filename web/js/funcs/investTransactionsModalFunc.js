@@ -87,12 +87,10 @@ var InvestTransactionsModalFunc = {
               .val();
             const observations = $('#trx-description')
               .val();
-
             const type = $('select.select-trxs-types')
               .val();
             const assetId = $('select.select-trxs-asset')
               .val();
-
             if (ValidationUtils.checkIfFieldsAreFilled([date, units, amount, type, assetId])) {
               addTransactionBtnClickCallback(date, units, amount, type, observations, assetId);
             } else {
