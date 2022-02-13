@@ -190,27 +190,32 @@ AND date_timestamp BETWEEN 0 and 1*/
 
             // 3 - if current year, limit by current month
             $fromDate = strtotime("1-1-$yearInLoop");
-            if ($yearInLoop == $currentYear)
+            if ($yearInLoop == $currentYear) {
                 $toDate = time();
-            else
+                $maxDate = date('m');
+            } else {
                 $toDate = strtotime("31-12-$yearInLoop");
+                $maxDate = 12;
+            }
+
 
             // 4 - extract data
             $investedInYearAmount = InvestTransactionModel::getCombinedInvestedBalanceBetweenDatesForUser($userId, $fromDate, $toDate, $transactional);
-            $valueTotalAmount = Input::convertIntegerToFloatAmount(InvestAssetModel::getTotalInvestmentValueAtDate($userId, 12, $yearInLoop, $transactional));
-
+            $fullCurrentValue = Input::convertIntegerToFloatAmount(InvestAssetModel::getTotalInvestmentValueAtDate($userId, $maxDate, $yearInLoop, $transactional));
             $expectedBreakEvenValue = $lastYearsTotalValue + $investedInYearAmount; // If the user had a 0% profit, this would be the current portfolio value
 
-            $roiAmount = $valueTotalAmount - $expectedBreakEvenValue;
+            $roiAmount = $fullCurrentValue - $expectedBreakEvenValue;
             $roiPercentage = ($expectedBreakEvenValue != 0) ? ($roiAmount / $expectedBreakEvenValue) * 100 : "-";;
 
             array_push($roiByYear[$yearInLoop], [
                 "invested_in_year_amount" => $investedInYearAmount,
-                "value_total_amount" => $valueTotalAmount,
+                "value_total_amount" => $fullCurrentValue,
                 "roi_amount" => $roiAmount,
                 "roi_percentage" => $roiPercentage,
+                "LAST_YEARS_TOTAL_VALUE" => $lastYearsTotalValue,
+                "EXPECTED_BREAKEVEN_VALUE" => $expectedBreakEvenValue,
             ]);
-            $lastYearsTotalValue = $valueTotalAmount;
+            $lastYearsTotalValue = $fullCurrentValue;
             $yearInLoop++;
         }
         return $roiByYear;
