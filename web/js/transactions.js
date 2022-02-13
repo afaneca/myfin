@@ -105,6 +105,7 @@ var Transactions = {
   },
   showAddTransactionModal: () => {
     LoadingManager.showLoading();
+    const lastTrxInputData = LocalDataManager.getLastTrxInputData();
     TransactionServices.getAddTransactionStep0(
       (response) => {
         LoadingManager.hideLoading();
@@ -221,6 +222,25 @@ var Transactions = {
             i18n: PickerUtils.getDatePickerDefault18nStrings(),
           });
 
+        if (lastTrxInputData) {
+          // Auto-fill fields with last trx input data
+          $('select.select-trxs-entities')
+            .val(lastTrxInputData.entityId)
+            .trigger('change');
+          $('select.select-trxs-account_to')
+            .val(lastTrxInputData.accountToId)
+            .trigger('change');
+          $('select.select-trxs-account_from')
+            .val(lastTrxInputData.accountFromId)
+            .trigger('change');
+          $('select.select-trxs-categories')
+            .val(lastTrxInputData.categoryId)
+            .trigger('change');
+          if (lastTrxInputData.trxType) {
+            $('select.select-trxs-types')
+              .select2('val', lastTrxInputData.trxType);
+          }
+        }
         Transactions.manageAccountsSelectAvailability();
 
       },
@@ -332,6 +352,7 @@ var Transactions = {
     }
 
     LoadingManager.showLoading();
+    LocalDataManager.setLastTrxInputData(type, account_from_id, account_to_id, catID, entID);
     TransactionServices.addTransaction(amount, type, description, entID, account_from_id, account_to_id, catID, date_timestamp,
       (response) => {
         // SUCCESS
