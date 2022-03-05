@@ -164,11 +164,11 @@ var Investments = {
       $('#topics-index-wrapper')
         .html(`
         <center style="padding: 25px;">
-          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;" onclick="LayoutUtils.smoothScrollToDiv('#topic-distribution')">Distribuição</a>
-          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;" onclick="LayoutUtils.smoothScrollToDiv('#topic-roi-by-asset')">Retornos por Ativo (ROI)</a>
-          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;" onclick="LayoutUtils.smoothScrollToDiv('#topic-roi-by-asset-class')">Retornos por Classe de Ativo (ROI)</a>
-          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;"  onclick="LayoutUtils.smoothScrollToDiv('#topic-roi-by-year')">Desempenho Combinado por Ano</a>
-          <a class="card" style="cursor: pointer; background: var(--main-accent-color); color: white; padding: 5px;"  onclick="LayoutUtils.smoothScrollToDiv('#topic-evo-chart')">Evolução do Portefólio</a>
+          <a class="card topics-index-wrapper-card" onclick="LayoutUtils.smoothScrollToDiv('#topic-distribution')">Distribuição</a>
+          <a class="card topics-index-wrapper-card" onclick="LayoutUtils.smoothScrollToDiv('#topic-roi-by-asset')">Retornos por Ativo (ROI)</a>
+          <a class="card topics-index-wrapper-card" onclick="LayoutUtils.smoothScrollToDiv('#topic-roi-by-asset-class')">Retornos por Classe de Ativo (ROI)</a>
+          <a class="card topics-index-wrapper-card" onclick="LayoutUtils.smoothScrollToDiv('#topic-roi-by-year')">Desempenho Combinado por Ano</a>
+          <a class="card topics-index-wrapper-card" onclick="LayoutUtils.smoothScrollToDiv('#topic-evo-chart')">Evolução do Portefólio</a>
         </center>
       `);
     },

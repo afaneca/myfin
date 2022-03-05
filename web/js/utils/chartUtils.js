@@ -145,6 +145,18 @@ var chartUtils = {
                         return '(' + percent + '%)'
                     }
                 }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+                    }
+                }]
             }
         }
 
@@ -194,6 +206,18 @@ var chartUtils = {
                         return '(' + percent + '%)'
                     }
                 }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+                    }
+                }]
             }
         }
 
@@ -250,6 +274,18 @@ var chartUtils = {
                         return '(' + percent + '%)'
                     }
                 }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+                    }
+                }]
             }
         }
 
@@ -320,6 +356,18 @@ var chartUtils = {
                         return '(' + percent + '%)'
                     }
                 }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+                    }
+                }]
             }
         }
 
