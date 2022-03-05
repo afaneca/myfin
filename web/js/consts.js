@@ -34,11 +34,13 @@ var MYFIN = {
     DARK_BLUE: './css/main.css',
     DARK_GRAY: './css/themes/dark_gray_theme.css',
     LIGHT: './css/themes/light_theme.css',
+    SOLARIZED_GREEN: './css/themes/solarized_green_theme.css'
   },
   APP_THEMES: {
     DARK_BLUE: 'DARK_BLUE',
     DARK_GRAY: 'DARK_GRAY',
     LIGHT: 'LIGHT',
+    SOLARIZED_GREEN: 'SOLARIZED_GREEN'
   },
   TRX_FETCH_LIMIT: 300,
   INVEST_ASSETS_TYPES: {

@@ -181,6 +181,18 @@ var Stats = {
           afterLabel: (tooltipItem, data) => {
           }
         }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }]
       }
     };
 
@@ -344,6 +356,18 @@ var Stats = {
           afterLabel: (tooltipItem, data) => {
           }
         }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }]
       }
     };
 
@@ -591,6 +615,18 @@ var Stats = {
           afterLabel: (tooltipItem, data) => {
           }
         }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }]
       }
     };
 
@@ -704,7 +740,31 @@ var Stats = {
           },
           afterLabel: (tooltipItem, data) => {
           }
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            }
+          }],
+          xAxes: [{
+            ticks: {
+              fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            }
+          }]
         }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }]
       }
     };
 

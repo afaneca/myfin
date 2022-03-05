@@ -977,3 +977,10 @@ svg:not(:root) {
     background: var(--main-body-background);
     box-shadow: 0px 0px 1px 0px black;
 }
+
+.topics-index-wrapper-card {
+    cursor: pointer;
+    background: var(--main-accent-color);
+    color: white;
+    padding: 5px;
+}

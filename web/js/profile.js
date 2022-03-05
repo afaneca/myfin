@@ -100,6 +100,12 @@ var Profile = {
                             <span>Light</span>
                         </label>
                     </p>
+                    <p>
+                        <label>
+                            <input name="theme-group" type="radio" value="${MYFIN.APP_THEMES.SOLARIZED_GREEN}"  ${(currentTheme === MYFIN.APP_THEMES.SOLARIZED_GREEN) ? ' checked ' : ''} />
+                            <span>Solarized Green</span>
+                        </label>
+                    </p>
                    `;
 
     $('#change-theme-radio-group-wrapper')

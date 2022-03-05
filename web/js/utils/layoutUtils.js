@@ -20,12 +20,16 @@ var LayoutUtils = {
           .remove();
         $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.LIGHT + '\']')
           .remove();
+        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN + '\']')
+          .remove();
         LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.DARK_BLUE);
         break;
       case MYFIN.APP_THEMES.DARK_GRAY:
       default:
         // unload light theme css
         $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.LIGHT + '\']')
+          .remove();
+        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN + '\']')
           .remove();
         // load dark gray theme css
         $('head')
@@ -36,6 +40,8 @@ var LayoutUtils = {
         // unload dark gray theme css
         $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY + '\']')
           .remove();
+        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN + '\']')
+          .remove();
         // load dark gray theme css
         $('head')
           .append('<link type="text/css" rel="stylesheet" href="' + MYFIN.APP_THEMES_CSS_PATH.LIGHT + '" id="removable-css">');
@@ -43,6 +49,19 @@ var LayoutUtils = {
         // custom logo for light theme
         $('#side-nav-logo-img')
           .attr('src', '../img/logo/logo_transparent_bg_v2.png');
+        break;
+      case MYFIN.APP_THEMES.SOLARIZED_GREEN:
+        // unload dark gray theme and light theme css
+        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY + '\']')
+          .remove();
+        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.LIGHT + '\']')
+          .remove();
+        /*$('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.DARK_BLUE + '\']')
+          .remove();*/
+        // load solarized green theme css
+        $('head')
+          .append('<link type="text/css" rel="stylesheet" href="' + MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN + '" id="removable-css">');
+        LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.SOLARIZED_GREEN);
         break;
     }
   },

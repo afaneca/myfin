@@ -10,11 +10,11 @@ var InvestmentDashboardChartsFunc = {
       scales: {
         yAxes: [{
           gridLines: { display: true, },
-          ticks: { display: true, }
+          ticks: { display: true, fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'), }
         }],
         xAxes: [{
           gridLines: { display: true, },
-          ticks: { display: true, }
+          ticks: { display: true, fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),}
         }],
       },
       title: {
@@ -40,7 +40,7 @@ var InvestmentDashboardChartsFunc = {
           afterLabel: (tooltipItem, data) => {
           }
         }
-      }
+      },
     };
 
     var data = {
@@ -116,6 +116,18 @@ var InvestmentDashboardChartsFunc = {
             return '(' + percent + '%)';
           }
         }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          }
+        }]
       }
     };
 
