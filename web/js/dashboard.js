@@ -61,6 +61,8 @@ var Dashboard = {
         .html(GraphEmptyViewComponent.buildDefaultGraphEmptyView());
     } else {
       CHART_MONTHLY_OVERVIEW = chartUtils.setupAngularChart('chart-angular-target-goals', data, null, customLabels, realToBudgetedRatio);
+      $('#chart-angular-target-goals')
+        .show();
     }
   },
   setupLastTransactionsTable: () => {
