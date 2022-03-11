@@ -357,7 +357,7 @@ var chartUtils = {
                     }
                 }
             },
-            scales: {
+            /*scales: {
                 yAxes: [{
                     ticks: {
                         fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
@@ -368,7 +368,7 @@ var chartUtils = {
                         fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
                     }
                 }]
-            }
+            }*/
         }
 
         var chartDataVar = {
