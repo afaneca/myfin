@@ -176,6 +176,8 @@ var Dashboard = {
     }
     if (dataset.length > 0) {
       chartUtils.setupDebtDistributionPieChart('chart_pie_investing_portfolio', dataset, labels, 'Portefólio de Investimento', colorGradientsArr);
+      $('#chart_pie_investing_portfolio')
+        .show();
     } else {
       $('#chart_pie_investing_portfolio')
         .hide();
@@ -236,6 +238,11 @@ var Dashboard = {
 
         if (datasetCredit.length > 0) {
           CHART_INCOME_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart('chart_pie_income_distribution', datasetCredit, labelsCredit, 'Distribuição de Receita', catColorsCredit);
+          $('#chart_pie_income_distribution')
+            .show();
+          $('.card-panel.income_distribution')
+            .find('.empty-view')
+            .hide();
         } else {
           $('#chart_pie_income_distribution')
             .hide();
@@ -246,8 +253,12 @@ var Dashboard = {
 
         if (datasetDebit.length > 0) {
           CHART_EXPENSES_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart('chart_pie_spending_distribution', datasetDebit, labelsDebit, 'Distribuição de Despesa', catColorsDebit);
+          $('#chart_pie_spending_distribution')
+            .show();
+          $('.card-panel.spending_distribution')
+            .find('.empty-view')
+            .hide();
         } else {
-
           $('#chart_pie_spending_distribution')
             .hide();
           $('.card-panel.spending_distribution')
