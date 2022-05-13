@@ -341,8 +341,8 @@ class AccountModel extends Entity
         $sql = "SELECT truncate((coalesce(balance, 0) / 100), 2) as 'balance' " .
             "FROM balances_snapshot " .
             "WHERE accounts_account_id = :accID " .
-            "AND month <= :month " .
-            "AND year <= :year " .
+            "AND ((year = :year AND month <= :month) " .
+            "OR (year < :year)) " .
             "ORDER BY year DESC, month DESC " .
             "LIMIT 1";
 
