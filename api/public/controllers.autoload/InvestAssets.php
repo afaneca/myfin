@@ -34,13 +34,14 @@ class InvestAssets
             $res = array();
 
             foreach ($assetsArr as $asset) {
-                $month = date('m', EnsoShared::now());
-                $year = date('Y', EnsoShared::now());
                 $snapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], null, null);
                 if ($snapshot) $snapshot = $snapshot[0];
                 $investedValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["invested_amount"] : 0);
+                $withdrawnAmount = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["withdrawn_amount"] : 0);
                 $currentValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["current_value"] : 0);
-                $roiValue = $currentValue - $investedValue;
+                $currently_invested_value = doubleval($investedValue) - doubleval($withdrawnAmount);
+                if ($currently_invested_value < 0) $currently_invested_value = 0;
+                $roiValue = ($currentValue + $withdrawnAmount) - $investedValue;
                 $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
 
                 array_push($res, [
@@ -51,6 +52,8 @@ class InvestAssets
                         "units" => floatval($asset["units"]),
                         "broker" => $asset["broker"],
                         "invested_value" => $investedValue,
+                        "currently_invested_value" => $currently_invested_value,
+                        "withdrawn_amount" => $withdrawnAmount,
                         "current_value" => $currentValue,
                         "absolute_roi_value" => $roiValue,
                         "relative_roi_percentage" => $roiPercentage,
@@ -291,29 +294,30 @@ class InvestAssets
             $month = date('m', EnsoShared::now());
             $year = date('Y', EnsoShared::now());
             $units = InvestAssetModel::getWhere(["users_user_id" => $userID, "asset_id" => $assetID], ["units"])[0]["units"];
+            $withdrawnAmount = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($assetID, null, null)[0]["withdrawn_amount"];
 
-            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($month, $year, $assetID, $units, $newValue);
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($month, $year, $assetID, $units, $withdrawnAmount, $newValue);
             // Snapshot next 6 months also, to create a buffer (in case no more snapshots are added till then)
             $nextMonth = ($month + 1 > 12) ? 1 : ($month + 1);
             $nextMonthsYear = ($nextMonth > 12) ? $year + 1 : $year;
-            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
             $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
             $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
-            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
             $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
             $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
-            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
             $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
             $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
-            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
             $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
             $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
-            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
             $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
             $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
-            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $newValue);
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
 
-            return sendResponse($response, EnsoShared::$REST_OK, "Asset value successfully updated!");
+            return sendResponse($response, EnsoShared::$REST_OK, "Asset value successfully updated!  - $assetID - $newValue");
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
         } catch (AuthenticationException $e) {
