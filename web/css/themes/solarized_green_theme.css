@@ -22,7 +22,7 @@ table.dataTable tbody tr {
 }
 
 tr {
-    border-bottom: 1px solid #1B3A4B;
+    border-bottom: 1px solid #045d5e !important;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.disabled, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
@@ -44,6 +44,7 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
 .select2-container--default .select2-selection--single {
     background-color: #08464e;
 }
+
 .list-item {
     background-color: var(--main-body-background);
 }
@@ -62,4 +63,14 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
 
 a {
     color: #17f1f5;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    padding: 10px 18px;
+    border: 0px;
+    background: #144552;
+}
+
+label {
+    color: white;
 }

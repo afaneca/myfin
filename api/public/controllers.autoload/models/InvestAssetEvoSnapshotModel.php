@@ -15,12 +15,12 @@ class InvestAssetEvoSnapshotModel extends Entity
         "updated_at"
     ];
 
-    public static function updateCurrentAssetValue($month, $year, $assetID, $units, $newValue, $transactional = false)
+    public static function updateCurrentAssetValue($month, $year, $assetID, $units, $withdrawnAmount, $newValue, $transactional = false)
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "INSERT INTO invest_asset_evo_snapshot (month, year, units, invested_amount, current_value, invest_assets_asset_id, created_at, updated_at) " .
-            " VALUES(:month, :year, :units, :investedAmount, :currentValue, :assetID, :createdAt, :updatedAt) " .
+        $sql = "INSERT INTO invest_asset_evo_snapshot (month, year, units, invested_amount, current_value, invest_assets_asset_id, created_at, updated_at, withdrawn_amount) " .
+            " VALUES(:month, :year, :units, :investedAmount, :currentValue, :assetID, :createdAt, :updatedAt, :withdrawnAmount) " .
             " ON DUPLICATE KEY UPDATE current_value = :currentValue, updated_at = :updatedAt";
 
         $latestSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($assetID, $month, $year, $transactional);
@@ -32,6 +32,7 @@ class InvestAssetEvoSnapshotModel extends Entity
         $values[':units'] = $units;
         $values[':investedAmount'] = $latestSnapshot ? $latestSnapshot["invested_amount"] : 0;
         $values[':currentValue'] = Input::convertFloatToIntegerAmount($newValue);
+        $values[':withdrawnAmount'] = Input::convertFloatToIntegerAmount($withdrawnAmount);
         $values[':assetID'] = $assetID;
         $values[':createdAt'] = EnsoShared::now();
         $values[':updatedAt'] = EnsoShared::now();
@@ -56,14 +57,14 @@ class InvestAssetEvoSnapshotModel extends Entity
         return $snapshot;
     }
 
-    public static function addCustomBalanceSnapshot($assetId, $month, $year, $units, $investedAmount, $currentAmount, $transactional = false)
+    public static function addCustomBalanceSnapshot($assetId, $month, $year, $units, $investedAmount, $currentAmount, $withdrawnAmount, $transactional = false)
     {
 
         $db = new EnsoDB($transactional);
 
-        $sql = "INSERT INTO invest_asset_evo_snapshot (month, year, units, invested_amount, current_value, invest_assets_asset_id, created_at, updated_at) " .
-            "VALUES (:month, :year, :units, :invested_amount, :current_amount, :invest_assets_asset_id, :created_at, :updated_at) " .
-            "ON DUPLICATE KEY UPDATE units = :units, invested_amount = :invested_amount, /*current_value = :current_amount,*/ updated_at = :updated_at;";
+        $sql = "INSERT INTO invest_asset_evo_snapshot (month, year, units, invested_amount, current_value, invest_assets_asset_id, created_at, updated_at, withdrawn_amount) " .
+            "VALUES (:month, :year, :units, :invested_amount, :current_amount, :invest_assets_asset_id, :created_at, :updated_at, :withdrawn_amount) " .
+            "ON DUPLICATE KEY UPDATE units = :units, invested_amount = :invested_amount, /*current_value = :current_amount,*/ updated_at = :updated_at, withdrawn_amount = :withdrawn_amount;";
 
         $values = array();
         $values[':month'] = $month;
@@ -72,6 +73,7 @@ class InvestAssetEvoSnapshotModel extends Entity
         $values[':invested_amount'] = $investedAmount;
         $values[':current_amount'] = $currentAmount;
         $values[':invest_assets_asset_id'] = $assetId;
+        $values[':withdrawn_amount'] = $withdrawnAmount;
         $values[':created_at'] = time();
         $values[':updated_at'] = time();
 
@@ -176,23 +178,25 @@ class InvestAssetEvoSnapshotModel extends Entity
 
         /*$priorMonthsSnapshot = InvestAssetEvoSnapshotModel::getAssetSnapshotAtMonth(($beginMonth > 2) ? ($beginMonth - 2) : 1,
             ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $assetId, $transactional);*/
+
+        // Get snapshot from 2 months prior of begin date
         $priorMonthsSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($assetId, ($beginMonth > 2) ? ($beginMonth - 2) : 12 - 2 + (int)$beginMonth,
             ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $transactional);
 
 
         if (!$priorMonthsSnapshot)
-            $priorMonthsSnapshot = ["units" => 0, "current_value" => 0, "invested_amount" => 0];
+            $priorMonthsSnapshot = ["units" => 0, "current_value" => 0, "invested_amount" => 0, "withdrawn_amount" => 0];
         else
             $priorMonthsSnapshot = $priorMonthsSnapshot[0];
 
         InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $beginMonth, $beginYear,
-            $priorMonthsSnapshot["units"], $priorMonthsSnapshot["invested_amount"], $priorMonthsSnapshot["current_value"], $transactional);
+            $priorMonthsSnapshot["units"], $priorMonthsSnapshot["invested_amount"], $priorMonthsSnapshot["current_value"], $priorMonthsSnapshot["withdrawn_amount"], $transactional);
 
-        //Reset snapshots for next 2 months (in case there are no transactions in these months and the balance doesn't get recalculated
+        // Reset snapshots for next 2 months (in case there are no transactions in these months and the balance doesn't get recalculated
         InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, ($beginMonth < 12) ? $beginMonth + 1 : 1, ($beginMonth < 12) ? $beginYear : $beginYear + 1,
-            $priorMonthsSnapshot["units"], $priorMonthsSnapshot["invested_amount"], $priorMonthsSnapshot["current_value"], $transactional);
+            $priorMonthsSnapshot["units"], $priorMonthsSnapshot["invested_amount"], $priorMonthsSnapshot["current_value"], $priorMonthsSnapshot["withdrawn_amount"], $transactional);
         InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, ($beginMonth < 11) ? $beginMonth + 2 : 1, ($beginMonth < 11) ? $beginYear : $beginYear + 1,
-            $priorMonthsSnapshot["units"], $priorMonthsSnapshot["invested_amount"], $priorMonthsSnapshot["current_value"], $transactional);
+            $priorMonthsSnapshot["units"], $priorMonthsSnapshot["invested_amount"], $priorMonthsSnapshot["current_value"], $priorMonthsSnapshot["withdrawn_amount"], $transactional);
 
 
         if ($beginMonth > 1) $beginMonth--;
@@ -216,7 +220,7 @@ class InvestAssetEvoSnapshotModel extends Entity
         $trxList = InvestAssetModel::getAllTransactionsForAssetBetweenDates($assetId, $fromDate, $toDate, $transactional);
 
         $initialSnapshot = $priorMonthsSnapshot;
-        if (!$initialSnapshot) $priorMonthsSnapshot = ["units" => 0, "current_value" => 0, "invested_amount" => 0];
+        if (!$initialSnapshot) $priorMonthsSnapshot = ["units" => 0, "current_value" => 0, "invested_amount" => 0, "withdrawn_amount" => 0];
         /*echo "\n############################################\n";
         echo "\nInitial Snapshot:";
         echo "\n";
@@ -233,25 +237,27 @@ class InvestAssetEvoSnapshotModel extends Entity
             $changeInUnits = $trx["units"];
 
             if ($trxType == DEFAULT_INVESTING_TRANSACTIONS_SELL) {
-                $changeInAmounts *= -1;
+                /*$changeInAmounts *= -1;*/
                 $changeInUnits *= -1;
+                $initialSnapshot["withdrawn_amount"] = doubleval($initialSnapshot["withdrawn_amount"]) + doubleval($changeInAmounts);
+            } else {
+                $initialSnapshot["invested_amount"] = doubleval($initialSnapshot["invested_amount"]) + doubleval($changeInAmounts);
             }
             /*echo "\nNew Transaction from date=" . gmdate("Y-m-d", $trxDate);
             echo "\nAmount: $changeInAmounts (type: $trxType)";
             echo "\nTrx Units:" . $initialSnapshot["units"];*/
             $initialSnapshot["units"] = doubleval($initialSnapshot["units"]) + doubleval($changeInUnits);
-            $initialSnapshot["invested_amount"] = doubleval($initialSnapshot["invested_amount"]) + doubleval($changeInAmounts);
             /*$initialSnapshot["current_value"] = doubleval($initialSnapshot["current_value"]) + doubleval($changeInAmounts);*/
             /*echo "\nTOTAL Units:" . $initialSnapshot["units"];
             echo "\n-------------------------------------------\n";*/
 
             /* Automatically add snapshots for current & next 2 months in order to create a buffer*/
             InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $month, $year,
-                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $transactional);
+                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
             InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, ($month < 12) ? $month + 1 : 1, ($month < 12) ? $year : $year + 1,
-                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $transactional);
+                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
             InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, ($month < 11) ? $month + 2 : 1, ($month < 11) ? $year : $year + 1,
-                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $transactional);
+                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
 
         }
         /*die();*/
