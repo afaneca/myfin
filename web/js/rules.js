@@ -66,42 +66,42 @@ var Rules = {
     buildConditionsString: rule => {
         let outputStr = ""
         if (rule.matcher_description_operator && rule.matcher_description_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE && rule.matcher_description_value) {
-            outputStr += "<u>Descrição</u>: " + rule.matcher_description_operator + " => " + "\"" + rule.matcher_description_value + "\"" + "<br>"
+            outputStr += "<span style='color: #b5b5b5'>Descrição:</span> " + rule.matcher_description_operator + " => " + "\"" + rule.matcher_description_value + "\"" + "<br>"
         }
 
         if (rule.matcher_amount_operator && rule.matcher_amount_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE && rule.matcher_amount_value) {
-            outputStr += "<u>Valor</u>: " + rule.matcher_amount_operator + " => " + "\"" + rule.matcher_amount_value + "\"" + "<br>"
+            outputStr += "<span style='color: #b5b5b5'>Valor:</span> " + rule.matcher_amount_operator + " => " + "\"" + rule.matcher_amount_value + "\"" + "<br>"
         }
 
         if (rule.matcher_type_operator && rule.matcher_type_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE && rule.matcher_type_value) {
-            outputStr += "<u>Tipo</u>: " + rule.matcher_type_operator + " => " + "\"" + rule.matcher_type_value + "\"" + "<br>"
+            outputStr += "<span style='color: #b5b5b5'>Tipo:</span> " + rule.matcher_type_operator + " => " + "\"" + rule.matcher_type_value + "\"" + "<br>"
         }
 
         if (rule.matcher_account_from_id_operator && rule.matcher_account_from_id_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE && rule.matcher_account_from_id_value) {
-            outputStr += "<u>Conta Origem</u>: " + rule.matcher_account_from_id_operator + " => " + "\"" + LocalDataManager.getUserAccount(rule.matcher_account_from_id_value).name + "\"" + "<br>"
+            outputStr += "<span style='color: #b5b5b5'>Conta Origem:</span> " + rule.matcher_account_from_id_operator + " => " + "\"" + LocalDataManager.getUserAccount(rule.matcher_account_from_id_value).name + "\"" + "<br>"
         }
 
         if (rule.matcher_account_to_id_operator && rule.matcher_account_to_id_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE && rule.matcher_account_to_id_value) {
-            outputStr += "<u>Conta Destino</u>: " + rule.matcher_account_to_id_operator + " => " + "\"" + LocalDataManager.getUserAccount(rule.matcher_account_to_id_value).name + "\"" + "<br>"
+            outputStr += "<span style='color: #b5b5b5'>Conta Destino:</span> " + rule.matcher_account_to_id_operator + " => " + "\"" + LocalDataManager.getUserAccount(rule.matcher_account_to_id_value).name + "\"" + "<br>"
         }
 
         return outputStr
     }, buildResulstsString: rule => {
         let outputStr = ""
         if (rule.assign_category_id && rule.assign_category_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-            outputStr += "<u>Atribuir Categoria</u>: " + Rules.getCategoryName(rule.assign_category_id) + "<br>"
+            outputStr += "<span style='color: #b5b5b5'>Atribuir Categoria:</span> " + Rules.getCategoryName(rule.assign_category_id) + "<br>"
         }
 
         if (rule.assign_entity_id && rule.assign_entity_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-            outputStr += "<u>Atribuir Entidade</u>: " + Rules.getEntityName(rule.assign_entity_id) + "<br>"
+            outputStr += "<span style='color: #b5b5b5'>Atribuir Entidade:</span> " + Rules.getEntityName(rule.assign_entity_id) + "<br>"
         }
 
         if (rule.assign_account_from_id && rule.assign_account_from_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-            outputStr += "<u>Atribuir Conta Origem</u>: " + LocalDataManager.getUserAccount(rule.assign_account_from_id).name + "<br>"
+            outputStr += "<span style='color: #b5b5b5'>Atribuir Conta Origem:</span> " + LocalDataManager.getUserAccount(rule.assign_account_from_id).name + "<br>"
         }
 
         if (rule.assign_account_to_id && rule.assign_account_to_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-            outputStr += "<u>Atribuir Conta Destino</u>: " + LocalDataManager.getUserAccount(rule.assign_account_to_id).name + "<br>"
+            outputStr += "<span style='color: #b5b5b5'>Atribuir Conta Destino:</span> " + LocalDataManager.getUserAccount(rule.assign_account_to_id).name + "<br>"
         }
 
         return outputStr
