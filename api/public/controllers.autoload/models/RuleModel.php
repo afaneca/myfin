@@ -120,7 +120,7 @@ class RuleModel extends Entity
                 $ruleValue = $rule["matcher_type_value"];
 
                 if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
-                    if (RuleModel::contains($ruleValue, $trx["type"])) {
+                    if (array_key_exists("type", $trx) && RuleModel::contains($ruleValue, $trx["type"])) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
@@ -134,14 +134,14 @@ class RuleModel extends Entity
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
-                    if ($ruleValue == $trx["type"]) {
+                    if (array_key_exists("type", $trx) && $ruleValue == $trx["type"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
-                    if ($ruleValue != $trx["type"]) {
+                    if (array_key_exists("type", $trx) && $ruleValue != $trx["type"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
@@ -208,14 +208,16 @@ class RuleModel extends Entity
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
-                    if ($ruleValue == $trx["accounts_account_from_id"]) {
+                    if (array_key_exists("accounts_account_from_id", $trx)
+                        && $ruleValue == $trx["accounts_account_from_id"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
-                    if ($ruleValue != $trx["accounts_account_from_id"]) {
+                    if (array_key_exists("accounts_account_from_id", $trx)
+                        && $ruleValue != $trx["accounts_account_from_id"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
