@@ -127,6 +127,9 @@ var Transactions = {
                             ${typesArr.map(type => Transactions.renderTypesSelectOptions(type))
           .join('')}
                         </select>
+                        <a id="auto-categorize-btn" class="waves-effect waves-light btn purple-gradient-bg scale-transition scale-out"
+                        onclick="Transactions.autoCategorizeButtonClicked()"
+                        style="margin: 10px 0;"><i class="material-icons left">lightbulb_outline</i>Auto-Categorizar</a>
                     </div>
                 </div>
                 
@@ -241,13 +244,67 @@ var Transactions = {
               .select2('val', lastTrxInputData.trxType);
           }
         }
+        $('textarea#trx-description')
+          .on('change keyup paste', () => {
+            const description = $('textarea#trx-description')
+              .val();
+            if (description !== '') {
+              $('a#auto-categorize-btn')
+                .removeClass('scale-transition')
+                .removeClass('scale-out')
+                .addClass('scale-transition')
+                .addClass('scale-in');
+            } else {
+              $('a#auto-categorize-btn')
+                .removeClass('scale-transition')
+                .removeClass('scale-in')
+                .addClass('scale-transition')
+                .addClass('scale-out');
+            }
+          });
         Transactions.manageAccountsSelectAvailability();
-
       },
       (error) => {
         LoadingManager.hideLoading();
       });
 
+  },
+  autoCategorizeButtonClicked: () => {
+    const description = $('textarea#trx-description')
+      .val();
+    LoadingManager.showLoading();
+    TransactionServices.autoCategorizeTrxByDescription(description,
+      (fillData) => {
+        // SUCCESS
+        LoadingManager.hideLoading();
+        Transactions.autoFillAddNewTransactionFields(fillData);
+      }, (err) => {
+        // ERROR
+        LoadingManager.hideLoading();
+        DialogUtils.showErrorMessage();
+      });
+  },
+  autoFillAddNewTransactionFields: (fillData) => {
+    if (fillData['selectedCategoryID']) {
+      $('select.select-trxs-categories')
+        .val(fillData['selectedCategoryID'])
+        .change();
+    }
+    if (fillData['selectedEntityID']) {
+      $('select.select-trxs-entities')
+        .val(fillData['selectedEntityID'])
+        .change();
+    }
+    if (fillData['selectedAccountFromID']) {
+      $('select.select-trxs-account_from')
+        .val(fillData['selectedAccountFromID'])
+        .change();
+    }
+    if (fillData['selectedAccountToID']) {
+      $('select.select-trxs-account_to')
+        .val(fillData['selectedAccountToID'])
+        .change();
+    }
   },
   manageAccountsSelectAvailability: () => {
     const accountFromSelect = $('select.select-trxs-account_from');

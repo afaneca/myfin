@@ -214,6 +214,30 @@ var TransactionServices = {
             }
         });
     },
+    autoCategorizeTrxByDescription: (description, successCallback, errorCallback) => {
+        var pageUrl = REST_SERVER_PATH + "trxs/auto-cat-description"
+
+        $.ajax({
+            async: true,
+            type: "POST",
+            dataType: "json",
+            cache: false,
+            headers: {
+                authusername: Cookies.get("username"),
+                sessionkey: Cookies.get("sessionkey"),
+            },
+            data: {
+                description,
+            },
+            url: pageUrl,
+            success: function (response) {
+                if (successCallback) successCallback(response)
+            },
+            error: function (response) {
+                if (errorCallback) errorCallback(response)
+            }
+        });
+    },
 }
 
 //# sourceURL=js/actions/transactionServices.js
