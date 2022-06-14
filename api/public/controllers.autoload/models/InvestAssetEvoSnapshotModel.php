@@ -251,14 +251,42 @@ class InvestAssetEvoSnapshotModel extends Entity
             /*echo "\nTOTAL Units:" . $initialSnapshot["units"];
             echo "\n-------------------------------------------\n";*/
 
-            /* Automatically add snapshots for current & next 2 months in order to create a buffer*/
+            /* Automatically add snapshots for current & next 6 months in order to create a buffer*/
+
             InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $month, $year,
                 $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
-            InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, ($month < 12) ? $month + 1 : 1, ($month < 12) ? $year : $year + 1,
+            /*echo "$month/$year\n";*/
+            $nextMonth = ($month + 1 > 12) ? 1 : ($month + 1);
+            $nextMonthsYear = ($nextMonth > 12) ? $year + 1 : $year;
+            InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $nextMonth, $nextMonthsYear,
                 $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
-            InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, ($month < 11) ? $month + 2 : 1, ($month < 11) ? $year : $year + 1,
+            /*echo "$nextMonth/$nextMonthsYear\n";*/
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $nextMonth, $nextMonthsYear,
                 $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
-
+            /*echo "$nextMonth/$nextMonthsYear\n";*/
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $nextMonth, $nextMonthsYear,
+                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
+            /*echo "$nextMonth/$nextMonthsYear\n";*/
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $nextMonth, $nextMonthsYear,
+                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
+            /*echo "$nextMonth/$nextMonthsYear\n";*/
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $nextMonth, $nextMonthsYear,
+                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
+            /*echo "$nextMonth/$nextMonthsYear\n";*/
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::addCustomBalanceSnapshot($assetId, $nextMonth, $nextMonthsYear,
+                $initialSnapshot["units"], $initialSnapshot["invested_amount"], $initialSnapshot["current_value"], $initialSnapshot["withdrawn_amount"], $transactional);
+            /*echo "$nextMonth/$nextMonthsYear";*/
+            /*die();*/
         }
         /*die();*/
 
