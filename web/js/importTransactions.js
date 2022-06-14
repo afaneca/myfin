@@ -38,7 +38,7 @@ var ImportTransactions = {
       name: 'clipboard-read'
     })
       .then(permissionStatus => {
-        if (permissionStatus.state !== 'granted') {
+        if (permissionStatus.state !== 'granted' && permissionStatus.state !== 'prompt') {
           DialogUtils.showGenericMessage('Para poder continuar a importação, tem que aceitar a permissão de leitura do clipboard!');
         } else {
           ImportTransactions.readFromClipboard();
