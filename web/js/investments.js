@@ -340,7 +340,7 @@ var Investments = {
           LoadingManager.hideLoading();
           $('#modal-global')
             .modal('close');
-          Investments.changeTabs('tab-inv-assets');
+          Investments.changeTabs('tab-inv-transactions');
         }, (err) => {
           // FAILURE
           LoadingManager.hideLoading();
