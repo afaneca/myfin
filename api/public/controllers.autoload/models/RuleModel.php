@@ -4,6 +4,8 @@ require_once 'consts.php';
 
 class RuleModel extends Entity
 {
+    public const RULES_MATCHING_IGNORE = "RULES_MATCHING_IGNORE";
+
     protected static $table = "rules";
 
     protected static $columns = [
@@ -40,7 +42,8 @@ class RuleModel extends Entity
             $hasMatched = false;
 
             /* description matcher */
-            if ($rule["matcher_description_operator"] && $rule["matcher_description_value"]) {
+            if ($rule["matcher_description_operator"] && $rule["matcher_description_value"]
+                && $trx["description"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_description_operator"];
                 $ruleValue = $rule["matcher_description_value"];
@@ -77,7 +80,8 @@ class RuleModel extends Entity
             }
 
             /* amount matcher */
-            if ($rule["matcher_amount_operator"] && $rule["matcher_amount_value"]) {
+            if ($rule["matcher_amount_operator"] && $rule["matcher_amount_value"]
+                && $trx["amount"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_amount_operator"];
                 $ruleValue = $rule["matcher_amount_value"];
@@ -114,7 +118,8 @@ class RuleModel extends Entity
             }
 
             /* type matcher */
-            if ($rule["matcher_type_operator"] && $rule["matcher_type_value"]) {
+            if ($rule["matcher_type_operator"] && $rule["matcher_type_value"]
+                && $trx["type"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_type_operator"];
                 $ruleValue = $rule["matcher_type_value"];
@@ -151,7 +156,8 @@ class RuleModel extends Entity
             }
 
             /* account_to_id matcher */
-            if ($rule["matcher_account_to_id_operator"] && $rule["matcher_account_to_id_value"]) {
+            if ($rule["matcher_account_to_id_operator"] && $rule["matcher_account_to_id_value"]
+                && $trx["accounts_account_to_id"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_account_to_id_operator"];
                 $ruleValue = $rule["matcher_account_to_id_value"];
@@ -188,7 +194,8 @@ class RuleModel extends Entity
             }
 
             /* account_from_id matcher */
-            if ($rule["matcher_account_from_id_operator"] && $rule["matcher_account_from_id_value"]) {
+            if ($rule["matcher_account_from_id_operator"] && $rule["matcher_account_from_id_value"]
+                && $trx["accounts_account_from_id"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_account_from_id_operator"];
                 $ruleValue = $rule["matcher_account_from_id_value"];
