@@ -887,8 +887,8 @@ class Transactions
             $trx["type"] = RuleModel::RULES_MATCHING_IGNORE;
             $trx["selectedCategoryID"] = RuleModel::RULES_MATCHING_IGNORE;
             $trx["selectedEntityID"] = RuleModel::RULES_MATCHING_IGNORE;
-            $trx["accountFromID"] = RuleModel::RULES_MATCHING_IGNORE;
-            $trx["accountToID"] = RuleModel::RULES_MATCHING_IGNORE;
+            $trx["accounts_account_to_id"] = RuleModel::RULES_MATCHING_IGNORE;
+            $trx["accounts_account_from_id"] = RuleModel::RULES_MATCHING_IGNORE;
 
             $foundRule = RuleModel::getRuleForTransaction($userID, $trx, true);
             /*print_r($foundRule);
