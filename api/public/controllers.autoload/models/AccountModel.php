@@ -329,6 +329,38 @@ class AccountModel extends Entity
         }
     }
 
+    public static function getAmountForInvestmentAccountsInMonth($categoryId, $month, $year, $transactional = false)
+    {
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT sum(if(transactions.type = 'I', amount, 0)) as 'account_balance_credit', sum(if(transactions.type = 'E' OR (transactions.type = 'T'), amount, 0)) as 'account_balance_debit' " .
+            "FROM transactions INNER JOIN accounts on accounts.account_id = transactions.accounts_account_from_id OR accounts.account_id = transactions.accounts_account_to_id " .
+            "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
+            " AND categories_category_id = :categoryId " .
+            "AND (accounts.type = 'INVAC' AND transactions.type != 'T') ";
+
+        $tz = new DateTimeZone('UTC');
+        $beginTimestamp = new DateTime("$year-$month-01", $tz);
+        $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t 23:59:59'), $tz);
+
+        $values = array();
+        /*$values[':invac'] = "INVAC";
+        $values[':transferTag'] = DEFAULT_TYPE_TRANSFER_TAG;*/
+        $values[':categoryId'] = $categoryId;
+        $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
+        $values[':endTimestamp'] = $endTimestamp->getTimestamp();
+
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
     private static function transformBalanceSnapshotsList($fetchAll)
     {
     }
