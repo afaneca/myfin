@@ -190,8 +190,11 @@ class Budgets
                 $type = ($category["type"] == 'D') ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
 
                 $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse, true)[0];
-                $current_amount_credit = $calculatedAmounts["category_balance_credit"];
-                $current_amount_debit = $calculatedAmounts["category_balance_debit"];
+                $calculatedAmountsFromInvestmentAccounts = AccountModel::getAmountForInvestmentAccountsInMonth($category["category_id"], $monthToUse, $yearToUse, true)[0];
+                $creditFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_credit"]; // Unrealized gains
+                $expensesFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_debit"]; // Unrealized losses
+                $current_amount_credit = $calculatedAmounts["category_balance_credit"] - $creditFromInvestmentAccounts; // remove unrealized gains from budget calcs
+                $current_amount_debit = $calculatedAmounts["category_balance_debit"] - $expensesFromInvestmentAccounts; // remove unrealized losses from budget calcs
                 $category["current_amount_credit"] = abs(Input::convertIntegerToFloatAmount($current_amount_credit));
                 $category["current_amount_debit"] = abs(Input::convertIntegerToFloatAmount($current_amount_debit));
 

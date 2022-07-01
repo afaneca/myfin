@@ -164,15 +164,18 @@ class BudgetModel extends Entity
 
         foreach ($categories as &$category) {
             $monthToUse = $month;
-            $yearToUser = $year;
+            $yearToUse = $year;
 
             if ($isOpen) {
                 $amount_credit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_credit"]));
                 $amount_debit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_debit"]));
             } else {
-                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
-                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
-                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse)[0];
+                $calculatedAmountsFromInvestmentAccounts = AccountModel::getAmountForInvestmentAccountsInMonth($category["category_id"], $monthToUse, $yearToUse, true)[0];
+                $creditFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_credit"]; // Unrealized gains
+                $expensesFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_debit"]; // Unrealized losses
+                $amount_credit = abs($calculatedAmounts["category_balance_credit"] - $creditFromInvestmentAccounts); // remove unrealized gains from budget calcs
+                $amount_debit = abs($calculatedAmounts["category_balance_debit"] - $expensesFromInvestmentAccounts); // remove unrealized losses from budget calcs
             }
             $balance_credit += $amount_credit;
             $balance_debit += $amount_debit;
