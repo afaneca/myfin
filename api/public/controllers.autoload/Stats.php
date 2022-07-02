@@ -131,7 +131,7 @@ class Stats
                 $year = $budget["year"];
                 if (!$lastPlannedFinalBalance) {
                     $budget["planned_initial_balance"] = floatVal(AccountModel::getBalancesSnapshotForMonthForUser($userID,
-                        ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, false));
+                        ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, true, false));
                 } else {
                     $budget["planned_initial_balance"] = $lastPlannedFinalBalance;
                 }
