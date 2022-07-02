@@ -386,6 +386,7 @@ class InvestAssets
 
             $fullInvestedValue = 0;
             $fullCurrentValue = 0;
+            $fullWithdrawnValue = 0;
             $currentValuesByAssetType = []; // ex: ["ETF" => "1030.42"]
             $lastYearsValue = 0; // the value of all assets combined at last day of previous year
 
@@ -399,12 +400,13 @@ class InvestAssets
                 $snapshot = InvestAssetEvoSnapshotModel::getAssetSnapshotAtMonth($month, $year, $asset["asset_id"]);
                 $investedValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["invested_amount"] : 0);
                 $currentValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["current_value"] : 0);
+                $withdrawnAmount = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["withdrawn_amount"] : 0);
 
                 $asset["invested_amount"] = $investedValue;
                 $asset["current_value"] = $currentValue;
                 $asset["absolute_roi_value"] = $currentValue - $investedValue;
 
-                $roiValue = $currentValue - $investedValue;
+                $roiValue = $currentValue - $investedValue + $withdrawnAmount;
                 $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
                 $asset["relative_roi_percentage"] = $roiPercentage;
                 $lastYearsSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], 12, $currentYear - 1);
@@ -414,6 +416,7 @@ class InvestAssets
 
                 $fullInvestedValue += $investedValue;
                 $fullCurrentValue += $currentValue;
+                $fullWithdrawnValue += $withdrawnAmount;
 
                 if (array_key_exists($asset["type"], $currentValuesByAssetType)) {
                     // Key already exists in array -> increment value
@@ -430,8 +433,10 @@ class InvestAssets
                         "type" => $asset["type"],
                         "units" => floatval($asset["units"]),
                         "broker" => $asset["broker"],
-                        "invested_value" => $investedValue,
+                        "original_invested_value" => $investedValue,
+                        "invested_value" => $investedValue - $withdrawnAmount,
                         "current_value" => $currentValue,
+                        "withdrawn_value" => $withdrawnAmount,
                         "absolute_roi_value" => $roiValue,
                         "relative_roi_percentage" => $roiPercentage,
                     ]
@@ -440,7 +445,7 @@ class InvestAssets
 
             $res["total_invested_value"] = $fullInvestedValue;
             $res["total_current_value"] = $fullCurrentValue;
-            $res["global_roi_value"] = $fullCurrentValue - $fullInvestedValue;
+            $res["global_roi_value"] = $fullCurrentValue - $fullInvestedValue + $fullWithdrawnValue;
             $res["global_roi_percentage"] = ($fullInvestedValue != 0) ? ($res["global_roi_value"] / $fullInvestedValue) * 100 : "-";
 
 
@@ -453,7 +458,7 @@ class InvestAssets
             /*$res["AAA_expected_break_even_value"] = $expectedBreakEvenValue;*/
 
             $res["current_year_roi_value"] = $fullCurrentValue - $expectedBreakEvenValue;
-            $res["current_year_roi_percentage"] = ($expectedBreakEvenValue != 0) ? ($res["current_year_roi_value"] / $expectedBreakEvenValue) * 100 : "-";
+            $res["current_year_roi_percentage"] = ($expectedBreakEvenValue != 0) ? ($res["current_year_roi_value"] / $expectedBreakEvenValue) * 100 : $res["global_roi_percentage"];
             $res["monthly_snapshots"] = InvestAssetEvoSnapshotModel::getAllAssetSnapshotsForUser($userID, false);
 
             $res["current_value_distribution"] = array();
@@ -465,11 +470,11 @@ class InvestAssets
                     [$assetType => $percentage]);
             }
             // Sort assets array by absolute roi value (DESC)
-            usort($assetsArr, function ($first, $second) {
+            usort($fullAssetsDetailsArr, function ($first, $second) {
                 return $first["absolute_roi_value"] < $second["absolute_roi_value"];
             });
             $res["top_performing_assets"] = /*array_slice(*/
-                $assetsArr/*, 0, 3)*/
+                $fullAssetsDetailsArr/*, 0, 3)*/
             ;
 
             $yearOfFirstSnapshotForUser = $currentYear;
