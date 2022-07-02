@@ -37,6 +37,7 @@ var Stats = {
         budget['planned_final_balance_assets_only'] = initialAssetsValue
           + StringUtils.convertIntegerToFloat((StringUtils.convertFloatToInteger(budget.planned_final_balance) - StringUtils.convertFloatToInteger(budget.planned_initial_balance)));
         initialAssetsValue = budget['planned_final_balance_assets_only'];
+        budget['planned_final_balance_operating_funds_only'] = budget['planned_final_balance_assets_only'] - Stats.getTotalBalanceFromInvestmentAccounts();
       }
       let chartData = budgetsList.map(budget => parseFloat(budget.planned_final_balance)
         .toFixed(2));
@@ -676,7 +677,8 @@ var Stats = {
                     <th>Mês</th>
                     <th>Balanço Prévio<span class="projections-table-footnotes">*</span></th>
                     <th>Balanço Final<span class="projections-table-footnotes">*</span></th>
-                    <th>Balanço Final - ATIVOS<span class="projections-table-footnotes">**</span></th>
+                    <th>Balanço Final — ATIVOS<span class="projections-table-footnotes">**</span></th>
+                    <th>Balanço Final — Fundo de Maneio<span class="projections-table-footnotes">***</span></th>
                     <th>Crescimento</th>
                 </tr>
             </thead>
@@ -692,6 +694,7 @@ var Stats = {
         </style>
         <p class="right-align grey-text text-accent-4 projections-table-footnotes">* Este é um valor projetado através dos dados orçamentados</p>
         <p class="right-align grey-text text-accent-4 projections-table-footnotes">** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo</p>
+        <p class="right-align grey-text text-accent-4 projections-table-footnotes">*** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo e contas de investimento</p>
       `;
   },
   renderPatrimonyProjectionsTableRow: (budget) => {
@@ -700,7 +703,8 @@ var Stats = {
             <td>${budget.month}/${budget.year}</td>
             <td>${StringUtils.formatMoney(budget.planned_initial_balance)}</td>
             <td>${StringUtils.formatMoney(budget.planned_final_balance)}</td>
-            <td>${StringUtils.formatMoney(budget.planned_final_balance_assets_only/*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/)}</td>
+            <td>${StringUtils.formatMoney(budget.planned_final_balance_assets_only)}</td>
+            <td>${StringUtils.formatMoney(budget.planned_final_balance_operating_funds_only)}</td>
             <td>${(budget.planned_initial_balance) ? Stats.calculateGrowthPercentage(budget.planned_initial_balance, budget.planned_final_balance) : '-'}</td>
         </tr>
       `;
@@ -712,6 +716,13 @@ var Stats = {
     }, 0);
 
     return totalBalance - debtTotals;
+  },
+  getTotalBalanceFromInvestmentAccounts: () => {
+    const investAccounts = LocalDataManager.getInvestmentAccounts();
+    if (!investAccounts) return 0;
+    return investAccounts.reduce((acc, val) => {
+      return acc + parseFloat(val.balance);
+    }, 0);
   },
   setupPatrimonyProjectionsLineChart: (chartData, chartLabels, extraChartData) => {
     var ctx = document.getElementById('chart_pie_patrimony_projection')

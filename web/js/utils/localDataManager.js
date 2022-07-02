@@ -44,6 +44,13 @@ var LocalDataManager = {
       return acc.type === 'CREAC';
     });
   },
+  getInvestmentAccounts: () => {
+    const accsArr = LocalDataManager.getUserAccounts();
+
+    return accsArr.filter(function (acc) {
+      return acc.type === 'INVAC';
+    });
+  },
 
   // THEME
   setCurrentTheme: (theme) => {

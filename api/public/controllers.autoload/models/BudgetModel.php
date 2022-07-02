@@ -106,8 +106,11 @@ class BudgetModel extends Entity
                 $amount_debit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_debit"]));
             } else {
                 $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
-                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
-                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);
+                $calculatedAmountsFromInvestmentAccounts = AccountModel::getAmountForInvestmentAccountsInMonth($category["category_id"], $monthToUse, $yearToUser, true)[0];
+                $creditFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_credit"]; // Unrealized gains
+                $expensesFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_debit"]; // Unrealized losses
+                $amount_credit = abs($calculatedAmounts["category_balance_credit"]) - $creditFromInvestmentAccounts; // remove unrealized gains from budget calcs
+                $amount_debit = abs($calculatedAmounts["category_balance_debit"]) - $expensesFromInvestmentAccounts; // remove unrealized losses from budget calcs
             }
             $balance += $amount_credit;
             $balance -= $amount_debit;
@@ -137,7 +140,7 @@ class BudgetModel extends Entity
 
         $initialBalance =
             AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12,
-                ($month > 1) ? $year : $year - 1, false);
+                ($month > 1) ? $year : $year - 1, true, false);
         $finalBalance = $initialBalance + $budgetBalance;
 
         if ($initialBalance == 0) return "NaN";
