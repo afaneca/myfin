@@ -12,7 +12,7 @@ var InvestmentTransactionsTableFunc = {
                 <th>Tipo</th>
                 <th>Unidades</th>
                 <th>Broker</th>
-                <th>Valor Investido</th>
+                <th>Valor</th>
                 <th>Observações</th>
                 <th>Ações</th>
             </tr>
