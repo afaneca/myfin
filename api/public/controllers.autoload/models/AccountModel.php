@@ -393,7 +393,7 @@ class AccountModel extends Entity
     }
 
     public
-    static function getBalancesSnapshotForMonthForUser($userID, $month, $year, $transactional = false)
+    static function getBalancesSnapshotForMonthForUser($userID, $month, $year, $includeInvestmentAccounts = true, $transactional = false)
     {
         /*echo "Get balance snapshot for month $month and year $year for user $userID";*/
         /*$db = new EnsoDB($transactional);
@@ -420,12 +420,15 @@ class AccountModel extends Entity
         }*/
 
         $totalBalance = 0;
-        $accsArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"], $transactional);
+        $accsArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "type"], $transactional);
         /*$accsArr = AccountModel::getAllAccountsForUserWithAmounts($userID, false, $transactional);*/
 
 
         foreach ($accsArr as $acc) {
-            $balanceSnapshotAtMonth = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $month, $year, $transactional)["balance"];
+            if ($includeInvestmentAccounts || $acc["type"] != "INVAC")
+                $balanceSnapshotAtMonth = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $month, $year, $transactional)["balance"];
+            else
+                $balanceSnapshotAtMonth = 0;
             /*echo "\n-> balance snapshot at month for account " . $acc["account_id"] . ": $balanceSnapshotAtMonth";*/
             if ($balanceSnapshotAtMonth)
                 $totalBalance += $balanceSnapshotAtMonth;

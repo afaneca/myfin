@@ -177,7 +177,7 @@ class Budgets
             $month = intval($list["month"]);
             $year = intval($list["year"]);
 
-            $list["initial_balance"] = AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, false);
+            $list["initial_balance"] = AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, true, false);
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
 
             foreach ($list["categories"] as &$category) {
