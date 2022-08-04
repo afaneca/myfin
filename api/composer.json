@@ -32,6 +32,7 @@
         "vlucas/phpdotenv": "^4.1"
     },
     "require-dev": {
+        "odan/phinx-migrations-generator": "^5.5",
         "phpunit/phpunit": "^7.5"
     },
     "config": {
