@@ -7,7 +7,7 @@ class Initial extends Phinx\Migration\AbstractMigration
     public function change()
     {
         $this->execute("ALTER DATABASE CHARACTER SET 'utf8mb4';");
-        $this->execute("ALTER DATABASE COLLATE='utf8mb4_0900_ai_ci';");
+        $this->execute("ALTER DATABASE COLLATE='utf8mb4_general_ci';");
         $this->table('accounts', [
                 'id' => false,
                 'primary_key' => ['account_id'],
