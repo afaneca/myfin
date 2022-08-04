@@ -51,12 +51,9 @@ Here's some of the features currently in development or planned for the near fut
 - & much more...
 
 # Getting Started
-This project relies on PHP's Slim framework for its backend and there's where most of the initial setup will take place if you want to deploy this solution to your own server.
-Here's the steps:
-1. Create a MySQL/MariaDB Database for myfin with the same structure as [depicted here](https://github.com/aFaneca/myfin/blob/master/model/myfin_model.mwb).
-2. Upload this project into your server
-3. Setup your webserver to work with slim ([Apache](http://www.slimframework.com/docs/v4/start/web-servers.html#apache-configuration) or [Nginx](http://www.slimframework.com/docs/v4/start/web-servers.html#nginx-configuration))
-4. Setup your webserver to correctly resolve your web app (set its root to %YOUR_SERVER%/%YOUR_DOMAINS_DIR%/myfin/web)
+This project relies on PHP's Slim framework for its backend and there's where most of the initial setup will take place if you want to deploy this solution to your own server. 
+
+[Here](https://github.com/aFaneca/myfin/wiki/Project-Setup#initial-setup) you can find the full documentation on the first steps to get started.
 
 # Contributing
 This was never meant to be anything other than a little passion project of mine. However, if you're interested in taking this project and make it your own or add something to it, you're more than welcome to do so. Just get in touch :)
