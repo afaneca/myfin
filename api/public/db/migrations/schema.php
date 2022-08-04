@@ -4,7 +4,7 @@ return array (
   'database' => 
   array (
     'DEFAULT_CHARACTER_SET_NAME' => 'utf8mb4',
-    'DEFAULT_COLLATION_NAME' => 'utf8mb4_0900_ai_ci',
+    'DEFAULT_COLLATION_NAME' => 'utf8mb4_general_ci',
   ),
   'tables' => 
   array (
@@ -376,7 +376,19 @@ return array (
           ),
         ),
       ),
-      'foreign_keys' => NULL,
+      'foreign_keys' => 
+      array (
+        'fk_accounts_users1' => 
+        array (
+          'TABLE_NAME' => 'accounts',
+          'COLUMN_NAME' => 'users_user_id',
+          'CONSTRAINT_NAME' => 'fk_accounts_users1',
+          'REFERENCED_TABLE_NAME' => 'users',
+          'REFERENCED_COLUMN_NAME' => 'user_id',
+          'UPDATE_RULE' => 'NO ACTION',
+          'DELETE_RULE' => 'NO ACTION',
+        ),
+      ),
     ),
     'balances' => 
     array (
@@ -2031,54 +2043,6 @@ return array (
             'Non_unique' => '1',
             'Key_name' => 'fk_invest_asset_evo_snapshot_invest_assets1_idx',
             'Seq_in_index' => '1',
-            'Column_name' => 'invest_assets_asset_id',
-            'Collation' => 'A',
-            'Sub_part' => NULL,
-            'Packed' => NULL,
-            'Null' => '',
-            'Index_type' => 'BTREE',
-            'Comment' => '',
-            'Index_comment' => '',
-          ),
-        ),
-        'PRIMARY' => 
-        array (
-          1 => 
-          array (
-            'Table' => 'invest_asset_evo_snapshot',
-            'Non_unique' => '0',
-            'Key_name' => 'PRIMARY',
-            'Seq_in_index' => '1',
-            'Column_name' => 'month',
-            'Collation' => 'A',
-            'Sub_part' => NULL,
-            'Packed' => NULL,
-            'Null' => '',
-            'Index_type' => 'BTREE',
-            'Comment' => '',
-            'Index_comment' => '',
-          ),
-          2 => 
-          array (
-            'Table' => 'invest_asset_evo_snapshot',
-            'Non_unique' => '0',
-            'Key_name' => 'PRIMARY',
-            'Seq_in_index' => '2',
-            'Column_name' => 'year',
-            'Collation' => 'A',
-            'Sub_part' => NULL,
-            'Packed' => NULL,
-            'Null' => '',
-            'Index_type' => 'BTREE',
-            'Comment' => '',
-            'Index_comment' => '',
-          ),
-          3 => 
-          array (
-            'Table' => 'invest_asset_evo_snapshot',
-            'Non_unique' => '0',
-            'Key_name' => 'PRIMARY',
-            'Seq_in_index' => '3',
             'Column_name' => 'invest_assets_asset_id',
             'Collation' => 'A',
             'Sub_part' => NULL,
@@ -3826,30 +3790,6 @@ return array (
           'COLLATION_NAME' => NULL,
           'COLUMN_TYPE' => 'bigint',
           'COLUMN_KEY' => 'MUL',
-          'EXTRA' => '',
-          'PRIVILEGES' => 'select,insert,update,references',
-          'COLUMN_COMMENT' => '',
-          'GENERATION_EXPRESSION' => '',
-          'SRS_ID' => NULL,
-        ),
-        'is_essential' => 
-        array (
-          'TABLE_CATALOG' => 'def',
-          'TABLE_NAME' => 'transactions',
-          'COLUMN_NAME' => 'is_essential',
-          'ORDINAL_POSITION' => '10',
-          'COLUMN_DEFAULT' => NULL,
-          'IS_NULLABLE' => 'YES',
-          'DATA_TYPE' => 'tinyint',
-          'CHARACTER_MAXIMUM_LENGTH' => NULL,
-          'CHARACTER_OCTET_LENGTH' => NULL,
-          'NUMERIC_PRECISION' => '3',
-          'NUMERIC_SCALE' => '0',
-          'DATETIME_PRECISION' => NULL,
-          'CHARACTER_SET_NAME' => NULL,
-          'COLLATION_NAME' => NULL,
-          'COLUMN_TYPE' => 'tinyint(1)',
-          'COLUMN_KEY' => '',
           'EXTRA' => '',
           'PRIVILEGES' => 'select,insert,update,references',
           'COLUMN_COMMENT' => '',
