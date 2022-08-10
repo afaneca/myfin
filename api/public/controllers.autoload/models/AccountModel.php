@@ -293,7 +293,7 @@ class AccountModel extends Entity
             $balance = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $month, $year, $transactional);
             array_push($accSnapshots, [
                 "account_id" => $acc["account_id"],
-                "balance" => ($balance["balance"]) ?: "0"
+                "balance" => ($balance["balance"]) ?? "0"
             ]);
         }
 
@@ -420,14 +420,15 @@ class AccountModel extends Entity
         }*/
 
         $totalBalance = 0;
-        $accsArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "type"], $transactional);
+        $accsArr = AccountModel::getWhere(["users_user_id" => $userID], ["account_id", "type"]);
         /*$accsArr = AccountModel::getAllAccountsForUserWithAmounts($userID, false, $transactional);*/
 
 
         foreach ($accsArr as $acc) {
-            if ($includeInvestmentAccounts || $acc["type"] != "INVAC")
-                $balanceSnapshotAtMonth = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $month, $year, $transactional)["balance"];
-            else
+            if ($includeInvestmentAccounts || $acc["type"] != "INVAC") {
+                $snapshotAtMonth = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $month, $year, $transactional);
+                $balanceSnapshotAtMonth = floatval($snapshotAtMonth["balance"] ?? 0);
+            } else
                 $balanceSnapshotAtMonth = 0;
             /*echo "\n-> balance snapshot at month for account " . $acc["account_id"] . ": $balanceSnapshotAtMonth";*/
             if ($balanceSnapshotAtMonth)
