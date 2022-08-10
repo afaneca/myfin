@@ -4,11 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2de0e734c59db231cad00264792aa62d",
+    "content-hash": "9077d77efc4915835be00188ddec4397",
     "packages": [
         {
             "name": "cakephp/core",
-            "version": "4.4.3",
+            "version": "4.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/core.git",
@@ -65,7 +65,7 @@
         },
         {
             "name": "cakephp/database",
-            "version": "4.4.3",
+            "version": "4.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/database.git",
@@ -120,16 +120,16 @@
         },
         {
             "name": "cakephp/datasource",
-            "version": "4.4.3",
+            "version": "4.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/datasource.git",
-                "reference": "2f890a6b8d8b33da2d26fcb486ecf5484d9ab014"
+                "reference": "f0dd560edbaf6dac8045e7804c25d2e8e6ef0d3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/datasource/zipball/2f890a6b8d8b33da2d26fcb486ecf5484d9ab014",
-                "reference": "2f890a6b8d8b33da2d26fcb486ecf5484d9ab014",
+                "url": "https://api.github.com/repos/cakephp/datasource/zipball/f0dd560edbaf6dac8045e7804c25d2e8e6ef0d3c",
+                "reference": "f0dd560edbaf6dac8045e7804c25d2e8e6ef0d3c",
                 "shasum": ""
             },
             "require": {
@@ -174,11 +174,11 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/datasource"
             },
-            "time": "2022-07-06T14:29:38+00:00"
+            "time": "2022-07-28T08:59:25+00:00"
         },
         {
             "name": "cakephp/utility",
-            "version": "4.4.3",
+            "version": "4.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/utility.git",
@@ -1237,35 +1237,40 @@
         },
         {
             "name": "slim/psr7",
-            "version": "0.5.0",
+            "version": "1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Slim-Psr7.git",
-                "reference": "99ad31f503584bc7c5a36cb0304120f1bce8983d"
+                "reference": "a47b43a8da7c0208b4c228af0cb29ea36080635a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Slim-Psr7/zipball/99ad31f503584bc7c5a36cb0304120f1bce8983d",
-                "reference": "99ad31f503584bc7c5a36cb0304120f1bce8983d",
+                "url": "https://api.github.com/repos/slimphp/Slim-Psr7/zipball/a47b43a8da7c0208b4c228af0cb29ea36080635a",
+                "reference": "a47b43a8da7c0208b4c228af0cb29ea36080635a",
                 "shasum": ""
             },
             "require": {
-                "fig/http-message-util": "^1.1.2",
-                "php": "^7.1",
+                "fig/http-message-util": "^1.1.5",
+                "php": "^7.3 || ^8.0",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0",
-                "ralouphie/getallheaders": "^3"
+                "ralouphie/getallheaders": "^3.0",
+                "symfony/polyfill-php80": "^1.23"
             },
             "provide": {
+                "psr/http-factory-implementation": "1.0",
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
+                "adriansuter/php-autoload-override": "^1.2",
                 "ext-json": "*",
-                "http-interop/http-factory-tests": "^0.5.0",
+                "http-interop/http-factory-tests": "^0.9.0",
                 "php-http/psr7-integration-tests": "dev-master",
-                "phpstan/phpstan": "^0.10",
-                "phpunit/phpunit": "^6.0|^7.0",
-                "squizlabs/php_codesniffer": "^3.3"
+                "phpspec/prophecy": "^1.14",
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpstan/phpstan": "^0.12.99",
+                "phpunit/phpunit": "^9.5",
+                "squizlabs/php_codesniffer": "^3.6"
             },
             "type": "library",
             "autoload": {
@@ -1308,9 +1313,9 @@
             ],
             "support": {
                 "issues": "https://github.com/slimphp/Slim-Psr7/issues",
-                "source": "https://github.com/slimphp/Slim-Psr7/tree/0.5.0"
+                "source": "https://github.com/slimphp/Slim-Psr7/tree/1.5"
             },
-            "time": "2019-08-18T16:50:29+00:00"
+            "time": "2021-09-22T04:33:00+00:00"
         },
         {
             "name": "slim/slim",
@@ -2687,16 +2692,16 @@
         },
         {
             "name": "odan/phinx-migrations-generator",
-            "version": "5.5.0",
+            "version": "5.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/odan/phinx-migrations-generator.git",
-                "reference": "86942d5701c9136574bbf37ab6e8c5b389ef634b"
+                "reference": "79439b5678db5b0ec1f367235ccfe298313aaad3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/odan/phinx-migrations-generator/zipball/86942d5701c9136574bbf37ab6e8c5b389ef634b",
-                "reference": "86942d5701c9136574bbf37ab6e8c5b389ef634b",
+                "url": "https://api.github.com/repos/odan/phinx-migrations-generator/zipball/79439b5678db5b0ec1f367235ccfe298313aaad3",
+                "reference": "79439b5678db5b0ec1f367235ccfe298313aaad3",
                 "shasum": ""
             },
             "require": {
@@ -2705,17 +2710,19 @@
                 "php": "^7.2 || ^8.0",
                 "riimu/kit-phpencoder": "^2.4",
                 "robmorgan/phinx": "^0.12",
-                "symfony/console": "^2.8 || ^3.0 || ^4.0 || ^5.0",
+                "symfony/console": "^2.8 || ^3.0 || ^4.0 || ^5.0 || 6.0.*",
                 "symfony/polyfill-php73": "^1.18"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.0",
-                "overtrue/phplint": "^1.1 || ^2.0 || ^3.0",
                 "phpstan/phpstan": "^1.0",
                 "phpunit/phpunit": "^8 || ^9",
                 "squizlabs/php_codesniffer": "^3.4",
-                "symfony/polyfill-uuid": "^1.24",
-                "symfony/string": "^5 || ^6"
+                "symfony/event-dispatcher": "^5 || 6.0.*",
+                "symfony/filesystem": "^5 || 6.0.*",
+                "symfony/finder": "^5 || 6.0.*",
+                "symfony/string": "^5 || 6.0.*",
+                "symfony/uid": "^5 || 6.0.*"
             },
             "bin": [
                 "./bin/phinx-migrations"
@@ -2742,9 +2749,9 @@
             ],
             "support": {
                 "issues": "https://github.com/odan/phinx-migrations-generator/issues",
-                "source": "https://github.com/odan/phinx-migrations-generator/tree/5.5.0"
+                "source": "https://github.com/odan/phinx-migrations-generator/tree/5.6.0"
             },
-            "time": "2022-02-22T17:42:52+00:00"
+            "time": "2022-08-05T21:40:16+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -4296,7 +4303,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1",
+        "php": "^7.4",
         "ext-json": "*"
     },
     "platform-dev": [],
