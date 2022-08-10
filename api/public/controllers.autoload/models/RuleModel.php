@@ -25,6 +25,7 @@ class RuleModel extends Entity
         "assign_account_to_id",
         "assign_account_from_id",
         "assign_type",
+        "assign_is_essential",
         "users_user_id"
     ];
 

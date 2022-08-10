@@ -74,3 +74,28 @@ table.dataTable thead th, table.dataTable thead td {
 label {
     color: white;
 }
+
+
+.checkbox-indigo[type="checkbox"] + label:before{
+    border: 2px solid indigo;
+    background: transparent;
+}
+.checkbox-indigo[type="checkbox"]:checked + label:before{
+    border: 2px solid transparent;
+    border-bottom: 2px solid indigo;
+    border-right: 2px solid indigo;
+    background: transparent;
+}
+.checkbox-indigo.filled-in[type="checkbox"] + label:after{
+    border: 2px solid indigo;
+    background: transparent;
+}
+.checkbox-indigo.filled-in[type="checkbox"]:checked + label:after{
+    background: indigo;
+}
+.checkbox-indigo.filled-in[type="checkbox"]:checked + label:before{
+    border-top: 2px solid transparent;
+    border-left: 2px solid transparent;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+}

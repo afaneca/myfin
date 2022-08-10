@@ -179,7 +179,7 @@ class Budgets
 
             $list["initial_balance"] = AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, true, false);
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
-
+            $list["debit_essential_trx_total"] = BudgetModel::getTotalEssentialDebitTransactionsAmountForBudget($userID, $list, false);
             foreach ($list["categories"] as &$category) {
                 $monthToUse = $list["month"];
                 $yearToUse = $list["year"];

@@ -87,6 +87,11 @@ var LayoutUtils = {
           .offset().top
       }, scrollInterval);
   },
+  buildEssentialTransactionBadge: () => {
+    return `
+      <span class="badge white-text purple-gradient-bg" style="font-size:small;" data-badge-caption="">Essencial</span>
+    `;
+  },
 };
 
 //# sourceURL=js/utils/layoutUtils.js

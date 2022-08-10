@@ -53,10 +53,10 @@ var Transactions = {
                     <span><b>${DateUtils.getDayNumberFromUnixTimestamp(trx.date_timestamp)}</b></span><br>${DateUtils.getMonthShortStringFromUnixTimestamp(trx.date_timestamp)} '${DateUtils.getShortYearFromUnixTimestamp(trx.date_timestamp)}         
                 </td>
                 <td>${Transactions.formatTypeToString(trx.type, trx.account_from_name, trx.account_to_name)}</td>
-                <td>${trx.description}<p><i class="inline-icon material-icons">folder_shared</i>  ${(trx.category_name) ? trx.category_name : '<span class=\'medium-gray-color\'>Sem Categoria</span>'}&nbsp;&nbsp;&nbsp;<i class="inline-icon material-icons">business</i> ${(trx.entity_name) ? trx.entity_name : '<span class=\'medium-gray-color\'>Sem Entidade</span>'}</p></td>
+                <td>${trx.is_essential == true ? LayoutUtils.buildEssentialTransactionBadge() : ''}  ${trx.description}<p><i class="inline-icon material-icons">folder_shared</i>  ${(trx.category_name) ? trx.category_name : '<span class=\'medium-gray-color\'>Sem Categoria</span>'}&nbsp;&nbsp;&nbsp;<i class="inline-icon material-icons">business</i> ${(trx.entity_name) ? trx.entity_name : '<span class=\'medium-gray-color\'>Sem Entidade</span>'}</p></td>
                 <td>${Transactions.formatCurrencyColumn(trx.type, StringUtils.formatMoney(trx.amount))}</td>
                 <td>
-                    <i onClick="Transactions.showEditTransactionModal(${trx.transaction_id}, ${trx.amount}, ${trx.date_timestamp}, ${trx.entity_id}, ${trx.categories_category_id}, ${trx.accounts_account_from_id}, ${trx.accounts_account_to_id}, '${trx.type}', '${StringUtils.removeLineBreaksFromString(trx.description)}')" class="material-icons table-action-icons">create</i>
+                    <i onClick="Transactions.showEditTransactionModal(${trx.transaction_id}, ${trx.amount}, ${trx.date_timestamp}, ${trx.entity_id}, ${trx.categories_category_id}, ${trx.accounts_account_from_id}, ${trx.accounts_account_to_id}, '${trx.type}', '${StringUtils.removeLineBreaksFromString(trx.description)}', ${trx.is_essential})" class="material-icons table-action-icons">create</i>
                     <i onClick="Transactions.showRemoveTransactionModal(${trx.transaction_id})" class="material-icons table-action-icons" style="margin-left:10px">delete</i>
                 </td>
             </tr>
@@ -120,6 +120,12 @@ var Transactions = {
                 <div class="row row-no-margin-bottom">
                     <div class="input-field col s8">
                         <h4>Adicionar nova transação</h4>
+                        <p>
+                          <label>
+                            <input id="cb-essential" type="checkbox" class="checkbox-indigo filled-in" />
+                            <span>Essencial</span>
+                          </label>
+                        </p>
                     </div>
                     <div class="input-field col s4">
                         <span class="select2-top-label">Tipo de Transação</span>
@@ -130,6 +136,7 @@ var Transactions = {
                         <a id="auto-categorize-btn" class="waves-effect waves-light btn purple-gradient-bg scale-transition scale-out"
                         onclick="Transactions.autoCategorizeButtonClicked()"
                         style="margin: 10px 0;"><i class="material-icons left">lightbulb_outline</i>Auto-Categorizar</a>
+                        
                     </div>
                 </div>
                 
@@ -305,6 +312,11 @@ var Transactions = {
         .val(fillData['selectedAccountToID'])
         .change();
     }
+    if (fillData['isEssential'] == true) {
+      $('input#cb-essential')
+        .prop('checked', 'checked')
+        .change();
+    }
   },
   manageAccountsSelectAvailability: () => {
     const accountFromSelect = $('select.select-trxs-account_from');
@@ -370,6 +382,8 @@ var Transactions = {
       .val();
     const type = $('select.select-trxs-types')
       .val();
+    const isEssential = $('input#cb-essential')
+      .is(':checked');
     let account_from_id;
     let account_to_id;
     switch (type) {
@@ -410,7 +424,7 @@ var Transactions = {
 
     LoadingManager.showLoading();
     LocalDataManager.setLastTrxInputData(type, account_from_id, account_to_id, catID, entID);
-    TransactionServices.addTransaction(amount, type, description, entID, account_from_id, account_to_id, catID, date_timestamp,
+    TransactionServices.addTransaction(amount, type, description, entID, account_from_id, account_to_id, catID, date_timestamp, isEssential,
       (response) => {
         // SUCCESS
         LoadingManager.hideLoading();
@@ -459,7 +473,7 @@ var Transactions = {
         DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
       };
   },
-  showEditTransactionModal: (trxID, selectedAmount, selectedDateTimestamp, selectedEntityID, selectedCategoryID, selectedAccountFromID, selectedAccountToID, selectedTypeID, selectedDescription) => {
+  showEditTransactionModal: (trxID, selectedAmount, selectedDateTimestamp, selectedEntityID, selectedCategoryID, selectedAccountFromID, selectedAccountToID, selectedTypeID, selectedDescription, isEssential) => {
 
     LoadingManager.showLoading();
     TransactionServices.getAddTransactionStep0(
@@ -476,6 +490,14 @@ var Transactions = {
                     <div class="row row-no-margin-bottom">
                         <div class="input-field col s8">
                             <h4>Editar transação <b>#${trxID}</b></h4>
+                            <p>
+                          <label>
+                            <input id="cb-essential" type="checkbox"
+                             ${isEssential == true ? 'checked="checked"' : ''}
+                             class="checkbox-indigo filled-in" />
+                            <span>Essencial</span>
+                          </label>
+                        </p>
                         </div>
                         <div class="input-field col s4">
                             <span class="select2-top-label">Tipo de Transação</span>
@@ -599,6 +621,14 @@ var Transactions = {
                                     </select>
                                 </div> 
                             </div>
+                            <p>
+                                      <label>
+                                        <input id="cb-essential-split" type="checkbox"
+                                         ${isEssential == true ? 'checked="checked"' : ''}
+                                         class="checkbox-indigo filled-in" />
+                                        <span>Essencial</span>
+                                      </label>
+                                    </p>
                         </div>
                         
                     </form>
@@ -737,6 +767,9 @@ var Transactions = {
       .val();
     const new_type = $('select.select-trxs-types')
       .val();
+
+    const new_is_essential = $('input#cb-essential')
+      .is(':checked');
     let new_account_from_id;
     let new_account_to_id;
     switch (new_type) {
@@ -772,6 +805,7 @@ var Transactions = {
     let split_account_from = null;
     let split_account_to = null;
     let split_description = null;
+    let split_is_essential = new_is_essential;
     const wrapperLocator = $('div#split-trx-wrapper');
 
     let isSplit = false;
@@ -792,6 +826,9 @@ var Transactions = {
         .val();
       split_description = StringUtils.removeLineBreaksFromString($('textarea#trx-description2')
         .val());
+      split_is_essential = $('input#cb-essential-split')
+        .is(':checked');
+      debugger
     }
 
     if (!ValidationUtils.checkIfFieldsAreFilled([new_amount, new_type, new_date_timestamp])) {
@@ -818,8 +855,8 @@ var Transactions = {
 
     LoadingManager.showLoading();
 
-    TransactionServices.editTransaction(trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp,
-      isSplit, split_amount, split_category, split_entity, split_type, split_account_from, split_account_to, split_description,
+    TransactionServices.editTransaction(trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp, new_is_essential,
+      isSplit, split_amount, split_category, split_entity, split_type, split_account_from, split_account_to, split_description, split_is_essential,
       () => {
         // SUCCESS
         LoadingManager.hideLoading();

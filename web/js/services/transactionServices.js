@@ -86,7 +86,7 @@ var TransactionServices = {
             }
         })
     },
-    addTransaction: (amount, type, description, entity_id, account_from_id, account_to_id, category_id, date_timestamp, successCallback, errorCallback) => {
+    addTransaction: (amount, type, description, entity_id, account_from_id, account_to_id, category_id, date_timestamp, is_essential, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "trxs/step1"
 
         $.ajax({
@@ -106,7 +106,8 @@ var TransactionServices = {
                 account_from_id,
                 account_to_id,
                 category_id,
-                date_timestamp
+                date_timestamp,
+                is_essential
             },
             url: pageUrl,
             success: function (response) {
@@ -149,8 +150,8 @@ var TransactionServices = {
             }
         });
     },*/
-    editTransaction: (trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp,
-                      is_split, split_amount, split_category, split_entity, split_type, split_account_from, split_account_to, split_description, successCallback, errorCallback) => {
+    editTransaction: (trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp, new_is_essential,
+                      is_split, split_amount, split_category, split_entity, split_type, split_account_from, split_account_to, split_description, split_is_essential, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "trxs/"
 
         $.ajax({
@@ -172,6 +173,7 @@ var TransactionServices = {
                 new_account_to_id,
                 new_category_id,
                 new_date_timestamp,
+                new_is_essential,
                 is_split,
                 split_amount,
                 split_category,
@@ -179,7 +181,8 @@ var TransactionServices = {
                 split_type,
                 split_account_from,
                 split_account_to,
-                split_description
+                split_description,
+                split_is_essential,
             },
             url: pageUrl,
             success: function (response) {
