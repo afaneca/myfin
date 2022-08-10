@@ -443,7 +443,7 @@ class InvestAssets
                 );
             }
 
-            $res["total_invested_value"] = $fullInvestedValue;
+            $res["total_invested_value"] = $fullInvestedValue - $fullWithdrawnValue;
             $res["total_current_value"] = $fullCurrentValue;
             $res["global_roi_value"] = $fullCurrentValue - $fullInvestedValue + $fullWithdrawnValue;
             $res["global_roi_percentage"] = ($fullInvestedValue != 0) ? ($res["global_roi_value"] / $fullInvestedValue) * 100 : "-";
