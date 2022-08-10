@@ -5,7 +5,7 @@ function RemoveLastDirectoryPartOf(the_url) {
 }
 
 var MYFIN = {
-  APP_VERSION: '1.8.2',
+  APP_VERSION: '1.8.3',
   TRX_TYPES: {
     INCOME: 'I',
     EXPENSE: 'E',
