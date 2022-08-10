@@ -86,7 +86,7 @@ class Budgets
                 $budgetSums = BudgetModel::getSumAmountsForBudget($userID, $budget);
                 $budget["credit_amount"] = $budgetSums["balance_credit"];
                 $budget["debit_amount"] = $budgetSums["balance_debit"];
-                if(doubleval($budget["credit_amount"]) == 0) $budget["savings_rate_percentage"] = 0;
+                if (doubleval($budget["credit_amount"]) == 0) $budget["savings_rate_percentage"] = 0;
                 else $budget["savings_rate_percentage"] = (doubleval($budget["balance_value"]) / doubleval($budget["credit_amount"])) * 100;
             }
 
@@ -179,7 +179,7 @@ class Budgets
 
             $list["initial_balance"] = AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, true, false);
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
-
+            $list["debit_essential_trx_total"] = BudgetModel::getTotalEssentialDebitTransactionsAmountForBudget($userID, $list, false);
             foreach ($list["categories"] as &$category) {
                 $monthToUse = $list["month"];
                 $yearToUse = $list["year"];
