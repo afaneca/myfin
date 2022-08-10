@@ -212,6 +212,7 @@ class Transactions
                 $mobile = false;
             }
 
+            $isEssential = (int)Input::validate($request->getParsedBody()['is_essential'], Input::$BOOLEAN, 11);
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
@@ -231,7 +232,8 @@ class Transactions
                 "entities_entity_id" => $entityID,
                 "accounts_account_from_id" => $accountFrom,
                 "accounts_account_to_id" => $accountTo,
-                "categories_category_id" => $categoryID
+                "categories_category_id" => $categoryID,
+                "is_essential" => $isEssential,
             ], true);
 
             $userID = UserModel::getUserIdByName($authusername, true);
@@ -455,6 +457,15 @@ class Transactions
                 $split_description = "";
             }
 
+            if (array_key_exists('split_is_essential', $request->getParsedBody()) && $request->getParsedBody()['split_is_essential'] !== "") {
+                $split_is_essential = (int)Input::validate($request->getParsedBody()['split_is_essential'], Input::$BOOLEAN, 20);
+            } else {
+                $split_is_essential = "";
+            }
+
+            $isEssential = (int)Input::validate($request->getParsedBody()['new_is_essential'], Input::$BOOLEAN, 21);
+
+
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
@@ -493,7 +504,8 @@ class Transactions
                 "entities_entity_id" => $entityID,
                 "accounts_account_from_id" => $accountFrom,
                 "accounts_account_to_id" => $accountTo,
-                "categories_category_id" => $categoryID
+                "categories_category_id" => $categoryID,
+                "is_essential" => $isEssential,
             ], true);
 
 
@@ -555,7 +567,8 @@ class Transactions
                     "entities_entity_id" => $split_entity_id,
                     "accounts_account_from_id" => $split_accountFromID,
                     "accounts_account_to_id" => $split_accountToID,
-                    "categories_category_id" => $split_cat_id
+                    "categories_category_id" => $split_cat_id,
+                    "is_essential" => $split_is_essential,
                 ], true);
             }
 
@@ -685,7 +698,8 @@ class Transactions
                     "selectedCategoryID" => ($foundRule) ? $foundRule["assign_category_id"] : null,
                     "selectedEntityID" => ($foundRule) ? $foundRule["assign_entity_id"] : null,
                     "selectedAccountFromID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? (($foundRule) ? $foundRule["assign_account_from_id"] : null) : $accountID,
-                    "selectedAccountToID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? $accountID : (($foundRule) ? $foundRule["assign_account_to_id"] : null)
+                    "selectedAccountToID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? $accountID : (($foundRule) ? $foundRule["assign_account_to_id"] : null),
+                    "isEssential" => ($foundRule) ? $foundRule["assign_is_essential"] : "0",
                 ];
                 /*  array_push($outgoingArr["fillData"], [
                     "date" => $trx["date"],
@@ -754,6 +768,7 @@ class Transactions
                 $accountFrom = (isset($trx["account_from_id"])) ? $trx["account_from_id"] : null;
                 $accountTo = (isset($trx["account_to_id"])) ? $trx["account_to_id"] : null;
                 $categoryID = $trx["category_id"];
+                $isEssential = (int)$trx["is_essential"];
 
                 if (!$date_timestamp || !$amount || !$type || (!$accountFrom && !$accountTo)) {
                     continue;
@@ -768,7 +783,8 @@ class Transactions
                     "entities_entity_id" => $entityID,
                     "accounts_account_from_id" => $accountFrom,
                     "accounts_account_to_id" => $accountTo,
-                    "categories_category_id" => $categoryID
+                    "categories_category_id" => $categoryID,
+                    "is_essential" => $isEssential,
                 ], true);
 
 
@@ -893,14 +909,15 @@ class Transactions
             $foundRule = RuleModel::getRuleForTransaction($userID, $trx, true);
             /*print_r($foundRule);
             die();*/
-                $outgoing["date"] = array_key_exists("date", $trx) ? $trx["date"] : null;
-                $outgoing["description"] = array_key_exists("description", $trx) ? $trx["description"] : null;
-                $outgoing["amount"] = array_key_exists("amount", $trx) ? $trx["amount"] : null;
-                $outgoing["type"] = array_key_exists("type", $trx) ? $trx["type"] : null;
-                $outgoing["selectedCategoryID"] = ($foundRule) ? $foundRule["assign_category_id"] : null;
-                $outgoing["selectedEntityID"] = ($foundRule) ? $foundRule["assign_entity_id"] : null;
-                $outgoing["selectedAccountFromID"] = (($foundRule) ? $foundRule["assign_account_from_id"] : null);
-                $outgoing["selectedAccountToID"] = (($foundRule) ? $foundRule["assign_account_to_id"] : null);
+            $outgoing["date"] = array_key_exists("date", $trx) ? $trx["date"] : null;
+            $outgoing["description"] = array_key_exists("description", $trx) ? $trx["description"] : null;
+            $outgoing["amount"] = array_key_exists("amount", $trx) ? $trx["amount"] : null;
+            $outgoing["type"] = array_key_exists("type", $trx) ? $trx["type"] : null;
+            $outgoing["selectedCategoryID"] = ($foundRule) ? $foundRule["assign_category_id"] : null;
+            $outgoing["selectedEntityID"] = ($foundRule) ? $foundRule["assign_entity_id"] : null;
+            $outgoing["selectedAccountFromID"] = (($foundRule) ? $foundRule["assign_account_from_id"] : null);
+            $outgoing["selectedAccountToID"] = (($foundRule) ? $foundRule["assign_account_to_id"] : null);
+            $outgoing["isEssential"] = (($foundRule) ? $foundRule["assign_is_essential"] : null);
 
             /*  array_push($outgoingArr["fillData"], [
                 "date" => $trx["date"],

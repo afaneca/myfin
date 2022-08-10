@@ -161,6 +161,12 @@ class Rules
                 $assignType = null;
             }
 
+            if (array_key_exists('assign_essential', $request->getParsedBody()) && $request->getParsedBody()['assign_essential'] !== "") {
+                $assignEssential = (int)Input::validate($request->getParsedBody()['assign_essential'], Input::$BOOLEAN, 18);
+            } else {
+                $assignEssential = null;
+            }
+
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
@@ -192,6 +198,7 @@ class Rules
                     "assign_account_to_id" => $assignAccountToID,
                     "assign_account_from_id" => $assignAccountFromID,
                     "assign_type" => $assignType,
+                    "assign_is_essential" => $assignEssential,
                 ]
             );
 
@@ -309,6 +316,12 @@ class Rules
                 $assignType = null;
             }
 
+            if (array_key_exists('assign_essential', $request->getParsedBody()) && $request->getParsedBody()['assign_essential'] !== "") {
+                $assignEssential = (int)Input::validate($request->getParsedBody()['assign_essential'], Input::$BOOLEAN, 18);
+            } else {
+                $assignEssential = null;
+            }
+
             $ruleID = Input::validate($request->getParsedBody()["rule_id"], Input::$INT, 18);
 
             /* Auth - token validation */
@@ -343,6 +356,7 @@ class Rules
                     "assign_account_to_id" => $assignAccountToID,
                     "assign_account_from_id" => $assignAccountFromID,
                     "assign_type" => $assignType,
+                    "assign_is_essential" => $assignEssential,
                 ]
             );
 
