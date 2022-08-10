@@ -22,13 +22,13 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": "^7.4",
         "ext-json": "*",
         "monolog/monolog": "^1.24",
         "php-di/php-di": "^6.0",
         "robmorgan/phinx": "^0.12.12",
-        "slim/psr7": "^0.5",
-        "slim/slim": "^4.1",
+        "slim/psr7": "^1.5.0",
+        "slim/slim": "^4.10.0",
         "vlucas/phpdotenv": "^4.1"
     },
     "require-dev": {
