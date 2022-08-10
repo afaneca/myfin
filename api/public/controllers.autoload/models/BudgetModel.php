@@ -86,14 +86,14 @@ class BudgetModel extends Entity
         return Input::convertIntegerToFloatAmount($balance);
     }
 
-    public static function calculateBudgetBalance($userID, $budget)
+    public static function calculateBudgetBalance($userID, $budget, $transactional = false)
     {
         $budgetID = $budget["budget_id"];
         $month = intval($budget["month"]);
         $year = intval($budget["year"]);
         $isOpen = intval($budget["is_open"]);
 
-        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, $transactional);
 
         $balance = 0;
 
@@ -133,14 +133,14 @@ class BudgetModel extends Entity
         return Input::convertIntegerToFloatAmount($balance);
     }
 
-    public static function calculateBudgetBalanceChangePercentage($userID, $budget, $budgetBalance)
+    public static function calculateBudgetBalanceChangePercentage($userID, $budget, $budgetBalance, $transactional = false)
     {
         $month = intval($budget["month"]);
         $year = intval($budget["year"]);
 
         $initialBalance =
             AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12,
-                ($month > 1) ? $year : $year - 1, true, false);
+                ($month > 1) ? $year : $year - 1, true, $transactional);
         $finalBalance = $initialBalance + $budgetBalance;
 
         if ($initialBalance == 0) return "NaN";
@@ -359,7 +359,7 @@ class BudgetHasCategoriesModel extends Entity
        AND categories_category_id IS :cat_id
    */
 
-    public static function getAmountForCategoryInMonth($category_id, $month, $year, $transactional = false)
+    public static function getAmountForCategoryInMonth($category_id, $month, $year, $includeTransfers = true, $transactional = false)
     {
         $listOfAccountsToExclude = AccountModel::getWhere(["exclude_from_budgets" => true]);
         if (!$listOfAccountsToExclude || sizeof($listOfAccountsToExclude) == 0) {
@@ -373,8 +373,13 @@ class BudgetHasCategoriesModel extends Entity
 
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT sum(if(type = 'I' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsTo), amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsFrom), amount, 0)) as 'category_balance_debit' " .
-            "FROM transactions " .
+        if ($includeTransfers) {
+            $sql = "SELECT sum(if(type = 'I' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsTo), amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsFrom), amount, 0)) as 'category_balance_debit' ";
+        } else {
+            $sql = "SELECT sum(if(type = 'I', amount, 0)) as 'category_balance_credit', sum(if(type = 'E', amount, 0)) as 'category_balance_debit' ";
+        }
+
+        $sql .= "FROM transactions " .
             "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
             "AND categories_category_id = :cat_id ";
 

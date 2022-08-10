@@ -81,9 +81,9 @@ class Budgets
             });
 
             foreach ($budgetsArr as &$budget) {
-                $budget["balance_value"] = BudgetModel::calculateBudgetBalance($userID, $budget);//"-343.54";
-                $budget["balance_change_percentage"] = BudgetModel::calculateBudgetBalanceChangePercentage($userID, $budget, $budget["balance_value"]);
-                $budgetSums = BudgetModel::getSumAmountsForBudget($userID, $budget);
+                $budget["balance_value"] = BudgetModel::calculateBudgetBalance($userID, $budget, true);//"-343.54";
+                $budget["balance_change_percentage"] = BudgetModel::calculateBudgetBalanceChangePercentage($userID, $budget, $budget["balance_value"], true);
+                $budgetSums = BudgetModel::getSumAmountsForBudget($userID, $budget, true);
                 $budget["credit_amount"] = $budgetSums["balance_credit"];
                 $budget["debit_amount"] = $budgetSums["balance_debit"];
                 if (doubleval($budget["credit_amount"]) == 0) $budget["savings_rate_percentage"] = 0;
