@@ -86,14 +86,14 @@ class BudgetModel extends Entity
         return Input::convertIntegerToFloatAmount($balance);
     }
 
-    public static function calculateBudgetBalance($userID, $budget)
+    public static function calculateBudgetBalance($userID, $budget, $transactional = false)
     {
         $budgetID = $budget["budget_id"];
         $month = intval($budget["month"]);
         $year = intval($budget["year"]);
         $isOpen = intval($budget["is_open"]);
 
-        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, $transactional);
 
         $balance = 0;
 
@@ -133,14 +133,14 @@ class BudgetModel extends Entity
         return Input::convertIntegerToFloatAmount($balance);
     }
 
-    public static function calculateBudgetBalanceChangePercentage($userID, $budget, $budgetBalance)
+    public static function calculateBudgetBalanceChangePercentage($userID, $budget, $budgetBalance, $transactional = false)
     {
         $month = intval($budget["month"]);
         $year = intval($budget["year"]);
 
         $initialBalance =
             AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12,
-                ($month > 1) ? $year : $year - 1, true, false);
+                ($month > 1) ? $year : $year - 1, true, $transactional);
         $finalBalance = $initialBalance + $budgetBalance;
 
         if ($initialBalance == 0) return "NaN";
