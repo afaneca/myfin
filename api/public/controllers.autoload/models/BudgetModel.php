@@ -187,6 +187,39 @@ class BudgetModel extends Entity
         return ["balance_credit" => Input::convertIntegerToFloatAmount($balance_credit), "balance_debit" => Input::convertIntegerToFloatAmount($balance_debit)];
     }
 
+    public static function getTotalEssentialDebitTransactionsAmountForBudget($userID, $budget, $transactional = false)
+    {
+        $month = intval($budget["month"]);
+        $year = intval($budget["year"]);
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT sum(amount) as 'amount' FROM transactions " .
+            "inner join accounts on transactions.accounts_account_from_id = accounts.account_id " .
+            "where users_user_id = :userId " .
+            "and date_timestamp between :beginTimestamp AND :endTimestamp " .
+            "and transactions.is_essential IS TRUE " .
+            "and transactions.type = :type";
+
+        $tz = new DateTimeZone('UTC');
+        $beginTimestamp = new DateTime("$year-$month-01", $tz);
+        $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t 23:59:59'), $tz);
+
+        $values = array();
+        $values[':userId'] = $userID;
+        $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
+        $values[':endTimestamp'] = $endTimestamp->getTimestamp();
+        $values[':type'] = DEFAULT_TYPE_EXPENSE_TAG;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return Input::convertIntegerToFloatAmount($db->fetch()["amount"] ?? 0);
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
     public static function getBudgetsUntilCertainMonth($userID, int $nextMonth, int $nextMonthsYear, string $orderByDate = "ASC", $transactional = false)
     {
         $db = new EnsoDB($transactional);

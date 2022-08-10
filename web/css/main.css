@@ -471,6 +471,14 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
     background: linear-gradient(45deg, #ffd89b, #19547b) !important;
 }
 
+[type="checkbox"] .filled-in :not(:checked) + span:not(.lever):after {
+    margin-top: 3px;
+}
+
+[type="checkbox"] .filled-in:checked + span:not(.lever):after {
+    margin-top: 3px;
+}
+
 /* RESET-CHECKBOX - to remove materializecss styling from checkbox inputs */
 
 [type="checkbox"].reset-checkbox, [type="checkbox"].reset-checkbox:checked, [type="checkbox"].reset-checkbox:not(checked) {

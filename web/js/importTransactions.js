@@ -351,6 +351,7 @@ var ImportTransactions = {
                         <th>Entidade</th>
                         <th>Categoria</th>
                         <th>Conta</th>
+                        <th>Essencial</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -440,6 +441,7 @@ var ImportTransactions = {
             <td>
                 <center>${ImportTransactions.renderAccountsSelect(trx.selectedAccountFromID)} ⮕ ${ImportTransactions.renderAccountsSelect(trx.selectedAccountToID)}</center>
             </td>
+            <td><center><input type="checkbox" ${trx.isEssential == true ? 'checked="checked"' : ''} class="trx-checkbox-essential-input reset-checkbox center-align" style="transform:scale(1.5)" /></center></td>
                        
         </tr>
     `,
@@ -514,7 +516,9 @@ var ImportTransactions = {
           let category_id = $(this)
             .find('.categories-select')
             .val();
-
+          let isEssential = $(this)
+            .find('.trx-checkbox-essential-input')
+            .is(':checked');
           let selectedOptionIndex = $($($(this)
             .find('.accounts-select2')[0])[0])[0].selectedIndex;
           let accountFrom_id = $($($($($(this)
@@ -537,7 +541,8 @@ var ImportTransactions = {
             category_id,
             account_from_id: accountFrom_id,
             account_to_id: accountTo_id,
-            type
+            is_essential: isEssential,
+            type,
           });
         }
       });

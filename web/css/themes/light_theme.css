@@ -55,11 +55,16 @@ table.dataTable.display tbody tr.even {
 }
 
 tr {
-    border-bottom: 1px solid #a6a6b1 !important;
+    border-bottom: 1px solid #f0f0f3 !important;
 }
 
 table.dataTable tbody tr {
     background-color: #ffffff !important;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    padding: 10px 18px;
+    border-bottom: 1px solid #e1e1e1;
 }
 
 .select2-container--default .select2-selection--single {
