@@ -3938,7 +3938,29 @@ return array (
           ),
         ),
       ),
-      'foreign_keys' => NULL,
+      'foreign_keys' => 
+      array (
+        'fk_transactions_categories1' => 
+        array (
+          'TABLE_NAME' => 'transactions',
+          'COLUMN_NAME' => 'categories_category_id',
+          'CONSTRAINT_NAME' => 'fk_transactions_categories1',
+          'REFERENCED_TABLE_NAME' => 'categories',
+          'REFERENCED_COLUMN_NAME' => 'category_id',
+          'UPDATE_RULE' => 'NO ACTION',
+          'DELETE_RULE' => 'SET NULL',
+        ),
+        'fk_transactions_entities2' => 
+        array (
+          'TABLE_NAME' => 'transactions',
+          'COLUMN_NAME' => 'entities_entity_id',
+          'CONSTRAINT_NAME' => 'fk_transactions_entities2',
+          'REFERENCED_TABLE_NAME' => 'entities',
+          'REFERENCED_COLUMN_NAME' => 'entity_id',
+          'UPDATE_RULE' => 'NO ACTION',
+          'DELETE_RULE' => 'SET NULL',
+        ),
+      ),
     ),
     'users' => 
     array (
