@@ -273,21 +273,20 @@ var BudgetDetails = {
       });
   },
   updateSummaryValues: (expensesID, incomeID, balanceID) => {
-    let expensesAcc = 0.00;
-    let incomeAcc = 0.00;
-    let balance = 0.00;
+    let currentExpensesAcc = 0.00;
+    let plannedExpensesAcc = 0.00;
+    let currentIncomeAcc = 0.00;
+    let plannedIncomeAcc = 0.00;
+    let plannedBalance = 0.00;
+    let currentBalance = 0.00;
 
-    let creditAmoutsClassSelector;
-    let debitAmoutsClassSelector;
+    let plannedCreditAmountsClassSelector = '.credit-input-estimated';
+    let plannedDebitAmountsClassSelector = '.debit-input-estimated';
+    let currentCreditAmountsClassSelector = '.credit-input-current';
+    let currentDebitAmountsClassSelector = '.debit-input-current';
 
-    if (IS_OPEN) {
-      creditAmoutsClassSelector = '.credit-input-estimated';
-      debitAmoutsClassSelector = '.debit-input-estimated';
-    } else {
-      creditAmoutsClassSelector = '.credit-input-current';
-      debitAmoutsClassSelector = '.debit-input-current';
-
-      // Also update labels
+    if (!IS_OPEN) {
+      // update labels
       $('span#estimated_expenses_label')
         .text('Despesas Reais');
       $('span#estimated_balance_label')
@@ -296,38 +295,54 @@ var BudgetDetails = {
         .text('Renda Real');
     }
 
-    $(creditAmoutsClassSelector)
+    $(plannedCreditAmountsClassSelector)
       .each((i, input) => {
         let inputValue = $('#' + input.id)
           .val();
-        incomeAcc += parseFloat(inputValue);
+        plannedIncomeAcc += parseFloat(inputValue);
         // debugger
       });
 
-    $(debitAmoutsClassSelector)
+    $(currentCreditAmountsClassSelector)
       .each((i, input) => {
         let inputValue = $('#' + input.id)
           .val();
-        expensesAcc += parseFloat(inputValue);
+        currentIncomeAcc += parseFloat(inputValue);
+        // debugger
+      });
+
+    $(plannedDebitAmountsClassSelector)
+      .each((i, input) => {
+        let inputValue = $('#' + input.id)
+          .val();
+        plannedExpensesAcc += parseFloat(inputValue);
+      });
+
+    $(currentDebitAmountsClassSelector)
+      .each((i, input) => {
+        let inputValue = $('#' + input.id)
+          .val();
+        currentExpensesAcc += parseFloat(inputValue);
       });
 
     $('#table_total_credit_expected')
-      .text(StringUtils.formatMoney(incomeAcc));
+      .text(StringUtils.formatMoney(plannedIncomeAcc));
     $('#table_total_debit_expected')
-      .text(StringUtils.formatMoney(expensesAcc));
+      .text(StringUtils.formatMoney(plannedExpensesAcc));
 
-    balance = incomeAcc - expensesAcc;
+    plannedBalance = plannedIncomeAcc - plannedExpensesAcc;
+    currentBalance = currentIncomeAcc - currentExpensesAcc;
 
     $(expensesID)
-      .text(StringUtils.formatMoney(expensesAcc));
+      .text(StringUtils.formatMoney(IS_OPEN ? plannedExpensesAcc : currentExpensesAcc));
     $(incomeID)
-      .text(StringUtils.formatMoney(incomeAcc));
+      .text(StringUtils.formatMoney(IS_OPEN ? plannedIncomeAcc : currentIncomeAcc));
     $(balanceID)
-      .text(StringUtils.formatMoney(balance));
+      .text(StringUtils.formatMoney(IS_OPEN ? plannedBalance : currentBalance));
     $('#estimated_closing_balance_value_amount')
-      .text(StringUtils.formatMoney((parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))));
+      .text(StringUtils.formatMoney((parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(plannedBalance))));
     $('#estimated_closing_balance_value_percentage')
-      .text(BudgetDetails.calculatePercentageIncrease(BUDGET_INITIAL_BALANCE, (parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(balance))));
+      .text(BudgetDetails.calculatePercentageIncrease(BUDGET_INITIAL_BALANCE, (parseFloat(BUDGET_INITIAL_BALANCE) + parseFloat(plannedBalance))));
   },
   calculatePercentageIncrease: (val1, val2) => {
     return (((parseFloat(val2) - parseFloat(val1)) / Math.abs(parseFloat(val1))) * 100).toFixed(2);
@@ -453,8 +468,9 @@ var BudgetDetails = {
       });
   },
   setDebitEssentialTransactionsTotal(debit_essential_trx_total) {
-    $('#debit-essential-expenses-totals').html(`<span class="new badge" style="font-size: initial;" data-badge-caption="${StringUtils.formatMoney(debit_essential_trx_total)}">Despesas Essenciais:</span>`)
+    $('#debit-essential-expenses-totals')
+      .html(`<span class="new badge" style="font-size: initial;" data-badge-caption="${StringUtils.formatMoney(debit_essential_trx_total)}">Despesas Essenciais:</span>`);
   }
-}
+};
 
 //# sourceURL=js/budgetDetails.js
