@@ -493,7 +493,7 @@ var Transactions = {
                     <div class="row row-no-margin-bottom">
                         <div class="input-field col s8">
                             <h4>Editar transação <b>#${trxID}</b></h4>
-                            <p>
+                            <p id="cb-essential-wrapper" class="scale-transition ${selectedAccountToID == null ? 'scale-in' : 'scale-out'}">
                           <label>
                             <input id="cb-essential" type="checkbox"
                              ${isEssential == true ? 'checked="checked"' : ''}
@@ -706,6 +706,11 @@ var Transactions = {
           .trigger('change');
         $('select.select-trxs-types')
           .select2('val', selectedTypeID);
+        $('select.select-trxs-types')
+          .select2()
+          .on('select2:select', function (e) {
+            Transactions.toggleEssentialCheckboxVisibility(e.params.data.id);
+          });
         $('select.select-trxs-categories')
           .val(selectedCategoryID)
           .trigger('change');
@@ -724,6 +729,11 @@ var Transactions = {
           .trigger('change');
         $('select.select-trxs-types2')
           .select2('val', selectedTypeID);
+        $('select.select-trxs-types2')
+          .select2()
+          .on('select2:select', function (e) {
+            Transactions.toggleEssentialCheckboxVisibility(e.params.data.id);
+          });
 
         Transactions.manageAccountsSelectAvailability();
 
@@ -831,7 +841,6 @@ var Transactions = {
         .val());
       split_is_essential = $('input#cb-essential-split')
         .is(':checked');
-      debugger
     }
 
     if (!ValidationUtils.checkIfFieldsAreFilled([new_amount, new_type, new_date_timestamp])) {
