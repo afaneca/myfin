@@ -256,17 +256,9 @@ var Transactions = {
             const description = $('textarea#trx-description')
               .val();
             if (description !== '') {
-              $('a#auto-categorize-btn')
-                .removeClass('scale-transition')
-                .removeClass('scale-out')
-                .addClass('scale-transition')
-                .addClass('scale-in');
+              LayoutUtils.scaleInElement('a#auto-categorize-btn');
             } else {
-              $('a#auto-categorize-btn')
-                .removeClass('scale-transition')
-                .removeClass('scale-in')
-                .addClass('scale-transition')
-                .addClass('scale-out');
+              LayoutUtils.scaleOutElement('a#auto-categorize-btn');
             }
           });
         Transactions.manageAccountsSelectAvailability();
