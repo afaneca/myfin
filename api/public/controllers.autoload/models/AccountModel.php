@@ -454,7 +454,7 @@ class AccountModel extends Entity
 
         /*echo "begin month & year::\n$beginMonth\t$beginYear\n";*/
         $priorMonthsBalance = Input::convertFloatToIntegerAmount(AccountModel::getBalanceSnapshotAtMonth($accountID, ($beginMonth > 2) ? ($beginMonth - 2) : 12 - 2 + (int)$beginMonth,
-            ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $transactional)["balance"]);
+            ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $transactional)["balance"] ?? 0);
         if (!$priorMonthsBalance)
             $priorMonthsBalance = 0;
 
