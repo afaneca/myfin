@@ -441,10 +441,16 @@ var ImportTransactions = {
             <td>
                 <center>${ImportTransactions.renderAccountsSelect(trx.selectedAccountFromID)} ⮕ ${ImportTransactions.renderAccountsSelect(trx.selectedAccountToID)}</center>
             </td>
-            <td><center><input type="checkbox" ${trx.isEssential == true ? 'checked="checked"' : ''} class="trx-checkbox-essential-input reset-checkbox center-align" style="transform:scale(1.5)" /></center></td>
-                       
+            <td><center>${trx.selectedAccountToID != null ?
+    ImportTransactions.renderEssentialCheckbox(StringUtils.normalizeStringForHtml(trx.description + trx.amount + trx.date), trx.isEssential == true)
+    : ''}</center></td> 
         </tr>
     `,
+  renderEssentialCheckbox: (id, isEssential) => {
+    return `
+      <input id="${id}" type="checkbox" ${isEssential ? 'checked="checked"' : ''} class="trx-checkbox-essential-input reset-checkbox center-align" style="transform:scale(1.5)" />
+    `;
+  },
   renderAmountInput: amount => `
         <input class="trx-amount-input" value="${(amount) ? amount : '0.00'}" type="number" class="validate input" min="0.00" value="0.00" step="0.01" required>
     `,

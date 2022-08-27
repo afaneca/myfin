@@ -120,7 +120,7 @@ var Transactions = {
                 <div class="row row-no-margin-bottom">
                     <div class="input-field col s8">
                         <h4>Adicionar nova transação</h4>
-                        <p>
+                        <p id="cb-essential-wrapper" class="scale-transition scale-out">
                           <label>
                             <input id="cb-essential" type="checkbox" class="checkbox-indigo filled-in" />
                             <span>Essencial</span>
@@ -217,7 +217,10 @@ var Transactions = {
         $('select.select-trxs-account_from')
           .select2({ dropdownParent: '#modal-global' });
         $('select.select-trxs-types')
-          .select2({ dropdownParent: '#modal-global' });
+          .select2({ dropdownParent: '#modal-global' })
+          .on('select2:select', function (e) {
+            Transactions.toggleEssentialCheckboxVisibility(e.params.data.id);
+          });
         $('select.select-trxs-categories')
           .select2({
             dropdownParent: '#modal-global',
@@ -249,6 +252,7 @@ var Transactions = {
           if (lastTrxInputData.trxType) {
             $('select.select-trxs-types')
               .select2('val', lastTrxInputData.trxType);
+            Transactions.toggleEssentialCheckboxVisibility(lastTrxInputData.trxType);
           }
         }
         $('textarea#trx-description')
@@ -256,17 +260,9 @@ var Transactions = {
             const description = $('textarea#trx-description')
               .val();
             if (description !== '') {
-              $('a#auto-categorize-btn')
-                .removeClass('scale-transition')
-                .removeClass('scale-out')
-                .addClass('scale-transition')
-                .addClass('scale-in');
+              LayoutUtils.scaleInElement('a#auto-categorize-btn');
             } else {
-              $('a#auto-categorize-btn')
-                .removeClass('scale-transition')
-                .removeClass('scale-in')
-                .addClass('scale-transition')
-                .addClass('scale-out');
+              LayoutUtils.scaleOutElement('a#auto-categorize-btn');
             }
           });
         Transactions.manageAccountsSelectAvailability();
@@ -275,6 +271,13 @@ var Transactions = {
         LoadingManager.hideLoading();
       });
 
+  },
+  toggleEssentialCheckboxVisibility: (selectedId) => {
+    if (selectedId === MYFIN.TRX_TYPES.EXPENSE) {
+      LayoutUtils.scaleInElement('p#cb-essential-wrapper');
+    } else {
+      LayoutUtils.scaleOutElement('p#cb-essential-wrapper');
+    }
   },
   autoCategorizeButtonClicked: () => {
     const description = $('textarea#trx-description')
@@ -490,7 +493,7 @@ var Transactions = {
                     <div class="row row-no-margin-bottom">
                         <div class="input-field col s8">
                             <h4>Editar transação <b>#${trxID}</b></h4>
-                            <p>
+                            <p id="cb-essential-wrapper" class="scale-transition ${selectedAccountToID == null ? 'scale-in' : 'scale-out'}">
                           <label>
                             <input id="cb-essential" type="checkbox"
                              ${isEssential == true ? 'checked="checked"' : ''}
@@ -703,6 +706,11 @@ var Transactions = {
           .trigger('change');
         $('select.select-trxs-types')
           .select2('val', selectedTypeID);
+        $('select.select-trxs-types')
+          .select2()
+          .on('select2:select', function (e) {
+            Transactions.toggleEssentialCheckboxVisibility(e.params.data.id);
+          });
         $('select.select-trxs-categories')
           .val(selectedCategoryID)
           .trigger('change');
@@ -721,6 +729,11 @@ var Transactions = {
           .trigger('change');
         $('select.select-trxs-types2')
           .select2('val', selectedTypeID);
+        $('select.select-trxs-types2')
+          .select2()
+          .on('select2:select', function (e) {
+            Transactions.toggleEssentialCheckboxVisibility(e.params.data.id);
+          });
 
         Transactions.manageAccountsSelectAvailability();
 
@@ -828,7 +841,6 @@ var Transactions = {
         .val());
       split_is_essential = $('input#cb-essential-split')
         .is(':checked');
-      debugger
     }
 
     if (!ValidationUtils.checkIfFieldsAreFilled([new_amount, new_type, new_date_timestamp])) {
