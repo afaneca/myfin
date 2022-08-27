@@ -92,6 +92,20 @@ var LayoutUtils = {
       <span class="badge white-text purple-gradient-bg" style="font-size:small;" data-badge-caption="">Essencial</span>
     `;
   },
+  scaleOutElement: (elementLocator) => {
+    $(elementLocator)
+      .removeClass('scale-transition')
+      .removeClass('scale-in')
+      .addClass('scale-transition')
+      .addClass('scale-out');
+  },
+  scaleInElement: (elementLocator) => {
+    $(elementLocator)
+      .removeClass('scale-transition')
+      .removeClass('scale-out')
+      .addClass('scale-transition')
+      .addClass('scale-in');
+  },
 };
 
 //# sourceURL=js/utils/layoutUtils.js
