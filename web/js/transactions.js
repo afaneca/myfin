@@ -120,7 +120,7 @@ var Transactions = {
                 <div class="row row-no-margin-bottom">
                     <div class="input-field col s8">
                         <h4>Adicionar nova transação</h4>
-                        <p>
+                        <p id="cb-essential-wrapper" class="scale-transition scale-out">
                           <label>
                             <input id="cb-essential" type="checkbox" class="checkbox-indigo filled-in" />
                             <span>Essencial</span>
@@ -217,7 +217,10 @@ var Transactions = {
         $('select.select-trxs-account_from')
           .select2({ dropdownParent: '#modal-global' });
         $('select.select-trxs-types')
-          .select2({ dropdownParent: '#modal-global' });
+          .select2({ dropdownParent: '#modal-global' })
+          .on('select2:select', function (e) {
+            Transactions.toggleEssentialCheckboxVisibility(e.params.data.id);
+          });
         $('select.select-trxs-categories')
           .select2({
             dropdownParent: '#modal-global',
@@ -249,6 +252,7 @@ var Transactions = {
           if (lastTrxInputData.trxType) {
             $('select.select-trxs-types')
               .select2('val', lastTrxInputData.trxType);
+            Transactions.toggleEssentialCheckboxVisibility(lastTrxInputData.trxType);
           }
         }
         $('textarea#trx-description')
@@ -267,6 +271,13 @@ var Transactions = {
         LoadingManager.hideLoading();
       });
 
+  },
+  toggleEssentialCheckboxVisibility: (selectedId) => {
+    if (selectedId === MYFIN.TRX_TYPES.EXPENSE) {
+      LayoutUtils.scaleInElement('p#cb-essential-wrapper');
+    } else {
+      LayoutUtils.scaleOutElement('p#cb-essential-wrapper');
+    }
   },
   autoCategorizeButtonClicked: () => {
     const description = $('textarea#trx-description')
