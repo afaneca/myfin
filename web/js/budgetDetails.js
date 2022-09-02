@@ -43,6 +43,22 @@ var BudgetDetails = {
     $('.collapsible')
       .collapsible();
 
+    BudgetDetails.setupObservationsShortcuts();
+  },
+  setupObservationsShortcuts: () => {
+    TextareaShortcuts.setupTextareaShortcut('#budget_observations', '#budget_observations_shortcut_separator1', ' • ');
+    TextareaShortcuts.setupTextareaShortcut('#budget_observations', '#budget_observations_shortcut_separator2', ' - ');
+    TextareaShortcuts.setupTextareaShortcut('#budget_observations', '#budget_observations_shortcut_separator3', ' ⋆ ');
+  },
+  setupTextareaShortcut: (textareaId, shortcutId, shortcutText) => {
+    $(shortcutId)
+      .click(function () {
+        const currentCursorPos = document.getElementById(textareaId.replace("#", "")).selectionStart;
+        const currentText = $(textareaId)
+          .val();
+        $(textareaId)
+          .val(currentText.slice(0, currentCursorPos) + shortcutText + currentText.slice(currentCursorPos));
+      });
   },
   enableCloneMonthButton: () => {
     $('#clone-month-btn')

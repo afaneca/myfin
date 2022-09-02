@@ -99,7 +99,9 @@
             <li><a id="menu-item-budgets" class="menu-item"
                    onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
                     class="material-icons left">class</i>Orçamentos</a></li>
-            <li><a id="menu-item-investments" class="menu-item" onClick="configs.goToPage('investments');MenuUtils.changeActiveMenu('investments')" href="#!investments"><i
+            <li><a id="menu-item-investments" class="menu-item"
+                   onClick="configs.goToPage('investments');MenuUtils.changeActiveMenu('investments')"
+                   href="#!investments"><i
                     class="material-icons left">equalizer</i>Investimentos</a></li>
             <li><a id="menu-item-stats" class="menu-item"
                    onClick="configs.goToPage('stats');MenuUtils.changeActiveMenu('stats')" href="#!stats"><i
@@ -173,6 +175,7 @@
 <script src="./js/utils/layoutUtils.js"></script>
 
 <script src="./js/components/graphEmptyView.js"></script>
+<script src="./js/components/textareaShortcuts.js"></script>
 
 <script src="./js/services/categoryServices.js"></script>
 <script src="./js/services/ruleServices.js"></script>
@@ -210,8 +213,9 @@
       LayoutUtils.changeTheme(LayoutUtils.getCurrentThemeName());
 
       // custom logo for light theme
-      if(LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT){
-        $("#side-nav-logo-img").attr("src", "../img/logo/logo_transparent_bg_v2.png")
+      if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT) {
+        $('#side-nav-logo-img')
+          .attr('src', '../img/logo/logo_transparent_bg_v2.png');
       }
     });
 
@@ -222,7 +226,7 @@
   }
 
   function onMouseOutLogo(element) {
-    if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT){
+    if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT) {
       return;
     }
     element.src = '../img/logo/logo_white_font_transparent_bg.png';
