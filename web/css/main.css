@@ -992,3 +992,11 @@ svg:not(:root) {
     color: white;
     padding: 5px;
 }
+
+.budget-observations-shortcuts-box {
+    background-color: #0b525b;
+}
+
+.budget-observations-shortcuts-box:nth-of-type(1) {
+    background-color: #3daa57;
+}
