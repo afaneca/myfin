@@ -1,12 +1,15 @@
 'use strict';
+
 let currentBudgetID;
 let BUDGET_INITIAL_BALANCE;
 
 let IS_OPEN;
+let IS_NEW;
 
 var BudgetDetails = {
   init: (isOpen, isNew, budgetID) => {
     IS_OPEN = isOpen;
+    IS_NEW = isNew;
     currentBudgetID = budgetID;
     if (isOpen == true) {
       $('#conclusion-close-btn')
@@ -43,6 +46,27 @@ var BudgetDetails = {
     $('.collapsible')
       .collapsible();
 
+    BudgetDetails.setupObservationsShortcuts('#budget_observations');
+  },
+  setupObservationsShortcuts: (observationsId) => {
+    TextareaShortcuts.setupTextareaShortcut(observationsId, '#budget_observations_shortcut_separator1', ' • ');
+    TextareaShortcuts.setupTextareaShortcut(observationsId, '#budget_observations_shortcut_separator2', ' - ');
+    TextareaShortcuts.setupTextareaShortcut(observationsId, '#budget_observations_shortcut_separator3', ' ⋆ ');
+    buildEmojiPicker('#emoji-picker-container', '#budget_observations_shortcut_emoji_picker',
+      (emoji) => TextareaShortcuts.addShortcutToTextarea('#budget_observations', ` ${emoji} `));
+    $('#observations-shortcuts')
+      .fadeOut();
+    $(observationsId)
+      .focusin(() => {
+        $('#observations-shortcuts')
+          .fadeIn();
+      })
+      .focusout(() => {
+        if (document.body !== document.activeElement) {
+          $('#observations-shortcuts')
+            .fadeOut();
+        }
+      });
   },
   enableCloneMonthButton: () => {
     $('#clone-month-btn')
@@ -219,7 +243,7 @@ var BudgetDetails = {
                     </div>
                  </td>
                 <td style="padding:0px !important;"><div class="input-field inline tooltip">
-                    <input ${(isOpen) ? '' : ' disabled '} id="${cat.category_id}${(isCredit) ? 'credit' : 'debit'}" onClick="this.select();" value="${(isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0') : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')}" type="number" class="cat-input validate ${(isCredit) ? 'credit-input-estimated' : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" required>
+                    <input ${(IS_OPEN) ? '' : ' disabled '} id="${cat.category_id}${(isCredit) ? 'credit' : 'debit'}" onClick="this.select();" value="${(isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0') : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')}" type="number" class="cat-input validate ${(isCredit) ? 'credit-input-estimated' : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" required>
                     <label for="${cat.category_id}" class="active">Previsto (€)</label>
                 </div></td>
                 <td style="padding:0px !important;"><div class="input-field inline">
@@ -377,7 +401,7 @@ var BudgetDetails = {
 
     LoadingManager.showLoading();
 
-    if (isNew) {
+    if (IS_NEW) {
       BudgetServices.addBudget(month, year, observations, catValuesArr,
         (resp) => {
           // SUCCESS
