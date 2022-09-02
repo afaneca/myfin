@@ -441,9 +441,7 @@ var ImportTransactions = {
             <td>
                 <center>${ImportTransactions.renderAccountsSelect(trx.selectedAccountFromID)} ⮕ ${ImportTransactions.renderAccountsSelect(trx.selectedAccountToID)}</center>
             </td>
-            <td><center>${trx.selectedAccountToID != null ?
-    ImportTransactions.renderEssentialCheckbox(StringUtils.normalizeStringForHtml(trx.description + trx.amount + trx.date), trx.isEssential == true)
-    : ''}</center></td> 
+            <td><center>${ImportTransactions.renderEssentialCheckbox(StringUtils.normalizeStringForHtml(trx.description + trx.amount + trx.date), trx.isEssential == true)}</center></td> 
         </tr>
     `,
   renderEssentialCheckbox: (id, isEssential) => {
