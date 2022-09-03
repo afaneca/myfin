@@ -4,7 +4,9 @@
         <span class="main-accent-color">Regras para Auto-Categorização</span><br>
         <ul class="collapsible">
             <li>
-                <div id="add-rule-collapsible-header" class="collapsible-header"><i class="material-icons">add_circle</i>Adicionar Regra</div>
+                <div id="add-rule-collapsible-header" class="collapsible-header"><i
+                        class="material-icons">add_circle</i>Adicionar Regra
+                </div>
                 <div class="collapsible-body">
                     <div id="add-rule-form-wrapper"></div>
                 </div>
@@ -19,10 +21,13 @@
 </div>
 
 
-<script>
-    $(document).ready(function () {
-        DialogUtils.initStandardModal()
-        $('.collapsible').collapsible();
-        Rules.init()
-    });
+<script type="module">
+  import { DialogUtils } from '../js/utils/dialogUtils.js'
+  import { Rules } from '../js/rules.js'
+
+  $(document).ready(function () {
+    DialogUtils.initStandardModal()
+    $('.collapsible').collapsible()
+    Rules.init()
+  })
 </script>

@@ -1,6 +1,8 @@
-'use strict';
+import { LayoutUtils } from '../utils/layoutUtils.js'
+import { chartUtils } from '../utils/chartUtils.js'
+import { StringUtils } from '../utils/stringUtils.js'
 
-var InvestmentDashboardChartsFunc = {
+export const InvestmentDashboardChartsFunc = {
   buildInvestmentsvolutionLineChart: (canvasId, chartLabels, chartData, extraChartData) => {
     var ctx = document.getElementById(canvasId)
       .getContext('2d');

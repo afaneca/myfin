@@ -1,6 +1,4 @@
-'use strict';
-
-var RuleServices = {
+export const RuleServices = {
   getAllRules: (successCallback, errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'rules/';
     $.ajax({

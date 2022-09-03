@@ -37,8 +37,7 @@
     <!--<link rel="stylesheet" href="./css/themes/light_theme.css"/>-->
 </head>
 
-<body onLoad="checkPreAuth(); checkPreAuthWithInterval(); TopNav.setupTopNavSummaryAmounts()"
-      class="fill-height">
+<body class="fill-height">
 <header>
     <nav class="top-nav">
         <div class="nav-wrapper row">
@@ -63,7 +62,7 @@
                            onClick="configs.goToPage('profile');MenuUtils.changeActiveMenu('profile')"><i
                             class="large material-icons">account_circle</i></a>
                     </li>
-                    <li><a onClick="resetSession()" href="#"><i
+                    <li><a id="logout-btn" href="#"><i
                             class="large material-icons">exit_to_app</i></a></li>
                 </ul>
             </div>
@@ -72,9 +71,7 @@
     </nav>
     <nav class="side-nav fixed">
         <div id="side-nav-logo-wrapper">
-            <img id="side-nav-logo-img" src="../img/logo/logo_white_font_transparent_bg.png"
-                 onmouseover="onMouseOverLogo(this)"
-                 onmouseout="onMouseOutLogo(this)"/>
+            <img id="side-nav-logo-img" src="../img/logo/logo_white_font_transparent_bg.png"/>
         </div>
         <ul class="side-nav-menu">
             <li><a id="menu-item-dashboard"
@@ -157,80 +154,94 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 <script src="./js/ensoshared_js_lib/ensoshared.js" type="text/javascript"></script>
 <script src="./js/consts.js"></script>
-<script src="./js/configs.js" type="text/javascript"></script>
-<script src="./js/topNav.js" type="text/javascript"></script>
+<script src="./js/configs.js" type="module"></script>
+<script src="./js/topNav.js" type="module"></script>
 
-<script src="js/utils/localDataManager.js"></script>
-<script src="./js/utils/validationUtils.js"></script>
-<script src="./js/utils/dialogUtils.js"></script>
-<script src="./js/utils/menuUtils.js"></script>
-<script src="./js/utils/pickerUtils.js"></script>
-<script src="./js/utils/tableUtils.js"></script>
-<script src="./js/utils/arrayUtils.js"></script>
-<script src="./js/utils/chartUtils.js"></script>
-<script src="./js/utils/stringUtils.js"></script>
-<script src="./js/utils/loadingManager.js"></script>
-<script src="./js/utils/dateUtils.js"></script>
-<script src="./js/utils/progressbarUtils.js"></script>
-<script src="./js/utils/layoutUtils.js"></script>
+<script src="js/utils/localDataManager.js" type="module"></script>
+<script src="./js/utils/validationUtils.js" type="module"></script>
+<script src="./js/utils/dialogUtils.js" type="module"></script>
+<script src="./js/utils/menuUtils.js" type="module"></script>
+<script src="./js/utils/pickerUtils.js" type="module"></script>
+<script src="./js/utils/tableUtils.js" type="module"></script>
+<script src="./js/utils/arrayUtils.js" type="module"></script>
+<script src="./js/utils/chartUtils.js" type="module"></script>
+<script src="./js/utils/stringUtils.js" type="module"></script>
+<script src="./js/utils/loadingManager.js" type="module"></script>
+<script src="./js/utils/dateUtils.js" type="module"></script>
+<script src="./js/utils/progressbarUtils.js" type="module"></script>
+<script src="./js/utils/layoutUtils.js" type="module"></script>
 
-<script src="./js/components/graphEmptyView.js"></script>
-<script src="./js/components/textareaShortcuts.js"></script>
-<script type="module" src="./js/components/emojiPicker.js"></script>
+<script src="./js/components/graphEmptyView.js" type="module"></script>
+<script src="./js/components/textareaShortcuts.js" type="module"></script>
+<script src="./js/components/emojiPicker.js" type="module"></script>
 
-<script src="./js/services/categoryServices.js"></script>
-<script src="./js/services/ruleServices.js"></script>
-<script src="./js/services/budgetServices.js"></script>
-<script src="./js/services/entityServices.js"></script>
-<script src="./js/services/accountServices.js"></script>
-<script src="./js/services/transactionServices.js"></script>
-<script src="./js/services/importTransactionsServices.js"></script>
-<script src="./js/services/statServices.js"></script>
-<script src="./js/services/userServices.js"></script>
-<script src="./js/services/investServices.js"></script>
+<script src="./js/services/categoryServices.js" type="module"></script>
+<script src="./js/services/ruleServices.js" type="module"></script>
+<script src="./js/services/budgetServices.js" type="module"></script>
+<script src="./js/services/entityServices.js" type="module"></script>
+<script src="./js/services/accountServices.js" type="module"></script>
+<script src="./js/services/transactionServices.js" type="module"></script>
+<script src="./js/services/importTransactionsServices.js" type="module"></script>
+<script src="./js/services/statServices.js" type="module"></script>
+<script src="./js/services/userServices.js" type="module"></script>
+<script src="./js/services/investServices.js" type="module"></script>
 
-<script src="./js/login.js" type="text/javascript"></script>
-<script src="./js/accounts.js" type="text/javascript"></script>
-<script src="./js/categories.js"></script>
-<script src="./js/rules.js"></script>
-<script src="./js/budgetDetails.js"></script>
-<script src="./js/importTransactions.js"></script>
-<script src="./js/budgets.js"></script>
-<script src="./js/entities.js"></script>
-<script src="./js/transactions.js"></script>
-<script src="./js/stats.js"></script>
-<script src="./js/dashboard.js"></script>
-<script src="./js/profile.js"></script>
-<script src="./js/investments.js"></script>
+<script src="./js/login.js" type="module"></script>
+<script src="./js/accounts.js" type="module"></script>
+<script src="./js/categories.js" type="module"></script>
+<script src="./js/rules.js" type="module"></script>
+<script src="./js/budgetDetails.js" type="module"></script>
+<script src="./js/importTransactions.js" type="module"></script>
+<script src="./js/budgets.js" type="module"></script>
+<script src="./js/entities.js" type="module"></script>
+<script src="./js/transactions.js" type="module"></script>
+<script src="./js/stats.js" type="module"></script>
+<script src="./js/dashboard.js" type="module"></script>
+<script src="./js/profile.js" type="module"></script>
+<script src="./js/investments.js" type="module"></script>
 
-<script>
-  $(document)
-    .ready(function () {
-      configs.loadFirstView('dashboard');
-      $('.sidenav')
-        .sidenav();
-      $('.dropdown-trigger')
-        .dropdown();
-      LayoutUtils.changeTheme(LayoutUtils.getCurrentThemeName());
+<script type="module">
+  import { configs } from './js/configs.js'
+  import { LayoutUtils } from './js/utils/layoutUtils.js'
+  import { LocalDataManager } from './js/utils/localDataManager.js'
+  import { checkPreAuth, checkPreAuthWithInterval, resetSession } from './js/login.js'
+  import { TopNav } from './js/topNav.js'
 
-      // custom logo for light theme
-      if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT) {
-        $('#side-nav-logo-img')
-          .attr('src', '../img/logo/logo_transparent_bg_v2.png');
-      }
-    });
+  $(window).on('load', function () {
+    checkPreAuth()
+    checkPreAuthWithInterval()
+    TopNav.setupTopNavSummaryAmounts()
+  })
 
-  function onMouseOverLogo(element) {
-    if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT) return;
+  $(document).ready(function () {
+    configs.loadFirstView('dashboard')
+    $('.sidenav').sidenav()
+    $('.dropdown-trigger').dropdown()
+    LayoutUtils.changeTheme(LayoutUtils.getCurrentThemeName())
 
-    element.src = '../img/logo/logo_transparent_bg_v2.png';
+    // custom logo for light theme
+    if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT) {
+      $('#side-nav-logo-img').attr('src', '../img/logo/logo_transparent_bg_v2.png')
+    }
+
+    $('#side-nav-logo-img').mouseover(() => onMouseOverLogo(this)).mouseout(() => onMouseOutLogo(this))
+  })
+
+  $('#logout-btn').click(() => resetSession())
+
+  function onMouseOverLogo (element) {
+    if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT) {
+      return
+    }
+
+    element.src = '../img/logo/logo_transparent_bg_v2.png'
   }
 
-  function onMouseOutLogo(element) {
+  function onMouseOutLogo (element) {
     if (LocalDataManager.getCurrentTheme() === MYFIN.APP_THEMES.LIGHT) {
-      return;
+      return
     }
-    element.src = '../img/logo/logo_white_font_transparent_bg.png';
+    element.src = '../img/logo/logo_white_font_transparent_bg.png'
   }
 </script>
 </body>

@@ -1,8 +1,7 @@
 <div id="page-wrapper">
     <div class="card-panel">
         <span class="main-accent-color">Contas</span><br>
-        <a class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"
-           onClick="Accounts.addNewAccount()"><i
+        <a class="waves-effect waves-light btn green-gradient-bg add-new-account-action" style="margin: 10px;"><i
                 class="material-icons left">add_circle</i>Adicionar Conta</a>
 
         <ul class="list">
@@ -15,13 +14,15 @@
                             de Maneio</h5>
                         <div id="acc-operating-funds-accs-wrapper">
                             <div style="text-align: center;"><p>Não possui atualmente qualquer conta neste grupo.</p>
-                                <p>Pode adicionar uma nova conta <a onClick="Accounts.addNewAccount()" style="cursor:pointer;">aqui</a>.</p>
+                                <p>Pode adicionar uma nova conta <a class="add-new-account-action"
+                                                                    style="cursor:pointer;">aqui</a>.</p>
                             </div>
                         </div>
 
                     </div>
                     <div class="accounts-account-group-total-wrapper">
-                        TOTAL: <span id="account-group-operating-funds-total-balance-value" class="account-groups-total-balance-value">0.00€</span>
+                        TOTAL: <span id="account-group-operating-funds-total-balance-value"
+                                     class="account-groups-total-balance-value">0.00€</span>
                     </div>
                 </div>
             </li>
@@ -34,12 +35,14 @@
                         </h5>
                         <div id="acc-credits-accs-wrapper">
                             <div style="text-align: center;"><p>Não possui atualmente qualquer conta neste grupo.</p>
-                                <p>Pode adicionar uma nova conta <a onClick="Accounts.addNewAccount()" style="cursor:pointer;">aqui</a>.</p>
+                                <p>Pode adicionar uma nova conta <a class="add-new-account-action"
+                                                                    style="cursor:pointer;">aqui</a>.</p>
                             </div>
                         </div>
                     </div>
                     <div class="accounts-account-group-total-wrapper">
-                        TOTAL: <span id="account-group-credits-total-balance-value" class="account-groups-total-balance-value">0.00€</span>
+                        TOTAL: <span id="account-group-credits-total-balance-value"
+                                     class="account-groups-total-balance-value">0.00€</span>
                     </div>
                 </div>
             </li>
@@ -52,12 +55,14 @@
                         </h5>
                         <div id="acc-investments-accs-wrapper">
                             <div style="text-align: center;"><p>Não possui atualmente qualquer conta neste grupo.</p>
-                                <p>Pode adicionar uma nova conta <a onClick="Accounts.addNewAccount()" style="cursor:pointer;">aqui</a>.</p>
+                                <p>Pode adicionar uma nova conta <a class="add-new-account-action"
+                                                                    style="cursor:pointer;">aqui</a>.</p>
                             </div>
                         </div>
                     </div>
                     <div class="accounts-account-group-total-wrapper">
-                        TOTAL: <span id="account-group-investments-total-balance-value" class="account-groups-total-balance-value">0.00€</span>
+                        TOTAL: <span id="account-group-investments-total-balance-value"
+                                     class="account-groups-total-balance-value">0.00€</span>
                     </div>
                 </div>
             </li>
@@ -70,12 +75,14 @@
                         </h5>
                         <div id="acc-others-accs-wrapper">
                             <div style="text-align: center;"><p>Não possui atualmente qualquer conta neste grupo.</p>
-                                <p>Pode adicionar uma nova conta <a onClick="Accounts.addNewAccount()" style="cursor:pointer;">aqui</a>.</p>
+                                <p>Pode adicionar uma nova conta <a class="add-new-account-action"
+                                                                    style="cursor:pointer;">aqui</a>.</p>
                             </div>
                         </div>
                     </div>
                     <div class="accounts-account-group-total-wrapper">
-                        TOTAL: <span id="account-group-others-total-balance-value" class="account-groups-total-balance-value">0.00€</span>
+                        TOTAL: <span id="account-group-others-total-balance-value"
+                                     class="account-groups-total-balance-value">0.00€</span>
                     </div>
                 </div>
             </li>
@@ -91,9 +98,13 @@
 </div>
 
 
-<script>
-    $(document).ready(function () {
-        DialogUtils.initStandardModal()
-        Accounts.init()
-    });
+<script type="module">
+  import { DialogUtils } from '../js/utils/dialogUtils.js'
+  import { Accounts } from '../js/accounts.js'
+
+  $(document).ready(function () {
+    DialogUtils.initStandardModal()
+    Accounts.init()
+    $('.add-new-account-action').click(() => Accounts.addNewAccount())
+  })
 </script>

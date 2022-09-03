@@ -1,6 +1,4 @@
-"use strict";
-
-var PickerUtils = {
+export const PickerUtils = {
     setupMonthPickerWithDefaultDate: (selectorID, defaultMonth, defaultYear, onSelectCallback, minValue = PickerUtils.getMonthPickersMinValue(), maxValue = PickerUtils.getMonthPickersMaxValue()) => {
         $(selectorID).Monthpicker({
             minValue: minValue,

@@ -1,6 +1,7 @@
-'use strict';
+import { InvestmentAssetsTableFunc } from './investmentAssetsTableFunc.js'
+import { StringUtils } from '../utils/stringUtils.js'
 
-var InvestmentReportsTableFunc = {
+export const InvestmentReportsTableFunc = {
   buildReportsROIByAssetTable: (tableId, assetsList, totalInvestedValue) => {
     return `
       <table id="${tableId}" class="display browser-defaults" style="width:100%">

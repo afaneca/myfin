@@ -1,6 +1,12 @@
-'use strict';
+import { DialogUtils } from './utils/dialogUtils.js'
+import { ValidationUtils } from './utils/validationUtils.js'
+import { LayoutUtils } from './utils/layoutUtils.js'
+import { LoadingManager } from './utils/loadingManager.js'
+import { AccountServices } from './services/accountServices.js'
+import { StatServices } from './services/statServices.js'
+import { UserServices } from './services/userServices.js'
 
-var Profile = {
+export const Profile = {
   init: () => {
     $('#global-web-app-version')
       .text(MYFIN.APP_VERSION);

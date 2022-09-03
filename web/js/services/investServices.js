@@ -1,6 +1,4 @@
-'use strict';
-
-var InvestServices = {
+export const InvestServices = {
   getAllAssets: (successCallback, errorCallback) => {
     const pageUrl = `${REST_SERVER_PATH}invest/assets/`;
     $.ajax({

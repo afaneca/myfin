@@ -1,6 +1,4 @@
-'use strict';
-
-var DialogUtils = {
+export var DialogUtils = {
   showGenericMessage: (messageToShow) => {
     M.toast({ html: messageToShow });
   },

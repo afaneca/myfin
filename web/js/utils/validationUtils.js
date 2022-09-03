@@ -1,7 +1,7 @@
 
 "use strict";
 
-var ValidationUtils = {
+export const ValidationUtils = {
     checkIfFieldsAreFilled: (fieldsArr, emptyStr) => {
         let emptyRepStr = (emptyStr) ? emptyStr : ""
         

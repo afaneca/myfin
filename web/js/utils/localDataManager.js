@@ -1,10 +1,8 @@
-'use strict';
-
 const USER_ACCOUNTS_TAG = 'USER_ACCOUNTS_TAG';
 const CURRENT_THEME_TAG = 'CURRENT_THEME_TAG';
 const LAST_TRX_INPUT_DATA_TAG = 'LAST_TRX_INPUT_DATA_TAG';
 
-var LocalDataManager = {
+export var LocalDataManager = {
 
   // CRUD METHODS - LocalStorage
   getLocalItem: (tag) => {
@@ -73,7 +71,7 @@ var LocalDataManager = {
   getLastTrxInputData() {
     return JSON.parse(LocalDataManager.getLocalItem(LAST_TRX_INPUT_DATA_TAG));
   }
-
 };
+
 
 //# sourceURL=js/localDataManager.js
