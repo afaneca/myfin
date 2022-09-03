@@ -1,17 +1,16 @@
 <div id="page-wrapper">
     <div class="card-panel">
         <span class="main-accent-color">Transações</span><br>
-        <a class="waves-effect waves-light btn right-align green-gradient-bg"
-           onclick="Transactions.showAddTransactionModal()"
+        <a id="add-transaction-btn" class="waves-effect waves-light btn right-align green-gradient-bg"
            style="margin: 10px;"><i class="material-icons left">add_circle</i>Adicionar Transação</a>
         <a onClick="configs.goToPage('importTransactions', null, true)"
            class="waves-effect waves-light btn right-align blue-gradient-bg"
            onclick="Transactions.showImportTransactionsModal()"
            style="margin: 10px;"><i class="material-icons left">add_circle</i>Importar Transações</a>
 
-       <!-- <div class="row">
-            <div class="col s8" style="min-height: 50px;background: black;"></div>
-        </div>-->
+        <!-- <div class="row">
+             <div class="col s8" style="min-height: 50px;background: black;"></div>
+         </div>-->
         <div class="row">
             <div class="col s12">
                 <div id="table-transactions-wrapper"></div>
@@ -20,7 +19,11 @@
     </div>
 </div>
 
-<script>
-    DialogUtils.initStandardModal()
-    Transactions.getTransactions()
+<script type="module">
+  import { DialogUtils } from '../js/utils/dialogUtils.js'
+  import { Transactions } from '../js/transactions.js'
+
+  DialogUtils.initStandardModal()
+  Transactions.getTransactions()
+  $('#add-transaction-btn').click(() => Transactions.showAddTransactionModal())
 </script>

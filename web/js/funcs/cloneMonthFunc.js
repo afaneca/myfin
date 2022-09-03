@@ -1,6 +1,9 @@
-"use strict";
+import { DialogUtils } from '../utils/dialogUtils.js'
+import { BudgetDetails } from '../budgetDetails.js'
+import { LoadingManager } from '../utils/loadingManager.js'
+import { BudgetServices } from '../services/budgetServices.js'
 
-var CloneMonthFunc = {
+export const CloneMonthFunc = {
     onCloneMonthClicked: () => {
         LoadingManager.showLoading()
         BudgetServices.getBudgetsListForUser(
@@ -32,11 +35,11 @@ var CloneMonthFunc = {
                 `;
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a onClick="CloneMonthFunc.cloneSpecificMonth()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Clonar Orçamento</a>`;
+            <a id="modal-clone-month-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Clonar Orçamento</a>`;
 
         $("#modal-global .modal-content").html(txt);
         $("#modal-global .modal-footer").html(actionLinks);
-
+        $("#modal-clone-month-btn").click(() => CloneMonthFunc.cloneSpecificMonth())
         $('#specific-budget-select').formSelect();
     },
     renderBudgetsListRow: (budgetID, month, year) => {

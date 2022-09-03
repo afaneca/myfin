@@ -1,6 +1,4 @@
-'use strict';
-
-var StringUtils = {
+export const StringUtils = {
   formatStringToCurrency: (str) => {
     return parseFloat(str)
       .toFixed(2) + '€';
@@ -96,7 +94,7 @@ var StringUtils = {
 - WALLETS (WALLET)
 - Other Accounts (OTHAC)
 */
-const account_types = {
+export const account_types = {
   'CHEAC': 'Conta à Ordem',
   'SAVAC': 'Conta Poupança',
   'INVAC': 'Investimento',
@@ -106,7 +104,7 @@ const account_types = {
   'OTHAC': 'Outra'
 };
 
-const account_types_tag = {
+export const account_types_tag = {
   'CHEAC': 'CHEAC',
   'SAVAC': 'SAVAC',
   'INVAC': 'INVAC',

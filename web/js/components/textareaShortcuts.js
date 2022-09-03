@@ -1,6 +1,4 @@
-'use strict';
-
-const TextareaShortcuts = {
+export const TextareaShortcuts = {
   /**
    * Binds a click listener to shortcutId and appends content to textarea at current cursor position when triggered
    * @param textareaId

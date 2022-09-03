@@ -2,21 +2,22 @@
     <div class="card-panel">
         <span class="blue-text text-darken-2">Importar Transações</span><br>
 
-        <a disabled onClick="ImportTransactions.importFromFileWasClicked()"
+        <a id="import-from-file-btn" disabled
            class="waves-effect waves-light btn right-align blue-gradient-bg"
-           onclick="Transactions.showImportTransactionsModal()" style="margin: 10px;"><i
+           style="margin: 10px;"><i
                 class="material-icons left">add_circle</i>Importar de .csv</a>
-        <a onClick="ImportTransactions.importFromClipboardWasClicked()"
+        <a id="import-from-clipboard-btn"
            class="waves-effect waves-light btn right-align blue-gradient-bg"
-           onclick="Transactions.showImportTransactionsModal()" style="margin: 10px;"><i
+           style="margin: 10px;"><i
                 class="material-icons left">add_circle</i>Importar do clipboard</a>
 
-        <a  id="continue_import_btn" disabled onClick="ImportTransactions.continueImportWasClicked()"
+        <a id="continue_import_btn" disabled
            class="waves-effect waves-light btn right-align orange-gradient-bg"
            style="margin: 10px;float:right;"><i
                 class="material-icons left">chevron_right</i>Continuar Importação</a>
         <div id="account-select"></div>
-        <p id="import_notes">Selecione uma coluna para cada campo: <b>Data</b>, <b>Descrição</b>, <b>Montante</b> (e/ou <b>Tipo</b>/<b>Crédito</b>/<b>Débito</b>).</p>
+        <p id="import_notes">Selecione uma coluna para cada campo: <b>Data</b>, <b>Descrição</b>, <b>Montante</b> (e/ou
+            <b>Tipo</b>/<b>Crédito</b>/<b>Débito</b>).</p>
         <div id="table-wrapper">
 
         </div>
@@ -24,9 +25,13 @@
 </div>
 
 
+<script type="module">
+  import { ImportTransactions } from '../js/importTransactions.js'
 
-<script>
-    $(document).ready(function () {
-        $("p#import_notes").hide()
-    });
+  $(document).ready(function () {
+    $('p#import_notes').hide()
+    $('a#import-from-file-btn').click(() => ImportTransactions.importFromFileWasClicked())
+    $('a#import-from-clipboard-btn').click(() => ImportTransactions.importFromClipboardWasClicked())
+    $('a#continue_import_btn').click(() => ImportTransactions.continueImportWasClicked())
+  })
 </script>

@@ -1,9 +1,18 @@
-'use strict';
+import { DialogUtils } from './utils/dialogUtils.js'
+import { LocalDataManager } from './utils/localDataManager.js'
+import { chartUtils } from './utils/chartUtils.js'
+import { LayoutUtils } from './utils/layoutUtils.js'
+import { GraphEmptyViewComponent } from './components/graphEmptyView.js'
+import { tableUtils } from './utils/tableUtils.js'
+import { LoadingManager } from './utils/loadingManager.js'
+import { StatServices } from './services/statServices.js'
+import { account_types_tag, StringUtils } from './utils/stringUtils.js'
+import { UserServices } from './services/userServices.js'
 
 let EXPENSES_PER_CATEGORY_LINE_CHART;
 let INCOME_PER_CATEGORY_LINE_CHART;
 
-var Stats = {
+export const Stats = {
   initTabEvolutionOfPatrimony: () => {
     /* let cData = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
      let cLabels = ["01/2020", "02/2020", "03/2020", "04/2020", "05/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020"];*/
@@ -383,7 +392,7 @@ var Stats = {
       }
       ]
     };
-
+debugger
     INCOME_PER_CATEGORY_LINE_CHART = new Chart(ctx, {
       type: 'line',
       data: data,

@@ -1,6 +1,6 @@
-'use strict';
+import { LocalDataManager } from './localDataManager.js';
 
-var LayoutUtils = {
+export var LayoutUtils = {
   smoothScrollToDiv: (divStr, animationDurationInMs = 500) => {
     $('html, body')
       .animate({

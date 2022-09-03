@@ -67,8 +67,7 @@
             </div>
             <div id="tab-inv-assets" class="col s12">
                 <div class="card-panel">
-                    <a class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"
-                       onClick="Investments.addNewAssetClicked()"><i
+                    <a id="add-asset-btn" class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"><i
                             class="material-icons left">add_circle</i>Adicionar Ativo</a>
                     <!--<hr>-->
                     <div id="table-wrapper"></div>
@@ -77,8 +76,9 @@
             <div id="tab-inv-transactions" class="col s12">
                 <div class="card-panel">
                     <div class="card-panel">
-                        <a class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"
-                           onClick="Investments.addNewTransactionClicked()"><i
+                        <a id="add-new-trx-btn" class="waves-effect waves-light btn green-gradient-bg"
+                           style="margin: 10px;"
+                        ><i
                                 class="material-icons left">add_circle</i>Adicionar Transação</a>
                         <!--<hr>-->
                         <div id="table-wrapper-transactions"></div>
@@ -167,50 +167,48 @@
     </div>
 </div>
 
-<script src="../js/funcs/investmentAssetsTableFunc.js"></script>
-<script src="../js/funcs/investAssetsModalFunc.js"></script>
-<script src="../js/funcs/investmentTransactionsTableFunc.js"></script>
-<script src="../js/funcs/investTransactionsModalFunc.js"></script>
-<script src="../js/funcs/investmentDashboardChartsFunc.js"></script>
-<script src="../js/funcs/investmentReportsTableFunc.js"></script>
-<script>
-  $(document)
-    .ready(function () {
-      DialogUtils.initStandardModal();
+<script src="../js/funcs/investmentAssetsTableFunc.js" type="module"></script>
+<script src="../js/funcs/investAssetsModalFunc.js" type="module"></script>
+<script src="../js/funcs/investmentTransactionsTableFunc.js" type="module"></script>
+<script src="../js/funcs/investTransactionsModalFunc.js" type="module"></script>
+<script src="../js/funcs/investmentDashboardChartsFunc.js" type="module"></script>
+<script src="../js/funcs/investmentReportsTableFunc.js" type="module"></script>
+<script type="module">
+  import { DialogUtils } from '../js/utils/dialogUtils.js'
+  import { Investments } from '../js/investments.js'
+  import { DateUtils } from '../js/utils/dateUtils.js'
 
-      $('.tabs')
-        .tabs({
-          'onShow': (a, b) => {
-            let activeID = $(a)[0]['id'];
-            Investments.changeTabs(activeID);
-          }
-        });
+  $(document).ready(function () {
+    DialogUtils.initStandardModal()
+    $('#add-new-trx-btn').click(() => Investments.addNewTransactionClicked())
+    $('#add-asset-btn').click(() => Investments.addNewAssetClicked())
+    $('.tabs').tabs({
+      'onShow': (a, b) => {
+        let activeID = $(a)[0]['id']
+        Investments.changeTabs(activeID)
+      },
+    })
 
-      const currentYear = DateUtils.getCurrentYear();
-      $('#current-year-roi-label')
-        .text(`ROI ${currentYear}`);
+    const currentYear = DateUtils.getCurrentYear()
+    $('#current-year-roi-label').text(`ROI ${currentYear}`)
 
-      const argsArr = configs.getUrlArgs();
-      const selectedTab = (argsArr && argsArr.hasOwnProperty('tab')) ? argsArr['tab'] : undefined;
+    const argsArr = configs.getUrlArgs()
+    const selectedTab = (argsArr && argsArr.hasOwnProperty('tab')) ? argsArr['tab'] : undefined
 
-      switch (selectedTab) {
-        case 'dashboard':
-        default:
-          $('.tabs')
-            .tabs('select', 'tab-inv-dashboard');
-          break;
-        case 'assets':
-          $('.tabs')
-            .tabs('select', 'tab-inv-assets');
-          break;
-        case 'transactions':
-          $('.tabs')
-            .tabs('select', 'tab-inv-transactions');
-          break;
-        case 'reports':
-          $('.tabs')
-            .tabs('select', 'tab-inv-reports');
-          break;
-      }
-    });
+    switch (selectedTab) {
+      case 'dashboard':
+      default:
+        $('.tabs').tabs('select', 'tab-inv-dashboard')
+        break
+      case 'assets':
+        $('.tabs').tabs('select', 'tab-inv-assets')
+        break
+      case 'transactions':
+        $('.tabs').tabs('select', 'tab-inv-transactions')
+        break
+      case 'reports':
+        $('.tabs').tabs('select', 'tab-inv-reports')
+        break
+    }
+  })
 </script>

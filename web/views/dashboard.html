@@ -108,8 +108,10 @@
                 <canvas id="chart_pie_debt_distribution" width="600" height="400"></canvas>
                 <div class="empty-view"></div>
             </div>
-            <script>
-              Dashboard.init();
+            <script type="module">
+              import { Dashboard } from '../js/dashboard.js'
+
+              Dashboard.init()
             </script>
         </div>
 

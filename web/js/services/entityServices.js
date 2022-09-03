@@ -1,6 +1,4 @@
-"use strict";
-
-var EntityServices = {
+export const EntityServices = {
     getAllEntities: (successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "entities/"
         $.ajax({

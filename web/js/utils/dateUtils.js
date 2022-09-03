@@ -1,7 +1,6 @@
-'use strict';
 const monthsShort = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 const monthsFull = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-var DateUtils = {
+export const DateUtils = {
   /**
    * Returns in DD/MMM/YYYY format (ex: 03/abr/2020)
    */

@@ -22,7 +22,9 @@
 </div>
 
 
-<script>
+<script type="module">
+  import { DialogUtils } from '../js/utils/dialogUtils.js'
+  import { Budgets } from '../js/budgets.js'
     $(document).ready(function () {
         DialogUtils.initStandardModal()
         Budgets.init();

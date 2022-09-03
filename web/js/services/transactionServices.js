@@ -1,6 +1,4 @@
-'use strict';
-
-var TransactionServices = {
+export const TransactionServices = {
   getAllTransactions: (trxLimit, successCallback, errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'trxs/';
     $.ajax({

@@ -1,6 +1,4 @@
-"use strict";
-
-var CategoryServices = {
+export const CategoryServices = {
     getAllCategories: (type = undefined, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "cats/"
         $.ajax({
