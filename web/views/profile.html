@@ -86,7 +86,7 @@
                 <div class="collapsible-body">
                     <ul>
                         <li>
-                            <b><a onClick="Profile.askForRecalculationOfAllAccountsBalances()" style="cursor:pointer;">Recalcular
+                            <b><a id="ask-for-balances-recalculation-btn" style="cursor:pointer;">Recalcular
                                 saldos de
                                 todas as contas</a></b></li>
                     </ul>
@@ -104,10 +104,11 @@
 
 <script type="module">
   import { Profile } from '../js/profile.js'
-  $(document)
-    .ready(function () {
-      $('.collapsible')
-        .collapsible();
-      Profile.init();
-    });
+
+  $(document).ready(function () {
+    $('.collapsible').collapsible()
+    Profile.init()
+
+    $('#ask-for-balances-recalculation-btn').click(() => Profile.askForRecalculationOfAllAccountsBalances())
+  })
 </script>
