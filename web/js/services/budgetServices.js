@@ -1,6 +1,4 @@
-"use strict";
-
-var BudgetServices = {
+export const BudgetServices = {
     getBudget: (budgetID, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "budgets/" + budgetID
 

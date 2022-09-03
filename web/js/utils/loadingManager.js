@@ -1,6 +1,4 @@
-'use strict';
-
-const LoadingManager = {
+export const LoadingManager = {
   showLoading: () => {
     $('.loader')
       .addClass('is-active');

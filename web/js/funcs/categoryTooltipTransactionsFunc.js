@@ -1,6 +1,11 @@
-'use strict';
+import { LoadingManager } from '../utils/loadingManager.js'
+import { StringUtils } from '../utils/stringUtils.js'
+import { DialogUtils } from '../utils/dialogUtils.js'
+import { DateUtils } from '../utils/dateUtils.js'
+import { TransactionServices } from '../services/transactionServices.js'
+import { LayoutUtils } from '../utils/layoutUtils.js'
 
-var CategoryTooltipTransactionsFunc = {
+export const CategoryTooltipTransactionsFunc = {
   showCategoryTransactionsForMonthInModal: (catID, isCredit, month, year) => {
     LoadingManager.showLoading();
     const type = (isCredit) ? MYFIN.TRX_TYPES.INCOME : MYFIN.TRX_TYPES.EXPENSE;

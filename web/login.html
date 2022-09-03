@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body onload="checkCredentials()">
+<body>
 <div id="login-bg"></div>
 <div id="login-wrap">
     <div class="login-box enso-border">
@@ -40,13 +40,13 @@
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-<script src="./js/utils/dialogUtils.js"></script>
-<script src="js/utils/localDataManager.js"></script>
-<script src="./js/configs.js"></script>
+<script src="./js/utils/dialogUtils.js" type="module"></script>
+<script src="js/utils/localDataManager.js" type="module"></script>
+<script src="./js/configs.js" type="module"></script>
 <script src="./js/consts.js"></script>
 <script src="./js/ensoshared_js_lib/ensoshared.js"></script>
-<script src="./js/utils/loadingManager.js"></script>
-<script src="./js/login.js"></script>
+<script src="./js/utils/loadingManager.js" type="module"></script>
+<script src="./js/login.js" type="module"></script>
 
 <!-- Compiled and minified JavaScript -->
 <!-- <script src="./js/js.cookie.js" type="text/javascript"></script>
@@ -58,6 +58,13 @@
 <script src="./js/misc.js"></script>
 <script src="./js/actions/UserActions.js"></script>
 -->
+<script type="module">
+  import { checkCredentials } from './js/login.js'
+
+  $(window).on('load', function () {
+    checkCredentials()
+  })
+</script>
 </body>
 
 </html>

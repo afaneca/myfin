@@ -1,6 +1,4 @@
-"use strict";
-
-var UserServices = {
+export const UserServices = {
     changeUserPassword: (current_password, new_password, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "users/changePW/"
 

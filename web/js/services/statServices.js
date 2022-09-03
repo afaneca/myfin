@@ -1,6 +1,4 @@
-"use strict";
-
-var StatServices = {
+export const StatServices = {
     getUserCounterStats: (successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "stats/userStats"
         $.ajax({

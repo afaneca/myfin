@@ -65,43 +65,41 @@
 </div>
 
 
-<script>
-    $(document).ready(function () {
-        DialogUtils.initStandardModal()
+<script type="module">
+  import { DialogUtils } from '../js/utils/dialogUtils.js'
+  import { Stats } from '../js/stats.js'
 
-        $('.tabs').tabs({
-            'onShow': (a, b) => {
-                let activeID = $(a)[0]["id"]
-                Stats.changeTabs(activeID)
-            }
-        });
+  $(document).ready(function () {
+    DialogUtils.initStandardModal()
 
+    $('.tabs').tabs({
+      'onShow': (a, b) => {
+        let activeID = $(a)[0]['id']
+        Stats.changeTabs(activeID)
+      },
+    })
 
-        //const selectedTab = (configs.hasOwnProperty("tab")) ? configs.getUrlArgs()["tab"] : undefined
-        const argsArr = configs.getUrlArgs()
-        const selectedTab = (argsArr && argsArr.hasOwnProperty("tab")) ? argsArr["tab"] : undefined
-        /*if(!selectedTab){
-            $('.tabs').tabs('select', "tab-ev-pat")
-            Stats.changeTabs("tab-ev-pat")
-        }*/
-        switch (selectedTab) {
-            case "projections":
-                $('.tabs').tabs('select', "tab-projections")
-                break;
-            case "cat-expenses-evo":
-                $('.tabs').tabs('select', "tab-expenses-per-cat")
-                break;
-            case "cat-income-evo":
-                $('.tabs').tabs('select', "tab-income-per-cat")
-                break;
-            case "ev-pat":
-            default:
-                $('.tabs').tabs('select', "tab-ev-pat")
-                break;
-        }
-
-
-    });
-
-
+    //const selectedTab = (configs.hasOwnProperty("tab")) ? configs.getUrlArgs()["tab"] : undefined
+    const argsArr = configs.getUrlArgs()
+    const selectedTab = (argsArr && argsArr.hasOwnProperty('tab')) ? argsArr['tab'] : undefined
+    /*if(!selectedTab){
+        $('.tabs').tabs('select', "tab-ev-pat")
+        Stats.changeTabs("tab-ev-pat")
+    }*/
+    switch (selectedTab) {
+      case 'projections':
+        $('.tabs').tabs('select', 'tab-projections')
+        break
+      case 'cat-expenses-evo':
+        $('.tabs').tabs('select', 'tab-expenses-per-cat')
+        break
+      case 'cat-income-evo':
+        $('.tabs').tabs('select', 'tab-income-per-cat')
+        break
+      case 'ev-pat':
+      default:
+        $('.tabs').tabs('select', 'tab-ev-pat')
+        break
+    }
+  })
 </script>

@@ -1,6 +1,4 @@
-"use strict";
-
-var ImportTransactionsServices = {
+export const ImportTransactionsServices = {
     doImportTransactionsStep0: (successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "trxs/import/step0"
         $.ajax({
