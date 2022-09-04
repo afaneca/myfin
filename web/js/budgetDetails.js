@@ -10,7 +10,6 @@ import { StringUtils } from './utils/stringUtils.js'
 import { CategoryTooltipTransactionsFunc } from './funcs/categoryTooltipTransactionsFunc.js'
 import { buildEmojiPicker } from './components/emojiPicker.js'
 
-
 let currentBudgetID
 let BUDGET_INITIAL_BALANCE
 
@@ -162,6 +161,17 @@ export const BudgetDetails = {
 
     $('#table_total_credit_current').text(StringUtils.formatMoney(incomeAcc))
     $('#table_total_debit_current').text(StringUtils.formatMoney(expensesAcc))
+    BudgetDetails.bindClickListenersForCatNameTooltip()
+  },
+  bindClickListenersForCatNameTooltip: () => {
+    $('.cat-name-for-tooltip').each(function () {
+      $(this).on('click', function () {
+        BudgetDetails.onCategoryTooltipClick(
+          this.dataset.categoryId,
+          this.dataset.categoryIsCredit,
+        )
+      })
+    })
   },
   buildBudgetInputs: (categoriesArr, isCredit, sameMonthLastYearLabel) => {
     return `
@@ -208,14 +218,17 @@ export const BudgetDetails = {
             `
   },
   renderInputRow: (cat, isCredit, sameMonthLastYearLabel) => {
+    let catHasZeroValue = (isCredit && cat.planned_amount_credit == 0 && cat.current_amount_credit == 0)
+      || (!isCredit && cat.planned_amount_debit == 0 && cat.current_amount_debit == 0)
     return `
-            <tr>
-                <td style="padding:0px !important;"><div class="tooltip" onClick="BudgetDetails.onCategoryTooltipClick(${cat.category_id}, ${isCredit})">
-                        <span style="border-bottom: 1px dotted black;">${cat.name}</span>
+            <tr style="border-bottom: none !important;">
+                <td style="padding:0px !important;"><div class="tooltip cat-name-for-tooltip"
+                data-category-id="${cat.category_id}" data-category-is-credit="${isCredit}">
+                        <span style="border-bottom: 1px dotted black; ${catHasZeroValue ? 'color: #9ca8a9;' : ''}">${cat.name}</span>
                         <div class="tooltiptext">
-                        <span class="center-align" style="margin: 10px 0;font-style: italic;"><center>${(cat.description)
-      ? cat.description
-      : 'Sem descrição'}</center></span><hr>
+                        <span class="center-align" style="margin: 10px 0;font-style: italic;">
+                            <center>${(cat.description) ? cat.description : 'Sem descrição'}</center>
+                        </span><hr>
                         <div class="row">
                             <div class="col s8">${sameMonthLastYearLabel}</div>
                             <div class="col s4 right-align white-text"><strong class="white-text">${StringUtils.formatMoney(
@@ -263,18 +276,16 @@ export const BudgetDetails = {
                     <div id="modded">
                         <div class="progress main-dark-bg tooltipped" data-position="top" data-tooltip="${BudgetDetails.buildCatTooltipText(
       cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
-                            <span>${cat.name}</span>
-                            <div class="determinate ${isCredit
-      ? 'green-gradient-bg'
-      : 'red-gradient-bg'}" style="width: ${BudgetDetails.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit,
+                          
+                        <div class="determinate ${isCredit ? 'green-gradient-bg' : 'red-gradient-bg'}"
+                            style="width: ${BudgetDetails.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit,
       cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
-                                ${BudgetDetails.getCorrectPercentageValue(cat.current_amount_credit, cat.current_amount_debit,
-      cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%
-                             </div>
-                        </div>
-                    </div>
-                 </td>
-            </tr>
+                              
+                         </div>
+                      </div>
+                  </div>
+               </td>
+          </tr>
         `
     /* <div class="row">
         ${cat}:
