@@ -202,7 +202,6 @@ export var Transactions = {
           type => Transactions.renderTypesSelectOptions(type)).join('')}
                         </select>
                         <a id="auto-categorize-btn" class="waves-effect waves-light btn purple-gradient-bg scale-transition scale-out"
-                        onclick="Transactions.autoCategorizeButtonClicked()"
                         style="margin: 10px 0;"><i class="material-icons left">lightbulb_outline</i>Auto-Categorizar</a>
                         
                     </div>
@@ -271,9 +270,12 @@ export var Transactions = {
                 `
 
         let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-                    <a onClick="Transactions.addTransaction()"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`
+                    <a id="modal-action-add-trx" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`
         $('#modal-global .modal-content').html(txt)
         $('#modal-global .modal-footer').html(actionLinks)
+        $('#modal-action-add-trx').click(() => Transactions.addTransaction())
+        $('#auto-categorize-btn').click(() => Transactions.autoCategorizeButtonClicked())
+
         $('select.select-trxs-entities').select2({
           dropdownParent: '#modal-global',
           allowClear: true,
