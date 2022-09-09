@@ -83,6 +83,9 @@ export const StringUtils = {
     return Object.values(MYFIN.INVEST_TRX_TYPES)
       .find(type => type.id === id);
   },
+  parseStringToBoolean: str => {
+    return str === 'true'
+  }
 };
 
 /* TYPES OF ACCOUNTS:
