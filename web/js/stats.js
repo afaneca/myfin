@@ -1,7 +1,6 @@
 import { DialogUtils } from './utils/dialogUtils.js'
 import { LocalDataManager } from './utils/localDataManager.js'
 import { chartUtils } from './utils/chartUtils.js'
-import { LayoutUtils } from './utils/layoutUtils.js'
 import { GraphEmptyViewComponent } from './components/graphEmptyView.js'
 import { tableUtils } from './utils/tableUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
@@ -9,224 +8,178 @@ import { StatServices } from './services/statServices.js'
 import { account_types_tag, StringUtils } from './utils/stringUtils.js'
 import { UserServices } from './services/userServices.js'
 
-let EXPENSES_PER_CATEGORY_LINE_CHART;
-let INCOME_PER_CATEGORY_LINE_CHART;
+let EXPENSES_PER_CATEGORY_LINE_CHART
+let INCOME_PER_CATEGORY_LINE_CHART
+let EVOLUTION_LINE_CHART
+let PROJECTIONS_LINE_CHART
 
 export const Stats = {
   initTabEvolutionOfPatrimony: () => {
-    /* let cData = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
-     let cLabels = ["01/2020", "02/2020", "03/2020", "04/2020", "05/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020"];*/
-    LoadingManager.showLoading();
+    LoadingManager.showLoading()
     StatServices.getUserAccountsBalanceSnapshot((resp) => {
       // SUCCESS
-      LoadingManager.hideLoading();
+      LoadingManager.hideLoading()
       if (resp) {
-        Stats.transformList(resp);
-      } else {
-        $('#chart_pie_patrimony_evolution')
-          .hide();
-        $('#patrimony-table')
-          .html(GraphEmptyViewComponent.buildDefaultGraphEmptyView());
+        Stats.transformList(resp)
+      }
+      else {
+        $('#chart_pie_patrimony_evolution').hide()
+        $('#patrimony-table').html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
       }
     }, (err) => {
       // FAILURE
-      LoadingManager.hideLoading();
-      DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
-    });
+      LoadingManager.hideLoading()
+      DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+    })
   },
   initTabProjections: () => {
-    LoadingManager.showLoading();
+    LoadingManager.showLoading()
     StatServices.getMonthlyPatrimonyProjections((resp) => {
       // SUCCESS
-      LoadingManager.hideLoading();
-      const budgetsList = resp['budgets'];
-      const accountsFromPreviousMonth = resp['accountsFromPreviousMonth'];
-      let initialAssetsValue = Stats.getInitialAssetsBalance(accountsFromPreviousMonth);
+      LoadingManager.hideLoading()
+      const budgetsList = resp['budgets']
+      const accountsFromPreviousMonth = resp['accountsFromPreviousMonth']
+      let initialAssetsValue = Stats.getInitialAssetsBalance(accountsFromPreviousMonth)
       for (let budget of budgetsList) {
         budget['planned_final_balance_assets_only'] = initialAssetsValue
-          + StringUtils.convertIntegerToFloat((StringUtils.convertFloatToInteger(budget.planned_final_balance) - StringUtils.convertFloatToInteger(budget.planned_initial_balance)));
-        initialAssetsValue = budget['planned_final_balance_assets_only'];
-        budget['planned_final_balance_operating_funds_only'] = budget['planned_final_balance_assets_only'] - Stats.getTotalBalanceFromInvestmentAccounts();
+          + StringUtils.convertIntegerToFloat(
+            (StringUtils.convertFloatToInteger(budget.planned_final_balance) - StringUtils.convertFloatToInteger(budget.planned_initial_balance)))
+        initialAssetsValue = budget['planned_final_balance_assets_only']
+        budget['planned_final_balance_operating_funds_only'] = budget['planned_final_balance_assets_only'] -
+          Stats.getTotalBalanceFromInvestmentAccounts()
       }
-      let chartData = budgetsList.map(budget => parseFloat(budget.planned_final_balance)
-        .toFixed(2));
-      let chartLabels = budgetsList.map(budget => budget.month + '/' + budget.year);
-      let extraChartData = [{
-        borderColor: '#FF5722',
-        data: budgetsList.map(budget => parseFloat(budget.planned_final_balance_assets_only)
-          .toFixed(2) /*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/),
-        fill: true,
-        hidden: true,
-        label: 'Balanço Projetado (Ativos)',
-      }];
-      Stats.setupPatrimonyProjectionsLineChart(chartData, chartLabels, extraChartData);
-      Stats.setupPatrimonyProjectionsList(budgetsList);
+      let chartData = budgetsList.map(budget => parseFloat(budget.planned_final_balance).toFixed(2))
+      let chartLabels = budgetsList.map(budget => budget.month + '/' + budget.year)
+      let extraChartData = [
+        {
+          borderColor: '#FF5722',
+          data: budgetsList.map(budget => parseFloat(budget.planned_final_balance_assets_only).toFixed(2) /*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/),
+          fill: true,
+          hidden: true,
+          label: 'Balanço Projetado (Ativos)',
+        }]
+      Stats.setupPatrimonyProjectionsLineChart(chartData, chartLabels, extraChartData)
+      Stats.setupPatrimonyProjectionsList(budgetsList)
     }, (err) => {
       // FAILURE
-      LoadingManager.hideLoading();
-      DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
-    });
+      LoadingManager.hideLoading()
+      DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+    })
   },
   changeTabs: activeID => {
     switch (activeID) {
       case 'tab-ev-pat':
-        Stats.initTabEvolutionOfPatrimony();
-        window.history.replaceState(null, null, '#!stats?tab=ev-pat');
-        break;
+        Stats.initTabEvolutionOfPatrimony()
+        window.history.replaceState(null, null, '#!stats?tab=ev-pat')
+        break
       case 'tab-projections':
-        Stats.initTabProjections();
-        window.history.replaceState(null, null, '#!stats?tab=projections');
-        break;
+        Stats.initTabProjections()
+        window.history.replaceState(null, null, '#!stats?tab=projections')
+        break
       case 'tab-expenses-per-cat':
-        Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution');
-        $('#chart_pie_cat_expenses_evolution')
-          .remove();
-        $('#canvas_chart_expenses_evo_wrapper')
-          .append(' <canvas id="chart_pie_cat_expenses_evolution" width="800" height="300"></canvas>');
-        Stats.initExpensesPerCatEvolution();
-        window.history.replaceState(null, null, '#!stats?tab=cat-expenses-evo');
-        break;
+        Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution')
+        $('#chart_pie_cat_expenses_evolution').remove()
+        $('#canvas_chart_expenses_evo_wrapper').append(' <canvas id="chart_pie_cat_expenses_evolution" width="800" height="300"></canvas>')
+        Stats.initExpensesPerCatEvolution()
+        window.history.replaceState(null, null, '#!stats?tab=cat-expenses-evo')
+        break
       case 'tab-income-per-cat':
-        Stats.clearCanvasAndTableWrapper('#chart_pie_cat_income_evolution_table', 'chart_pie_cat_income_evolution');
-        $('#chart_pie_cat_income_evolution')
-          .remove();
-        $('#canvas_chart_income_evo_wrapper')
-          .append(' <canvas id="chart_pie_cat_income_evolution" width="800" height="300"></canvas>');
+        Stats.clearCanvasAndTableWrapper('#chart_pie_cat_income_evolution_table', 'chart_pie_cat_income_evolution')
+        $('#chart_pie_cat_income_evolution').remove()
+        $('#canvas_chart_income_evo_wrapper').append(' <canvas id="chart_pie_cat_income_evolution" width="800" height="300"></canvas>')
 
-        Stats.initIncomePerCatEvolution();
-        window.history.replaceState(null, null, '#!stats?tab=cat-income-evo');
-        break;
+        Stats.initIncomePerCatEvolution()
+        window.history.replaceState(null, null, '#!stats?tab=cat-income-evo')
+        break
       default:
-        break;
+        break
     }
   },
   clearCanvasAndTableWrapper: (tableWrapperLocator, canvasLocator) => {
-    $(tableWrapperLocator)
-      .html('');
-    let canvas = document.getElementById(canvasLocator);
-    let context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    $(tableWrapperLocator).html('')
+    let canvas = document.getElementById(canvasLocator)
+    let context = canvas.getContext('2d')
+    context.clearRect(0, 0, canvas.width, canvas.height)
   },
   initExpensesPerCatEvolution: () => {
-
+    LoadingManager.showLoading()
     UserServices.getAllCategoriesAndEntitiesForUser(
       (resp) => {
         // SUCCESS
-        LoadingManager.hideLoading();
-        Stats.setupCategorySelect(resp.categories, resp.entities, '#tab-expenses-per-cat');
+        LoadingManager.hideLoading()
+        Stats.setupCategorySelect(resp.categories, resp.entities, '#tab-expenses-per-cat')
 
-        $('#tab-expenses-per-cat')
-          .find('select.category-selection-select')
-          .select2();//.formSelect();//.select2()
-        $('select.category-selection-select')
-          .on('change', (v) => {
-            let selectedEntCatId = $('#tab-expenses-per-cat')
-              .find('select.category-selection-select')
-              .val();
-            let selectedCatId,
-              selectedEntId;
-            if (selectedEntCatId.startsWith('cat-')) {
-              selectedCatId = selectedEntCatId.split('cat-')[1];
-            } else if (selectedEntCatId.startsWith('ent-')) {
-              selectedEntId = selectedEntCatId.split('ent-')[1];
-            }
+        $('#tab-expenses-per-cat').find('select.category-selection-select').select2()
+        $('select.category-selection-select').on('change', (v) => {
+          let selectedEntCatId = $('#tab-expenses-per-cat').find('select.category-selection-select').val()
+          let selectedCatId,
+            selectedEntId
+          if (selectedEntCatId.startsWith('cat-')) {
+            selectedCatId = selectedEntCatId.split('cat-')[1]
+          }
+          else if (selectedEntCatId.startsWith('ent-')) {
+            selectedEntId = selectedEntCatId.split('ent-')[1]
+          }
 
-            Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution');
+          Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution')
 
-            LoadingManager.showLoading();
-            StatServices.getCategoryExpensesEvolution(selectedCatId, selectedEntId,
-              (resp) => {
-                // SUCCESS
-                LoadingManager.hideLoading();
-                Stats.renderExpensesPerCategoryTable(resp);
-                Stats.renderExpensesPerCategoryLineChart(resp);
-              }, (resp) => {
-                // FAILURE
-                LoadingManager.hideLoading();
-                DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
-              });
-          });
+          LoadingManager.showLoading()
+          StatServices.getCategoryExpensesEvolution(selectedCatId, selectedEntId,
+            (resp) => {
+              // SUCCESS
+              LoadingManager.hideLoading()
+              Stats.renderExpensesPerCategoryTable(resp)
+              Stats.renderExpensesPerCategoryLineChart(resp)
+            }, (resp) => {
+              // FAILURE
+              LoadingManager.hideLoading()
+              DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+            })
+        })
       }, (err) => {
         // FAILURE
-        LoadingManager.hideLoading();
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
-      }
-    );
+        LoadingManager.hideLoading()
+        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+      },
+    )
   },
-  renderExpensesPerCategoryLineChart: data => {
-    /*let chartData = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
-    let chartLabels = ["01/2020", "02/2020", "03/2020", "04/2020", "05/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020"];*/
-    let chartData = [];
-    let chartLabels = [];
+  renderExpensesPerCategoryLineChart: dataset => {
+    let chartData = []
+    let chartLabels = []
 
-    for (var i = data.length - 1; i >= 0; i--) {
-      chartData.push(data[i].value);
-      chartLabels.push(`${data[i].month}/${data[i].year}`);
+    for (var i = dataset.length - 1; i >= 0; i--) {
+      chartData.push(dataset[i].value)
+      chartLabels.push(`${dataset[i].month}/${dataset[i].year}`)
     }
 
-    var ctx = document.getElementById('chart_pie_cat_expenses_evolution')
-      .getContext('2d');
+    const ctx = document.getElementById('chart_pie_cat_expenses_evolution').getContext('2d')
 
-    const chartTitle = 'Evolução de Despesa';
-    var customOptions = {
-      title: {
-        display: true,
-        text: chartTitle,
-        position: 'top',
-        fontColor: LayoutUtils.getCSSVariableValue('--main-headline-text-color')
-      },
-      legend: {
-        labels: {
-          fontColor: LayoutUtils.getCSSVariableValue('--main-text-color')
-        }
-      },
-      tooltips: {
-        callbacks: {
-          title: function (tooltipItem, data) {
-            return data['labels'][tooltipItem[0]['index']];
-          },
-          label: (tooltipItem, data) => {
-            return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']]);
-          },
-          afterLabel: (tooltipItem, data) => {
-          }
-        }
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-          }
-        }],
-        xAxes: [{
-          ticks: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-          }
-        }]
-      }
-    };
+    const chartTitle = 'Evolução de Despesa'
+    const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
-    var data = {
+    const data = {
       labels: chartLabels,
-      datasets: [{
-        data: chartData,
-        label: 'Evolução de Despesa',
-        borderColor: '#3e95cd',
-        fill: true,
-        trendlineLinear: chartUtils.getTrendLineObject()
-      },
-      ]
-    };
-
+      datasets: [
+        {
+          data: chartData,
+          label: 'Evolução de Despesa',
+          borderColor: '#3e95cd',
+          fill: true,
+          trendlineLinear: chartUtils.getTrendLineObject(),
+        },
+      ],
+    }
+    if (EXPENSES_PER_CATEGORY_LINE_CHART) {
+      EXPENSES_PER_CATEGORY_LINE_CHART.destroy()
+    }
     EXPENSES_PER_CATEGORY_LINE_CHART = new Chart(ctx, {
       type: 'line',
       data: data,
-      options: customOptions
-    });
+      options: customOptions,
+    })
   },
   renderExpensesPerCategoryTable: data => {
-    $('div#chart_pie_cat_expenses_evolution_table')
-      .html(`
+    $('div#chart_pie_cat_expenses_evolution_table').html(`
             <table id="cat-expenses-evolution-table" class="display browser-defaults" style="width:100%">
                 <thead>
                     <tr>
@@ -236,13 +189,13 @@ export const Stats = {
                     </tr>
                 </thead>
                 <tbody>
-                    ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month))
-        .join('')}
+                    ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
+      join('')}
                 </tbody>
             </table>
-        `);
+        `)
 
-    tableUtils.setupStaticTable('table#cat-expenses-evolution-table');
+    tableUtils.setupStaticTable('table#cat-expenses-evolution-table')
   },
   renderExpensesPerCategoryTableRow: (oldMonth, monthData) => {
 
@@ -252,156 +205,112 @@ export const Stats = {
             <td>${StringUtils.formatMoney(monthData.value)}</td>
             <td>${(!oldMonth) ? '-' : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
         </tr>
-      `;
+      `
   },
   setupCategorySelect: (categories, entities, wrapperDivLocator) => {
-    $(wrapperDivLocator)
-      .find('div.categories-select-wrapper')
-      .html(`
+    $(wrapperDivLocator).find('div.categories-select-wrapper').html(`
             <div class="input-field col s3">
                 <select id="category_select" class="category-selection-select">
                     <option value="" disabled selected>Escolha uma categoria</option>
                     <optgroup label="Categorias">
-                        ${categories.map(cat => Stats.renderCategorySelectOption(cat))
-        .join('')}
+                        ${categories.map(cat => Stats.renderCategorySelectOption(cat)).join('')}
                     </optgroup>
                     <optgroup label="Entidades">
-                        ${entities.map(ent => Stats.renderEntitySelectOption(ent))
-        .join('')}
+                        ${entities.map(ent => Stats.renderEntitySelectOption(ent)).join('')}
                     </optgroup>
                 </select>
             </div>
-        `);
+        `)
   },
   renderCategorySelectOption: cat => {
     return `
             <option value="cat-${cat.category_id}">${cat.name}</option>
-        `;
+        `
   },
   renderEntitySelectOption: ent => {
     return `
             <option value="ent-${ent.entity_id}">${ent.name}</option>
-        `;
+        `
   },
   initIncomePerCatEvolution: () => {
+    LoadingManager.showLoading()
     UserServices.getAllCategoriesAndEntitiesForUser(
       (resp) => {
         // SUCCESS
-        LoadingManager.hideLoading();
-        Stats.setupCategorySelect(resp.categories, resp.entities, '#tab-income-per-cat');
+        LoadingManager.hideLoading()
+        Stats.setupCategorySelect(resp.categories, resp.entities, '#tab-income-per-cat')
 
-        $('#tab-income-per-cat')
-          .find('select.category-selection-select')
-          .select2();//.formSelect();//.select2()
-        $('select.category-selection-select')
-          .on('change', (v) => {
-            let selectedEntCatId = $('#tab-income-per-cat')
-              .find('select.category-selection-select')
-              .val();
-            let selectedCatId,
-              selectedEntId;
-            if (selectedEntCatId.startsWith('cat-')) {
-              selectedCatId = selectedEntCatId.split('cat-')[1];
-            } else if (selectedEntCatId.startsWith('ent-')) {
-              selectedEntId = selectedEntCatId.split('ent-')[1];
-            }
+        $('#tab-income-per-cat').find('select.category-selection-select').select2()
+        $('select.category-selection-select').on('change', (v) => {
+          let selectedEntCatId = $('#tab-income-per-cat').find('select.category-selection-select').val()
+          let selectedCatId,
+            selectedEntId
+          if (selectedEntCatId.startsWith('cat-')) {
+            selectedCatId = selectedEntCatId.split('cat-')[1]
+          }
+          else if (selectedEntCatId.startsWith('ent-')) {
+            selectedEntId = selectedEntCatId.split('ent-')[1]
+          }
 
-            Stats.clearCanvasAndTableWrapper('#chart_pie_cat_income_evolution_table', 'chart_pie_cat_income_evolution');
+          Stats.clearCanvasAndTableWrapper('#chart_pie_cat_income_evolution_table', 'chart_pie_cat_income_evolution')
 
-            LoadingManager.showLoading();
-            StatServices.getCategoryIncomeEvolution(selectedCatId, selectedEntId,
-              (resp) => {
-                // SUCCESS
-                LoadingManager.hideLoading();
-                Stats.renderIncomePerCategoryTable(resp);
-                Stats.renderIncomePerCategoryLineChart(resp);
-              }, (resp) => {
-                // FAILURE
-                LoadingManager.hideLoading();
-                DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
-              });
-          });
+          LoadingManager.showLoading()
+          StatServices.getCategoryIncomeEvolution(selectedCatId, selectedEntId,
+            (resp) => {
+              // SUCCESS
+              LoadingManager.hideLoading()
+              Stats.renderIncomePerCategoryTable(resp)
+              Stats.renderIncomePerCategoryLineChart(resp)
+            }, (resp) => {
+              // FAILURE
+              LoadingManager.hideLoading()
+              DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+            })
+        })
       }, (err) => {
         // FAILURE
-        LoadingManager.hideLoading();
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!');
-      }
-    );
+        LoadingManager.hideLoading()
+        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+      },
+    )
   },
-  renderIncomePerCategoryLineChart: data => {
-    /*let chartData = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000];
-    let chartLabels = ["01/2020", "02/2020", "03/2020", "04/2020", "05/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020", "06/2020"];*/
-    let chartData = [];
-    let chartLabels = [];
+  renderIncomePerCategoryLineChart: dataset => {
+    let chartData = []
+    let chartLabels = []
 
-    for (var i = data.length - 1; i >= 0; i--) {
-      chartData.push(data[i].value);
-      chartLabels.push(`${data[i].month}/${data[i].year}`);
+    for (var i = dataset.length - 1; i >= 0; i--) {
+      chartData.push(dataset[i].value)
+      chartLabels.push(`${dataset[i].month}/${dataset[i].year}`)
     }
 
-    var ctx = document.getElementById('chart_pie_cat_income_evolution')
-      .getContext('2d');
+    const ctx = document.getElementById('chart_pie_cat_income_evolution').getContext('2d')
 
-    const chartTitle = 'Evolução de Receita';
-    var customOptions = {
-      title: {
-        display: true,
-        text: chartTitle,
-        position: 'top',
-        fontColor: LayoutUtils.getCSSVariableValue('--main-headline-text-color')
-      },
-      legend: {
-        labels: {
-          fontColor: LayoutUtils.getCSSVariableValue('--main-text-color')
-        }
-      },
-      tooltips: {
-        callbacks: {
-          title: function (tooltipItem, data) {
-            return data['labels'][tooltipItem[0]['index']];
-          },
-          label: (tooltipItem, data) => {
-            return StringUtils.formatMoney(data['datasets'][0]['data'][tooltipItem['index']]);
-          },
-          afterLabel: (tooltipItem, data) => {
-          }
-        }
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-          }
-        }],
-        xAxes: [{
-          ticks: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-          }
-        }]
-      }
-    };
+    const chartTitle = 'Evolução de Receita'
+    const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
-    var data = {
+    const data = {
       labels: chartLabels,
-      datasets: [{
-        data: chartData,
-        label: 'Evolução de Receita Por Categoria',
-        borderColor: '#3e95cd',
-        fill: true,
-        trendlineLinear: chartUtils.getTrendLineObject()
-      }
-      ]
-    };
-debugger
+      datasets: [
+        {
+          data: chartData,
+          label: 'Evolução de Receita Por Categoria',
+          borderColor: '#3e95cd',
+          fill: true,
+          trendlineLinear: chartUtils.getTrendLineObject(),
+        },
+      ],
+    }
+    if (INCOME_PER_CATEGORY_LINE_CHART) {
+      INCOME_PER_CATEGORY_LINE_CHART.destroy()
+    }
     INCOME_PER_CATEGORY_LINE_CHART = new Chart(ctx, {
       type: 'line',
       data: data,
-      options: customOptions
-    });
+      options: customOptions,
+    })
   },
   renderIncomePerCategoryTable: data => {
-    $('div#chart_pie_cat_income_evolution_table')
-      .html(`
+    $('div#chart_pie_cat_income_evolution_table').html(`
             <table id="cat-income-evolution-table" class="display browser-defaults" style="width:100%">
                 <thead>
                     <tr>
@@ -411,13 +320,13 @@ debugger
                     </tr>
                 </thead>
                 <tbody>
-                    ${data.map((month, index) => Stats.renderIncomePerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month))
-        .join('')}
+                    ${data.map((month, index) => Stats.renderIncomePerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
+      join('')}
                 </tbody>
             </table>
-        `);
+        `)
 
-    tableUtils.setupStaticTable('table#cat-income-evolution-table');
+    tableUtils.setupStaticTable('table#cat-income-evolution-table')
   },
   renderIncomePerCategoryTableRow: (oldMonth, monthData) => {
 
@@ -427,25 +336,25 @@ debugger
             <td>${StringUtils.formatMoney(monthData.value)}</td>
             <td>${(!oldMonth) ? '-' : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
         </tr>
-      `;
+      `
   },
   transformList: list => {
-    let cLabels = [];
-    let cAggData = [];
-    let accsList = [];
-    let extraChartData = [];
+    let cLabels = []
+    let cAggData = []
+    let accsList = []
+    let extraChartData = []
 
-    accsList = LocalDataManager.getUserAccounts();
+    accsList = LocalDataManager.getUserAccounts()
 
     for (const elem of list) {
-      const genKey = `${elem.month}/${elem.year}`;
-      cLabels.push(genKey);
+      const genKey = `${elem.month}/${elem.year}`
+      cLabels.push(genKey)
 
       for (const acc of elem.account_snapshots) {
         let fullAccount = accsList.filter((ac) => {
-          return ac.account_id == acc.account_id;
-        })[0];
-        let extraDataObj = extraChartData.filter(e => e.account_id == acc.account_id)[0];
+          return ac.account_id == acc.account_id
+        })[0]
+        let extraDataObj = extraChartData.filter(e => e.account_id == acc.account_id)[0]
         if (!extraDataObj) {
           // record doesn't exist
           extraChartData.push(
@@ -457,103 +366,27 @@ debugger
               fill: true,
               hidden: true,
             },
-          );
-        } else {
+          )
+        }
+        else {
           // record exists already. Just update its data
-          extraDataObj.data.push(acc.balance);
+          extraDataObj.data.push(acc.balance)
         }
 
       }
 
       let aggregateBalance = elem.account_snapshots.reduce((acc, item) => {
-        return acc + StringUtils.convertFloatToInteger(item.balance);
-      }, 0);
-      cAggData.push(StringUtils.convertIntegerToFloat(aggregateBalance));
+        return acc + StringUtils.convertFloatToInteger(item.balance)
+      }, 0)
+      cAggData.push(StringUtils.convertIntegerToFloat(aggregateBalance))
     }
-    Stats.setupPatrimonyLineChart(cAggData, cLabels, extraChartData);
-    Stats.setupPatrimonyTable(cAggData.slice()
-      .reverse(), cLabels.slice()
-      .reverse());
-    tableUtils.setupStaticTable('#ev-pat-table');
+    Stats.setupPatrimonyLineChart(cAggData, cLabels, extraChartData)
+    Stats.setupPatrimonyTable(cAggData.slice().reverse(), cLabels.slice().reverse())
+    tableUtils.setupStaticTable('#ev-pat-table')
 
   },
-  /*transformList: list => {
-      let tempList = []
-      let cLabels = []
-      let cData = []
-      let accsList = []
-      let extraChartData = []
-      /!**
-       * [account_id] = { }
-       *!/
-      accsList = LocalDataManager.getUserAccounts()
-
-
-      for (const elem of list) {
-          const genKey = `${elem.month}/${elem.year}`
-
-          if (!tempList[genKey]) {
-              // if this key doesn't exist yet  -> create sub-array
-              tempList[genKey] = []
-              cLabels.push(genKey)
-          }
-
-          tempList[genKey].push(elem)
-      }
-
-
-      cData["sum"] = []
-      for (const elem of cLabels) {
-          if (!tempList[elem]) continue
-
-          let total = tempList[elem].reduce((acc, item) => {
-              return acc + StringUtils.convertFloatToInteger(item.balance)
-          }, 0)
-
-          for (const elem1 of accsList) {
-              // loop trough the accs associated with each month
-              let accsInSnapshot = tempList[elem].filter((acc) => {
-                  return acc.account_id == elem1.account_id
-              })
-
-              if (!cData[elem1.name]) cData[elem1.name] = []
-
-              if (!accsInSnapshot[0]) {
-                  cData[elem1.name].push(0)
-              } else {
-                  cData[elem1.name].push(accsInSnapshot[0].balance)
-              }
-          }
-
-          cData["sum"].push(StringUtils.convertIntegerToFloat(total))
-      }
-
-
-      const cDataKeysArr = Object.keys(cData)
-
-      for (const dataKey of cDataKeysArr) {
-          if (dataKey === "sum") continue;
-
-          extraChartData.push(
-              {
-                  data: cData[dataKey],
-                  label: dataKey,
-                  borderColor: chartUtils.getPieChartColorsList()[0],
-                  fill: true,
-                  hidden: true,
-              },
-          )
-      }
-
-      //chartUtils.setupSimpleLineChart("chart_pie_patrimony_evolution", cData, cLabels, "asdfsa")
-
-      Stats.setupPatrimonyLineChart(cData["sum"], cLabels, extraChartData)
-      Stats.setupPatrimonyTable(cData["sum"].slice().reverse(), cLabels.slice().reverse())
-      tableUtils.setupStaticTable("#ev-pat-table")
-  },*/
   setupPatrimonyTable: (sumArr, sumLabels) => {
-    $('#patrimony-table')
-      .html(Stats.renderPatrimonyTable(sumArr, sumLabels));
+    $('#patrimony-table').html(Stats.renderPatrimonyTable(sumArr, sumLabels))
   },
   renderPatrimonyTable: (sumArr, sumLabels) => {
     return `
@@ -568,11 +401,10 @@ debugger
                 </tr>
             </thead>
             <tbody>
-                ${sumLabels.map((label, index) => Stats.renderPatrimonyTableRow(label, sumArr[index + 1], sumArr[index]))
-      .join('')}
+                ${sumLabels.map((label, index) => Stats.renderPatrimonyTableRow(label, sumArr[index + 1], sumArr[index])).join('')}
             </tbody>
         </table>
-      `;
+      `
   },
   renderPatrimonyTableRow: (label, starValue, endValue) => {
     return `
@@ -583,100 +415,66 @@ debugger
             <td>${(starValue) ? StringUtils.formatMoney(endValue - starValue) : '-'}</td>
             <td>${(starValue) ? Stats.calculateGrowthPercentage(starValue, endValue) : '-'}</td>
         </tr>
-      `;
+      `
   },
   calculateGrowthPercentage: (val1, val2) => {
-    const percentageChange = (((parseFloat(val2) - parseFloat(val1)) / Math.abs(parseFloat(val1))) * 100)
-      .toFixed(2);
+    const percentageChange = (((parseFloat(val2) - parseFloat(val1)) / Math.abs(parseFloat(val1))) * 100).toFixed(2)
 
     if (percentageChange == 0) {
-      return `<span>${percentageChange}%</span>`;
-    } else if (percentageChange < 0) {
-      return `<span class="badge pink-text text-accent-1">${percentageChange}%</span>`;
-    } else {
-      return `<span class="badge green-text text-accent-4">${percentageChange}%</span>`;
+      return `<span>${percentageChange}%</span>`
+    }
+    else if (percentageChange < 0) {
+      return `<span class="badge pink-text text-accent-1">${percentageChange}%</span>`
+    }
+    else {
+      return `<span class="badge green-text text-accent-4">${percentageChange}%</span>`
     }
   },
   setupPatrimonyLineChart: (chartData, chartLabels, extraChartData) => {
-    var ctx = document.getElementById('chart_pie_patrimony_evolution')
-      .getContext('2d');
+    const ctx = document.getElementById('chart_pie_patrimony_evolution').getContext('2d')
 
-    const chartTitle = 'Evolução do Património';
-    var customOptions = {
-      title: {
-        display: true,
-        text: chartTitle,
-        position: 'top',
-        fontColor: LayoutUtils.getCSSVariableValue('--main-headline-text-color')
-      },
-      legend: {
-        labels: {
-          fontColor: LayoutUtils.getCSSVariableValue('--main-text-color')
-        }
-      },
-      tooltips: {
-        callbacks: {
-          title: function (tooltipItem, data) {
-            return data['labels'][tooltipItem[0]['index']];
-          },
-          label: (tooltipItem, data) => {
-            return StringUtils.formatMoney(tooltipItem.value/*data['datasets'][0]['data'][tooltipItem['index']]*/);
-          },
-          afterLabel: (tooltipItem, data) => {
-          }
-        }
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-          }
-        }],
-        xAxes: [{
-          ticks: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-          }
-        }]
-      }
-    };
+    const chartTitle = 'Evolução do Património'
+    const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
-    var data = {
+    const data = {
       labels: chartLabels,
-      datasets: [{
-        data: chartData,
-        label: 'Acumulado',
-        borderColor: '#3e95cd',
-        fill: true,
-        /*lineTension: 0,*/
-      },
-        ...extraChartData
-      ]
-    };
-
-    var myLineChart = new Chart(ctx, {
+      datasets: [
+        {
+          data: chartData,
+          label: 'Acumulado',
+          borderColor: '#3e95cd',
+          fill: true,
+          /*lineTension: 0,*/
+        },
+        ...extraChartData,
+      ],
+    }
+    if (EVOLUTION_LINE_CHART) {
+      EVOLUTION_LINE_CHART.destroy()
+    }
+    EVOLUTION_LINE_CHART = new Chart(ctx, {
       type: 'line',
       data: data,
-      options: customOptions
-    });
+      options: customOptions,
+    })
   },
-  setupPatrimonyProjectionsList(resp) {
-    $('#patrimony-projections-table')
-      .html(Stats.renderPatrimonyProjectionsTable(resp));
-    tableUtils.setupStaticTable('#ev-pat-projections-table');
+  setupPatrimonyProjectionsList (resp) {
+    $('#patrimony-projections-table').html(Stats.renderPatrimonyProjectionsTable(resp))
+    tableUtils.setupStaticTable('#ev-pat-projections-table')
   },
-  getInitialAssetsBalance(accs) {
-    const allAccs = accs;//LocalDataManager.getUserAccounts()
+  getInitialAssetsBalance (accs) {
+    const allAccs = accs//LocalDataManager.getUserAccounts()
     const assetsAccounts = allAccs.filter(function (acc) {
       return acc.type === account_types_tag.CHEAC || acc.type === account_types_tag.SAVAC
         || acc.type === account_types_tag.INVAC || acc.type === account_types_tag.OTHAC
-        || acc.type === account_types_tag.WALLET || acc.type === account_types_tag.MEALAC;
-    });
+        || acc.type === account_types_tag.WALLET || acc.type === account_types_tag.MEALAC
+    })
 
     let assetsBalance = assetsAccounts.reduce((acc, val) => {
-      return acc + parseFloat(val.balance);
-    }, 0);
+      return acc + parseFloat(val.balance)
+    }, 0)
 
-    return assetsBalance;
+    return assetsBalance
   },
   renderPatrimonyProjectionsTable: budgets => {
     return `
@@ -692,8 +490,7 @@ debugger
                 </tr>
             </thead>
             <tbody>
-                ${budgets.map((budget, index) => Stats.renderPatrimonyProjectionsTableRow(budget))
-      .join('')}
+                ${budgets.map((budget, index) => Stats.renderPatrimonyProjectionsTableRow(budget)).join('')}
             </tbody>
         </table>
         <style>
@@ -704,7 +501,7 @@ debugger
         <p class="right-align grey-text text-accent-4 projections-table-footnotes">* Este é um valor projetado através dos dados orçamentados</p>
         <p class="right-align grey-text text-accent-4 projections-table-footnotes">** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo</p>
         <p class="right-align grey-text text-accent-4 projections-table-footnotes">*** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo e contas de investimento</p>
-      `;
+      `
   },
   renderPatrimonyProjectionsTableRow: (budget) => {
     return `
@@ -714,98 +511,56 @@ debugger
             <td>${StringUtils.formatMoney(budget.planned_final_balance)}</td>
             <td>${StringUtils.formatMoney(budget.planned_final_balance_assets_only)}</td>
             <td>${StringUtils.formatMoney(budget.planned_final_balance_operating_funds_only)}</td>
-            <td>${(budget.planned_initial_balance) ? Stats.calculateGrowthPercentage(budget.planned_initial_balance, budget.planned_final_balance) : '-'}</td>
+            <td>${(budget.planned_initial_balance)
+      ? Stats.calculateGrowthPercentage(budget.planned_initial_balance, budget.planned_final_balance)
+      : '-'}</td>
         </tr>
-      `;
+      `
   },
   getFinalBalanceForAssetsOnly: (totalBalance) => {
-    const debtAccounts = LocalDataManager.getDebtAccounts();
+    const debtAccounts = LocalDataManager.getDebtAccounts()
     let debtTotals = debtAccounts.reduce((acc, val) => {
-      return acc + parseFloat(val.balance);
-    }, 0);
+      return acc + parseFloat(val.balance)
+    }, 0)
 
-    return totalBalance - debtTotals;
+    return totalBalance - debtTotals
   },
   getTotalBalanceFromInvestmentAccounts: () => {
-    const investAccounts = LocalDataManager.getInvestmentAccounts();
-    if (!investAccounts) return 0;
+    const investAccounts = LocalDataManager.getInvestmentAccounts()
+    if (!investAccounts) {
+      return 0
+    }
     return investAccounts.reduce((acc, val) => {
-      return acc + parseFloat(val.balance);
-    }, 0);
+      return acc + parseFloat(val.balance)
+    }, 0)
   },
   setupPatrimonyProjectionsLineChart: (chartData, chartLabels, extraChartData) => {
-    var ctx = document.getElementById('chart_pie_patrimony_projection')
-      .getContext('2d');
+    const ctx = document.getElementById('chart_pie_patrimony_projection').getContext('2d')
 
-    const chartTitle = 'Projeção de Evolução do Património';
-    var customOptions = {
-      title: {
-        display: true,
-        text: chartTitle,
-        position: 'top',
-        fontColor: LayoutUtils.getCSSVariableValue('--main-headline-text-color')
-      },
-      legend: {
-        labels: {
-          fontColor: LayoutUtils.getCSSVariableValue('--main-text-color')
-        }
-      },
-      tooltips: {
-        callbacks: {
-          title: function (tooltipItem, data) {
-            return data['labels'][tooltipItem[0]['index']];
-          },
-          label: (tooltipItem, data) => {
-            return StringUtils.formatMoney(tooltipItem.value/*data['datasets'][0]['data'][tooltipItem['index']]*/);
-          },
-          afterLabel: (tooltipItem, data) => {
-          }
-        },
-        scales: {
-          yAxes: [{
-            ticks: {
-              fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-            }
-          }],
-          xAxes: [{
-            ticks: {
-              fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-            }
-          }]
-        }
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-          }
-        }],
-        xAxes: [{
-          ticks: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-          }
-        }]
-      }
-    };
+    const chartTitle = 'Projeção de Evolução do Património'
+    const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
-    var data = {
+    const data = {
       labels: chartLabels,
-      datasets: [{
-        data: chartData,
-        label: 'Balanço Projetado (Ativos + Passivos)',
-        borderColor: '#3e95cd',
-        fill: true
-      },
-        ...extraChartData
-      ]
-    };
-
-    var myLineChart = new Chart(ctx, {
+      datasets: [
+        {
+          data: chartData,
+          label: 'Balanço Projetado (Ativos + Passivos)',
+          borderColor: '#3e95cd',
+          fill: true,
+        },
+        ...extraChartData,
+      ],
+    }
+    if (PROJECTIONS_LINE_CHART) {
+      PROJECTIONS_LINE_CHART.destroy()
+    }
+    PROJECTIONS_LINE_CHART = new Chart(ctx, {
       type: 'line',
       data: data,
-      options: customOptions
-    });
+      options: customOptions,
+    })
   },
-};
+}
 
 //# sourceURL=js/stats.js
