@@ -168,7 +168,7 @@ export const BudgetDetails = {
       $(this).on('click', function () {
         BudgetDetails.onCategoryTooltipClick(
           this.dataset.categoryId,
-          this.dataset.categoryIsCredit,
+          StringUtils.parseStringToBoolean(this.dataset.categoryIsCredit),
         )
       })
     })
@@ -253,29 +253,24 @@ export const BudgetDetails = {
                     </div>
                  </td>
                 <td style="padding:0px !important;"><div class="input-field inline tooltip">
-                    <input ${(IS_OPEN) ? '' : ' disabled '} id="${cat.category_id}${(isCredit)
-      ? 'credit'
-      : 'debit'}" onClick="this.select();" value="${(isCredit)
-      ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0')
+                    <input ${(IS_OPEN) ? '' : ' disabled '} id="${cat.category_id}${(isCredit) ? 'credit' : 'debit'}" onClick="this.select();"
+                    value="${(isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0')
       : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')}" type="number" class="cat-input validate ${(isCredit)
-      ? 'credit-input-estimated'
-      : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" required>
+      ? 'credit-input-estimated' : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" required>
                     <label for="${cat.category_id}" class="active">Previsto (€)</label>
                 </div></td>
                 <td style="padding:0px !important;"><div class="input-field inline">
                     <input disabled id="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" value="${(isCredit)
       ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0')
       : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')}" type="number" class="validate ${(isCredit)
-      ? 'credit-input-current'
-      : 'debit-input-current'} input" min="0.00" value="0.00" step="0.01" required>
+      ? 'credit-input-current' : 'debit-input-current'} input tooltipped" min="0.00" value="0.00" step="0.01" required>
                     <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" class="active">Atual (€)</label>
                 </div></td>
             </tr>
             <tr>
                 <td colspan="3" style="padding:0px !important;">
                     <div id="modded">
-                        <div class="progress main-dark-bg tooltipped" data-position="top" data-tooltip="${BudgetDetails.buildCatTooltipText(
-      cat.current_amount_credit, cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}">
+                        <div class="progress main-dark-bg">
                           
                         <div class="determinate ${isCredit ? 'green-gradient-bg' : 'red-gradient-bg'}"
                             style="width: ${BudgetDetails.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit,
