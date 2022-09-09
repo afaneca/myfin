@@ -64,9 +64,9 @@ export const chartUtils = {
             ctx.textBaseline = 'center'
             var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2)
             var centerY = chart.chartArea.bottom - 20 //((chart.chartArea.top
-                                                       // +
-                                                       // chart.chartArea.bottom)
-                                                       // / 2);
+            // +
+            // chart.chartArea.bottom)
+            // / 2);
             ctx.font = fontSizeToUse + 'px ' + fontStyle
             ctx.fillStyle = color
 
@@ -122,18 +122,19 @@ export const chartUtils = {
           sidePadding: 10, // Defualt is 20 (as a percentage)
         },
       },
-      legend: {
-        display: false,
-        labels: {
-          fontColor: LayoutUtils.getCSSVariableValue(
-            '--main-text-headline-color'),
+      plugins: {
+        legend: {
+          display: false,
+          labels: {
+            color: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
+          },
         },
       },
       title: {
         display: true,
         text: 'Overview Mensal',
         position: 'bottom',
-        fontColor: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
+        color: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
       },
       tooltips: {
         callbacks: {
@@ -192,10 +193,11 @@ export const chartUtils = {
         position: 'top',
         fontColor: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
       },
-      legend: {
-        labels: {
-          fontColor: LayoutUtils.getCurrentThemeName() ===
-          MYFIN.APP_THEMES.LIGHT ? '#000000' : '#ffffff',
+      plugins: {
+        legend: {
+          labels: {
+            color: LayoutUtils.getCurrentThemeName() === MYFIN.APP_THEMES.LIGHT ? '#000000' : '#ffffff',
+          },
         },
       },
       tooltips: {
@@ -224,18 +226,18 @@ export const chartUtils = {
         },
       },
       scales: {
-        yAxes: [
-          {
-            ticks: {
-              fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-            },
-          }],
-        xAxes: [
-          {
-            ticks: {
-              fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-            },
-          }],
+        y: {
+          ticks: {
+            color: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            beginAtZero: true,
+          },
+        },
+        x: {
+          ticks: {
+            color: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            beginAtZero: true,
+          },
+        },
       },
     }
 
@@ -267,9 +269,11 @@ export const chartUtils = {
         text: chartTitle,
         position: 'top',
       },
-      legend: {
-        labels: {
-          fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+      plugins: {
+        legend: {
+          labels: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          },
         },
       },
       tooltips: {
@@ -358,9 +362,11 @@ export const chartUtils = {
         position: 'top',
         fontColor: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
       },
-      legend: {
-        labels: {
-          fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+      plugins: {
+        legend: {
+          labels: {
+            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          },
         },
       },
       tooltips: {
@@ -443,7 +449,7 @@ export const chartUtils = {
       datasets: [
         {
           data: chartData,
-          label: 'Africa',
+          label: '',
           borderColor: '#3e95cd',
           fill: true,
         },
@@ -731,10 +737,55 @@ export const chartUtils = {
   getTrendLineObject: () => {
     return {
       style: 'rgb(66, 87, 255, 0.3)',
+      colorMin: 'rgb(86, 87, 255, 0.3)',
+      colorMax: 'rgba(86,87,255,0.7)',
       lineStyle: 'dotted|solid',
       width: 2,
+      projection: true,
     }
-  }
+  },
+  getDefaultCustomOptionsForLineChart: (chartTitle) => {
+    return {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: chartTitle,
+          position: 'top',
+          color: LayoutUtils.getCSSVariableValue('--main-text-color'),
+        },
+        legend: {
+          labels: {
+            color: LayoutUtils.getCSSVariableValue('--main-text-color'),
+          },
+        },
+      },
+      tooltips: {
+        callbacks: {
+          title: function (tooltipItem, data) {
+            return data['labels'][tooltipItem[0]['index']]
+          },
+          label: (tooltipItem, data) => {
+            return StringUtils.formatMoney(tooltipItem.value)
+          },
+        },
+      },
+      scales: {
+        y: {
+          ticks: {
+            color: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            beginAtZero: true,
+          },
+        },
+        x: {
+          ticks: {
+            color: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            beginAtZero: true,
+          },
+        },
+      },
+    }
+  },
 }
 
 //# sourceURL=js/utils/chartUtils.js
