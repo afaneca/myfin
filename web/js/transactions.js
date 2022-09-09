@@ -27,14 +27,14 @@ export var Transactions = {
   initTables: (dataset) => {
     $('#table-transactions-wrapper').html(Transactions.renderTable(dataset)
       +
-      `<p class="right-align grey-text text-accent-4 projections-table-footnotes" style="font-size: small">* Por defeito, esta pesquisa apenas devolve as últimas ${MYFIN.TRX_FETCH_LIMIT} transações.<br><a onclick="Transactions.getTransactions(999999999999999)" style="cursor:pointer;">Clique aqui para recuperar a lista completa.</a></p>`)
+      `<p class="right-align grey-text text-accent-4 projections-table-footnotes" style="font-size: small">* Por defeito, esta pesquisa apenas devolve as últimas ${MYFIN.TRX_FETCH_LIMIT} transações.<br><a id="get-all-trxs-footnote-btn" style="cursor:pointer;">Clique aqui para recuperar a lista completa.</a></p>`)
     tableUtils.setupStaticTable('#transactions-table', () => {
       // Click listener for edit trx click
       Transactions.bindClickListenersForEditAction()
       // Click listener for delete trx click
       Transactions.bindClickListenersForRemoveAction()
     })
-
+    $("#get-all-trxs-footnote-btn").click(() => Transactions.getTransactions(999999999999999))
     $(document).ready(function () {
       $('select').formSelect()
     })
