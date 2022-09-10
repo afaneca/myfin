@@ -271,7 +271,7 @@ export var Dashboard = {
             find('.empty-view').
             html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
         }
-        debugger
+
         if (datasetDebit.length > 0) {
           CHART_EXPENSES_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart(
             'chart_pie_spending_distribution', datasetDebit, labelsDebit,
