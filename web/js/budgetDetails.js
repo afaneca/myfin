@@ -77,8 +77,8 @@ export const BudgetDetails = {
       // SUCCESS
       LoadingManager.hideLoading()
       const allCategories = resp['categories']
-      /*const debitCategories = resp['categories'].filter((cat) => cat.type === 'D');
-      const creditCategories = resp['categories'].filter((cat) => cat.type === 'C');*/
+      let allCategoriesDebit
+      let allCategoriesCredit
       const observations = resp['observations']
       BUDGET_INITIAL_BALANCE = resp['initial_balance']
       const month = resp['month']
@@ -86,24 +86,28 @@ export const BudgetDetails = {
 
       /* Reorder categories list */
       if (IS_OPEN) {
-        allCategories.sort((a, b) => {
-          return parseFloat((Math.abs(b.planned_amount_credit) + Math.abs(b.planned_amount_debit)) -
-            (Math.abs(a.planned_amount_credit) + Math.abs(a.planned_amount_debit)))
+        allCategoriesDebit = [...allCategories].sort((a, b) => {
+          return parseFloat(b.planned_amount_debit) - parseFloat(a.planned_amount_debit)
+        })
+        allCategoriesCredit = [...allCategories].sort((a, b) => {
+          return parseFloat(b.planned_amount_credit) - parseFloat(a.planned_amount_credit)
         })
       }
       else {
-        allCategories.sort((a, b) => {
-          return parseFloat((Math.abs(b.current_amount_credit) + Math.abs(b.current_amount_debit)) -
-            (Math.abs(a.current_amount_credit) + Math.abs(a.current_amount_debit)))
+        allCategoriesDebit = [...allCategories].sort((a, b) => {
+          return parseFloat(b.current_amount_debit) - parseFloat(a.current_amount_debit)
+        })
+        allCategoriesCredit = [...allCategories].sort((a, b) => {
+          return parseFloat(b.current_amount_credit) - parseFloat(a.current_amount_credit)
         })
       }
-
+      debugger
       BudgetDetails.setMonthPickerValue(month, year)
       BudgetDetails.setInitialBalance(BUDGET_INITIAL_BALANCE)
       BudgetDetails.setObservations(observations)
       BudgetDetails.setDebitEssentialTransactionsTotal(resp.debit_essential_trx_total)
-      BudgetDetails.setupBudgetInputs('#new-budget-debit-inputs', allCategories, false, `${DateUtils.getMonthsFullName(month)} ${year - 1}`)
-      BudgetDetails.setupBudgetInputs('#new-budget-credit-inputs', allCategories, true, `${DateUtils.getMonthsFullName(month)} ${year - 1}`)
+      BudgetDetails.setupBudgetInputs('#new-budget-debit-inputs', allCategoriesDebit, false, `${DateUtils.getMonthsFullName(month)} ${year - 1}`)
+      BudgetDetails.setupBudgetInputs('#new-budget-credit-inputs', allCategoriesCredit, true, `${DateUtils.getMonthsFullName(month)} ${year - 1}`)
       BudgetDetails.setupInputListenersAndUpdateSummary('#estimated_expenses_value', '#estimated_income_value', '#estimated_balance_value')
       BudgetDetails.updateSummaryValues('#estimated_expenses_value', '#estimated_income_value', '#estimated_balance_value')
     }, (err) => {
