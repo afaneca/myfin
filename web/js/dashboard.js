@@ -8,9 +8,11 @@ import { TransactionServices } from './services/transactionServices.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { StatServices } from './services/statServices.js'
 
-var CHART_INCOME_DISTRIBUTION
-var CHART_EXPENSES_DISTRIBUTION
-var CHART_MONTHLY_OVERVIEW
+let CHART_INCOME_DISTRIBUTION
+let CHART_EXPENSES_DISTRIBUTION
+let CHART_MONTHLY_OVERVIEW
+let CHART_DEBT_DISTRIBUTION
+let CHART_INVESTMENT_DISTRIBUTION
 
 export var Dashboard = {
   init: () => {
@@ -66,7 +68,7 @@ export var Dashboard = {
       $('#chart-angular-target-goals').hide()
       $('.card-panel.target-goals').
         find('.empty-view').
-        html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
+        html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
     }
     else {
       CHART_MONTHLY_OVERVIEW = chartUtils.setupAngularChart(
@@ -92,7 +94,7 @@ export var Dashboard = {
         // FAILURE
         $('.card-panel.last_movements').
           find('.empty-view').
-          html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
+          html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
       })
   },
   setupLastMovementsTable: list => {
@@ -155,15 +157,18 @@ export var Dashboard = {
       labels.push(cacc.name)
       colorGradientsArr.push(cacc.color_gradient)
     }
+    if (CHART_DEBT_DISTRIBUTION) {
+      chartUtils.removeData(CHART_DEBT_DISTRIBUTION)
+    }
     if (dataset.length > 0) {
-      chartUtils.setupDebtDistributionPieChart('chart_pie_debt_distribution',
+      CHART_DEBT_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart('chart_pie_debt_distribution',
         dataset, labels, 'Distribuição da Dívida', colorGradientsArr)
     }
     else {
       $('#chart_pie_debt_distribution').hide()
       $('.card-panel.debt-distribution').
         find('.empty-view').
-        html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
+        html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
 
     }
   },
@@ -186,8 +191,11 @@ export var Dashboard = {
       labels.push(invAcc.name)
       colorGradientsArr.push(invAcc.color_gradient)
     }
+    if (CHART_INVESTMENT_DISTRIBUTION) {
+      chartUtils.removeData(CHART_INVESTMENT_DISTRIBUTION)
+    }
     if (dataset.length > 0) {
-      chartUtils.setupDebtDistributionPieChart('chart_pie_investing_portfolio',
+      CHART_INVESTMENT_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart('chart_pie_investing_portfolio',
         dataset, labels, 'Portefólio de Investimento', colorGradientsArr)
       $('#chart_pie_investing_portfolio').show()
     }
@@ -195,7 +203,7 @@ export var Dashboard = {
       $('#chart_pie_investing_portfolio').hide()
       $('.card-panel.investing_portfolio').
         find('.empty-view').
-        html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
+        html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
     }
   },
   setupIncomeExpensesDistributionChart: () => {
@@ -261,9 +269,9 @@ export var Dashboard = {
           $('#chart_pie_income_distribution').hide()
           $('.card-panel.income_distribution').
             find('.empty-view').
-            html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
+            html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
         }
-
+        debugger
         if (datasetDebit.length > 0) {
           CHART_EXPENSES_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart(
             'chart_pie_spending_distribution', datasetDebit, labelsDebit,
@@ -275,7 +283,7 @@ export var Dashboard = {
           $('#chart_pie_spending_distribution').hide()
           $('.card-panel.spending_distribution').
             find('.empty-view').
-            html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
+            html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
         }
       }, (err) => {
         // FAILURE
@@ -292,19 +300,19 @@ export var Dashboard = {
         $('#chart_pie_income_distribution').hide()
         $('.card-panel.income_distribution').
           find('.empty-view').
-          html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
+          html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
 
         $('#chart_pie_spending_distribution').hide()
 
         $('.card-panel.spending_distribution').
           find('.empty-view').
-          html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
+          html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
 
         $('#chart-angular-target-goals').hide()
 
         $('.card-panel.target-goals').
           find('.empty-view').
-          html(GraphEmptyViewComponent.buildDefaultGraphEmptyView())
+          html(GraphEmptyViewComponent.buildDefaultGraphEmptyView()).show()
 
         Dashboard.setupMonthlyOverviewChart(0, 0)
       })
@@ -321,8 +329,8 @@ export var Dashboard = {
     }
     const formattedTime = DateUtils.convertUnixTimestampToEuropeanDateTimeFormat(
       timestamp)
-    $('#dashboard-last-update-timestamp-value').text(formattedTime);
-  }
-};
+    $('#dashboard-last-update-timestamp-value').text(formattedTime)
+  },
+}
 
 //# sourceURL=js/dashboard.js
