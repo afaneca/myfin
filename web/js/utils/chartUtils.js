@@ -111,15 +111,26 @@ export const chartUtils = {
     }
 
     var customOptions = {
-      rotation: 1 * Math.PI,
-      circumference: Math.PI,
-      cutoutPercentage: 70,
+      aspectRatio: 1.5,
+      maintainAspectRatio: true,
+      responsive: true,
+      rotation: -90,
+      circumference: 180,
+      cutout: '70%',
+      layout: {
+        padding: {
+          left: 0,
+          top: 10,
+          right: 10,
+          bottom: 0,
+        },
+      },
       elements: {
         center: {
           text: customText,
           color: '#fff', // Default is #000000
           fontStyle: 'Arial', // Default is Arial
-          sidePadding: 10, // Defualt is 20 (as a percentage)
+          sidePadding: 10, // Default is 20 (as a percentage)
         },
       },
       plugins: {
@@ -129,13 +140,17 @@ export const chartUtils = {
             color: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
           },
         },
+        title: {
+          display: true,
+          text: 'Overview Mensal',
+          position: 'bottom',
+          color: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
+          padding: {
+            top: -20,
+          },
+        },
       },
-      title: {
-        display: true,
-        text: 'Overview Mensal',
-        position: 'bottom',
-        color: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
-      },
+
       tooltips: {
         callbacks: {
           title: function (tooltipItem, data) {
@@ -161,39 +176,26 @@ export const chartUtils = {
           },
         },
       },
-      /*scales: {
-          yAxes: [{
-              ticks: {
-                  fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-              }
-          }],
-          xAxes: [{
-              ticks: {
-                  fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
-              }
-          }]
-      }*/
     }
 
-    var myPieChart = new Chart(ctx, {
+    return new Chart(ctx, {
       type: 'doughnut',
       data: customData,
       options: customOptions,
     })
-
-    return myPieChart
   },
   setupPieChart: (elementID, chartData, chartLabels, chartTitle) => {
     var ctx = document.getElementById(elementID).getContext('2d')
 
     var customOptions = {
-      title: {
-        display: true,
-        text: chartTitle,
-        position: 'top',
-        fontColor: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
-      },
+
       plugins: {
+        title: {
+          display: true,
+          text: chartTitle,
+          position: 'top',
+          color: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
+        },
         legend: {
           labels: {
             color: LayoutUtils.getCurrentThemeName() === MYFIN.APP_THEMES.LIGHT ? '#000000' : '#ffffff',
@@ -264,15 +266,15 @@ export const chartUtils = {
     var ctx = document.getElementById(elementID).getContext('2d')
 
     var customOptions = {
-      title: {
-        display: true,
-        text: chartTitle,
-        position: 'top',
-      },
       plugins: {
+        title: {
+          display: true,
+          text: chartTitle,
+          position: 'top',
+        },
         legend: {
           labels: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            color: LayoutUtils.getCSSVariableValue('--main-text-color'),
           },
         },
       },
@@ -305,13 +307,13 @@ export const chartUtils = {
         yAxes: [
           {
             ticks: {
-              fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+              color: LayoutUtils.getCSSVariableValue('--main-text-color'),
             },
           }],
         xAxes: [
           {
             ticks: {
-              fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+              color: LayoutUtils.getCSSVariableValue('--main-text-color'),
             },
           }],
       },
@@ -356,16 +358,19 @@ export const chartUtils = {
     }
 
     var customOptions = {
-      title: {
-        display: true,
-        text: chartTitle,
-        position: 'top',
-        fontColor: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
-      },
+      responsive: false,
+      maintainAspectRatio: true,
+      aspectRatio: 1,
       plugins: {
+        title: {
+          display: true,
+          text: chartTitle,
+          position: 'top',
+          color: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
+        },
         legend: {
           labels: {
-            fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            color: LayoutUtils.getCSSVariableValue('--main-text-color'),
           },
         },
       },
@@ -429,23 +434,20 @@ export const chartUtils = {
     return myPieChart
   },
   setupSimpleLineChart: (elementID, chartData, chartLabels, chartTitle) => {
-    var ctx = document.getElementById(elementID).getContext('2d')
+    const ctx = document.getElementById(elementID).getContext('2d')
 
-    var customOptions = {
-      title: {
-        display: true,
-        text: chartTitle,
-        position: 'top',
+    const customOptions = {
+      plugins: {
+        title: {
+          display: true,
+          text: chartTitle,
+          position: 'top',
+        },
       },
     }
 
-    var data = {
+    const data = {
       labels: chartLabels,
-      /* datasets: [{
-          data: [0, 10, 20, 30, 100, 40, 56, 60, 70, 91, 300],
-          backgroundColor: chartUtils.getPieChartColorsList()
-
-      }] */
       datasets: [
         {
           data: chartData,
@@ -456,13 +458,11 @@ export const chartUtils = {
       ],
     }
 
-    var myLineChart = new Chart(ctx, {
+    return new Chart(ctx, {
       type: 'line',
       data: data,
       options: customOptions,
     })
-
-    return myLineChart
   },
   getPieChartColorsList: () => {
     return ArrayUtils.shuffle([
@@ -728,11 +728,7 @@ export const chartUtils = {
     chart.update()
   },
   removeData: (chart) => {
-    chart.data.labels = []
-    chart.data.datasets.forEach((dataset) => {
-      dataset.data = []
-    })
-    chart.update()
+    chart.destroy()
   },
   getTrendLineObject: () => {
     return {
