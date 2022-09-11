@@ -101,7 +101,6 @@ export const BudgetDetails = {
           return parseFloat(b.current_amount_credit) - parseFloat(a.current_amount_credit)
         })
       }
-      debugger
       BudgetDetails.setMonthPickerValue(month, year)
       BudgetDetails.setInitialBalance(BUDGET_INITIAL_BALANCE)
       BudgetDetails.setObservations(observations)
