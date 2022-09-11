@@ -143,7 +143,6 @@ export async function checkPreAuth (failFunction = undefined, renewValidity = un
       // page
     {
       const { configs } = await import('./configs.js').then((c) => {
-        debugger
         window.location = c.defaultApp + '.html'
       });
 
