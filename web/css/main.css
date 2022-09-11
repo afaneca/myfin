@@ -1000,3 +1000,10 @@ svg:not(:root) {
 .budget-observations-shortcuts-box:nth-of-type(1) {
     background-color: #3daa57;
 }
+
+.dashboard-pie-chart-canvas {
+    margin: 0 auto;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+    height: 400px;
+}

@@ -358,7 +358,7 @@ export const chartUtils = {
     }
 
     var customOptions = {
-      responsive: false,
+      responsive: true,
       maintainAspectRatio: true,
       aspectRatio: 1,
       plugins: {
