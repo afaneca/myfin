@@ -149,7 +149,7 @@ class Stats
             $previousMonthsYear = ($currentMonth > 1) ? $currentYear : $currentYear - 1;
 
             foreach ($accountsFromPreviousMonth as &$acc) {
-                $acc["balance"] = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $previousMonth, $previousMonthsYear, false)["balance"];
+                $acc["balance"] = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $previousMonth, $previousMonthsYear, false)["balance"] ?? "0.00";
                 if (!$acc["balance"]) $acc["balance"] = "0.00";
             }
 
