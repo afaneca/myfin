@@ -1,11 +1,7 @@
 <?php
 
-use App\Application\Actions\User\ListUsersAction;
-use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\App;
-use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 require_once 'consts.php';
 
@@ -517,6 +513,69 @@ class Budgets
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function updateBudgetCategoryPlannedValues(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+            } else {
+                $mobile = false;
+            }
+
+            $budgetID = Input::validate($args['id'], Input::$INT, 3);
+
+            $catID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 4);
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* Execute Operations */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
+
+            $userID = UserModel::getUserIdByName($authusername, true);
+
+            if (array_key_exists('planned_expense', $request->getParsedBody()) && $request->getParsedBody()['planned_expense'] !== "") {
+                $plannedExpense = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['planned_expense'], Input::$FLOAT, 5));
+            } else {
+                $plannedExpense = null;
+            }
+
+            if (array_key_exists('planned_income', $request->getParsedBody()) && $request->getParsedBody()['planned_income'] !== "") {
+                $plannedIncome = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['planned_income'], Input::$FLOAT, 6));
+            } else {
+                $plannedIncome = null;
+            }
+
+            if ($plannedExpense == null && $plannedIncome == null) {
+                throw new BadInputValidationException("required input not found");
+            }
+
+            $currentAmounts = BudgetHasCategoriesModel::getWhere([
+                "budgets_budget_id" => $budgetID,
+                "categories_category_id" => $catID,
+                "budgets_users_user_id" => $userID,
+            ], ["planned_amount_credit", "planned_amount_debit"])[0];
+
+            BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID,
+                $plannedIncome ?? $currentAmounts["planned_amount_credit"],
+                $plannedExpense ?? $currentAmounts["planned_amount_debit"], true);
+
+            $db->getDB()->commit();
+
+            return sendResponse($response, EnsoShared::$REST_OK, "Update was successful");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/budgets/', 'Budgets::getAllBudgetsForUser');
@@ -526,4 +585,5 @@ $app->post('/budgets/step0', 'Budgets::addBudgetStep0');
 $app->post('/budgets/step1', 'Budgets::addBudget');
 $app->put('/budgets/', 'Budgets::editBudget');
 $app->put('/budgets/status', 'Budgets::changeBudgetStatus');
+$app->put('/budgets/{id}', 'Budgets::updateBudgetCategoryPlannedValues');
 $app->delete('/budgets/', 'Budgets::removeBudget');
