@@ -230,18 +230,26 @@ export var Dashboard = {
         let totalExpensesRealAmount = 0
         let totalExpensesBudgetedAmount = 0
 
-        allCategories.forEach((cat) => {
-          if (cat.current_amount_credit &&
-            parseFloat(cat.current_amount_credit) !== 0) {
-            datasetCredit.push(cat.current_amount_credit)
-            labelsCredit.push(cat.name)
-            catColorsCredit.push(cat.color_gradient)
-          }
+        // sort by debit amount desc
+        allCategories.concat().sort((a, b) => (a['current_amount_debit'] > b['current_amount_debit'] ? -1 : 1)).forEach((cat) => {
           if (cat.current_amount_debit &&
             parseFloat(cat.current_amount_debit) !== 0) {
             datasetDebit.push(cat.current_amount_debit)
             labelsDebit.push(cat.name)
             catColorsDebit.push(cat.color_gradient)
+          }
+
+          totalExpensesRealAmount += parseFloat(cat.current_amount_debit)
+          totalExpensesBudgetedAmount += parseFloat(cat.planned_amount_debit)
+        })
+
+        // sort by credit amount desc
+        allCategories.concat().sort((a, b) => (a['current_amount_credit'] > b['current_amount_credit'] ? -1 : 1)).forEach((cat) => {
+          if (cat.current_amount_credit &&
+            parseFloat(cat.current_amount_credit) !== 0) {
+            datasetCredit.push(cat.current_amount_credit)
+            labelsCredit.push(cat.name)
+            catColorsCredit.push(cat.color_gradient)
           }
 
           totalExpensesRealAmount += parseFloat(cat.current_amount_debit)

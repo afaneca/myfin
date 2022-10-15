@@ -356,7 +356,6 @@ export const chartUtils = {
       }
       catColorsArr.push(colorGradient)
     }
-
     var customOptions = {
       responsive: true,
       maintainAspectRatio: true,
@@ -371,6 +370,7 @@ export const chartUtils = {
         legend: {
           labels: {
             color: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            filter: (legendItem, data) => showOnlyTopLegendsFilter(legendItem, 5),
           },
         },
       },
@@ -411,6 +411,15 @@ export const chartUtils = {
               }
           }]
       }*/
+    }
+    function showOnlyTopLegendsFilter(legendItem, legendsNr) {
+      let label = legendItem.text;
+      if (typeof(label) !== 'undefined') {
+        if (legendItem.index >= legendsNr){
+          return false;
+        }
+      }
+      return label;
     }
 
     var chartDataVar = {
