@@ -34,9 +34,9 @@ class Stats
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+             $db = new EnsoDB(true);
 
-            $db->getDB()->beginTransaction(); */
+            $db->getDB()->beginTransaction();
 
             /**
              * Skeleton:
@@ -46,7 +46,7 @@ class Stats
              * ]
              */
 
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             $queryResult = BudgetModel::getWhere(["month" => $month, "year" => $year, "users_user_id" => $userID]);
             if (count($queryResult) == 0) {
@@ -54,7 +54,7 @@ class Stats
             }
             $budgetID = $queryResult[0]["budget_id"];
 
-            $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+            $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, true);
             $list["last_update_timestamp"] = intval(UserModel::getWhere(["user_id" => $userID], ["last_update_timestamp"])[0]["last_update_timestamp"]);
 
             foreach ($list["categories"] as &$category) {
@@ -64,7 +64,7 @@ class Stats
                 // TODO: map 'D' & 'C' in categories to 'I' & 'E'
                 $type = ($category["type"] == 'D') ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
 
-                $current_amounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser, false)[0];
+                $current_amounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser, true)[0];
                 $current_amount_credit = $current_amounts["category_balance_credit"];
                 $current_amount_debit = $current_amounts["category_balance_debit"];
 
@@ -73,7 +73,7 @@ class Stats
             }
 
 
-            /* $db->getDB()->commit(); */
+             $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $list);
         } catch (BadInputValidationException $e) {

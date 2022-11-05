@@ -251,9 +251,6 @@ export var Dashboard = {
             labelsCredit.push(cat.name)
             catColorsCredit.push(cat.color_gradient)
           }
-
-          totalExpensesRealAmount += parseFloat(cat.current_amount_debit)
-          totalExpensesBudgetedAmount += parseFloat(cat.planned_amount_debit)
         })
 
         Dashboard.setupMonthlyOverviewChart(totalExpensesBudgetedAmount,
