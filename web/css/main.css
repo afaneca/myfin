@@ -183,6 +183,7 @@ nav ul a:hover {
     float: left;
     margin-top: 0px;
     background: var(--main-sidebar-background);
+    overflow-y: auto;
 }
 
 .side-nav-menu li {
@@ -1007,3 +1008,14 @@ svg:not(:root) {
     aspect-ratio: 1 / 1;
     height: 400px;
 }
+
+.side-nav-menu-item-icon {
+    display: block !important;
+}
+
+@media (max-width: 1430px) {
+    .side-nav-menu-item-icon {
+        display: none !important;
+    }
+}
+
