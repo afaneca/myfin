@@ -50,7 +50,7 @@ class RuleModel extends Entity
                 $ruleValue = $rule["matcher_description_value"];
 
                 if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
-                    if (RuleModel::contains(strtoupper($ruleValue), strtoupper($trx["description"]))) {
+                    if (RuleModel::contains($ruleValue, $trx["description"])) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
