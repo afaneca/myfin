@@ -112,7 +112,7 @@ a > .material-icons, td > .material-icons, div.card-quick-actions > span > .mate
 .modal {
     overflow: visible !important;
     background: var(--main-modal-background);
-    max-height: 100% !important;
+    max-height: 85% !important;
 }
 
 .modal .modal-footer {
@@ -1017,5 +1017,9 @@ svg:not(:root) {
     .side-nav-menu-item-icon {
         display: none !important;
     }
+}
+
+#modal-global {
+    overflow-y: auto !important;
 }
 
