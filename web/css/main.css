@@ -112,7 +112,7 @@ a > .material-icons, td > .material-icons, div.card-quick-actions > span > .mate
 .modal {
     overflow: visible !important;
     background: var(--main-modal-background);
-    max-height: 100% !important;
+    max-height: 85% !important;
 }
 
 .modal .modal-footer {
@@ -183,6 +183,7 @@ nav ul a:hover {
     float: left;
     margin-top: 0px;
     background: var(--main-sidebar-background);
+    overflow-y: auto;
 }
 
 .side-nav-menu li {
@@ -1007,3 +1008,18 @@ svg:not(:root) {
     aspect-ratio: 1 / 1;
     height: 400px;
 }
+
+.side-nav-menu-item-icon {
+    display: block !important;
+}
+
+@media (max-width: 1430px) {
+    .side-nav-menu-item-icon {
+        display: none !important;
+    }
+}
+
+#modal-global {
+    overflow-y: auto !important;
+}
+
