@@ -58,9 +58,13 @@ class InvestAssets
                         "absolute_roi_value" => $roiValue,
                         "relative_roi_percentage" => $roiPercentage,
                     ]
-
                 );
             }
+            
+            // Sort assets array by current value (DESC)
+            usort($res, function ($first, $second) {
+                return $first["current_value"] < $second["current_value"];
+            });
 
             return sendResponse($response, EnsoShared::$REST_OK, $res);
         } catch (BadInputValidationException $e) {

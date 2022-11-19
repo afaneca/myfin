@@ -31,30 +31,6 @@ class Users
 {
     const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
-    /*
-    $app->group('/users/{id:[0-9]+}', function (RouteCollectorProxy $group) {
-    $group->map(['GET', 'DELETE', 'PATCH', 'PUT'], '', function ($request, $response, $args) {
-        // Find, delete, patch or replace user identified by $args['id']
-    })->setName('user');
-
-    $group->get('/reset-password', function ($request, $response, $args) {
-        // Route for /users/{id:[0-9]+}/reset-password
-        // Reset the password for user identified by $args['id']
-    })->setName('user-password-reset');
-});
-    */
-
-    public static function getUserInfo(Request $request, Response $response, $args)
-    {
-        //$request = $request->getParsedBody();
-        $userID = $args['userID']; // xxxx/{userID}
-        $name = $request->getQueryParams()['name']; // xxxx/yy?name={name}
-        $age = $request->getParsedBody()['idade']; // body
-
-
-        return sendResponse($response, EnsoShared::$REST_OK, "$age , $name , $userID");
-    }
-
     public static function addUser($request, $response, $args)
     {
         try {

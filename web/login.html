@@ -29,8 +29,8 @@
             </button>
         </form>
         <div style="margin-top: 31px;border-top: 1px solid #eeeeee;">
-            <p><span id="change-login-type">Ainda não está registado?</span> <a style="color:#243b55;cursor: pointer;"
-                                                                                onclick="signUpLinkWasClicked()">Clique
+            <p><span id="change-login-type">Ainda não está registado?</span> <a id="signup-link"
+                                                                                style="color:#243b55;cursor: pointer;">Clique
                 aqui</a>.</p>
         </div>
     </div>
@@ -59,10 +59,12 @@
 <script src="./js/actions/UserActions.js"></script>
 -->
 <script type="module">
-  import { checkCredentials } from './js/login.js'
+  import { checkCredentials, signUpLinkWasClicked } from './js/login.js'
 
   $(window).on('load', function () {
     checkCredentials()
+
+    $('#signup-link').click(() => signUpLinkWasClicked())
   })
 </script>
 </body>

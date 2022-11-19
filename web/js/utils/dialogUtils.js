@@ -1,6 +1,6 @@
 export var DialogUtils = {
   showGenericMessage: (messageToShow) => {
-    M.toast({ html: messageToShow });
+    M.toast({ text: messageToShow });
   },
   showErrorMessage: (errorMessage
     = 'Ocorreu um erro. Por favor, tente novamente mais tarde!') => {

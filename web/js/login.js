@@ -153,7 +153,7 @@ export async function checkPreAuth (failFunction = undefined, renewValidity = un
 
 function addUser (username, email, password) {
   if (!email || !username || !password) {
-    M.toast({ html: 'Não deixe campos em branco!' })
+    M.toast({ text: 'Não deixe campos em branco!' })
     return
   }
   disableLoginBtn()
@@ -176,14 +176,14 @@ function addUser (username, email, password) {
       url: pageUrl,
       success: (response) => {
         hideLoading().then(r => {
-          M.toast({ html: 'Utilizador adicionado com sucesso!' })
+          M.toast({ text: 'Utilizador adicionado com sucesso!' })
           signUpLinkWasClicked()
           enableLoginBtn()
         })
       },
       error: (response) => {
         hideLoading().then(r => {
-          M.toast({ html: 'Ocorreu um erro. Tente novamente!' })
+          M.toast({ text: 'Ocorreu um erro. Tente novamente!' })
           enableLoginBtn()
         })
       },
@@ -242,7 +242,7 @@ async function performLogin (username, password) {
           if (response.status == EnsoShared.ENSO_REST_NOT_AUTHORIZED) {
             /* M.toast('Autenticação falhada.', 3000, 'rounded'); */
           }
-          M.toast({ html: 'Username/password errados. Tente novamente!' })
+          M.toast({ text: 'Username/password errados. Tente novamente!' })
         })
       },
     })
