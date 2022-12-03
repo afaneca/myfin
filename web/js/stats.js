@@ -2,10 +2,12 @@ import { DialogUtils } from './utils/dialogUtils.js'
 import { GraphEmptyViewComponent } from './components/graphEmptyView.js'
 import { LoadingManager } from './utils/loadingManager.js'
 import { StatServices } from './services/statServices.js'
-import { StringUtils } from './utils/stringUtils.js'
+import { account_types_tag, StringUtils } from './utils/stringUtils.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { chartUtils } from './utils/chartUtils.js'
 import { tableUtils } from './utils/tableUtils.js'
+import { LocalDataManager } from './utils/localDataManager.js'
+import { UserServices } from './services/userServices.js'
 
 let EXPENSES_PER_CATEGORY_LINE_CHART
 let INCOME_PER_CATEGORY_LINE_CHART
@@ -364,15 +366,13 @@ export const Stats = {
     )
   },
   renderCategorySelectOption: cat => {
-    return
-    `
+    return `
     <option value='cat-${cat.category_id}'>${cat.name}</option>
     `
 
   },
   renderEntitySelectOption: ent => {
-    return
-    `
+    return `
     <option value='ent-${ent.entity_id}'>${ent.name}</option>
     `
 
@@ -479,8 +479,7 @@ export const Stats = {
   },
   renderIncomePerCategoryTableRow: (oldMonth, monthData) => {
 
-    return
-    `
+    return `
     <tr>
     <td>${monthData.month}/${monthData.year}</td>
     <td>${StringUtils.formatMoney(monthData.value)}</td>
@@ -542,8 +541,7 @@ export const Stats = {
     $('#patrimony-table').html(Stats.renderPatrimonyTable(sumArr, sumLabels))
   },
   renderPatrimonyTable: (sumArr, sumLabels) => {
-    return
-    `
+    return `
     <table id='ev-pat-table' class='centered' style='margin-top: 10px;'>
     <thead>
     <tr>
@@ -578,18 +576,15 @@ export const Stats = {
     const percentageChange = (((parseFloat(val2) - parseFloat(val1)) / Math.abs(parseFloat(val1))) * 100).toFixed(2)
 
     if (percentageChange == 0) {
-      return
-      `<span>${percentageChange}%</span>`
+      return `<span>${percentageChange}%</span>`
 
     }
     else if (percentageChange < 0) {
-      return
-      `<span class='badge pink-text text-accent-1'>${percentageChange}%</span>`
+      return `<span class='badge pink-text text-accent-1'>${percentageChange}%</span>`
 
     }
     else {
-      return
-      `<span class='badge green-text text-accent-4'>${percentageChange}%</span>`
+      return `<span class='badge green-text text-accent-4'>${percentageChange}%</span>`
 
     }
   },
@@ -640,8 +635,7 @@ export const Stats = {
     return assetsBalance
   },
   renderPatrimonyProjectionsTable: budgets => {
-    return
-    `
+    return `
     <table id='ev-pat-projections-table' class='centered' style='margin-top: 10px;'>
     <thead>
     <tr>
@@ -669,8 +663,7 @@ export const Stats = {
 
   },
   renderPatrimonyProjectionsTableRow: (budget) => {
-    return
-    `
+    return `
     <tr>
     <td>${budget.month}/${budget.year}</td>
     <td>${StringUtils.formatMoney(budget.planned_initial_balance)}</td>
