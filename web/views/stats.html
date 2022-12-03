@@ -7,10 +7,11 @@
         <div class="row" style="margin-top:10px;">
             <div class="col s12">
                 <ul class="tabs">
-                    <li class="tab col s3"><a href="#tab-ev-pat">Evolução do Património</a></li>
-                    <li class="tab col s3"><a href="#tab-projections">Projeções</a></li>
-                    <li class="tab col s3"><a href="#tab-expenses-per-cat">Evolução de Despesa</a></li>
-                    <li class="tab col s3"><a href="#tab-income-per-cat">Evolução de Receita</a></li>
+                    <li class="tab col s4"><a href="#tab-ev-pat">Evolução do Património</a></li>
+                    <li class="tab col s2"><a href="#tab-projections">Projeções</a></li>
+                    <li class="tab col s2"><a href="#tab-expenses-per-cat">Evolução de Despesa</a></li>
+                    <li class="tab col s2"><a href="#tab-income-per-cat">Evolução de Receita</a></li>
+                    <li class="tab col s2"><a href="#tab-year-by-year">Ano-a-Ano</a></li>
                 </ul>
             </div>
 
@@ -59,6 +60,24 @@
                     </div>
                 </div>
             </div>
+            <div id="tab-year-by-year" class="col s12" style="margin-top: 50px;">
+                <div class="card-panel">
+                    <div class="year-select-wrapper"></div>
+                    <div class="chart">
+                        <canvas id="chart"></canvas>
+                    </div>
+                    <div class="row">
+                        <div class="col s6">
+                            <h4>Renda por categoria</h4>
+                            <div id="year-by-year-table-credit-wrapper" style="padding: 10px;"></div>
+                        </div>
+                        <div class="col s6">
+                            <h4>Despesa por categoria</h4>
+                            <div id="year-by-year-table-debit-wrapper" style="padding: 10px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -95,6 +114,9 @@
         break
       case 'cat-income-evo':
         $('.tabs').tabs('select', 'tab-income-per-cat')
+        break
+      case 'cat-year-by-year':
+        $('.tabs').tabs('select', 'tab-year-by-year')
         break
       case 'ev-pat':
       default:

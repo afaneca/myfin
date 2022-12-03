@@ -1,18 +1,18 @@
 import { DialogUtils } from './utils/dialogUtils.js'
-import { LocalDataManager } from './utils/localDataManager.js'
-import { chartUtils } from './utils/chartUtils.js'
 import { GraphEmptyViewComponent } from './components/graphEmptyView.js'
-import { tableUtils } from './utils/tableUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
 import { StatServices } from './services/statServices.js'
-import { account_types_tag, StringUtils } from './utils/stringUtils.js'
-import { UserServices } from './services/userServices.js'
+import { StringUtils } from './utils/stringUtils.js'
+import { DateUtils } from './utils/dateUtils.js'
+import { chartUtils } from './utils/chartUtils.js'
+import { tableUtils } from './utils/tableUtils.js'
 
 let EXPENSES_PER_CATEGORY_LINE_CHART
 let INCOME_PER_CATEGORY_LINE_CHART
 let EVOLUTION_LINE_CHART
 let PROJECTIONS_LINE_CHART
-
+let YEAR_BY_YEAR_SANKEY_CHART
+let yearByYearCurrentlySelectedYear = DateUtils.getCurrentYear()
 export const Stats = {
   initTabEvolutionOfPatrimony: () => {
     LoadingManager.showLoading()
@@ -91,9 +91,146 @@ export const Stats = {
         Stats.initIncomePerCatEvolution()
         window.history.replaceState(null, null, '#!stats?tab=cat-income-evo')
         break
+      case 'tab-year-by-year':
+        Stats.initTabYearByYear()
+        window.history.replaceState(null, null, '#!stats?tab=cat-year-by-year')
+        break
       default:
         break
     }
+  },
+  initTabYearByYear: () => {
+    LoadingManager.showLoading()
+    StatServices.getYearByYearIncomeExpenseDistribution(yearByYearCurrentlySelectedYear,
+      (resp) => {
+        Stats.setupYearSelect('.year-select-wrapper', resp.year_of_first_trx, yearByYearCurrentlySelectedYear)
+        Stats.setupIncomeExpenseTable(resp.categories.filter((cat) => parseFloat(cat.category_yearly_income) > 0).
+            sort((a, b) => b.category_yearly_income - a.category_yearly_income),
+          '#year-by-year-table-credit-wrapper', true)
+        Stats.setupIncomeExpenseTable(resp.categories.filter((cat) => parseFloat(cat.category_yearly_expense) > 0).
+            sort((a, b) => b.category_yearly_expense - a.category_yearly_expense),
+          '#year-by-year-table-debit-wrapper', false)
+        $('select.year-selection-select').select2().on('change', (v) => {
+          yearByYearCurrentlySelectedYear = $('select.year-selection-select').val()
+          Stats.initTabYearByYear()
+        })
+        /* SUCCESS */
+        const NET_INCOME_LABEL = 'Rendimento Líquido'
+        const OTHER_EXPENSES_LABEL = 'Outros'
+        const categories = resp.categories
+        let dataset = []
+        let yearlyCategorizedIncome = 0
+        let yearlyCategorizedExpense = 0
+        // get top 10 debit categories
+        let topDebitCategories = categories.filter(cat => cat.category_yearly_expense > 0).sort((a, b) => b - a).slice(0, 10)
+
+        categories.forEach((cat) => {
+          // INCOME
+          if (cat.category_yearly_income && parseFloat(cat.category_yearly_income) !== 0) {
+            dataset.push({
+              from: cat.name + ' ',
+              to: NET_INCOME_LABEL,
+              flow: Math.round((cat.category_yearly_income + Number.EPSILON) * 100) / 100,
+            })
+          }
+          // EXPENSE
+          if (cat.category_yearly_expense && parseFloat(cat.category_yearly_expense) !== 0 && topDebitCategories.includes(cat)) {
+            dataset.push({
+              from: NET_INCOME_LABEL,
+              to: cat.name,
+              flow: Math.round((cat.category_yearly_expense + Number.EPSILON) * 100) / 100,
+            })
+          }
+          yearlyCategorizedIncome += parseFloat(cat.category_yearly_income)
+          yearlyCategorizedExpense += parseFloat(cat.category_yearly_expense)
+        })
+
+        const uncategorizedExpenses = yearlyCategorizedIncome - yearlyCategorizedExpense
+        if (uncategorizedExpenses !== 0) {
+          dataset.push({
+            from: NET_INCOME_LABEL,
+            to: OTHER_EXPENSES_LABEL,
+            flow: uncategorizedExpenses,
+          })
+        }
+
+        Stats.renderYearByYearCategoriesDistributionSankeyChart(dataset,
+          (nodeName, isFrom) => {
+            if (nodeName === OTHER_EXPENSES_LABEL) {
+              return 'red'
+            }
+            if (isFrom && nodeName !== NET_INCOME_LABEL) {
+              return 'slategray'
+            }
+            else if (nodeName === NET_INCOME_LABEL) {
+              return chartUtils.getRandomVariantOfGreen()/*'#008000'*//*'slategray'*/
+            }
+            return /*chartUtils.getRandomVariantOfOrange()*/'#ff7b72'
+          })
+        LoadingManager.hideLoading()
+      }, (err) => {
+        /* ERROR */
+        LoadingManager.hideLoading()
+        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+      })
+  },
+  setupIncomeExpenseTable: (categories, wrapperId, isCredit) => {
+    $(wrapperId).html('')
+    const tableId = `table-${StringUtils.normalizeStringForHtml(wrapperId)}`
+    const html = `
+      <table id='${tableId}' class='display browser-defaults' style='width:100%'>
+        <thead>
+            <tr>
+              <th>Categoria</th>
+              <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+          ${categories.map((category) => Stats.renderIncomeExpenseTableRow(category, isCredit)).
+      join('')}
+        </tbody>
+    </table>
+    `
+
+    $(wrapperId).html(html)
+    tableUtils.setupStaticTable(`table#${tableId}`, undefined, true, [[1, 'desc']], 5)
+  },
+  renderIncomeExpenseTableRow: (category, isCredit) => {
+    return `
+    <tr>
+        <td>${category.name}</td>
+        <td>${StringUtils.formatMoney(isCredit ? category.category_yearly_income : category.category_yearly_expense)}</td>
+    </tr>
+    `
+  },
+  setupYearSelect: (wrapperDivLocator, firstYear, selectedYear) => {
+    const currentYear = DateUtils.getCurrentYear()
+    let yearsArr = []
+    let cYear = firstYear
+    while (cYear <= currentYear) {
+      yearsArr.push(cYear)
+      cYear++
+    }
+
+    $(wrapperDivLocator).html(`
+      <div class="input-field col s3">
+          <select id="year_select" class="year-selection-select">
+              ${yearsArr.map(year => Stats.renderYearSelectOption(year, selectedYear)).join('')}
+          </select>
+      </div>
+    `)
+  },
+  renderYearSelectOption: (year, selectedYearValue) => {
+    return `
+            <option value="${year}" ${year == selectedYearValue ? 'selected' : ''}>${year}</option>
+        `
+  },
+  renderYearByYearCategoriesDistributionSankeyChart: (dataset, getColor) => {
+    if (YEAR_BY_YEAR_SANKEY_CHART) {
+      YEAR_BY_YEAR_SANKEY_CHART.destroy()
+    }
+    YEAR_BY_YEAR_SANKEY_CHART = chartUtils.setupSankeyChart('chart', 'Distribuição da receita por categorias de despesa', dataset, getColor)
+
   },
   clearCanvasAndTableWrapper: (tableWrapperLocator, canvasLocator) => {
     $(tableWrapperLocator).html('')
@@ -149,7 +286,7 @@ export const Stats = {
 
     for (var i = dataset.length - 1; i >= 0; i--) {
       chartData.push(dataset[i].value)
-      chartLabels.push(`${dataset[i].month}/${dataset[i].year}`)
+      chartLabels.push(`${dataset[i].month} /${dataset[i].year}`)
     }
 
     const ctx = document.getElementById('chart_pie_cat_expenses_evolution').getContext('2d')
@@ -180,57 +317,65 @@ export const Stats = {
   },
   renderExpensesPerCategoryTable: data => {
     $('div#chart_pie_cat_expenses_evolution_table').html(`
-            <table id="cat-expenses-evolution-table" class="display browser-defaults" style="width:100%">
-                <thead>
-                    <tr>
-                       <th>Mês</th>
-                       <th>Valor</th>
-                       <th>Alteração (%)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
+      < table id='cat-expenses-evolution-table' class='display browser-defaults' style='width:100%'>
+    <thead>
+    <tr>
+    <th>Mês</th>
+    <th>Valor</th>
+    <th>Alteração (%)</th>
+    </tr>
+    </thead>
+    <tbody>
+    ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
       join('')}
-                </tbody>
-            </table>
-        `)
+    </tbody>
+    </table>
+    `,
+    )
 
     tableUtils.setupStaticTable('table#cat-expenses-evolution-table')
   },
   renderExpensesPerCategoryTableRow: (oldMonth, monthData) => {
 
     return `
-        <tr>
-            <td>${monthData.month}/${monthData.year}</td>
-            <td>${StringUtils.formatMoney(monthData.value)}</td>
-            <td>${(!oldMonth) ? '-' : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
-        </tr>
-      `
+    <tr>
+    <td>${monthData.month}/${monthData.year}</td>
+    <td>${StringUtils.formatMoney(monthData.value)}</td>
+    <td>${(!oldMonth) ? '-' : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
+    </tr>
+    `
+
   },
   setupCategorySelect: (categories, entities, wrapperDivLocator) => {
-    $(wrapperDivLocator).find('div.categories-select-wrapper').html(`
-            <div class="input-field col s3">
-                <select id="category_select" class="category-selection-select">
-                    <option value="" disabled selected>Escolha uma categoria</option>
-                    <optgroup label="Categorias">
-                        ${categories.map(cat => Stats.renderCategorySelectOption(cat)).join('')}
-                    </optgroup>
-                    <optgroup label="Entidades">
-                        ${entities.map(ent => Stats.renderEntitySelectOption(ent)).join('')}
-                    </optgroup>
-                </select>
-            </div>
-        `)
+    $(wrapperDivLocator).find('div.categories-select-wrapper').html(
+      `
+    <div class='input-field col s3'>
+    <select id='category_select' class='category-selection-select'>
+    <option value='' disabled selected>Escolha uma categoria</option>
+    <optgroup label="Categorias">
+    ${categories.map(cat => Stats.renderCategorySelectOption(cat)).join('')}
+    </optgroup>
+    <optgroup label="Entidades">
+    ${entities.map(ent => Stats.renderEntitySelectOption(ent)).join('')}
+    </optgroup>
+    </select>
+    </div>
+    `,
+    )
   },
   renderCategorySelectOption: cat => {
-    return `
-            <option value="cat-${cat.category_id}">${cat.name}</option>
-        `
+    return
+    `
+    <option value='cat-${cat.category_id}'>${cat.name}</option>
+    `
+
   },
   renderEntitySelectOption: ent => {
-    return `
-            <option value="ent-${ent.entity_id}">${ent.name}</option>
-        `
+    return
+    `
+    <option value='ent-${ent.entity_id}'>${ent.name}</option>
+    `
+
   },
   initIncomePerCatEvolution: () => {
     LoadingManager.showLoading()
@@ -280,7 +425,9 @@ export const Stats = {
 
     for (var i = dataset.length - 1; i >= 0; i--) {
       chartData.push(dataset[i].value)
-      chartLabels.push(`${dataset[i].month}/${dataset[i].year}`)
+      chartLabels.push(
+        `${dataset[i].month}/${dataset[i].year}`,
+      )
     }
 
     const ctx = document.getElementById('chart_pie_cat_income_evolution').getContext('2d')
@@ -310,33 +457,37 @@ export const Stats = {
     })
   },
   renderIncomePerCategoryTable: data => {
-    $('div#chart_pie_cat_income_evolution_table').html(`
-            <table id="cat-income-evolution-table" class="display browser-defaults" style="width:100%">
-                <thead>
-                    <tr>
-                       <th>Mês</th>
-                       <th>Valor</th>
-                       <th>Alteração (%)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${data.map((month, index) => Stats.renderIncomePerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
-      join('')}
-                </tbody>
-            </table>
-        `)
+    $('div#chart_pie_cat_income_evolution_table').html(
+      `
+    <table id='cat-income-evolution-table' class='display browser-defaults' style='width:100%'>
+    <thead>
+    <tr>
+    <th>Mês</th>
+    <th>Valor</th>
+    <th>Alteração (%)</th>
+    </tr>
+    </thead>
+    <tbody>
+    ${data.map((month, index) => Stats.renderIncomePerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
+        join('')}
+    </tbody>
+    </table>
+    `,
+    )
 
     tableUtils.setupStaticTable('table#cat-income-evolution-table')
   },
   renderIncomePerCategoryTableRow: (oldMonth, monthData) => {
 
-    return `
-        <tr>
-            <td>${monthData.month}/${monthData.year}</td>
-            <td>${StringUtils.formatMoney(monthData.value)}</td>
-            <td>${(!oldMonth) ? '-' : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
-        </tr>
-      `
+    return
+    `
+    <tr>
+    <td>${monthData.month}/${monthData.year}</td>
+    <td>${StringUtils.formatMoney(monthData.value)}</td>
+    <td>${(!oldMonth) ? '-' : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
+    </tr>
+    `
+
   },
   transformList: list => {
     let cLabels = []
@@ -347,7 +498,9 @@ export const Stats = {
     accsList = LocalDataManager.getUserAccounts()
 
     for (const elem of list) {
-      const genKey = `${elem.month}/${elem.year}`
+      const genKey =
+        `${elem.month}/${elem.year}`
+
       cLabels.push(genKey)
 
       for (const acc of elem.account_snapshots) {
@@ -389,45 +542,55 @@ export const Stats = {
     $('#patrimony-table').html(Stats.renderPatrimonyTable(sumArr, sumLabels))
   },
   renderPatrimonyTable: (sumArr, sumLabels) => {
-    return `
-        <table id="ev-pat-table" class="centered" style="margin-top: 10px;">
-            <thead>
-                <tr>
-                    <th>Mês</th>
-                    <th>Balanço Prévio</th>
-                    <th>Balanço Final</th>
-                    <th>Saldo Mensal</th>
-                    <th>Crescimento</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${sumLabels.map((label, index) => Stats.renderPatrimonyTableRow(label, sumArr[index + 1], sumArr[index])).join('')}
-            </tbody>
-        </table>
-      `
+    return
+    `
+    <table id='ev-pat-table' class='centered' style='margin-top: 10px;'>
+    <thead>
+    <tr>
+    <th>Mês</th>
+    <th>Balanço Prévio</th>
+    <th>Balanço Final</th>
+    <th>Saldo Mensal</th>
+    <th>Crescimento</th>
+    </tr>
+    </thead>
+    <tbody>
+    ${sumLabels.map((label, index) => Stats.renderPatrimonyTableRow(label, sumArr[index + 1], sumArr[index])).join('')}
+    </tbody>
+    </table>
+    `
+
   },
   renderPatrimonyTableRow: (label, starValue, endValue) => {
-    return `
-        <tr>
-            <td>${label}</td>
-            <td>${(starValue) ? StringUtils.formatMoney(starValue) : '-'}</td>
-            <td>${StringUtils.formatMoney(endValue)}</td>
-            <td>${(starValue) ? StringUtils.formatMoney(endValue - starValue) : '-'}</td>
-            <td>${(starValue) ? Stats.calculateGrowthPercentage(starValue, endValue) : '-'}</td>
-        </tr>
-      `
+    return
+    `
+    <tr>
+    <td>${label}</td>
+    <td>${(starValue) ? StringUtils.formatMoney(starValue) : '-'}</td>
+    <td>${StringUtils.formatMoney(endValue)}</td>
+    <td>${(starValue) ? StringUtils.formatMoney(endValue - starValue) : '-'}</td>
+    <td>${(starValue) ? Stats.calculateGrowthPercentage(starValue, endValue) : '-'}</td>
+    </tr>
+    `
+
   },
   calculateGrowthPercentage: (val1, val2) => {
     const percentageChange = (((parseFloat(val2) - parseFloat(val1)) / Math.abs(parseFloat(val1))) * 100).toFixed(2)
 
     if (percentageChange == 0) {
-      return `<span>${percentageChange}%</span>`
+      return
+      `<span>${percentageChange}%</span>`
+
     }
     else if (percentageChange < 0) {
-      return `<span class="badge pink-text text-accent-1">${percentageChange}%</span>`
+      return
+      `<span class='badge pink-text text-accent-1'>${percentageChange}%</span>`
+
     }
     else {
-      return `<span class="badge green-text text-accent-4">${percentageChange}%</span>`
+      return
+      `<span class='badge green-text text-accent-4'>${percentageChange}%</span>`
+
     }
   },
   setupPatrimonyLineChart: (chartData, chartLabels, extraChartData) => {
@@ -477,45 +640,49 @@ export const Stats = {
     return assetsBalance
   },
   renderPatrimonyProjectionsTable: budgets => {
-    return `
-        <table id="ev-pat-projections-table" class="centered" style="margin-top: 10px;">
-            <thead>
-                <tr>
-                    <th>Mês</th>
-                    <th>Balanço Prévio<span class="projections-table-footnotes">*</span></th>
-                    <th>Balanço Final<span class="projections-table-footnotes">*</span></th>
-                    <th>Balanço Final — ATIVOS<span class="projections-table-footnotes">**</span></th>
-                    <th>Balanço Final — Fundo de Maneio<span class="projections-table-footnotes">***</span></th>
-                    <th>Crescimento</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${budgets.map((budget, index) => Stats.renderPatrimonyProjectionsTableRow(budget)).join('')}
-            </tbody>
-        </table>
-        <style>
-            .projections-table-footnotes{
-                font-size: small;
-            }
-        </style>
-        <p class="right-align grey-text text-accent-4 projections-table-footnotes">* Este é um valor projetado através dos dados orçamentados</p>
-        <p class="right-align grey-text text-accent-4 projections-table-footnotes">** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo</p>
-        <p class="right-align grey-text text-accent-4 projections-table-footnotes">*** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo e contas de investimento</p>
-      `
+    return
+    `
+    <table id='ev-pat-projections-table' class='centered' style='margin-top: 10px;'>
+    <thead>
+    <tr>
+    <th>Mês</th>
+    <th>Balanço Prévio<span class="projections-table-footnotes">*</span></th>
+    <th>Balanço Final<span class="projections-table-footnotes">*</span></th>
+    <th>Balanço Final — ATIVOS<span class="projections-table-footnotes">**</span></th>
+    <th>Balanço Final — Fundo de Maneio<span class="projections-table-footnotes">***</span></th>
+    <th>Crescimento</th>
+    </tr>
+    </thead>
+    <tbody>
+    ${budgets.map((budget, index) => Stats.renderPatrimonyProjectionsTableRow(budget)).join('')}
+    </tbody>
+    </table>
+    <style>
+    .projections-table-footnotes{
+    font-size: small;
+    }
+    </style>
+    <p class="right-align grey-text text-accent-4 projections-table-footnotes">* Este é um valor projetado através dos dados orçamentados</p>
+    <p class="right-align grey-text text-accent-4 projections-table-footnotes">** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo</p>
+    <p class="right-align grey-text text-accent-4 projections-table-footnotes">*** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo e contas de investimento</p>
+    `
+
   },
   renderPatrimonyProjectionsTableRow: (budget) => {
-    return `
-        <tr>
-            <td>${budget.month}/${budget.year}</td>
-            <td>${StringUtils.formatMoney(budget.planned_initial_balance)}</td>
-            <td>${StringUtils.formatMoney(budget.planned_final_balance)}</td>
-            <td>${StringUtils.formatMoney(budget.planned_final_balance_assets_only)}</td>
-            <td>${StringUtils.formatMoney(budget.planned_final_balance_operating_funds_only)}</td>
-            <td>${(budget.planned_initial_balance)
+    return
+    `
+    <tr>
+    <td>${budget.month}/${budget.year}</td>
+    <td>${StringUtils.formatMoney(budget.planned_initial_balance)}</td>
+    <td>${StringUtils.formatMoney(budget.planned_final_balance)}</td>
+    <td>${StringUtils.formatMoney(budget.planned_final_balance_assets_only)}</td>
+    <td>${StringUtils.formatMoney(budget.planned_final_balance_operating_funds_only)}</td>
+    <td>${(budget.planned_initial_balance)
       ? Stats.calculateGrowthPercentage(budget.planned_initial_balance, budget.planned_final_balance)
       : '-'}</td>
-        </tr>
-      `
+    </tr>
+    `
+
   },
   getFinalBalanceForAssetsOnly: (totalBalance) => {
     const debtAccounts = LocalDataManager.getDebtAccounts()
