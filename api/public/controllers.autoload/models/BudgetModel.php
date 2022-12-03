@@ -361,45 +361,10 @@ class BudgetHasCategoriesModel extends Entity
 
     public static function getAmountForCategoryInMonth($category_id, $month, $year, $includeTransfers = true, $transactional = false)
     {
-        $listOfAccountsToExclude = AccountModel::getWhere(["exclude_from_budgets" => true]);
-        if (!$listOfAccountsToExclude || sizeof($listOfAccountsToExclude) == 0) {
-            $accsExclusionSQLExcerptAccountsTo = " 1 = 1 ";
-            $accsExclusionSQLExcerptAccountsFrom = " 1 = 1 ";
-        } else {
-            $accountsToExcludeListInSQL = BudgetHasCategoriesModel::buildSQLForExcludedAccountsList($listOfAccountsToExclude);
-            $accsExclusionSQLExcerptAccountsTo = "accounts_account_to_id NOT IN $accountsToExcludeListInSQL ";
-            $accsExclusionSQLExcerptAccountsFrom = "accounts_account_from_id NOT IN $accountsToExcludeListInSQL ";
-        }
-
-        $db = new EnsoDB($transactional);
-
-        if ($includeTransfers) {
-            $sql = "SELECT sum(if(type = 'I' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsTo), amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsFrom), amount, 0)) as 'category_balance_debit' ";
-        } else {
-            $sql = "SELECT sum(if(type = 'I', amount, 0)) as 'category_balance_credit', sum(if(type = 'E', amount, 0)) as 'category_balance_debit' ";
-        }
-
-        $sql .= "FROM transactions " .
-            "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
-            "AND categories_category_id = :cat_id ";
-
         $tz = new DateTimeZone('UTC');
         $beginTimestamp = new DateTime("$year-$month-01", $tz);
         $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t 23:59:59'), $tz);
-
-        $values = array();
-        $values[':cat_id'] = $category_id;
-        $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
-        $values[':endTimestamp'] = $endTimestamp->getTimestamp();
-
-
-        try {
-            $db->prepare($sql);
-            $db->execute($values);
-            return $db->fetchAll();
-        } catch (Exception $e) {
-            return $e;
-        }
+        return CategoryModel::getAmountForCategoryInPeriod($category_id, $beginTimestamp->getTimestamp(), $endTimestamp->getTimestamp(), $includeTransfers, $transactional);
     }
 
     public static function getAverageAmountForCategoryInLast12Months($category_id, $transactional = false)
@@ -553,7 +518,7 @@ class BudgetHasCategoriesModel extends Entity
         }
     }
 
-    private static function buildSQLForExcludedAccountsList($excludedAccs)
+    public static function buildSQLForExcludedAccountsList($excludedAccs)
     {
         if (!$excludedAccs || sizeof($excludedAccs) == 0) return " 1 = 1 ";
         /*print_r($excludedAccs);

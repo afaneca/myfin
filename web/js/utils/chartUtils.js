@@ -412,14 +412,15 @@ export const chartUtils = {
           }]
       }*/
     }
-    function showOnlyTopLegendsFilter(legendItem, legendsNr) {
-      let label = legendItem.text;
-      if (typeof(label) !== 'undefined') {
-        if (legendItem.index >= legendsNr){
-          return false;
+
+    function showOnlyTopLegendsFilter (legendItem, legendsNr) {
+      let label = legendItem.text
+      if (typeof (label) !== 'undefined') {
+        if (legendItem.index >= legendsNr) {
+          return false
         }
       }
-      return label;
+      return label
     }
 
     var chartDataVar = {
@@ -496,6 +497,38 @@ export const chartUtils = {
       '#607D8B',
       /*'#000000'*/
     ])
+  },
+  getRandomVariantOfGreen: () => {
+    const variants = [
+      '#0a790a',
+      '#008000',
+      '#085308',
+      '#084508',
+      '#209720',
+      '#2cb62c',
+      '#3bce3b',
+      '#56f156',
+      '#12e312',
+      '#347f34',
+    ]
+
+    return ArrayUtils.shuffle(variants)[0]
+  },
+  getRandomVariantOfOrange: () => {
+    const variants = [
+      'orange',
+      '#ff7b72',
+      '#dc5e57',
+      '#bd3d35',
+      '#951d16',
+      '#7b2623',
+      '#974544',
+      '#aa5832',
+      '#d76c42',
+      '#d0410d',
+    ]
+
+    return ArrayUtils.shuffle(variants)[0]
   },
   getPieChartGradientsList: (ctx) => {
     red_gradient = ctx.createLinearGradient(500, 0, 100, 0)
@@ -790,6 +823,51 @@ export const chartUtils = {
         },
       },
     }
+  },
+  setupSankeyChart: (chartId, label, dataset, getColor) => {
+    var ctx = document.getElementById(chartId).getContext('2d')
+
+    var colors = {
+      Oil: 'black',
+      Coal: 'gray',
+      'Fossil Fuels': 'slategray',
+      Electricity: 'blue',
+      Energy: 'orange',
+    }
+
+    // the y-order of nodes, smaller = higher
+    /*var priority = {
+      Oil: 1,
+      'Narural Gas': 2,
+      Coal: 3,
+      'Fossil Fuels': 1,
+      Electricity: 2,
+      Energy: 1,
+    }*/
+
+    /*var labels = {
+      Oil: 'black gold (label changed)',
+    }*/
+
+    return new Chart(ctx, {
+      type: 'sankey',
+      data: {
+        datasets: [
+          {
+            label: label,
+            data: dataset,
+            /*priority,*/
+            /*labels,*/
+            colorFrom: (c) => getColor(c.dataset.data[c.dataIndex].from, true),
+            colorTo: (c) => getColor(c.dataset.data[c.dataIndex].to, false),
+            colorMode: 'gradient',
+            borderWidth: 0,
+            borderColor: 'black',
+            size: 'max',
+          },
+        ],
+      },
+    })
   },
 }
 

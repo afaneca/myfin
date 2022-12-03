@@ -1,11 +1,7 @@
 <?php
 
-use App\Application\Actions\User\ListUsersAction;
-use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\App;
-use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 require_once 'consts.php';
 
@@ -34,7 +30,7 @@ class Stats
             }
 
             /* Execute Operations */
-             $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
 
             $db->getDB()->beginTransaction();
 
@@ -73,7 +69,7 @@ class Stats
             }
 
 
-             $db->getDB()->commit();
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $list);
         } catch (BadInputValidationException $e) {
@@ -381,6 +377,60 @@ class Stats
             return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
         }
     }
+
+    public static function getYearByYearIncomeExpenseDistribution(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            $year = Input::validate($request->getQueryParams()['year'], Input::$INT, 2);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction();
+
+            /**
+             * Skeleton:
+             *  [
+             *    {category_name, category_yearly_income, category_yearly_expense },
+             *    ...
+             * ]
+             */
+
+            $userID = UserModel::getUserIdByName($authusername, true);
+            $outputArr = array();
+            $outputArr["year_of_first_trx"] = TransactionModel::getYearOfFirstTransactionForUser($userID, true);
+            $categories = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type"]);
+            foreach ($categories as &$category) {
+                $calculatedAmounts = CategoryModel::getAmountForCategoryInYear($category["category_id"], $year, true, true)[0];
+                $category["category_yearly_income"] = Input::convertIntegerToFloatAmount($calculatedAmounts["category_balance_credit"]);
+                $category["category_yearly_expense"] = Input::convertIntegerToFloatAmount($calculatedAmounts["category_balance_debit"]);
+            }
+            $outputArr["categories"] = $categories;
+            $db->getDB()->commit();
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
 }
 
 $app->get('/stats/dashboard/month-expenses-income-distribution', 'Stats::getExpensesIncomeDistributionForMonth');
@@ -388,3 +438,4 @@ $app->get('/stats/stats/monthly-patrimony-projections', 'Stats::getMonthlyPatrim
 $app->get('/stats/userStats', 'Stats::getUserCounterStats');
 $app->get("/stats/category-expenses-evolution", 'Stats:getCategoryExpensesEvolution');
 $app->get("/stats/category-income-evolution", 'Stats:getCategoryIncomeEvolution');
+$app->get("/stats/year-by-year-income-expense-distribution", 'Stats:getYearByYearIncomeExpenseDistribution');

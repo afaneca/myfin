@@ -1,10 +1,10 @@
 export const tableUtils = {
-  setupStaticTable: (tableID, onDrawCallback, ordering = false) => {
+  setupStaticTable: (tableID, onDrawCallback, ordering = false, customOrdering = undefined, pageLength = 50) => {
     $(tableID).DataTable({
-      /*"order": [[0, "desc"]], */
+      "order": customOrdering, /*[[0, "desc"]], */
       'ordering': ordering,
       'lengthChange': true,
-      'pageLength': 50,
+      'pageLength': pageLength,
       'language': {
         'lengthMenu': '',/*"A mostrar _MENU_ registos por página",*/
         'zeroRecords': 'Nenhum registo encontrado',

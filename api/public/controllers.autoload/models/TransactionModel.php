@@ -23,6 +23,28 @@ class TransactionModel extends Entity
         "is_essential"
     ];
 
+    public static function getYearOfFirstTransactionForUser($id_user, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT YEAR(FROM_UNIXTIME(date_timestamp)) as 'year' FROM myfin_prod.transactions " .
+            "INNER JOIN accounts account_from ON account_from.account_id = transactions.accounts_account_from_id " .
+            "INNER JOIN accounts account_to ON account_to.account_id = transactions.accounts_account_to_id " .
+            "WHERE account_from.users_user_id = :userId OR account_to.users_user_id = :userId " .
+            "ORDER BY date_timestamp ASC LIMIT 1";
+
+        $values = array();
+        $values[':userId'] = $id_user;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll()[0]["year"];
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
     public static function getAllTransactionsForUser($id_user, $trxLimit, $transactional = false)
     {
         $db = new EnsoDB($transactional);
