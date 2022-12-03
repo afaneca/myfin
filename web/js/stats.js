@@ -560,8 +560,7 @@ export const Stats = {
 
   },
   renderPatrimonyTableRow: (label, starValue, endValue) => {
-    return
-    `
+    return `
     <tr>
     <td>${label}</td>
     <td>${(starValue) ? StringUtils.formatMoney(starValue) : '-'}</td>
