@@ -1023,3 +1023,13 @@ svg:not(:root) {
     overflow-y: auto !important;
 }
 
+.hoverable {
+    opacity: 0.5;
+    cursor: help;
+    transition: 0.5s ease;
+}
+
+.hoverable:hover {
+    opacity: 1;
+    transition: 0.5s ease;
+}
