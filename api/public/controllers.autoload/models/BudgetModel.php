@@ -180,8 +180,10 @@ class BudgetModel extends Entity
                 $amount_credit = abs($calculatedAmounts["category_balance_credit"] - $creditFromInvestmentAccounts); // remove unrealized gains from budget calcs
                 $amount_debit = abs($calculatedAmounts["category_balance_debit"] - $expensesFromInvestmentAccounts); // remove unrealized losses from budget calcs
             }
-            $balance_credit += $amount_credit;
-            $balance_debit += $amount_debit;
+            if(!$category["exclude_from_budgets"]){
+                $balance_credit += $amount_credit;
+                $balance_debit += $amount_debit;
+            }
         }
 
         return ["balance_credit" => Input::convertIntegerToFloatAmount($balance_credit), "balance_debit" => Input::convertIntegerToFloatAmount($balance_debit)];
@@ -296,7 +298,7 @@ class BudgetHasCategoriesModel extends Entity
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT users_user_id, category_id, name, status, type, description, color_gradient, budgets_budget_id, truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit, truncate((coalesce(planned_amount_debit, 0) / 100), 2) as planned_amount_debit, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
+        $sql = "SELECT users_user_id, category_id, name, status, type, description, color_gradient, budgets_budget_id, exclude_from_budgets, truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit, truncate((coalesce(planned_amount_debit, 0) / 100), 2) as planned_amount_debit, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
             "FROM " .
             "(SELECT * FROM budgets_has_categories WHERE budgets_users_user_id = :userID AND (budgets_budget_id = :budgetID)) b " .
             "RIGHT JOIN categories ON categories.category_id = b.categories_category_id " .
