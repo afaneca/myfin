@@ -6,7 +6,6 @@ class AddsExcludeFromBudgetsAttrToCategories extends Phinx\Migration\AbstractMig
 {
     public function change()
     {
-        $this->execute("ALTER DATABASE COLLATE='utf8mb4_0900_ai_ci';");
         $this->table('categories', [
                 'id' => false,
                 'primary_key' => ['category_id'],
