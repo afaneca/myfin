@@ -28,6 +28,7 @@ export const Categories = {
   initMergedTable: (catsList) => {
     $('#table-merged-wrapper').
       html(Categories.renderCreditCategoriesTable(catsList))
+    $('.tooltipped').tooltip()
     tableUtils.setupStaticTable('#debit-categories-table', () => {
       // Click listener for edit cat click
       Categories.bindClickListenersForEditAction()
@@ -45,6 +46,7 @@ export const Categories = {
           this.dataset.catColorGradient,
           this.dataset.catId,
           this.dataset.catStatus,
+          this.dataset.excludeFromBudgets,
         )
       })
     })
@@ -67,6 +69,7 @@ export const Categories = {
 
     tableUtils.setupStaticTable('#debit-categories-table')
     $('select.cat-color-select').select2()
+    $('.tooltipped').tooltip()
 
     LoadingManager.hideLoading()
   },
@@ -110,7 +113,9 @@ export const Categories = {
                 <td>
                    ${Categories.renderColorColumn(cats.color_gradient)}
                 </td>
-                <td>${cats.name}</td>
+                <td>${cats.name} ${cats.exclude_from_budgets === '1'
+      ? '<a class="tooltipped" data-position="right" data-tooltip="Excluída dos orçamentos"> <i class="tiny material-icons hoverable">do_not_disturb_on</i></a>'
+      : ''}</td>
                 <td>${cats.description}</td>
                 <td><span class="${(cats.status === 'Ativa')
       ? 'badge green-text text-accent-4'
@@ -121,6 +126,7 @@ export const Categories = {
                        data-cat-color-gradient="${cats.color_gradient}"
                        data-cat-id="${cats.category_id}"
                        data-cat-status="${StringUtils.removeLineBreaksFromString(cats.status).replace(/["']/g, '')}"
+                       data-exclude-from-budgets="${cats.exclude_from_budgets}"
                        class="material-icons table-action-icons action-edit-cat">create</i>
                     <i data-cat-name="${StringUtils.escapeHtml(cats.name)}"
                      data-cat-id="${cats.category_id}" 
@@ -160,10 +166,16 @@ export const Categories = {
                         </div>
                      </div>
                      <div class="row">
-                        <div class="input-field col s12">
+                        <div class="input-field col s9">
                             <i class="material-icons prefix">description</i>
                             <label for="category_description" class="active">Descrição da Categoria</label>
                             <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                        </div>
+                        <div class="input-field col s3">
+                            <label>
+                                <input id="exclude_from_budgets" type="checkbox" />
+                                <span>Excluir dos Orçamentos</span>
+                            </label>
                         </div>
                      </div>
                         
@@ -203,6 +215,7 @@ export const Categories = {
     /*const catType = $("select#category_type_select").val()*/
     const catColorGradient = $('select.cat-color-picker-select').val()
     let catNewStatus = $('select#category_status_select').val()
+    const excludeFromBudgets = $('#exclude_from_budgets').is(':checked')
 
     if (!catName || catName === '' /*|| !catType || catType === ""*/) {
       DialogUtils.showErrorMessage('Por favor, preencha todos os campos!')
@@ -211,7 +224,7 @@ export const Categories = {
 
     LoadingManager.showLoading()
     CategoryServices.addCategory(catName, catDescription, catColorGradient,
-      catNewStatus,
+      catNewStatus, excludeFromBudgets,
       (response) => {
         // SUCCESS
         LoadingManager.hideLoading()
@@ -264,7 +277,7 @@ export const Categories = {
       }
   },
   showEditCategoryModal: (
-    catName, catDescription, catColorGradient, catID, catStatus) => {
+    catName, catDescription, catColorGradient, catID, catStatus, excludeFromBudgets) => {
     $('#modal-global').modal('open')
     let txt = `
                 <div class="row">
@@ -293,10 +306,16 @@ export const Categories = {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="input-field col s12">
+                        <div class="input-field col s9">
                             <i class="material-icons prefix">description</i>
                             <label for="category_description" class="active">Descrição da Categoria</label>
                             <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                        </div>
+                        <div class="input-field col s3">
+                            <label>
+                                <input id="exclude_from_budgets" type="checkbox" />
+                                <span>Excluir dos Orçamentos</span>
+                            </label>
                         </div>
                     </div>                        
                 </form>
@@ -314,6 +333,10 @@ export const Categories = {
     $('input#category_name').val(catName)
     $('textarea#category_description').val(catDescription)
     $('#category_status_select').formSelect()
+
+    if (excludeFromBudgets === '1') {
+      $('input#exclude_from_budgets').prop('checked', 'checked')
+    }
     //$(`select#category_type_select_edit
     // option[value='${catType}']`).prop('selected', 'selected')
     // $('select#category_type_select').find('option[value=' + catType +
@@ -357,6 +380,7 @@ export const Categories = {
     const catDescription = $('textarea#category_description').val()
     /* const catType = $("select#category_type_select").val()*/
     let catNewColorGradient = $('select.cat-color-picker-select').val()
+    const excludeFromBudgets = $('#exclude_from_budgets').is(':checked')
     if (!catNewColorGradient) {
       catNewColorGradient = 'red-gradient'
     }
@@ -369,7 +393,7 @@ export const Categories = {
 
     LoadingManager.showLoading()
     CategoryServices.editCategory(catID, catName, catDescription,
-      catNewColorGradient, catNewStatus,
+      catNewColorGradient, catNewStatus, excludeFromBudgets,
       () => {
         // SUCCESS
         LoadingManager.hideLoading()
