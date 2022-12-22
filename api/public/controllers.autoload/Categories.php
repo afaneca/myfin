@@ -1,11 +1,7 @@
 <?php
 
-use App\Application\Actions\User\ListUsersAction;
-use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\App;
-use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 require_once 'consts.php';
 
@@ -45,12 +41,12 @@ class Categories
             if (isset($type)) {
                 $catsArr = CategoryModel::getWhere(
                     ["users_user_id" => $userID, "type" => $type],
-                    ["category_id", "name", "type", "description", "color_gradient", "status"]
+                    ["category_id", "name", "type", "description", "color_gradient", "status", "exclude_from_budgets"]
                 );
             } else {
                 $catsArr = CategoryModel::getWhere(
                     ["users_user_id" => $userID],
-                    ["category_id", "name", "type", "description", "color_gradient", "status"]
+                    ["category_id", "name", "type", "description", "color_gradient", "status", "exclude_from_budgets"]
                 );
             }
 
@@ -74,25 +70,25 @@ class Categories
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
             } else {
                 $mobile = false;
             }
 
 
-            $name = Input::validate($request->getParsedBody()['name'], Input::$STRING);
-            $description = Input::validate($request->getParsedBody()['description'], Input::$STRING);
+            $name = Input::validate($request->getParsedBody()['name'], Input::$STRING, 3);
+            $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 4);
 
-            $colorGradient = Input::validate($request->getParsedBody()['color_gradient'], Input::$STRICT_STRING);
+            $colorGradient = Input::validate($request->getParsedBody()['color_gradient'], Input::$STRICT_STRING, 5);
 
             if (array_key_exists('type', $request->getParsedBody())) {
-                $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING);
+                $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 6);
             } else {
                 $type = "M"; // MIXED
             }
 
             if (array_key_exists('status', $request->getParsedBody())) {
-                $status = Input::validate($request->getParsedBody()['status'], Input::$STRICT_STRING);
+                $status = Input::validate($request->getParsedBody()['status'], Input::$STRICT_STRING, 7);
                 if ($status != DEFAULT_CATEGORY_ACTIVE_STATUS && $status != DEFAULT_CATEGORY_INACTIVE_STATUS) {
                     $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
                 }
@@ -100,18 +96,17 @@ class Categories
                 $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
             }
 
+            $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 8);
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
 
-            /* echo "1";
-            die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $db->getDB()->beginTransaction();
+
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             CategoryModel::insert([
                 "name" => $name,
@@ -119,11 +114,12 @@ class Categories
                 "description" => $description,
                 "users_user_id" => $userID,
                 "color_gradient" => $colorGradient,
-                "status" => $status
-            ], false);
+                "status" => $status,
+                "exclude_from_budgets" => $excludeFromBudgets,
+            ], true);
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "New category added!");
         } catch (BadInputValidationException $e) {
@@ -154,26 +150,26 @@ class Categories
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
-            
-            $db->getDB()->beginTransaction(); */
+            $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction();
 
             /* echo "1";
             die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
 
             BudgetHasCategoriesModel::delete([
                 "categories_category_id" => $categoryID,
-            ], false);
+            ], true);
 
             CategoryModel::delete([
                 "category_id" => $categoryID,
                 "users_user_id" => $userID
-            ], false);
+            ], true);
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Category Removed!");
         } catch (BadInputValidationException $e) {
@@ -206,7 +202,7 @@ class Categories
             //$newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING, 5);
 
             if (array_key_exists('new_type', $request->getParsedBody())) {
-                $newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING);
+                $newType = Input::validate($request->getParsedBody()['new_type'], Input::$STRING, 7);
             } else {
                 $newType = "M"; // MIXED
             }
@@ -220,17 +216,19 @@ class Categories
                 $status = DEFAULT_CATEGORY_ACTIVE_STATUS;
             }
 
+            $newExcludeFromBudgets = (int)Input::validate($request->getParsedBody()["new_exclude_from_budgets"], Input::$BOOLEAN, 8);
+
             /* Auth - token validation */
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+             $db = new EnsoDB(true);
             
-            $db->getDB()->beginTransaction(); */
+            $db->getDB()->beginTransaction();
 
             /* echo "1";
             die(); */
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
             CategoryModel::editWhere(
                 [
@@ -242,13 +240,14 @@ class Categories
                     "description" => $newDescription,
                     "type" => $newType,
                     "color_gradient" => $newColorGradient,
-                    "status" => $status
+                    "status" => $status,
+                    "exclude_from_budgets" => $newExcludeFromBudgets,
                 ],
-                false
+                true
             );
 
 
-            /* $db->getDB()->commit(); */
+             $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Category Updated!");
         } catch (BadInputValidationException $e) {

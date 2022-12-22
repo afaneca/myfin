@@ -15,7 +15,8 @@ class CategoryModel extends Entity
         "description",
         "users_user_id",
         "color_gradient",
-        "status"
+        "status",
+        "exclude_from_budgets"
     ];
 
     public static function getAmountForCategoryInPeriod($category_id, $startTimestamp, $endTimestamp, $includeTransfers = true, $transactional = false)

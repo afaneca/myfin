@@ -4,7 +4,7 @@ return array (
   'database' => 
   array (
     'DEFAULT_CHARACTER_SET_NAME' => 'utf8mb4',
-    'DEFAULT_COLLATION_NAME' => 'utf8mb4_general_ci',
+    'DEFAULT_COLLATION_NAME' => 'utf8mb4_0900_ai_ci',
   ),
   'tables' => 
   array (
@@ -1517,6 +1517,30 @@ return array (
           'GENERATION_EXPRESSION' => '',
           'SRS_ID' => NULL,
         ),
+        'exclude_from_budgets' => 
+        array (
+          'TABLE_CATALOG' => 'def',
+          'TABLE_NAME' => 'categories',
+          'COLUMN_NAME' => 'exclude_from_budgets',
+          'ORDINAL_POSITION' => '8',
+          'COLUMN_DEFAULT' => '0',
+          'IS_NULLABLE' => 'NO',
+          'DATA_TYPE' => 'tinyint',
+          'CHARACTER_MAXIMUM_LENGTH' => NULL,
+          'CHARACTER_OCTET_LENGTH' => NULL,
+          'NUMERIC_PRECISION' => '3',
+          'NUMERIC_SCALE' => '0',
+          'DATETIME_PRECISION' => NULL,
+          'CHARACTER_SET_NAME' => NULL,
+          'COLLATION_NAME' => NULL,
+          'COLUMN_TYPE' => 'tinyint(1) unsigned zerofill',
+          'COLUMN_KEY' => '',
+          'EXTRA' => '',
+          'PRIVILEGES' => 'select,insert,update,references',
+          'COLUMN_COMMENT' => '',
+          'GENERATION_EXPRESSION' => '',
+          'SRS_ID' => NULL,
+        ),
       ),
       'indexes' => 
       array (
@@ -1880,7 +1904,7 @@ return array (
           'DATETIME_PRECISION' => NULL,
           'CHARACTER_SET_NAME' => NULL,
           'COLLATION_NAME' => NULL,
-          'COLUMN_TYPE' => 'decimal(16,6)',
+          'COLUMN_TYPE' => 'decimal(16,6) unsigned zerofill',
           'COLUMN_KEY' => '',
           'EXTRA' => '',
           'PRIVILEGES' => 'select,insert,update,references',
@@ -2205,7 +2229,7 @@ return array (
           'DATETIME_PRECISION' => NULL,
           'CHARACTER_SET_NAME' => NULL,
           'COLLATION_NAME' => NULL,
-          'COLUMN_TYPE' => 'decimal(16,6)',
+          'COLUMN_TYPE' => 'decimal(16,6) unsigned zerofill',
           'COLUMN_KEY' => '',
           'EXTRA' => '',
           'PRIVILEGES' => 'select,insert,update,references',
@@ -3938,29 +3962,7 @@ return array (
           ),
         ),
       ),
-      'foreign_keys' => 
-      array (
-        'fk_transactions_categories1' => 
-        array (
-          'TABLE_NAME' => 'transactions',
-          'COLUMN_NAME' => 'categories_category_id',
-          'CONSTRAINT_NAME' => 'fk_transactions_categories1',
-          'REFERENCED_TABLE_NAME' => 'categories',
-          'REFERENCED_COLUMN_NAME' => 'category_id',
-          'UPDATE_RULE' => 'NO ACTION',
-          'DELETE_RULE' => 'SET NULL',
-        ),
-        'fk_transactions_entities2' => 
-        array (
-          'TABLE_NAME' => 'transactions',
-          'COLUMN_NAME' => 'entities_entity_id',
-          'CONSTRAINT_NAME' => 'fk_transactions_entities2',
-          'REFERENCED_TABLE_NAME' => 'entities',
-          'REFERENCED_COLUMN_NAME' => 'entity_id',
-          'UPDATE_RULE' => 'NO ACTION',
-          'DELETE_RULE' => 'SET NULL',
-        ),
-      ),
+      'foreign_keys' => NULL,
     ),
     'users' => 
     array (

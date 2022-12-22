@@ -262,7 +262,7 @@ class Budgets
             $userID = UserModel::getUserIdByName($authusername, false);
 
 
-            $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type", "description", "status"]);
+            $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type", "description", "status", "exclude_from_budgets"]);
 
             foreach ($catsArr as &$category) {
                 $monthToUse = date('m');

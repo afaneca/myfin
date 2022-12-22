@@ -149,16 +149,20 @@ export const BudgetDetails = {
       expensesAcc = 0
 
     $('.credit-input-current').each((i, input) => {
-      let inputValue = $('#' + input.id).val()
-      if (inputValue) {
-        incomeAcc += parseFloat(inputValue)
+      if (input.dataset.categoryExcludeFromBudgets !== '1') {
+        let inputValue = $('#' + input.id).val()
+        if (inputValue) {
+          incomeAcc += parseFloat(inputValue)
+        }
       }
     })
 
     $('.debit-input-current').each((i, input) => {
-      let inputValue = $('#' + input.id).val()
-      if (inputValue) {
-        expensesAcc += parseFloat(inputValue)
+      if (input.dataset.categoryExcludeFromBudgets !== '1') {
+        let inputValue = $('#' + input.id).val()
+        if (inputValue) {
+          expensesAcc += parseFloat(inputValue)
+        }
       }
     })
 
@@ -226,12 +230,18 @@ export const BudgetDetails = {
     return `
             <tr style="border-bottom: none !important;">
                 <td style="padding:0px !important;"><div class="tooltip cat-name-for-tooltip"
-                data-category-id="${cat.category_id}" data-category-is-credit="${isCredit}">
-                        <span style="border-bottom: 1px dotted black; ${catHasZeroValue ? 'color: #9ca8a9;' : ''}">${cat.name}</span>
+                data-category-id="${cat.category_id}" data-category-is-credit="${isCredit}" data-category-exclude-from-budgets="${cat.exclude_from_budgets}">
+                        <span style="border-bottom: 1px dotted black; ${catHasZeroValue
+      ? 'color: #9ca8a9;'
+      : ''}">${cat.name} ${cat.exclude_from_budgets === '1'
+      ? '<i class="tiny material-icons hoverable">do_not_disturb_on</i>'
+      : ''}</span>
                         <div class="tooltiptext">
                         <span class="center-align" style="margin: 10px 0;font-style: italic;">
                             <center>${(cat.description) ? cat.description : 'Sem descrição'}</center>
-                        </span><hr>
+                        </span>
+                        ${cat.exclude_from_budgets === '1' ? '<center><i>(Excluída dos orçamentos)</i></center>' : ''}
+                        <hr>
                         <div class="row">
                             <div class="col s8">${sameMonthLastYearLabel}</div>
                             <div class="col s4 right-align white-text"><strong class="white-text">${StringUtils.formatMoney(
@@ -259,14 +269,16 @@ export const BudgetDetails = {
                     <input ${(IS_OPEN) ? '' : ' disabled '} id="${cat.category_id}${(isCredit) ? 'credit' : 'debit'}" onClick="this.select();"
                     value="${(isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0')
       : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')}" type="number" class="cat-input validate ${(isCredit)
-      ? 'credit-input-estimated' : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" required>
+      ? 'credit-input-estimated'
+      : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" data-category-exclude-from-budgets="${cat.exclude_from_budgets}" required>
                     <label for="${cat.category_id}" class="active">Previsto (€)</label>
                 </div></td>
                 <td style="padding:0px !important;"><div class="input-field inline">
                     <input disabled id="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" value="${(isCredit)
       ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0')
       : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')}" type="number" class="validate ${(isCredit)
-      ? 'credit-input-current' : 'debit-input-current'} input tooltipped" min="0.00" value="0.00" step="0.01" required>
+      ? 'credit-input-current'
+      : 'debit-input-current'} input tooltipped" min="0.00" value="0.00" step="0.01" data-category-exclude-from-budgets="${cat.exclude_from_budgets}" required>
                     <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" class="active">Atual (€)</label>
                 </div></td>
             </tr>
@@ -342,25 +354,31 @@ export const BudgetDetails = {
     }
 
     $(plannedCreditAmountsClassSelector).each((i, input) => {
-      let inputValue = $('#' + input.id).val()
-      plannedIncomeAcc += parseFloat(inputValue)
-      // debugger
+      if (input.dataset.categoryExcludeFromBudgets !== '1') {
+        let inputValue = $('#' + input.id).val()
+        plannedIncomeAcc += parseFloat(inputValue)
+      }
     })
 
     $(currentCreditAmountsClassSelector).each((i, input) => {
-      let inputValue = $('#' + input.id).val()
-      currentIncomeAcc += parseFloat(inputValue)
-      // debugger
+      if (input.dataset.categoryExcludeFromBudgets !== '1') {
+        let inputValue = $('#' + input.id).val()
+        currentIncomeAcc += parseFloat(inputValue)
+      }
     })
 
     $(plannedDebitAmountsClassSelector).each((i, input) => {
-      let inputValue = $('#' + input.id).val()
-      plannedExpensesAcc += parseFloat(inputValue)
+      if (input.dataset.categoryExcludeFromBudgets !== '1') {
+        let inputValue = $('#' + input.id).val()
+        plannedExpensesAcc += parseFloat(inputValue)
+      }
     })
 
     $(currentDebitAmountsClassSelector).each((i, input) => {
-      let inputValue = $('#' + input.id).val()
-      currentExpensesAcc += parseFloat(inputValue)
+      if (input.dataset.categoryExcludeFromBudgets !== '1') {
+        let inputValue = $('#' + input.id).val()
+        currentExpensesAcc += parseFloat(inputValue)
+      }
     })
 
     $('#table_total_credit_expected').text(StringUtils.formatMoney(plannedIncomeAcc))
