@@ -97,7 +97,7 @@ export const Profile = {
       const selectedLanguage = $('input:radio[name =\'locale-group\']:checked').val()
       LocalDataManager.setCurrentLanguage(selectedLanguage)
       i18next.changeLanguage(selectedLanguage, () => {
-        Localization.initLocale()
+        Localization.localize()
       })
     })
   },

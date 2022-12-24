@@ -34,8 +34,13 @@ export var Localization = {
 
         // start localizing, details:
         // https://github.com/i18next/jquery-i18next#usage-of-selector-function
-        $('body').localize()
+        Localization.localize()
       })
+  },
+  localize: () => {
+    setTimeout(() => {
+      $('body').localize()
+    }, 100)
   },
   getString: (key) => {
     return i18next.t(key)
