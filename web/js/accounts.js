@@ -6,6 +6,7 @@ import { chartUtils } from './utils/chartUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
 import { AccountServices } from './services/accountServices.js'
 import { DialogUtils } from './utils/dialogUtils.js'
+import { Localization } from './utils/localization.js'
 
 export var Accounts = {
   init: () => {
@@ -241,8 +242,8 @@ export var Accounts = {
                         </div>
                         <div class="input-field col s6">
                             <i class="material-icons prefix">description</i>
-                            <label for="account_description" class="active">Descrição</label>
-                            <textarea id="account_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                            <label for="account_description" class="active">${Localization.getString("common.description")}</label>
+                            <textarea id="account_description" maxlength="50" placeholder="${Localization.getString("common.description")}..." class="materialize-textarea"></textarea>
                         </div>
                         <div class="input-field col s6">
                             <label>
@@ -448,8 +449,8 @@ export var Accounts = {
                         </div>
                          <div class="input-field col s6">
                             <i class="material-icons prefix">description</i>
-                            <label for="account_description" class="active">Descrição</label>
-                            <textarea id="account_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                            <label for="account_description" class="active">${Localization.getString("common.description")}</label>
+                            <textarea id="account_description" maxlength="50" placeholder="${Localization.getString("common.description")}..." class="materialize-textarea"></textarea>
                         </div>
                         <div class="input-field col s6">
                             <label>

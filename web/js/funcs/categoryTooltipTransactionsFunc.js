@@ -4,6 +4,7 @@ import { DialogUtils } from '../utils/dialogUtils.js'
 import { DateUtils } from '../utils/dateUtils.js'
 import { TransactionServices } from '../services/transactionServices.js'
 import { LayoutUtils } from '../utils/layoutUtils.js'
+import { Localization } from '../utils/localization.js'
 
 export const CategoryTooltipTransactionsFunc = {
   showCategoryTransactionsForMonthInModal: (catID, isCredit, month, year) => {
@@ -48,10 +49,10 @@ export const CategoryTooltipTransactionsFunc = {
                         <table class="bordered scrollable-table striped">
                           <thead class="scrollable-table">
                             <tr class="scrollable-table">
-                              <th class="center">Data</th>
-                              <th class="center">Descrição</th>
+                              <th class="center">${Localization.getString("common.date")}</th>
+                              <th class="center">${Localization.getString("common.description")}</th>
                               <th class="center">Conta</th>
-                              <th class="center">Montante</th>
+                              <th class="center">${Localization.getString("common.amount")}</th>
                             </tr>
                           </thead>
                           <tbody class="scrollable-table">

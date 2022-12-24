@@ -1,0 +1,94 @@
+{
+  "common": {
+    "seeMore": "See More",
+    "date": "Date",
+    "description": "Description",
+    "amount": "Amount",
+    "noDataToDisplay": "No data to display",
+    "noTransactionsToDisplay": "No transactions to display",
+    "debtDistribution": "Debt Distribution",
+    "investmentPortfolio": "Investment Portfolio"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "accounts": "Accounts",
+    "categories": "Categories",
+    "entities": "Entities",
+    "rules": "Rules",
+    "budgets": "Budgets",
+    "investments": "Investments",
+    "statistics": "Stats"
+  },
+  "topBar": {
+    "operatingFunds": "Operating Funds",
+    "investing": "Investing",
+    "debt": "Debt",
+    "netWorth": "Net Worth"
+  },
+  "dashboard": {
+    "newTransaction": "New Transaction",
+    "newBudget": "New Budget",
+    "seeTransactions": "See Transactions",
+    "seeStats": "See Stats",
+    "recentTransactions": "Recent Transactions",
+    "current": "Current",
+    "remaining": "Remaining",
+    "lastUpdate": "Last update"
+  },
+  "monthsShort": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "Mai",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Dec"
+  },
+  "monthsLong": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
+  },
+  "weekDaysShort": {
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat"
+  },
+  "weekDaysLong": {
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday"
+  },
+  "weekDaysAbbrev": {
+    "sun": "S",
+    "mon": "M",
+    "tue": "T",
+    "wed": "W",
+    "thu": "T",
+    "fri": "f",
+    "sat": "S"
+  }
+}

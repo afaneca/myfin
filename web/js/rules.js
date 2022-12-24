@@ -4,6 +4,7 @@ import { DialogUtils } from './utils/dialogUtils.js'
 import { LayoutUtils } from './utils/layoutUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
 import { RuleServices } from './services/ruleServices.js'
+import { Localization } from './utils/localization.js'
 
 var accountsList1
 var entitiesList1
@@ -332,7 +333,7 @@ export const Rules = {
         matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
                                 </option>
                             </select>
-                            <label>Descrição</label>
+                            <label>${Localization.getString("common.description")}</label>
                         </div>
                         <div class="input-field col s10">
                             <input id="value-input-description" type="text" maxlength="45" placeholder="Texto da descrição..."
@@ -354,7 +355,7 @@ export const Rules = {
         matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
                                 </option>
                             </select>
-                            <label>Montante</label>
+                            <label>${Localization.getString("common.amount")}</label>
                         </div>
                         <div class="input-field col s10">
                             <input id="value-input-amount" type="number" value="${matcher_amount_value ? matcher_amount_value : '0.00'}" step="0.01"

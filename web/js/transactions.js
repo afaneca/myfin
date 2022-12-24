@@ -8,6 +8,7 @@ import { LoadingManager } from './utils/loadingManager.js'
 import { TransactionServices } from './services/transactionServices.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { StringUtils } from './utils/stringUtils.js'
+import { Localization } from './utils/localization.js'
 
 export var Transactions = {
   getTransactions: (fetchLimit = MYFIN.TRX_FETCH_LIMIT) => {
@@ -71,9 +72,9 @@ export var Transactions = {
             <table id="transactions-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>Data</th>
+                <th>${Localization.getString("common.date")}</th>
                 <th>Fluxo</th>
-                <th>Descrição</th>
+                <th>${Localization.getString("common.description")}</th>
                 <th>Valor</th>
                 <th>Ações</th>
             </tr>
@@ -223,7 +224,7 @@ export var Transactions = {
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description" class="materialize-textarea"></textarea>
-                                    <label for="trx-description">Descrição</label>
+                                    <label for="trx-description">${Localization.getString("common.description")}</label>
                                 </div>
                             </div>                        
                         </div>
@@ -598,7 +599,7 @@ export var Transactions = {
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description" class="materialize-textarea"></textarea>
-                                    <label class="active" for="trx-description">Descrição</label>
+                                    <label class="active" for="trx-description">${Localization.getString("common.description")}</label>
                                 </div>
                             </div>
                         </div>
@@ -651,7 +652,7 @@ export var Transactions = {
                                 <div class="input-field col s6 offset-s1">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description2" class="materialize-textarea"></textarea>
-                                    <label for="trx-description2">Descrição</label>
+                                    <label for="trx-description2">${Localization.getString("common.description")}</label>
                                 </div>
                                 <div class="input-field col s3">
                                     <span class="select2-top-label" style="display: none;">Tipo de Transação</span>

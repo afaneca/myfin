@@ -7,6 +7,7 @@ import { LoadingManager } from './utils/loadingManager.js'
 import { TransactionServices } from './services/transactionServices.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { StatServices } from './services/statServices.js'
+import { Localization } from './utils/localization.js'
 
 let CHART_INCOME_DISTRIBUTION
 let CHART_EXPENSES_DISTRIBUTION
@@ -54,8 +55,8 @@ export var Dashboard = {
 
     var data = [Math.abs(realAmount), maxValue]
     var customLabels = [
-      'Atual',
-      'Restante',
+      Localization.getString("dashboard.current"),
+      Localization.getString("dashboard.remaining"),
     ]
 
     if (CHART_MONTHLY_OVERVIEW) {
@@ -88,7 +89,7 @@ export var Dashboard = {
           $('.card-panel.last_movements').
             find('.empty-view').
             html(GraphEmptyViewComponent.buildDefaultGraphEmptyView(
-              'Sem movimentos para apresentar'))
+              Localization.getString("common.noTransactionsToDisplay")))
         }
       }, (err) => {
         // FAILURE
@@ -101,9 +102,9 @@ export var Dashboard = {
     $('#last_movements_table_wrapper').html(`
          <table class="responsive-table myfin-table">
             <thead>
-                <th>Data</th>
-                <th>Descrição</th>
-                <th>Montante</th>
+                <th>${Localization.getString("common.date")}</th>
+                <th>${Localization.getString("common.description")}</th>
+                <th>${Localization.getString("common.amount")}</th>
             </thead>
             <tbody>
                 ${list.map(mov => Dashboard.renderLastMovementsRow(mov)).
@@ -162,7 +163,7 @@ export var Dashboard = {
     }
     if (dataset.length > 0) {
       CHART_DEBT_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart('chart_pie_debt_distribution',
-        dataset, labels, 'Distribuição da Dívida', colorGradientsArr)
+        dataset, labels, Localization.getString("common.debtDistribution"), colorGradientsArr)
     }
     else {
       $('#chart_pie_debt_distribution').hide()
@@ -196,7 +197,7 @@ export var Dashboard = {
     }
     if (dataset.length > 0) {
       CHART_INVESTMENT_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart('chart_pie_investing_portfolio',
-        dataset, labels, 'Portefólio de Investimento', colorGradientsArr)
+        dataset, labels, Localization.getString("common.investmentPortfolio"), colorGradientsArr)
       $('#chart_pie_investing_portfolio').show()
     }
     else {

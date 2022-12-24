@@ -1,5 +1,6 @@
 import { StringUtils } from '../utils/stringUtils.js'
 import { DateUtils } from '../utils/dateUtils.js'
+import { Localization } from '../utils/localization.js'
 
 export const InvestmentTransactionsTableFunc = {
   renderTransactionsTable: (trxs, containerId, editTrxCallback, removeTrxCallback) => {
@@ -7,7 +8,7 @@ export const InvestmentTransactionsTableFunc = {
       <table id="transactions-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>Data</th>
+                <th>${Localization.getString("common.date")}</th>
                 <th>Ativo</th>
                 <th>Tipo</th>
                 <th>Unidades</th>

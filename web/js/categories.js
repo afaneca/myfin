@@ -4,6 +4,7 @@ import { LoadingManager } from './utils/loadingManager.js'
 import { CategoryServices } from './services/categoryServices.js'
 import { StringUtils } from './utils/stringUtils.js'
 import { chartUtils } from './utils/chartUtils.js'
+import { Localization } from './utils/localization.js'
 
 export const Categories = {
   getCategories: (type = undefined) => {
@@ -79,7 +80,7 @@ export const Categories = {
         <thead>
             <tr>
                 <th>Nome</th>
-                <th>Descrição</th>
+                <th>${Localization.getString("common.description")}</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -96,7 +97,7 @@ export const Categories = {
             <tr>
                 <th>Cor</th>
                 <th>Nome</th>
-                <th>Descrição</th>
+                <th>${Localization.getString("common.description")}</th>
                 <th>Estado</th>
                 <th>Ações</th>
             </tr>
@@ -169,7 +170,7 @@ export const Categories = {
                         <div class="input-field col s9">
                             <i class="material-icons prefix">description</i>
                             <label for="category_description" class="active">Descrição da Categoria</label>
-                            <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                            <textarea id="category_description" maxlength="50" placeholder="${Localization.getString("common.description")}..." class="materialize-textarea"></textarea>
                         </div>
                         <div class="input-field col s3">
                             <label>
@@ -309,7 +310,7 @@ export const Categories = {
                         <div class="input-field col s9">
                             <i class="material-icons prefix">description</i>
                             <label for="category_description" class="active">Descrição da Categoria</label>
-                            <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                            <textarea id="category_description" maxlength="50" placeholder="${Localization.getString("common.description")}..." class="materialize-textarea"></textarea>
                         </div>
                         <div class="input-field col s3">
                             <label>

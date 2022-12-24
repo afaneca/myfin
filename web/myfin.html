@@ -35,6 +35,14 @@
     <link rel="stylesheet" href="./css/themes/dark_gray_theme.css"/>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 
+    <!-- Localization -->
+    <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-i18next@1.2.1/jquery-i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.3.2/i18nextHttpBackend.min.js"></script>
+    <script src="js/utils/localization.js" type="module"></script>
+
+
     <!--<link rel="stylesheet" href="./css/themes/light_theme.css"/>-->
 </head>
 
@@ -47,13 +55,13 @@
             </div>-->
             <div class="col s6">
                 <div class="row top-summary-wrapper">
-                    <div class="col top-summary-col"><span class="top-summary-label">Fundo de Maneio:</span><br><span
+                    <div class="col top-summary-col"><span class="top-summary-label"><span data-i18n="topBar.operatingFunds"></span>:</span><br><span
                             class="top-summary-key" id="top-summary-col-current-savings-value">0€</span></div>
-                    <div class="col top-summary-col"><span class="top-summary-label">Investimento:</span><br><span
+                    <div class="col top-summary-col"><span class="top-summary-label"><span data-i18n="topBar.investing"></span>:</span><br><span
                             class="top-summary-key" id="top-summary-col-investments-value">0€</span></div>
-                    <div class="col top-summary-col"><span class="top-summary-label">Passivo:</span><br><span
+                    <div class="col top-summary-col"><span class="top-summary-label"><span data-i18n="topBar.debt"></span>:</span><br><span
                             class="top-summary-key" id="top-summary-col-credits-value">0€</span></div>
-                    <div class="col top-summary-col"><span class="top-summary-label">Património:</span><br><span
+                    <div class="col top-summary-col"><span class="top-summary-label"><span data-i18n="topBar.netWorth"></span>:</span><br><span
                             class="top-summary-key" id="top-summary-col-patrimony-value">0€</span></div>
                 </div>
             </div>
@@ -77,38 +85,47 @@
         <ul class="side-nav-menu">
             <li><a id="menu-item-dashboard"
                    onClick="configs.goToPage('dashboard');MenuUtils.changeActiveMenu('dashboard')"
-                   class="menu-item" href="#!dashboard"><i class="material-icons left side-nav-menu-item-icon">view_module</i>Dashboard</a>
+                   class="menu-item" href="#!dashboard"><i class="material-icons left side-nav-menu-item-icon">view_module</i><span
+                    data-i18n="sidebar.dashboard"></span></a>
             </li>
             <li><a id="menu-item-transactions" class="menu-item"
                    onClick="configs.goToPage('transactions');MenuUtils.changeActiveMenu('transactions')"
-                   href="#!transactions"><i class="material-icons left side-nav-menu-item-icon">dvr</i>Transações</a>
+                   href="#!transactions"><i class="material-icons left side-nav-menu-item-icon">dvr</i><span
+                    data-i18n="sidebar.transactions"></span></a>
             </li>
             <li><a id="menu-item-accounts" class="menu-item"
                    onClick="configs.goToPage('accounts');MenuUtils.changeActiveMenu('accounts')"
                    href="#!accounts"><i
-                    class="material-icons left side-nav-menu-item-icon">account_balance</i>Contas</a></li>
+                    class="material-icons left side-nav-menu-item-icon">account_balance</i><span
+                    data-i18n="sidebar.accounts"></span></a></li>
             <li><a id="menu-item-categories" class="menu-item"
                    onClick="configs.goToPage('categories');MenuUtils.changeActiveMenu('categories')"
-                   href="#!categories"><i class="material-icons left side-nav-menu-item-icon">folder_shared</i>Categorias</a>
+                   href="#!categories"><i class="material-icons left side-nav-menu-item-icon">folder_shared</i><span
+                    data-i18n="sidebar.categories"></span></a>
             </li>
             <li><a id="menu-item-entities" class="menu-item"
                    onClick="configs.goToPage('entities');MenuUtils.changeActiveMenu('entities')"
-                   href="#!entities"><i class="material-icons left side-nav-menu-item-icon">business</i>Entidades</a>
+                   href="#!entities"><i class="material-icons left side-nav-menu-item-icon">business</i><span
+                    data-i18n="sidebar.entities"></span></a>
             </li>
             <li><a id="menu-item-rules" class="menu-item"
                    onClick="configs.goToPage('rules');MenuUtils.changeActiveMenu('rules')"
-                   href="#!rules"><i class="material-icons left side-nav-menu-item-icon">lightbulb_outline</i>Regras</a>
+                   href="#!rules"><i class="material-icons left side-nav-menu-item-icon">lightbulb_outline</i><span
+                    data-i18n="sidebar.rules"></span></a>
             </li>
             <li><a id="menu-item-budgets" class="menu-item"
                    onClick="configs.goToPage('budgets');MenuUtils.changeActiveMenu('budgets')" href="#!budgets"><i
-                    class="material-icons left side-nav-menu-item-icon">class</i>Orçamentos</a></li>
+                    class="material-icons left side-nav-menu-item-icon">class</i><span
+                    data-i18n="sidebar.budgets"></span></a></li>
             <li><a id="menu-item-investments" class="menu-item"
                    onClick="configs.goToPage('investments');MenuUtils.changeActiveMenu('investments')"
                    href="#!investments"><i
-                    class="material-icons left side-nav-menu-item-icon">equalizer</i>Investimentos</a></li>
+                    class="material-icons left side-nav-menu-item-icon">equalizer</i><span
+                    data-i18n="sidebar.investments"></span></a></li>
             <li><a id="menu-item-stats" class="menu-item"
                    onClick="configs.goToPage('stats');MenuUtils.changeActiveMenu('stats')" href="#!stats"><i
-                    class="material-icons left side-nav-menu-item-icon">folder_shared</i>Estatísticas</a></li>
+                    class="material-icons left side-nav-menu-item-icon">folder_shared</i><span
+                    data-i18n="sidebar.statistics"></span></a></li>
         </ul>
     </nav>
 </header>
@@ -213,6 +230,7 @@
   import { LocalDataManager } from './js/utils/localDataManager.js'
   import { checkPreAuth, checkPreAuthWithInterval, resetSession } from './js/login.js'
   import { TopNav } from './js/topNav.js'
+  import { Localization } from './js/utils/localization.js'
 
   $(window).on('load', function () {
     checkPreAuth()
@@ -221,6 +239,7 @@
   })
 
   $(document).ready(function () {
+    Localization.initLocale()
     configs.loadFirstView('dashboard')
     $('.sidenav').sidenav()
     $('.dropdown-trigger').dropdown()

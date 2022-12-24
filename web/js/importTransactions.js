@@ -6,6 +6,7 @@ import { DateUtils } from './utils/dateUtils.js'
 import { ValidationUtils } from './utils/validationUtils.js'
 import { StringUtils } from './utils/stringUtils.js'
 import { LocalDataManager } from './utils/localDataManager.js'
+import { Localization } from './utils/localization.js'
 
 let importedObjData = {
   data: [],
@@ -174,9 +175,9 @@ export const ImportTransactions = {
                         <option value="${column}_${FIELD_MAPPING.DATE}" ${checkIfTextIsAssociatedWithHeaderLabel(
         headerLabel, FIELD_MAPPING.DATE) ? ' selected ' : ''}>Data (DD-MM-YYYY)</option>
                         <option value="${column}_${FIELD_MAPPING.DESCRIPTION}" ${checkIfTextIsAssociatedWithHeaderLabel(
-        headerLabel, FIELD_MAPPING.DESCRIPTION) ? ' selected ' : ''}>Descrição</option>
+        headerLabel, FIELD_MAPPING.DESCRIPTION) ? ' selected ' : ''}>${Localization.getString("common.description")}</option>
                         <option value="${column}_${FIELD_MAPPING.AMOUNT}" ${checkIfTextIsAssociatedWithHeaderLabel(
-        headerLabel, FIELD_MAPPING.AMOUNT) ? ' selected ' : ''}>Montante</option>
+        headerLabel, FIELD_MAPPING.AMOUNT) ? ' selected ' : ''}>${Localization.getString("common.amount")}</option>
                         <option value="${column}_${FIELD_MAPPING.CREDIT}" ${checkIfTextIsAssociatedWithHeaderLabel(
         headerLabel, FIELD_MAPPING.CREDIT) ? ' selected ' : ''}>Crédito</option>
                         <option value="${column}_${FIELD_MAPPING.DEBIT}" ${checkIfTextIsAssociatedWithHeaderLabel(
@@ -411,9 +412,9 @@ export const ImportTransactions = {
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Data</th>
+                        <th>${Localization.getString("common.date")}</th>
                         <th>Valor</th>
-                        <th>Descrição</th>
+                        <th>${Localization.getString("common.description")}</th>
                         <th>Entidade</th>
                         <th>Categoria</th>
                         <th>Conta</th>
