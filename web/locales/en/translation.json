@@ -7,7 +7,10 @@
     "noDataToDisplay": "No data to display",
     "noTransactionsToDisplay": "No transactions to display",
     "debtDistribution": "Debt Distribution",
-    "investmentPortfolio": "Investment Portfolio"
+    "investmentPortfolio": "Investment Portfolio",
+    "taskSuccessfullyCompleted": "The task was successfully completed!",
+    "somethingWentWrongTryAgain": "Something went wrong. Please, try again.",
+    "fillAllFieldsTryAgain": "Fill all the fields and try again."
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -90,5 +93,30 @@
     "thu": "T",
     "fri": "f",
     "sat": "S"
+  },
+  "profile": {
+    "profileManagement": "Profile Management",
+    "changeLanguage": "Change Language",
+    "changeTheme": "Change Theme",
+    "changePassword": "Change Password",
+    "statsForNerds": "Stats for Nerds",
+    "tools": "Tools",
+    "version": "Version",
+    "selectOneOfOptionsBelow": "Select one of the options below",
+    "changeLanguageCTA": "Change Language",
+    "changeThemeCTA": "Change Theme",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "newPasswordConfirmation": "New password (confirmation)",
+    "changePasswordCTA": "Change Password",
+    "nrTrxCreated": "Nr. of transactions created",
+    "nrEntitiesCreated": "Nr of entities created",
+    "nrCategoriesCreated": "Nr of categories created",
+    "nrAccountsCreated": "Nr of accounts created",
+    "nrBudgetsCreated": "Nr of budgets created",
+    "nrRulesCreated": "Nr of rules created",
+    "recalculateBalancesOfAllAccounts": "Recalculate balances of all accounts",
+    "changePasswordSuccessMessage": "Password successfully updated. Please, log back in.",
+    "passwordsDoNotMatchMessage": "Passwords don't match. Please, verify your input and try again."
   }
 }

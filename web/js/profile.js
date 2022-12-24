@@ -26,7 +26,7 @@ export const Profile = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Aconteceu algo de errado. Por favor, tente novamente.')
+        DialogUtils.showErrorMessage(Localization.getString("common.somethingWentWrongTryAgain"))
       },
     )
   },
@@ -57,12 +57,12 @@ export const Profile = {
     const newPassword2 = $('input#new_pw_repeat').val()
 
     if (!ValidationUtils.checkIfFieldsAreFilled([oldPassword, newPassword1, newPassword2])) {
-      DialogUtils.showErrorMessage('Preencha todos os campos e tente novamente.')
+      DialogUtils.showErrorMessage(Localization.getString("common.fillAllFieldsTryAgain"))
       return
     }
 
     if (newPassword1 !== newPassword2) {
-      DialogUtils.showErrorMessage('As passwords não coincidem. Por favor, verifique o seu input e tente novamente.')
+      DialogUtils.showErrorMessage(Localization.getString("profile.passwordsDoNotMatchMessage"))
       return
     }
 
@@ -70,11 +70,11 @@ export const Profile = {
     UserServices.changeUserPassword(oldPassword, newPassword1,
       (resp) => {
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Password atualizada com sucesso. Por favor, volte a iniciar sessão.')
+        DialogUtils.showSuccessMessage(Localization.getString("profile.changePasswordSuccessMessage"))
         resetSession()
       }, (err) => {
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Aconteceu algo de errado. Por favor, tente novamente.')
+        DialogUtils.showErrorMessage(Localization.getString("common.somethingWentWrongTryAgain"))
       })
   },
   initChangeLanguageOptions: () => {
@@ -146,11 +146,11 @@ export const Profile = {
       (resp) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Tarefa concluída com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString("common.taskSuccessfullyCompleted"))
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Aconteceu algo de errado. Por favor, tente novamente.')
+        DialogUtils.showErrorMessage(Localization.getString("common.somethingWentWrongTryAgain"))
       },
     )
   },

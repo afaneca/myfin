@@ -7,7 +7,10 @@
     "noDataToDisplay": "Sem dados para apresentar",
     "noTransactionsToDisplay": "Sem transações para apresentar",
     "debtDistribution": "Distribuição da Dívida",
-    "investmentPortfolio": "Portefólio de Investimento"
+    "investmentPortfolio": "Portefólio de Investimento",
+    "taskSuccessfullyCompleted": "A tarefa foi concluída com sucesso!",
+    "somethingWentWrongTryAgain": "Aconteceu algo de errado. Por favor, tente novamente.",
+    "fillAllFieldsTryAgain": "Preencha todos os campos e tente novamente."
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -90,5 +93,30 @@
     "thu": "Q",
     "fri": "S",
     "sat": "S"
+  },
+  "profile": {
+    "profileManagement": "Gestão de Perfil",
+    "changeLanguage": "Alterar Linguagem",
+    "changeTheme": "Alterar Tema",
+    "changePassword": "Alterar Password",
+    "statsForNerds": "Estatísticas para Nerds",
+    "tools": "Utilitários",
+    "version": "Versão",
+    "selectOneOfOptionsBelow": "Selecione uma das opções abaixo",
+    "changeLanguageCTA": "Alterar Linguagem",
+    "changeThemeCTA": "Alterar Tema",
+    "currentPassword": "Password atual",
+    "newPassword": "Nova password",
+    "newPasswordConfirmation": "Nova password (confirmação)",
+    "changePasswordCTA": "Alterar Password",
+    "nrTrxCreated": "Nr. de transações criadas",
+    "nrEntitiesCreated": "Nr. de entidades criadas",
+    "nrCategoriesCreated": "Nr. de categorias criadas",
+    "nrAccountsCreated": "Nr. de contas criadas",
+    "nrBudgetsCreated": "Nr. de orçamentos criados",
+    "nrRulesCreated": "Nr. de regras criadas",
+    "recalculateBalancesOfAllAccounts": "Recalcular saldos de todas as contas",
+    "changePasswordSuccessMessage": "Password atualizada com sucesso. Por favor, volte a iniciar sessão.",
+    "passwordsDoNotMatchMessage": "As passwords não coincidem. Por favor, verifique o seu input e tente novamente."
   }
 }
