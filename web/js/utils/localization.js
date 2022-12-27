@@ -17,7 +17,7 @@ export var Localization = {
       // init i18next
       // for all options read: https://www.i18next.com/overview/configuration-options
       .init({
-        debug: false,
+        debug: true,
         fallbackLng: MYFIN.DEFAULT_LOCALE_CODE,
         lng: currentLocale,
         backend: {
@@ -42,7 +42,10 @@ export var Localization = {
       $('body').localize()
     }, 100)
   },
-  getString: (key) => {
+  /*getString: (key) => {
     return i18next.t(key)
+  },*/
+  getString: (key, placeholders = undefined) => {
+    return i18next.t(key, placeholders)
   },
 }

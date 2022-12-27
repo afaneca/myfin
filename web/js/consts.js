@@ -100,8 +100,6 @@ var MYFIN = {
   DEFAULT_LOCALE_CODE: 'en',
 }
 
-var EXTERNAL_ACCOUNT_LABEL = '** Conta Externa **'
-
 var FRONT_SERVER_PATH =
   window.location.protocol +
   '//' +

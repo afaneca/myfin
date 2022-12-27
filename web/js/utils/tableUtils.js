@@ -1,3 +1,5 @@
+import { Localization } from './localization.js'
+
 export const tableUtils = {
   setupStaticTable: (tableID, onDrawCallback, ordering = false, customOrdering = undefined, pageLength = 50) => {
     $(tableID).DataTable({
@@ -6,15 +8,15 @@ export const tableUtils = {
       'lengthChange': true,
       'pageLength': pageLength,
       'language': {
-        'lengthMenu': '',/*"A mostrar _MENU_ registos por página",*/
-        'zeroRecords': 'Nenhum registo encontrado',
-        'info': 'A mostrar a página _PAGE_ de _PAGES_',
-        'infoEmpty': 'Nenhum registo encontrado',
-        'infoFiltered': '(filtrado de um total de _MAX_ registos)',
-        'search': 'Pesquisa:',
+        'lengthMenu': '',
+        'zeroRecords': Localization.getString("common.tableZeroRecords"),
+        'info': Localization.getString("common.tableInfo"),
+        'infoEmpty': Localization.getString("common.tableInfoEmpty"),
+        'infoFiltered': Localization.getString("common.tableInfoFiltered"),
+        'search': `${Localization.getString('common.search')}:`,
         'paginate': {
-          'next': 'Página Seguinte',
-          'previous': 'Página Anterior',
+          'next': Localization.getString("common.tablePaginateNext"),
+          'previous': Localization.getString("common.tablePaginatePrevious"),
         },
       },
       drawCallback: onDrawCallback,
@@ -28,15 +30,15 @@ export const tableUtils = {
       'pageLength': 50,
       'columnDefs': customColumnWidths,
       'language': {
-        'lengthMenu': '',/*"A mostrar _MENU_ registos por página",*/
-        'zeroRecords': 'Nenhum registo encontrado',
-        'info': 'A mostrar a página _PAGE_ de _PAGES_',
-        'infoEmpty': 'Nenhum registo encontrado',
-        'infoFiltered': '(filtrado de um total de _MAX_ registos)',
-        'search': 'Pesquisa:',
+        'lengthMenu':'',
+        'zeroRecords': Localization.getString("common.tableZeroRecords"),
+        'info': Localization.getString("common.tableInfo"),
+        'infoEmpty': Localization.getString("common.tableInfoEmpty"),
+        'infoFiltered': Localization.getString("common.tableInfoFiltered"),
+        'search': `${Localization.getString('common.search')}:`,
         'paginate': {
-          'next': 'Página Seguinte',
-          'previous': 'Página Anterior',
+          'next': Localization.getString("common.tablePaginateNext"),
+          'previous': Localization.getString("common.tablePaginatePrevious"),
         },
       },
       drawCallback: onDrawCallback,

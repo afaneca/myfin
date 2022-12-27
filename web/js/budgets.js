@@ -5,6 +5,7 @@ import { LoadingManager } from './utils/loadingManager.js'
 import { BudgetServices } from './services/budgetServices.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { StringUtils } from './utils/stringUtils.js'
+import { Localization } from './utils/localization.js'
 
 let showOnlyOpen = false
 
@@ -73,8 +74,8 @@ export const Budgets = {
                 <th></th>
                 <th>Mês</th>
                 <th>Observações</th>
-                <th>Despesa</th>
-                <th>Receita</th>
+                <th>${Localization.getString("transactions.expense")}</th>
+                <th>${Localization.getString("transactions.income")}</th>
                 <th>Balanço</th>
                 <th>Poupança</th>
                 <th>Ações</th>
