@@ -247,7 +247,7 @@ export var Accounts = {
                         <div class="input-field col s6">
                             <label>
                                 <input id="exclude_from_budgets" type="checkbox" />
-                                <span>${Localization.getString('accounts.excludeFromBudgets')}</span>
+                                <span>${Localization.getString('common.excludeFromBudgets')}</span>
                             </label>
                         </div>
                        
@@ -453,7 +453,7 @@ export var Accounts = {
                         <div class="input-field col s6">
                             <label>
                                 <input id="exclude_from_budgets" type="checkbox" />
-                                <span>${Localization.getString('accounts.excludeFromBudgets')}</span>
+                                <span>${Localization.getString('common.excludeFromBudgets')}</span>
                             </label>
                         </div>
                        

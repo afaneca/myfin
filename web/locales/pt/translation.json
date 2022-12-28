@@ -35,7 +35,8 @@
     "debit": "Débito",
     "type": "Tipo",
     "externalAccounts": "Contas Externas",
-    "chooseAnOption": "Escolha uma opção"
+    "chooseAnOption": "Escolha uma opção",
+    "excludeFromBudgets": "Excluir dos orçamentos"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -231,5 +232,24 @@
     "deleteAccountModalSubtitle": "Tem a certeza de que pretende remover esta conta?",
     "deleteAccountModalAlert": "Esta ação é irreversível!",
     "accountSuccessfullyDeleted": "Conta removida com sucesso!"
+  },
+  "categories": {
+    "categories": "Categorias",
+    "addCategoryCTA": "Adicionar Categoria",
+    "color": "Cor",
+    "name": "Nome",
+    "description": "Descrição",
+    "status": "Estado",
+    "deleteCategoryModalTitle": "Remover categoria <b>{{name}}</b>",
+    "deleteCategoryModalSubtitle": "Tem a certeza de que pretende remover esta categoria?",
+    "deleteCategoryModalAlert": "Esta ação é irreversível!",
+    "categorySuccessfullyDeleted": "Categoria removida com sucesso!",
+    "excludedFromBudgets": "Excluída dos orçamentos",
+    "addCategoryModalTitle": "Adicionar nova categoria",
+    "active": "Ativa",
+    "inactive": "Inativa",
+    "categorySuccessfullyAdded": "Categoria adicionada com sucesso!",
+    "editCategoryModalTitle": "Editar categoria",
+    "categorySuccessfullyUpdated": "Categoria atualizada com sucesso!"
   }
 }
