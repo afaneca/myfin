@@ -34,7 +34,8 @@
     "credit": "Credit",
     "debit": "Debit",
     "type": "Type",
-    "externalAccounts": "External Accounts"
+    "externalAccounts": "External Accounts",
+    "chooseAnOption": "Choose an option"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -193,5 +194,41 @@
     "signUp": "Sign Up",
     "alreadyRegisteredQuestion": "Already registered?",
     "signIn": "Sign In"
+  },
+  "accounts": {
+    "accounts": "Accounts",
+    "addAccount": "Add Account",
+    "debts": "Debts",
+    "investments": "Investments",
+    "others": "Others",
+    "noAccountInGroup": "You don't have currently an account in this group.",
+    "youCanAddNewAccountPre": "You can add a new account",
+    "here": "here",
+    "total": "Total",
+    "color": "Color",
+    "name": "Name",
+    "type": "Type",
+    "balance": "Balance",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "addNewAccountModalTitle": "Add new account",
+    "accountName": "Account name",
+    "typeOfAccount": "Account type",
+    "statusOfAccount": "Account status",
+    "currentBalance": "Current balance",
+    "excludeFromBudgets": "Exclude from budgets",
+    "cheac": "Current account",
+    "savac": "Savings account",
+    "invac": "Investment",
+    "creac": "Credit",
+    "mealac": "Meal card",
+    "wallet": "Wallet",
+    "othac": "Other",
+    "editAccountModalTitle": "Edit account <b>{{name}}</b>",
+    "accountSuccessfullyUpdated": "Account successfully updated!",
+    "deleteAccountModalTitle": "Delete account <b>{{name}}</b>",
+    "deleteAccountModalSubtitle": "Are you sure you want to delete this account?",
+    "deleteAccountModalAlert": "This action is irreversible!"
   }
 }

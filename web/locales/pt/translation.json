@@ -34,7 +34,8 @@
     "credit": "Crédito",
     "debit": "Débito",
     "type": "Tipo",
-    "externalAccounts": "Contas Externas"
+    "externalAccounts": "Contas Externas",
+    "chooseAnOption": "Escolha uma opção"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -193,5 +194,42 @@
     "signUp": "Criar conta",
     "alreadyRegisteredQuestion": "Já registado?",
     "signIn": "Entrar"
+  },
+  "accounts": {
+    "accounts": "Contas",
+    "addAccount": "Adicionar Conta",
+    "debts": "Créditos",
+    "investments": "Investimentos",
+    "others": "Outras",
+    "noAccountInGroup": "Não possui atualmente qualquer conta neste grupo.",
+    "youCanAddNewAccountPre": "Pode adicionar uma nova conta",
+    "here": "aqui",
+    "total": "Total",
+    "color": "Cor",
+    "name": "Nome",
+    "type": "Tipo",
+    "balance": "Saldo",
+    "status": "Estado",
+    "active": "Ativa",
+    "inactive": "Inativa",
+    "addNewAccountModalTitle": "Adicionar nova conta",
+    "accountName": "Nome da conta",
+    "typeOfAccount": "Tipo de conta",
+    "statusOfAccount": "Account status",
+    "currentBalance": "Saldo atual",
+    "excludeFromBudgets": "Excluir dos orçamentos",
+    "cheac": "Conta à ordem",
+    "savac": "Conta poupança",
+    "invac": "Investimento",
+    "creac": "Crédito",
+    "mealac": "Cartão-refeição",
+    "wallet": "Carteira",
+    "othac": "Outra",
+    "editAccountModalTitle": "Editar a conta <b>{{name}}</b>",
+    "accountSuccessfullyUpdated": "Conta atualizada com sucesso!",
+    "deleteAccountModalTitle": "Remover conta <b>{{name}}</b>",
+    "deleteAccountModalSubtitle": "Tem a certeza de que pretende remover esta conta?",
+    "deleteAccountModalAlert": "Esta ação é irreversível!",
+    "accountSuccessfullyDeleted": "Conta removida com sucesso!"
   }
 }
