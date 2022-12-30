@@ -251,5 +251,19 @@
     "categorySuccessfullyAdded": "Categoria adicionada com sucesso!",
     "editCategoryModalTitle": "Editar categoria",
     "categorySuccessfullyUpdated": "Categoria atualizada com sucesso!"
+  },
+  "entities": {
+    "entities": "Entidades",
+    "addEntityCTA": "Adicionar entidade",
+    "name": "Nome",
+    "editEntityModalTitle": "Editar entidade <b>{{name}}</b>",
+    "deleteEntityModalTitle": "Remover entidade <b>{{name}}</b>",
+    "deleteEntityModalSubtitle": "Tem a certeza de que pretende remover esta categoria?",
+    "deleteEntityModalAlert": "Esta ação é irreversível!",
+    "addEntityModalTitle": "Adicionar nova entidade",
+    "entitySuccessfullyAdded": "Entidade adicionada com sucesso!",
+    "entitySuccessfullyDeleted": "Entidade removida com sucesso!",
+    "entitySuccessfullyUpdated": "Entidade atualizada com sucesso!"
+
   }
 }

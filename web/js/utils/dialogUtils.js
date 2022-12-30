@@ -2,7 +2,7 @@ import { Localization } from './localization.js'
 
 export var DialogUtils = {
   showGenericMessage: (messageToShow) => {
-    M.toast({ text: messageToShow });
+    M.toast({ html: messageToShow });
   },
   showErrorMessage: (errorMessage
     = Localization.getString("common.somethingWentWrongTryAgain")) => {
