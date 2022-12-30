@@ -264,6 +264,35 @@
     "entitySuccessfullyAdded": "Entidade adicionada com sucesso!",
     "entitySuccessfullyDeleted": "Entidade removida com sucesso!",
     "entitySuccessfullyUpdated": "Entidade atualizada com sucesso!"
-
+  },
+  "rules": {
+    "rules": "Regras para Auto-Categorização",
+    "addRule": "Adicionar regra",
+    "conditions": "Condições",
+    "result": "Resultado",
+    "fromAccount": "Conta Origem",
+    "toAccount": "Conta Destino",
+    "assignCategory": "Atribuir Categoria",
+    "assignEntity": "Atribuir Entidade",
+    "assignFromAccount": "Atribuir Conta Origem",
+    "assignToAccount": "Atribuir Conta Destino",
+    "updateRule": "Atualizar Regra",
+    "ignore": "Ignorar",
+    "equals": "Igual",
+    "notEquals": "Não é igual",
+    "contains": "Contém",
+    "doesNotContain": "Não contém",
+    "updateRuleCTA": "Update Rule CTA",
+    "descriptionPlaceholder": "Descrição...",
+    "categoryToAssign": "Categoria a atribuir",
+    "entityToAssign": "Entidade a atribuir",
+    "fromAccountToAssign": "Conta origem a atribuir",
+    "toAccountToAssign": "Conta destino a atribuir",
+    "yes": "Sim",
+    "no": "No",
+    "essential": "Essencial",
+    "deleteRuleModalTitle": "Remover regra <b>{{id}}</b>?",
+    "deleteRuleModalSubtitle": "Tem a certeza de que pretende remover esta categoria?",
+    "deleteRuleModalAlert": "Esta ação é irreversível!"
   }
 }

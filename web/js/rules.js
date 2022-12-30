@@ -29,7 +29,7 @@ export const Rules = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       },
     )
   },
@@ -79,9 +79,9 @@ export const Rules = {
             <table id="rules-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>Condições</th>
-                <th>Resultado</th>
-                <th>Ações</th>
+                <th>${Localization.getString("rules.conditions")}</th>
+                <th>${Localization.getString("rules.result")}</th>
+                <th>${Localization.getString("common.actions")}</th>
             </tr>
         </thead>
         <tbody>
@@ -124,30 +124,30 @@ export const Rules = {
     let outputStr = ''
     if (rule.matcher_description_operator && rule.matcher_description_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE &&
       rule.matcher_description_value) {
-      outputStr += '<span style=\'color: #b5b5b5\'>Descrição:</span> ' + rule.matcher_description_operator + ' => ' + '"' +
+      outputStr += `<span style=\'color: #b5b5b5\'>${Localization.getString("common.description")}:</span> ` + rule.matcher_description_operator + ' => ' + '"' +
         rule.matcher_description_value + '"' + '<br>'
     }
 
     if (rule.matcher_amount_operator && rule.matcher_amount_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE &&
       rule.matcher_amount_value) {
-      outputStr += '<span style=\'color: #b5b5b5\'>Valor:</span> ' + rule.matcher_amount_operator + ' => ' + '"' + rule.matcher_amount_value + '"' +
+      outputStr += `<span style=\'color: #b5b5b5\'>${Localization.getString("common.value")}:</span> ` + rule.matcher_amount_operator + ' => ' + '"' + rule.matcher_amount_value + '"' +
         '<br>'
     }
 
     if (rule.matcher_type_operator && rule.matcher_type_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE && rule.matcher_type_value) {
-      outputStr += '<span style=\'color: #b5b5b5\'>Tipo:</span> ' + rule.matcher_type_operator + ' => ' + '"' + rule.matcher_type_value + '"' +
+      outputStr += `<span style=\'color: #b5b5b5\'>${Localization.getString("common.type")}:</span> ` + rule.matcher_type_operator + ' => ' + '"' + rule.matcher_type_value + '"' +
         '<br>'
     }
 
     if (rule.matcher_account_from_id_operator && rule.matcher_account_from_id_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE &&
       rule.matcher_account_from_id_value) {
-      outputStr += '<span style=\'color: #b5b5b5\'>Conta Origem:</span> ' + rule.matcher_account_from_id_operator + ' => ' + '"' +
+      outputStr += `<span style=\'color: #b5b5b5\'>${Localization.getString("rules.fromAccount")}:</span> ` + rule.matcher_account_from_id_operator + ' => ' + '"' +
         LocalDataManager.getUserAccount(rule.matcher_account_from_id_value).name + '"' + '<br>'
     }
 
     if (rule.matcher_account_to_id_operator && rule.matcher_account_to_id_operator !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE &&
       rule.matcher_account_to_id_value) {
-      outputStr += '<span style=\'color: #b5b5b5\'>Conta Destino:</span> ' + rule.matcher_account_to_id_operator + ' => ' + '"' +
+      outputStr += `<span style=\'color: #b5b5b5\'>${Localization.getString("rules.toAccount")}:</span> ` + rule.matcher_account_to_id_operator + ' => ' + '"' +
         LocalDataManager.getUserAccount(rule.matcher_account_to_id_value).name + '"' + '<br>'
     }
 
@@ -156,20 +156,20 @@ export const Rules = {
   buildResulstsString: rule => {
     let outputStr = ''
     if (rule.assign_category_id && rule.assign_category_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-      outputStr += '<span style=\'color: #b5b5b5\'>Atribuir Categoria:</span> ' + Rules.getCategoryName(rule.assign_category_id) + '<br>'
+      outputStr += `<span style=\'color: #b5b5b5\'>${Localization.getString("rules.assignCategory")}:</span> ` + Rules.getCategoryName(rule.assign_category_id) + '<br>'
     }
 
     if (rule.assign_entity_id && rule.assign_entity_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-      outputStr += '<span style=\'color: #b5b5b5\'>Atribuir Entidade:</span> ' + Rules.getEntityName(rule.assign_entity_id) + '<br>'
+      outputStr += `<span style=\'color: #b5b5b5\'>${Localization.getString("rules.assignEntity")}:</span> ` + Rules.getEntityName(rule.assign_entity_id) + '<br>'
     }
 
     if (rule.assign_account_from_id && rule.assign_account_from_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-      outputStr += '<span style=\'color: #b5b5b5\'>Atribuir Conta Origem:</span> ' +
+      outputStr += `<span style=\'color: #b5b5b5\'>${Localization.getString("rules.assignFromAccount")}:</span> ` +
         LocalDataManager.getUserAccount(rule.assign_account_from_id).name + '<br>'
     }
 
     if (rule.assign_account_to_id && rule.assign_account_to_id !== MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) {
-      outputStr += '<span style=\'color: #b5b5b5\'>Atribuir Conta Destino:</span> ' +
+      outputStr += `<span style=\'color: #b5b5b5\'>${Localization.getString("rules.assignToAccount")}:</span> ` +
         LocalDataManager.getUserAccount(rule.assign_account_to_id).name + '<br>'
     }
 
@@ -200,8 +200,8 @@ export const Rules = {
       matcher_account_to_id_operator, matcher_account_to_id_value, assign_account_from_id, assign_account_to_id, assign_category_id, assign_entity_id,
       assign_type, assign_is_essential)
     $('.collapsible').collapsible('open')
-    $('#add-rule-btn').text('Atualizar Regra')
-    $('#add-rule-collapsible-header').html('<i class=\'material-icons\'>edit</i>Atualizar Regra')
+    $('#add-rule-btn').text(Localization.getString("rules.updateRuleCTA"))
+    $('#add-rule-collapsible-header').html(`<i class=\'material-icons\'>edit</i>${Localization.getString("rules.updateRuleCTA")}`)
 
     // set btn onClick
     $('#add-rule-btn').removeAttr('onclick')
@@ -271,22 +271,21 @@ export const Rules = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente...')
+        DialogUtils.showErrorMessage()
       })
   },
   showRemoveRuleModal: (ruleID) => {
     $('#modal-global').modal('open')
     let txt = `
-                <h4>Remover regra #<b>${ruleID}</b></h4>
+                <h4>${Localization.getString("rules.deleteRuleModalTitle", {id: ruleID})}</h4>
                 <div class="row">
-                    <p>Tem a certeza de que pretende remover esta regra?</p>
-                    <b>Esta ação é irreversível!</b>
-
+                    <p>${Localization.getString("rules.deleteRuleModalSubtitle")}</p>
+                    <b>${Localization.getString("rules.deleteRuleModalAlert")}</b>
                 </div>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a id="modal-remove-rule-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
+            <a id="modal-remove-rule-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.delete")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
     $('#modal-remove-rule-btn').click(() => Rules.removeRule(ruleID))
@@ -301,7 +300,7 @@ export const Rules = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente...')
+        DialogUtils.showErrorMessage()
       })
   },
   renderAddRuleForm: (accountsList, entitiesList, categoriesList, matcher_description_operator = null, matcher_description_value = null,
@@ -318,25 +317,25 @@ export const Rules = {
                         <div class="input-field col s2">
                             <select id="operator-select-description">
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_description_operator ||
-        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
+        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>${Localization.getString("rules.ignore")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_CONTAINS}" ${(matcher_description_operator &&
-        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_CONTAINS) ? 'selected' : ''}>Contém
+        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_CONTAINS) ? 'selected' : ''}>${Localization.getString("rules.contains")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_CONTAINS}" ${(matcher_description_operator &&
-        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_CONTAINS) ? 'selected' : ''}>Não Contém
+        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_CONTAINS) ? 'selected' : ''}>${Localization.getString("rules.doesNotContain")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_description_operator &&
-        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
+        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.equals")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_description_operator &&
-        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
+        matcher_description_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.notEquals")}
                                 </option>
                             </select>
                             <label>${Localization.getString("common.description")}</label>
                         </div>
                         <div class="input-field col s10">
-                            <input id="value-input-description" type="text" maxlength="45" placeholder="Texto da descrição..."
+                            <input id="value-input-description" type="text" maxlength="45" placeholder="${Localization.getString("rules.descriptionPlaceholder")}"
                                     ${(matcher_description_value) ? 'value="' + matcher_description_value + '"' : ''}
                                    ${(!matcher_description_operator || matcher_description_operator ==
         MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''} />
@@ -346,13 +345,13 @@ export const Rules = {
                         <div class="input-field col s2">
                             <select id="operator-select-amount">
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_amount_operator ||
-        matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
+        matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>${Localization.getString("rules.ignore")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_amount_operator &&
-        matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
+        matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.equals")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_amount_operator &&
-        matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
+        matcher_amount_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.notEquals")}
                                 </option>
                             </select>
                             <label>${Localization.getString("common.amount")}</label>
@@ -368,30 +367,30 @@ export const Rules = {
                         <div class="input-field col s2">
                             <select id="operator-select-type">
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_type_operator ||
-        matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
+        matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>${Localization.getString("rules.ignore")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_type_operator &&
-        matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
+        matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.equals")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_type_operator &&
-        matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
+        matcher_type_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.notEquals")}
                                 </option>
                             </select>
-                            <label>Tipo de Transação</label>
+                            <label>${Localization.getString("common.type")}</label>
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-type" ${(!matcher_type_operator || matcher_type_operator ==
         MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''}>
-                                <option value="" ${(!matcher_type_value) ? 'disabled' : ''}>Ignorar</option>
+                                <option value="" ${(!matcher_type_value) ? 'disabled' : ''}>${Localization.getString("rules.ignore")}</option>
                                 <option value="${MYFIN.TRX_TYPES.EXPENSE}" ${(matcher_type_value && matcher_type_value == MYFIN.TRX_TYPES.EXPENSE)
         ? 'selected'
-        : ''}>Débito</option>
+        : ''}>${Localization.getString("common.debit")}</option>
                                 <option value="${MYFIN.TRX_TYPES.INCOME}" ${(matcher_type_value && matcher_type_value == MYFIN.TRX_TYPES.INCOME)
         ? 'selected'
-        : ''}>Crédito</option>
+        : ''}>${Localization.getString("common.credit")}</option>
                                 <option value="${MYFIN.TRX_TYPES.TRANSFER}" ${(matcher_type_value && matcher_type_value == MYFIN.TRX_TYPES.TRANSFER)
         ? 'selected'
-        : ''}>Transferência</option>
+        : ''}>${Localization.getString("transactions.transfer")}</option>
                             </select>
                         </div>
                     </div>
@@ -399,21 +398,21 @@ export const Rules = {
                         <div class="input-field col s2">
                             <select id="operator-select-account-from">
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_account_from_id_operator ||
-        matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
+        matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>${Localization.getString("rules.ignore")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_account_from_id_operator &&
-        matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
+        matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.equals")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_account_from_id_operator &&
-        matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
+        matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.notEquals")}
                                 </option>
                             </select>
-                            <label>Conta Origem</label>
+                            <label>${Localization.getString("rules.fromAccount")}</label>
                         </div>
                         <div class="input-field col s10">
                             <select id="operator-select-account-from-value" ${(!matcher_account_from_id_operator ||
         matcher_account_from_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''}>
-                                <option value="" ${!matcher_account_from_id_value ? 'selected' : ''}>Ignorar</option>
+                                <option value="" ${!matcher_account_from_id_value ? 'selected' : ''}>${Localization.getString("rules.ignore")}</option>
                                  ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name, matcher_account_from_id_value)).
         join('')}
                             </select>
@@ -423,21 +422,21 @@ export const Rules = {
                         <div class="input-field col s2">
                             <select id="operator-select-account-to">
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE}" ${(!matcher_account_to_id_operator ||
-        matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>Ignorar
+        matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'selected' : ''}>${Localization.getString("rules.ignore")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS}" ${(matcher_account_to_id_operator &&
-        matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>É igual
+        matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.equals")}
                                 </option>
                                 <option value="${MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS}" ${(matcher_account_to_id_operator &&
-        matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>Não é igual
+        matcher_account_to_id_operator == MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_NOT_EQUALS) ? 'selected' : ''}>${Localization.getString("rules.notEquals")}
                                 </option>
                             </select>
-                            <label>Conta Destino</label>
+                            <label>${Localization.getString("rules.toAccount")}</label>
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-account-to" ${(!matcher_account_to_id_operator || matcher_account_to_id_operator ==
         MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) ? 'disabled' : ''}>
-                                <option value="" ${!matcher_account_to_id_value ? 'selected' : ''}>Ignorar</option>
+                                <option value="" ${!matcher_account_to_id_value ? 'selected' : ''}>${Localization.getString("rules.ignore")}</option>
                                 ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name, matcher_account_to_id_value)).
         join('')}
                             </select>
@@ -446,11 +445,11 @@ export const Rules = {
                     <hr>
                     <div class="row">
                         <div class="input-field col s2">
-                            <p>Categoria a atribuir</p>
+                            <p>${Localization.getString("rules.categoryToAssign")}</p>
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-category-assign">
-                                <option value="" ${!assign_category_id ? 'selected' : ''}>Ignorar</option>
+                                <option value="" ${!assign_category_id ? 'selected' : ''}>${Localization.getString("rules.ignore")}</option>
                                 ${categoriesList.map(cat => Rules.renderCategoriesSelectOption(cat.category_id, cat.name, assign_category_id)).
         join('')}
                             </select>
@@ -458,22 +457,22 @@ export const Rules = {
                     </div>
                     <div class="row">
                         <div class="input-field col s2">
-                            <p>Entidade a atribuir</p>
+                            <p>${Localization.getString("rules.entityToAssign")}</p>
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-entity-assign">
-                                <option value="" ${!assign_entity_id ? 'selected' : ''}>Ignorar</option>
+                                <option value="" ${!assign_entity_id ? 'selected' : ''}>${Localization.getString("rules.ignore")}</option>
                                 ${entitiesList.map(ent => Rules.renderEntitiesSelectOption(ent.entity_id, ent.name, assign_entity_id)).join('')}
                             </select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s2">
-                            <p>Conta Origem a atribuir</p>
+                            <p>${Localization.getString("rules.fromAccountToAssign")}</p>
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-account-from-assign">
-                                <option value="" ${!assign_account_from_id ? 'selected' : ''}>Ignorar</option>
+                                <option value="" ${!assign_account_from_id ? 'selected' : ''}>${Localization.getString("rules.ignore")}</option>
                                 ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name, assign_account_from_id)).
         join('')}
                             </select>
@@ -481,30 +480,30 @@ export const Rules = {
                     </div>
                     <div class="row">
                         <div class="input-field col s2">
-                            <p>Conta Destino a atribuir</p>
+                            <p>${Localization.getString("rules.toAccountToAssign")}</p>
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-account-to-assign">
-                                <option value="" ${!assign_account_to_id ? 'selected' : ''}>Ignorar</option>
+                                <option value="" ${!assign_account_to_id ? 'selected' : ''}>${Localization.getString("rules.ignore")}</option>
                                 ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name, assign_account_to_id)).join('')}
                             </select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s2">
-                            <p>Essencial</p>
+                            <p>${Localization.getString("rules.essential")}</p>
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-essential-assign">
-                                <option value="" ${!assign_is_essential ? 'selected' : ''}>Ignorar</option>
-                                <option value="0" ${assign_is_essential != true ? 'selected' : ''}>Não</option>
-                                <option value="1" ${assign_is_essential == true ? 'selected' : ''}>Sim</option>
+                                <option value="" ${!assign_is_essential ? 'selected' : ''}>${Localization.getString("rules.ignore")}</option>
+                                <option value="0" ${assign_is_essential != true ? 'selected' : ''}>${Localization.getString("rules.no")}</option>
+                                <option value="1" ${assign_is_essential == true ? 'selected' : ''}>${Localization.getString("rules.no")}</option>
                             </select>
                         </div>
                     </div>
 
                     <a id="add-rule-btn" class="waves-effect waves-light btn green-gradient-bg" style="margin: -15px; float:right;"><i
-                            class="material-icons left">add_circle</i>Adicionar Regra</a>
+                            class="material-icons left">add_circle</i>${Localization.getString("rules.addRule")}</a>
             `,
     )
 
@@ -644,7 +643,7 @@ export const Rules = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente...')
+        DialogUtils.showErrorMessage()
       })
   },
   renderAccountsSelectOption: (account_id, account_name, default_value = MYFIN.RULES_OPERATOR.DEFAULT_RULES_OPERATOR_IGNORE) => {
