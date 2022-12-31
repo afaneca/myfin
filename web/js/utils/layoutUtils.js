@@ -1,12 +1,11 @@
-import { LocalDataManager } from './localDataManager.js';
+import { LocalDataManager } from './localDataManager.js'
+import { Localization } from './localization.js'
 
 export var LayoutUtils = {
   smoothScrollToDiv: (divStr, animationDurationInMs = 500) => {
-    $('html, body')
-      .animate({
-        scrollTop: $(divStr)
-          .offset().top
-      }, animationDurationInMs);
+    $('html, body').animate({
+      scrollTop: $(divStr).offset().top,
+    }, animationDurationInMs)
   },
   getCSSVariableValue: (varName) => {
     return getComputedStyle(document.documentElement)
@@ -89,7 +88,8 @@ export var LayoutUtils = {
   },
   buildEssentialTransactionBadge: () => {
     return `
-      <span class="badge white-text purple-gradient-bg" style="font-size:small;" data-badge-caption="">Essencial</span>
+      <span class="badge white-text purple-gradient-bg" style="font-size:small;" data-badge-caption="">${Localization.getString(
+      'transactions.essential')}</span>
     `;
   },
   scaleOutElement: (elementLocator) => {

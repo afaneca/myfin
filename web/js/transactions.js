@@ -9,6 +9,7 @@ import { TransactionServices } from './services/transactionServices.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { StringUtils } from './utils/stringUtils.js'
 import { Localization } from './utils/localization.js'
+import { ToggleComponent } from './components/toggleComponent.js'
 
 export var Transactions = {
   getTransactions: (fetchLimit = MYFIN.TRX_FETCH_LIMIT) => {
@@ -189,26 +190,24 @@ ${trx.description}
         $('#modal-global').modal('open')
         let txt = `
                 <div class="row row-no-margin-bottom">
-                    <div class="input-field col s8">
-                        <h4>Adicionar nova transação</h4>
+                    <div class="input-field col s6">
+                        <h4>${Localization.getString('transactions.addNewTransaction')}</h4>
                         <p id="cb-essential-wrapper" class="scale-transition scale-out">
                           <label>
                             <input id="cb-essential" type="checkbox" class="checkbox-indigo filled-in" />
-                            <span>Essencial</span>
+                            <span>${Localization.getString('transactions.essential')}</span>
                           </label>
                         </p>
                     </div>
-                    <div class="input-field col s4">
-                        <span class="select2-top-label" data-i18n="transactions.typeOfTrx">${Localization.getString("transactions.typeOfTrx")}</span>
-                        <select class="select-trxs-types" name="types">
-                            ${typesArr.map(
-          type => Transactions.renderTypesSelectOptions(type)).join('')}
-                        </select>
+                    <div class="input-field" style="float:right;display: grid;margin-bottom: 0px !important;">
+                        <span class="select2-top-label col s12" style="float:right;text-align: end;width: fit-content;">${Localization.getString(
+          'investments.typeOfTransaction')}</span>
+                        <div id="type-toggle-wrapper" class="col s12" style="margin-left: 10px;float: right;width: fit-content;"></div>
                         <a id="auto-categorize-btn" class="waves-effect waves-light btn purple-gradient-bg scale-transition scale-out"
                         style="margin: 10px 0;"><i class="material-icons left">lightbulb_outline</i>${Localization.getString(
           'transactions.autoCategorize')}</a>
-                        
                     </div>
+                 
                 </div>
                 
                     <form class="col s12">
@@ -291,11 +290,29 @@ ${trx.description}
           select2({ dropdownParent: '#modal-global' })
         $('select.select-trxs-account_from').
           select2({ dropdownParent: '#modal-global' })
-        $('select.select-trxs-types').
-          select2({ dropdownParent: '#modal-global' }).
-          on('select2:select', function (e) {
-            Transactions.toggleEssentialCheckboxVisibility(e.params.data.id)
+
+        const options = [
+          {
+            id: MYFIN.TRX_TYPES.INCOME,
+            name: Transactions.mapTransactionTypeLetterToPrintableName(MYFIN.TRX_TYPES.INCOME),
+          },
+          {
+            id: MYFIN.TRX_TYPES.EXPENSE,
+            name: Transactions.mapTransactionTypeLetterToPrintableName(MYFIN.TRX_TYPES.EXPENSE),
+          }, {
+            id: MYFIN.TRX_TYPES.TRANSFER,
+            name: Transactions.mapTransactionTypeLetterToPrintableName(MYFIN.TRX_TYPES.TRANSFER),
+          },
+        ]
+        const selectedType = lastTrxInputData ? lastTrxInputData.trxType : MYFIN.TRX_TYPES.INCOME
+        ToggleComponent.buildToggle('add-transaction-type', 'type-toggle-wrapper', options, selectedType,
+          (selectedOption) => {
+            Transactions.toggleEssentialCheckboxVisibility(selectedOption)
+            Transactions.manageAccountsSelectAvailability()
           })
+
+        Transactions.toggleEssentialCheckboxVisibility(ToggleComponent.getSelectedOptionId('add-transaction-type'))
+
         $('select.select-trxs-categories').select2({
           dropdownParent: '#modal-global',
           allowClear: true,
@@ -322,12 +339,6 @@ ${trx.description}
           $('select.select-trxs-categories').
             val(lastTrxInputData.categoryId).
             trigger('change')
-          if (lastTrxInputData.trxType) {
-            $('select.select-trxs-types').
-              select2('val', lastTrxInputData.trxType)
-            Transactions.toggleEssentialCheckboxVisibility(
-              lastTrxInputData.trxType)
-          }
         }
         $('textarea#trx-description').on('change keyup paste', () => {
           const description = $('textarea#trx-description').val()
@@ -395,30 +406,22 @@ ${trx.description}
   manageAccountsSelectAvailability: () => {
     const accountFromSelect = $('select.select-trxs-account_from')
     const accountToSelect = $('select.select-trxs-account_to')
-    const trxTypeSelect = $('select.select-trxs-types')
+    const trxTypeSelect = ToggleComponent.getSelectedOptionId('add-transaction-type')
     const accountFromSelect2 = $('select.select-trxs-account_from2')
     const accountToSelect2 = $('select.select-trxs-account_to2')
-    const trxTypeSelect2 = $('select.select-trxs-types2')
+    let trxTypeSelect2 = undefined
+    try {
+      trxTypeSelect2 = ToggleComponent.getSelectedOptionId('edit-transaction-type2')
+    }
+    catch (e) {}
 
     Transactions.handleAccountsSelectAvailability(accountFromSelect,
-      accountToSelect, trxTypeSelect.val())
+      accountToSelect, trxTypeSelect)
 
-    trxTypeSelect.change((resp) => {
-      const selectedType = resp.target.value
-
-      Transactions.handleAccountsSelectAvailability(accountFromSelect,
-        accountToSelect, selectedType)
-    })
-
-    Transactions.handleAccountsSelectAvailability(accountFromSelect2,
-      accountToSelect2, trxTypeSelect2.val())
-
-    trxTypeSelect2.change((resp) => {
-      const selectedType = resp.target.value
-
+    if (trxTypeSelect2) {
       Transactions.handleAccountsSelectAvailability(accountFromSelect2,
-        accountToSelect2, selectedType)
-    })
+        accountToSelect2, trxTypeSelect2)
+    }
   },
   handleAccountsSelectAvailability: (
     accountFromSelect, accountToSelect, selectedType) => {
@@ -448,9 +451,6 @@ ${trx.description}
   renderAccountsSelectOptions: (acc) => `
         <option value="${acc.account_id}">${acc.name}</option>
     `,
-  renderTypesSelectOptions: (type) => `
-        <option value="${type.letter}">${Transactions.mapTransactionTypeLetterToPrintableName(type.letter)}</option>
-    `,
   mapTransactionTypeLetterToPrintableName: (letter) => {
     switch (letter) {
       case MYFIN.TRX_TYPES.EXPENSE:
@@ -466,7 +466,7 @@ ${trx.description}
     `,
   addTransaction: () => {
     const amount = $('input#trx_amount').val()
-    const type = $('select.select-trxs-types').val()
+    const type = ToggleComponent.getSelectedOptionId('add-transaction-type')
     const isEssential = $('input#cb-essential').is(':checked')
     let account_from_id
     let account_to_id
@@ -524,14 +524,17 @@ ${trx.description}
     let txt = `
                 <h4>${Localization.getString('transactions.deleteTransactionModalTitle', { id: trxID })}</h4>
                 <div class="row">
-                    <p data-i18n="transactions.deleteTransactionModalSubtitle">${Localization.getString("transactions.deleteTransactionModalSubtitle")}</p>
-                    <b data-i18n="transactions.deleteTransactionModalAlert">${Localization.getString("transactions.deleteTransactionModalAlert")}</b>
+                    <p data-i18n="transactions.deleteTransactionModalSubtitle">${Localization.getString(
+      'transactions.deleteTransactionModalSubtitle')}</p>
+                    <b data-i18n="transactions.deleteTransactionModalAlert">${Localization.getString('transactions.deleteTransactionModalAlert')}</b>
 
                 </div>
                 `
 
-    let actionLinks = `<a class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text" data-i18n="common.cancel">${Localization.getString("common.cancel")}</a>
-            <a data-trx-id="${trxID}" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text modal-action-delete-trx" data-i18n="common.delete">${Localization.getString("common.delete")}</a>`
+    let actionLinks = `<a class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text" data-i18n="common.cancel">${Localization.getString(
+      'common.cancel')}</a>
+            <a data-trx-id="${trxID}" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text modal-action-delete-trx" data-i18n="common.delete">${Localization.getString(
+      'common.delete')}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
 
@@ -577,7 +580,7 @@ ${trx.description}
         $('#modal-global').modal('open')
         let txt = `
                     <div class="row row-no-margin-bottom">
-                        <div class="input-field col s8">
+                        <div class="input-field col s6">
                             <h4>${Localization.getString('transactions.editTransactionModalTitle', { id: trxID })}</b></h4>
                             <p id="cb-essential-wrapper" class="scale-transition ${!selectedAccountToID ? 'scale-in' : 'scale-out'}">
                           <label>
@@ -588,12 +591,13 @@ ${trx.description}
                           </label>
                         </p>
                         </div>
-                        <div class="input-field col s4">
-                            <span class="select2-top-label" data-i18n="transactions.typeOfTrx">${Localization.getString("transactions.typeOfTrx")}</span>
-                            <select class="select-trxs-types" name="types">
-                                ${typesArr.map(
-          type => Transactions.renderTypesSelectOptions(type)).join('')}
-                            </select>
+                        <div class="input-field" style="float:right;display: grid;margin-bottom: 0px !important;">
+                          <span class="select2-top-label col s12" style="float:right;text-align: end;width: fit-content;">${Localization.getString(
+          'investments.typeOfTransaction')}</span>
+                          <div id="type-toggle-wrapper" class="col s12" style="margin-left: 10px;float: right;width: fit-content;"></div>
+                          <a id="auto-categorize-btn" class="waves-effect waves-light btn purple-gradient-bg scale-transition scale-out"
+                          style="margin: 10px 0;"><i class="material-icons left">lightbulb_outline</i>${Localization.getString(
+          'transactions.autoCategorize')}</a>
                         </div>
                     </div>
                     <form class="col s12">
@@ -662,19 +666,17 @@ ${trx.description}
                                 <div class="input-field col s2">
                                     <i class="material-icons prefix">euro_symbol</i>
                                     <input id="trx_amount_2" type="number" step=".01" class="validate" style="width: auto;">
-                                    <label for="trx_amount_2">${Localization.getString('common.value')} (€) (€)</label>
+                                    <label for="trx_amount_2">${Localization.getString('common.value')} (€)</label>
                                 </div>
-                                <div class="input-field col s6 offset-s1">
+                                <div class="input-field col s5 offset-s1">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description2" class="materialize-textarea"></textarea>
                                     <label for="trx-description2">${Localization.getString('common.description')}</label>
                                 </div>
-                                <div class="input-field col s3">
-                                    <span class="select2-top-label" style="display: none;" data-i18n="transactions.typeOfTrx">${Localization.getString("transactions.typeOfTrx")}</span>
-                                    <select class="select-trxs-types2" name="types" style="width: 100% !important">
-                                        ${typesArr.map(
-          type => Transactions.renderTypesSelectOptions(type)).join('')}
-                                    </select>
+                                <div class="input-field" style="float:right;display: grid;margin-bottom: 0px !important;">
+                                    <span class="select2-top-label col s12" style="float:right;text-align: end;width: fit-content;">${Localization.getString(
+          'investments.typeOfTransaction')}</span>
+                                    <div id="type2-toggle-wrapper" class="col s12" style="margin-left: 10px;float: right;width: fit-content;"></div>
                                 </div>
                             </div>
                             
@@ -722,7 +724,7 @@ ${trx.description}
           ? 'checked="checked"'
           : ''}
                                          class="checkbox-indigo filled-in" />
-                                        <span>Essencial</span>
+                                        <span>${Localization.getString('transactions.essential')}</span>
                                       </label>
                                     </p>
                         </div>
@@ -753,14 +755,11 @@ ${trx.description}
           select2({ dropdownParent: '#modal-global' })
         $('select.select-trxs-account_from').
           select2({ dropdownParent: '#modal-global' })
-        $('select.select-trxs-types').
-          select2({ dropdownParent: '#modal-global' })
         $('select.select-trxs-account_to2').
           select2({ dropdownParent: '#modal-global' })
         $('select.select-trxs-account_from2').
           select2({ dropdownParent: '#modal-global' })
-        $('select.select-trxs-types2').
-          select2({ dropdownParent: '#modal-global' })
+
         $('select.select-trxs-categories').select2({
           dropdownParent: '#modal-global',
           allowClear: true,
@@ -779,6 +778,31 @@ ${trx.description}
           i18n: PickerUtils.getDatePickerDefault18nStrings(),
         })
 
+        const options = [
+          {
+            id: MYFIN.TRX_TYPES.INCOME,
+            name: Transactions.mapTransactionTypeLetterToPrintableName(MYFIN.TRX_TYPES.INCOME),
+          },
+          {
+            id: MYFIN.TRX_TYPES.EXPENSE,
+            name: Transactions.mapTransactionTypeLetterToPrintableName(MYFIN.TRX_TYPES.EXPENSE),
+          }, {
+            id: MYFIN.TRX_TYPES.TRANSFER,
+            name: Transactions.mapTransactionTypeLetterToPrintableName(MYFIN.TRX_TYPES.TRANSFER),
+          },
+        ]
+        ToggleComponent.buildToggle('add-transaction-type', 'type-toggle-wrapper', options, selectedTypeID,
+          (selectedOption) => {
+            Transactions.toggleEssentialCheckboxVisibility(selectedOption)
+            Transactions.manageAccountsSelectAvailability()
+          })
+        Transactions.toggleEssentialCheckboxVisibility(ToggleComponent.getSelectedOptionId('add-transaction-type'))
+
+        ToggleComponent.buildToggle('edit-transaction-type2', 'type2-toggle-wrapper', options, selectedTypeID,
+          (selectedOption) => {
+            Transactions.manageAccountsSelectAvailability()
+          })
+
         // AUTO-FILL
         $('input#trx_amount').val(selectedAmount)
         $('textarea#trx-description').val(selectedDescription)
@@ -791,12 +815,7 @@ ${trx.description}
         $('select.select-trxs-account_from').
           val(selectedAccountFromID).
           trigger('change')
-        $('select.select-trxs-types').select2('val', selectedTypeID)
-        $('select.select-trxs-types').
-          select2().
-          on('select2:select', function (e) {
-            Transactions.toggleEssentialCheckboxVisibility(e.params.data.id)
-          })
+
         $('select.select-trxs-categories').
           val(selectedCategoryID).
           trigger('change')
@@ -813,12 +832,6 @@ ${trx.description}
         $('select.select-trxs-account_from2').
           val(selectedAccountFromID).
           trigger('change')
-        $('select.select-trxs-types2').select2('val', selectedTypeID)
-        $('select.select-trxs-types2').
-          select2().
-          on('select2:select', function (e) {
-            Transactions.toggleEssentialCheckboxVisibility(e.params.data.id)
-          })
 
         Transactions.manageAccountsSelectAvailability()
 
@@ -871,7 +884,7 @@ ${trx.description}
   },
   editTransaction: (trxID) => {
     const new_amount = $('input#trx_amount').val()
-    const new_type = $('select.select-trxs-types').val()
+    const new_type = ToggleComponent.getSelectedOptionId('add-transaction-type')
 
     const new_is_essential = $('input#cb-essential').is(':checked')
     let new_account_from_id
@@ -913,7 +926,7 @@ ${trx.description}
       split_amount = $('input#trx_amount_2').val()
       split_category = $('select.select-trxs-categories2').val()
       split_entity = $('select.select-trxs-entities2').val()
-      split_type = $('select.select-trxs-types2').val()
+      split_type = ToggleComponent.getSelectedOptionId('edit-transaction-type2')
       split_account_from = $('select.select-trxs-account_from2').val()
       split_account_to = $('select.select-trxs-account_to2').val()
       split_description = StringUtils.removeLineBreaksFromString(
