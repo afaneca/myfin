@@ -43,6 +43,7 @@ class InvestAssets
                 if ($currently_invested_value < 0) $currently_invested_value = 0;
                 $roiValue = ($currentValue + $withdrawnAmount) - $investedValue;
                 $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
+                $pricePerUnit = InvestAssetModel::getAverageBuyingPriceForAsset($asset["asset_id"])["avg_price"];
 
                 array_push($res, [
                         "asset_id" => $asset["asset_id"],
@@ -57,10 +58,11 @@ class InvestAssets
                         "current_value" => $currentValue,
                         "absolute_roi_value" => $roiValue,
                         "relative_roi_percentage" => $roiPercentage,
+                        "price_per_unit" => $pricePerUnit,
                     ]
                 );
             }
-            
+
             // Sort assets array by current value (DESC)
             usort($res, function ($first, $second) {
                 return $first["current_value"] < $second["current_value"];
