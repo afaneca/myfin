@@ -18,7 +18,7 @@ export const CategoryTooltipTransactionsFunc = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading();
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente...');
+        DialogUtils.showErrorMessage();
       });
   },
   renderModal: (catID, isCredit, trxList) => {
@@ -43,7 +43,7 @@ export const CategoryTooltipTransactionsFunc = {
                         width:100%;
                     }
                 </style>
-                <h4>Lista de transações</b></h4>
+                <h4>${Localization.getString("budgetDetails.transactionsList")}</b></h4>
                 <div class="row">
                     <div class="responsive-table scrollable-table table-status-sheet">
                         <table class="bordered scrollable-table striped">
@@ -51,7 +51,7 @@ export const CategoryTooltipTransactionsFunc = {
                             <tr class="scrollable-table">
                               <th class="center">${Localization.getString("common.date")}</th>
                               <th class="center">${Localization.getString("common.description")}</th>
-                              <th class="center">Conta</th>
+                              <th class="center">${Localization.getString("common.account")}</th>
                               <th class="center">${Localization.getString("common.amount")}</th>
                             </tr>
                           </thead>
@@ -65,7 +65,7 @@ export const CategoryTooltipTransactionsFunc = {
                 </div>
                 `;
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Voltar</a>`;
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.goBack")}</a>`;
     $('#modal-global .modal-content')
       .html(txt);
     $('#modal-global .modal-footer')

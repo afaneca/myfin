@@ -36,7 +36,9 @@
     "type": "Tipo",
     "externalAccounts": "Contas Externas",
     "chooseAnOption": "Escolha uma opção",
-    "excludeFromBudgets": "Excluir dos orçamentos"
+    "excludeFromBudgets": "Excluir dos orçamentos",
+    "total": "Total",
+    "goBack": "Voltar"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -294,5 +296,50 @@
     "deleteRuleModalTitle": "Remover regra <b>{{id}}</b>?",
     "deleteRuleModalSubtitle": "Tem a certeza de que pretende remover esta categoria?",
     "deleteRuleModalAlert": "Esta ação é irreversível!"
+  },
+  "budgets": {
+    "budgets": "Orçamentos",
+    "addBudget": "Adicionar Orçamento",
+    "onlyOpened": "Só abertos",
+    "month": "Mês",
+    "observations": "Observações",
+    "balance": "Balanço",
+    "savings": "Poupança",
+    "deleteBudgetModalTitle": "Remover o orçamento de <b>{{month}}/{{year}}</b>?",
+    "deleteBudgetModalSubtitle": "Tem a certeza de que pretende remover este orçamento?",
+    "deleteBudgetModalAlert": "Esta ação é irreversível!"
+  },
+  "budgetDetails": {
+    "newBudget": "Novo Orçamento",
+    "cloneAnotherBudget": "Clonar outro orçamento",
+    "observationsPlaceholder": "Observações...",
+    "estimatedExpenses": "Despesa Estimada",
+    "estimatedBalance": "Saldo Estimado",
+    "estimatedIncome": "Receita Estimada",
+    "initialBalance": "Saldo Inicial",
+    "status": "Estado",
+    "finalBalance": "Saldo Final",
+    "opened": "Aberto",
+    "closed": "Fechado",
+    "addBudgetCTA": "Adicionar orçamento",
+    "closeBudgetCTA": "Fechar orçamento",
+    "chooseAMonth": "Escolha um mês",
+    "reopenBudget": "Reabrir orçamento",
+    "updateBudget": "Atualizar orçamento",
+    "estimatedValue": "Valor estimado",
+    "currentValue": "Valor atual",
+    "previousMonth": "Mês anterior",
+    "12MonthAvg": "Média de 12 meses",
+    "globalAverage": "Média global",
+    "estimated": "Estimado",
+    "current": "Atual",
+    "actualExpenses": "Despesas atuais",
+    "actualBalance": "Saldo atual",
+    "actualIncome": "Receita atual",
+    "essentialExpenses": "Despesas Essenciais",
+    "noDescription": "Sem descrição",
+    "transactionsList": "Lista de transações",
+    "cloneAPreviousMonth": "Clonar um mês anterior",
+    "cloneBudgetCTA": "Clonar orçamento"
   }
 }

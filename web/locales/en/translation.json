@@ -36,7 +36,9 @@
     "type": "Type",
     "externalAccounts": "External Accounts",
     "chooseAnOption": "Choose an option",
-    "excludeFromBudgets": "Exclude from budgets"
+    "excludeFromBudgets": "Exclude from budgets",
+    "total": "Total",
+    "goBack": "Go back"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -294,5 +296,50 @@
     "deleteRuleModalTitle": "Delete rule <b>{{id}}</b>?",
     "deleteRuleModalSubtitle": "Are you sure you want to delete this rule?",
     "deleteRuleModalAlert": "This action is irreversible!"
+  },
+  "budgets": {
+    "budgets": "Budgets",
+    "addBudget": "Add Budget",
+    "onlyOpened": "Only Opened",
+    "month": "Month",
+    "observations": "Observations",
+    "balance": "Balance",
+    "savings": "Savings",
+    "deleteBudgetModalTitle": "Delete <b>{{month}}/{{year}}</b> budget?",
+    "deleteBudgetModalSubtitle": "Are you sure you want to delete this budget?",
+    "deleteBudgetModalAlert": "This action is irreversible!"
+  },
+  "budgetDetails": {
+    "newBudget": "New Budget",
+    "cloneAnotherBudget": "Clone another budget",
+    "observationsPlaceholder": "Observations...",
+    "estimatedExpenses": "Estimated Expenses",
+    "estimatedBalance": "Estimated Balance",
+    "estimatedIncome": "Estimated Income",
+    "initialBalance": "Initial Balance",
+    "status": "Status",
+    "finalBalance": "Final Balance",
+    "opened": "Opened",
+    "closed": "Closed",
+    "addBudgetCTA": "Add budget",
+    "closeBudgetCTA": "Close budget",
+    "chooseAMonth": "Choose a month",
+    "reopenBudget": "Reopen budget",
+    "updateBudget": "Update budget",
+    "estimatedValue": "Estimated Value",
+    "currentValue": "Current Value",
+    "previousMonth": "Previous Month",
+    "12MonthAvg": "12-Months average",
+    "globalAverage": "Global average",
+    "estimated": "Estimated",
+    "current": "Current",
+    "actualExpenses": "Actual expenses",
+    "actualBalance": "Actual balance",
+    "actualIncome": "Actual income",
+    "essentialExpenses": "Essential Expenses",
+    "noDescription": "No description",
+    "transactionsList": "Transactions list",
+    "cloneAPreviousMonth": "Clone a previous month",
+    "cloneBudgetCTA": "Clone budget"
   }
 }
