@@ -73,7 +73,8 @@ export const InvestmentAssetsTableFunc = {
         <td>${asset.broker ? asset.broker : '-'}</td>
         <td>${asset.units}</td>
         <td>${StringUtils.formatMoney(asset.currently_invested_value)}<br>
-            <span class="" style="font-size: small;font-style: italic;">${Localization.getString("investments.perUnitPrice", {price: StringUtils.formatMoney(asset.currently_invested_value / asset.units)}) }</span>
+            <span class="" style="font-size: small;font-style: italic;">${Localization.getString('investments.perUnitPrice',
+      { price: StringUtils.formatMoney(asset.price_per_unit) })}</span>
         </td>
         <td>${StringUtils.formatMoney(
       asset.current_value)}<i style="font-size: larger;color: var(--main-accent-color) !important;margin-left: 5px;vertical-align: text-bottom;"
