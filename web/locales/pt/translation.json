@@ -387,6 +387,19 @@
     "addNewTransaction": "Adicionar nova transação",
     "typeOfTransaction": "Tipo de transação",
     "associatedAsset": "Ativo associado",
-    "editTransaction": "Editar transação"
+    "editTransaction": "Editar transação",
+    "ticker": "Ticker",
+    "name": "Nome",
+    "investedValue": "Valor investido",
+    "currentROI": "ROI atual",
+    "editAsset": "Editar Ativo",
+    "currentInvestValue":"Valorização atual do investimento em <b>{{name}}</b>",
+    "deleteAssetModalTitle": "Remover ativo <b>#{{id}}</b>?",
+    "deleteAssetModalSubtitle": "Tem a certeza de que pretende remover este ativo?",
+    "deleteAssetModalAlert": "Esta ação é irreversível!",
+    "currentYearROI": "ROI do Ano Atual",
+    "year": "Ano",
+    "roi": "ROI",
+    "assetClass": "Classe de Ativos"
   }
 }
