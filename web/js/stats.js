@@ -9,6 +9,7 @@ import { tableUtils } from './utils/tableUtils.js'
 import { LocalDataManager } from './utils/localDataManager.js'
 import { UserServices } from './services/userServices.js'
 import { Localization } from './utils/localization.js'
+import { ToggleComponent } from './components/toggleComponent.js'
 
 let EXPENSES_PER_CATEGORY_LINE_CHART
 let INCOME_PER_CATEGORY_LINE_CHART
@@ -16,6 +17,14 @@ let EVOLUTION_LINE_CHART
 let PROJECTIONS_LINE_CHART
 let YEAR_BY_YEAR_SANKEY_CHART
 let yearByYearCurrentlySelectedYear = DateUtils.getCurrentYear()
+let categoryIncomeEvolutionDataCache
+let categoryExpensesEvolutionDataCache
+
+const INCOME_EVO_TOGGLE_ID = 'income-evo'
+const EXPENSES_EVO_TOGGLE_ID = 'expenses-evo'
+const INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY = 'month'
+const INCOME_EXPENSES_EVO_TOGGLE_OPTION_YEAR_KEY = 'year'
+
 export const Stats = {
   initTabEvolutionOfPatrimony: () => {
     LoadingManager.showLoading()
@@ -59,7 +68,7 @@ export const Stats = {
           data: budgetsList.map(budget => parseFloat(budget.planned_final_balance_assets_only).toFixed(2) /*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/),
           fill: true,
           hidden: true,
-          label: Localization.getString("stats.projectedBalanceAssets"),
+          label: Localization.getString('stats.projectedBalanceAssets'),
         }]
       Stats.setupPatrimonyProjectionsLineChart(chartData, chartLabels, extraChartData)
       Stats.setupPatrimonyProjectionsList(budgetsList)
@@ -118,8 +127,8 @@ export const Stats = {
           Stats.initTabYearByYear()
         })
         /* SUCCESS */
-        const NET_INCOME_LABEL = Localization.getString("stats.netIncome")
-        const OTHER_EXPENSES_LABEL = Localization.getString("stats.others")
+        const NET_INCOME_LABEL = Localization.getString('stats.netIncome')
+        const OTHER_EXPENSES_LABEL = Localization.getString('stats.others')
         const categories = resp.categories
         let dataset = []
         let yearlyCategorizedIncome = 0
@@ -184,8 +193,8 @@ export const Stats = {
       <table id='${tableId}' class='display browser-defaults' style='width:100%'>
         <thead>
             <tr>
-              <th>${Localization.getString("transactions.category")}</th>
-              <th>${Localization.getString("common.value")}</th>
+              <th>${Localization.getString('transactions.category')}</th>
+              <th>${Localization.getString('common.value')}</th>
             </tr>
         </thead>
         <tbody>
@@ -232,7 +241,8 @@ export const Stats = {
     if (YEAR_BY_YEAR_SANKEY_CHART) {
       YEAR_BY_YEAR_SANKEY_CHART.destroy()
     }
-    YEAR_BY_YEAR_SANKEY_CHART = chartUtils.setupSankeyChart('chart', Localization.getString("stats.incomeDistributionByExpenseCategories"), dataset, getColor)
+    YEAR_BY_YEAR_SANKEY_CHART = chartUtils.setupSankeyChart('chart', Localization.getString('stats.incomeDistributionByExpenseCategories'), dataset,
+      getColor)
 
   },
   clearCanvasAndTableWrapper: (tableWrapperLocator, canvasLocator) => {
@@ -243,6 +253,20 @@ export const Stats = {
   },
   initExpensesPerCatEvolution: () => {
     LoadingManager.showLoading()
+    const options = [
+      {
+        id: INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY,
+        name: Localization.getString('stats.month'),
+      },
+      {
+        id: INCOME_EXPENSES_EVO_TOGGLE_OPTION_YEAR_KEY,
+        name: Localization.getString('stats.year'),
+      },
+    ]
+    ToggleComponent.buildToggle(EXPENSES_EVO_TOGGLE_ID, 'expenses-month-year-toggle-wrapper', options, INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY,
+      (optionId) => {
+        Stats.onExpensesEvoFiltersChanged(true)
+      })
     UserServices.getAllCategoriesAndEntitiesForUser(
       (resp) => {
         // SUCCESS
@@ -251,30 +275,7 @@ export const Stats = {
 
         $('#tab-expenses-per-cat').find('select.category-selection-select').select2()
         $('select.category-selection-select').on('change', (v) => {
-          let selectedEntCatId = $('#tab-expenses-per-cat').find('select.category-selection-select').val()
-          let selectedCatId,
-            selectedEntId
-          if (selectedEntCatId.startsWith('cat-')) {
-            selectedCatId = selectedEntCatId.split('cat-')[1]
-          }
-          else if (selectedEntCatId.startsWith('ent-')) {
-            selectedEntId = selectedEntCatId.split('ent-')[1]
-          }
-
-          Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution')
-
-          LoadingManager.showLoading()
-          StatServices.getCategoryExpensesEvolution(selectedCatId, selectedEntId,
-            (resp) => {
-              // SUCCESS
-              LoadingManager.hideLoading()
-              Stats.renderExpensesPerCategoryTable(resp)
-              Stats.renderExpensesPerCategoryLineChart(resp)
-            }, (resp) => {
-              // FAILURE
-              LoadingManager.hideLoading()
-              DialogUtils.showErrorMessage()
-            })
+          Stats.onExpensesEvoFiltersChanged(false)
         })
       }, (err) => {
         // FAILURE
@@ -283,18 +284,68 @@ export const Stats = {
       },
     )
   },
-  renderExpensesPerCategoryLineChart: dataset => {
+  onExpensesEvoFiltersChanged: (useCachedData = false) => {
+    let selectedPeriod = ToggleComponent.getSelectedOptionId(EXPENSES_EVO_TOGGLE_ID)
+    let selectedEntCatId = $('#tab-expenses-per-cat').find('select.category-selection-select').val()
+    let selectedCatId,
+      selectedEntId
+    if (selectedEntCatId.startsWith('cat-')) {
+      selectedCatId = selectedEntCatId.split('cat-')[1]
+    }
+    else if (selectedEntCatId.startsWith('ent-')) {
+      selectedEntId = selectedEntCatId.split('ent-')[1]
+    }
+
+    Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution')
+    if (!useCachedData) {
+      LoadingManager.showLoading()
+      StatServices.getCategoryExpensesEvolution(selectedCatId, selectedEntId,
+        (resp) => {
+          // SUCCESS
+          // cache into memory
+          categoryExpensesEvolutionDataCache = resp
+          LoadingManager.hideLoading()
+          let usableData
+          if (selectedPeriod === INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY) {
+            usableData = resp
+          }
+          else {
+            usableData = Stats.transformMonthlyEvoDataToYearly(resp)
+          }
+          Stats.renderExpensesPerCategoryTable(usableData, selectedPeriod)
+          Stats.renderExpensesPerCategoryLineChart(usableData, selectedPeriod)
+        }, (resp) => {
+          // FAILURE
+          LoadingManager.hideLoading()
+          DialogUtils.showErrorMessage()
+        })
+    }
+    else {
+      let usableData
+      if (selectedPeriod === INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY) {
+        usableData = JSON.parse(JSON.stringify(categoryExpensesEvolutionDataCache))
+      }
+      else {
+        usableData = Stats.transformMonthlyEvoDataToYearly(categoryExpensesEvolutionDataCache)
+      }
+      Stats.renderExpensesPerCategoryTable(usableData, selectedPeriod)
+      Stats.renderExpensesPerCategoryLineChart(usableData, selectedPeriod)
+    }
+  },
+  renderExpensesPerCategoryLineChart: (dataset, selectedPeriod) => {
     let chartData = []
     let chartLabels = []
 
     for (var i = dataset.length - 1; i >= 0; i--) {
       chartData.push(dataset[i].value)
-      chartLabels.push(`${dataset[i].month} /${dataset[i].year}`)
+      chartLabels.push(selectedPeriod === INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY ?
+        `${dataset[i].month}/${dataset[i].year}` : `${dataset[i].year}`,
+      )
     }
 
     const ctx = document.getElementById('chart_pie_cat_expenses_evolution').getContext('2d')
 
-    const chartTitle = Localization.getString("stats.expensesEvolution")
+    const chartTitle = Localization.getString('stats.expensesEvolution')
     const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
     const data = {
@@ -318,7 +369,7 @@ export const Stats = {
       options: customOptions,
     })
   },
-  renderExpensesPerCategoryTable: data => {
+  renderExpensesPerCategoryTable: (data, period) => {
     $('div#chart_pie_cat_expenses_evolution_table').html(`
       <table id='cat-expenses-evolution-table' class='display browser-defaults' style='width:100%'>
         <thead>
@@ -329,7 +380,8 @@ export const Stats = {
           </tr>
         </thead>
       <tbody>
-      ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
+      ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month,
+      period !== INCOME_EXPENSES_EVO_TOGGLE_OPTION_YEAR_KEY)).
       join('')}
       </tbody>
     </table>
@@ -338,11 +390,11 @@ export const Stats = {
 
     tableUtils.setupStaticTable('table#cat-expenses-evolution-table')
   },
-  renderExpensesPerCategoryTableRow: (oldMonth, monthData) => {
+  renderExpensesPerCategoryTableRow: (oldMonth, monthData, isMonth) => {
 
     return `
     <tr>
-    <td>${monthData.month}/${monthData.year}</td>
+    <td>${isMonth ? monthData.month + '/' + monthData.year : monthData.year}</td>
     <td>${StringUtils.formatMoney(monthData.value)}</td>
     <td>${(!oldMonth) ? '-' : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
     </tr>
@@ -354,11 +406,11 @@ export const Stats = {
       `
     <div class='input-field col s3'>
     <select id='category_select' class='category-selection-select'>
-    <option value='' disabled selected>${Localization.getString("stats.chooseACategory")}</option>
-    <optgroup label="${Localization.getString("stats.categories")}">
+    <option value='' disabled selected>${Localization.getString('stats.chooseACategory')}</option>
+    <optgroup label="${Localization.getString('stats.categories')}">
     ${categories.map(cat => Stats.renderCategorySelectOption(cat)).join('')}
     </optgroup>
-    <optgroup label="${Localization.getString("stats.entities")}">
+    <optgroup label="${Localization.getString('stats.entities')}">
     ${entities.map(ent => Stats.renderEntitySelectOption(ent)).join('')}
     </optgroup>
     </select>
@@ -385,33 +437,24 @@ export const Stats = {
         // SUCCESS
         LoadingManager.hideLoading()
         Stats.setupCategorySelect(resp.categories, resp.entities, '#tab-income-per-cat')
+        const options = [
+          {
+            id: INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY,
+            name: Localization.getString('stats.month'),
+          },
+          {
+            id: INCOME_EXPENSES_EVO_TOGGLE_OPTION_YEAR_KEY,
+            name: Localization.getString('stats.year'),
+          },
+        ]
+        ToggleComponent.buildToggle(INCOME_EVO_TOGGLE_ID, 'income-month-year-toggle-wrapper', options, INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY,
+          (optionId) => {
+            Stats.onIncomeEvoFiltersChanged(true)
+          })
 
         $('#tab-income-per-cat').find('select.category-selection-select').select2()
         $('select.category-selection-select').on('change', (v) => {
-          let selectedEntCatId = $('#tab-income-per-cat').find('select.category-selection-select').val()
-          let selectedCatId,
-            selectedEntId
-          if (selectedEntCatId.startsWith('cat-')) {
-            selectedCatId = selectedEntCatId.split('cat-')[1]
-          }
-          else if (selectedEntCatId.startsWith('ent-')) {
-            selectedEntId = selectedEntCatId.split('ent-')[1]
-          }
-
-          Stats.clearCanvasAndTableWrapper('#chart_pie_cat_income_evolution_table', 'chart_pie_cat_income_evolution')
-
-          LoadingManager.showLoading()
-          StatServices.getCategoryIncomeEvolution(selectedCatId, selectedEntId,
-            (resp) => {
-              // SUCCESS
-              LoadingManager.hideLoading()
-              Stats.renderIncomePerCategoryTable(resp)
-              Stats.renderIncomePerCategoryLineChart(resp)
-            }, (resp) => {
-              // FAILURE
-              LoadingManager.hideLoading()
-              DialogUtils.showErrorMessage()
-            })
+          Stats.onIncomeEvoFiltersChanged()
         })
       }, (err) => {
         // FAILURE
@@ -420,20 +463,85 @@ export const Stats = {
       },
     )
   },
-  renderIncomePerCategoryLineChart: dataset => {
+  onIncomeEvoFiltersChanged: (useCachedData = false) => {
+    let selectedPeriod = ToggleComponent.getSelectedOptionId(INCOME_EVO_TOGGLE_ID)
+    let selectedEntCatId = $('#tab-income-per-cat').find('select.category-selection-select').val()
+    let selectedCatId,
+      selectedEntId
+    if (selectedEntCatId.startsWith('cat-')) {
+      selectedCatId = selectedEntCatId.split('cat-')[1]
+    }
+    else if (selectedEntCatId.startsWith('ent-')) {
+      selectedEntId = selectedEntCatId.split('ent-')[1]
+    }
+
+    Stats.clearCanvasAndTableWrapper('#chart_pie_cat_income_evolution_table', 'chart_pie_cat_income_evolution')
+
+    if (!useCachedData) {
+      LoadingManager.showLoading()
+      StatServices.getCategoryIncomeEvolution(selectedCatId, selectedEntId,
+        (resp) => {
+          // SUCCESS
+          // cache into memory
+          categoryIncomeEvolutionDataCache = resp
+          LoadingManager.hideLoading()
+          let usableData
+          if (selectedPeriod === INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY) {
+            usableData = resp
+          }
+          else {
+            usableData = Stats.transformMonthlyEvoDataToYearly(resp)
+          }
+          Stats.renderIncomePerCategoryTable(usableData, selectedPeriod)
+          Stats.renderIncomePerCategoryLineChart(usableData, selectedPeriod)
+        }, (resp) => {
+          // FAILURE
+          LoadingManager.hideLoading()
+          DialogUtils.showErrorMessage()
+        })
+    }
+    else {
+      let usableData = []
+      if (selectedPeriod === INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY) {
+        usableData = JSON.parse(JSON.stringify(categoryIncomeEvolutionDataCache))
+      }
+      else {
+        usableData = Stats.transformMonthlyEvoDataToYearly(categoryIncomeEvolutionDataCache)
+      }
+      Stats.renderIncomePerCategoryTable(usableData, selectedPeriod)
+      Stats.renderIncomePerCategoryLineChart(usableData, selectedPeriod)
+    }
+  },
+  transformMonthlyEvoDataToYearly: (data) => {
+    let transformedData = []
+    // transform
+    JSON.parse(JSON.stringify(data)).forEach((value) => {
+      if (transformedData.some((dp => dp.year === value.year))) {
+        // array entry already exists. Increment value
+        let entry = transformedData.find((dp => dp.year === value.year))
+        entry.value += value.value
+      }
+      else {
+        transformedData.push(value)
+      }
+    })
+
+    return transformedData
+  },
+  renderIncomePerCategoryLineChart: (dataset, selectedPeriod) => {
     let chartData = []
     let chartLabels = []
 
     for (var i = dataset.length - 1; i >= 0; i--) {
       chartData.push(dataset[i].value)
-      chartLabels.push(
-        `${dataset[i].month}/${dataset[i].year}`,
+      chartLabels.push(selectedPeriod === INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY ?
+        `${dataset[i].month}/${dataset[i].year}` : `${dataset[i].year}`,
       )
     }
 
     const ctx = document.getElementById('chart_pie_cat_income_evolution').getContext('2d')
 
-    const chartTitle = Localization.getString("stats.incomeEvolution")
+    const chartTitle = Localization.getString('stats.incomeEvolution')
     const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
     const data = {
@@ -441,7 +549,7 @@ export const Stats = {
       datasets: [
         {
           data: chartData,
-          label: Localization.getString("stats.incomeEvolutionByCategory"),
+          label: Localization.getString('stats.incomeEvolutionByCategory'),
           borderColor: '#3e95cd',
           fill: true,
           trendlineLinear: chartUtils.getTrendLineObject(),
@@ -457,19 +565,20 @@ export const Stats = {
       options: customOptions,
     })
   },
-  renderIncomePerCategoryTable: data => {
+  renderIncomePerCategoryTable: (data, period) => {
     $('div#chart_pie_cat_income_evolution_table').html(
       `
     <table id='cat-income-evolution-table' class='display browser-defaults' style='width:100%'>
     <thead>
     <tr>
-    <th>${Localization.getString("stats.month")}</th>
-    <th>${Localization.getString("common.value")}</th>
-    <th>${Localization.getString("stats.variationPercentage")}</th>
+    <th>${Localization.getString('stats.month')}</th>
+    <th>${Localization.getString('common.value')}</th>
+    <th>${Localization.getString('stats.variationPercentage')}</th>
     </tr>
     </thead>
     <tbody>
-    ${data.map((month, index) => Stats.renderIncomePerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
+    ${data.map((month, index) => Stats.renderIncomePerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month,
+        period !== INCOME_EXPENSES_EVO_TOGGLE_OPTION_YEAR_KEY)).
         join('')}
     </tbody>
     </table>
@@ -478,11 +587,11 @@ export const Stats = {
 
     tableUtils.setupStaticTable('table#cat-income-evolution-table')
   },
-  renderIncomePerCategoryTableRow: (oldMonth, monthData) => {
+  renderIncomePerCategoryTableRow: (oldMonth, monthData, isMonth) => {
 
     return `
     <tr>
-    <td>${monthData.month}/${monthData.year}</td>
+    <td>${isMonth ? monthData.month + '/' + monthData.year : monthData.year}</td>
     <td>${StringUtils.formatMoney(monthData.value)}</td>
     <td>${(!oldMonth) ? '-' : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
     </tr>
@@ -546,11 +655,11 @@ export const Stats = {
     <table id='ev-pat-table' class='centered' style='margin-top: 10px;'>
     <thead>
     <tr>
-    <th>${Localization.getString("stats.month")}</th>
-    <th>${Localization.getString("stats.previousBalance")}</th>
-    <th>${Localization.getString("stats.finalBalance")}</th>
-    <th>${Localization.getString("stats.monthlyBalance")}</th>
-    <th>${Localization.getString("stats.growth")}</th>
+    <th>${Localization.getString('stats.month')}</th>
+    <th>${Localization.getString('stats.previousBalance')}</th>
+    <th>${Localization.getString('stats.finalBalance')}</th>
+    <th>${Localization.getString('stats.monthlyBalance')}</th>
+    <th>${Localization.getString('stats.growth')}</th>
     </tr>
     </thead>
     <tbody>
@@ -591,7 +700,7 @@ export const Stats = {
   setupPatrimonyLineChart: (chartData, chartLabels, extraChartData) => {
     const ctx = document.getElementById('chart_pie_patrimony_evolution').getContext('2d')
 
-    const chartTitle = Localization.getString("stats.netWorthEvolution")
+    const chartTitle = Localization.getString('stats.netWorthEvolution')
     const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
     const data = {
@@ -599,7 +708,7 @@ export const Stats = {
       datasets: [
         {
           data: chartData,
-          label: Localization.getString("common.accumulated"),
+          label: Localization.getString('common.accumulated'),
           borderColor: '#3e95cd',
           fill: true,
           /*lineTension: 0,*/
@@ -639,12 +748,12 @@ export const Stats = {
     <table id='ev-pat-projections-table' class='centered' style='margin-top: 10px;'>
     <thead>
     <tr>
-    <th>${Localization.getString("stats.month")}</th>
-    <th>${Localization.getString("stats.previousBalance")}<span class="projections-table-footnotes">*</span></th>
-    <th>${Localization.getString("stats.finalBalance")}<span class="projections-table-footnotes">*</span></th>
-    <th>${Localization.getString("stats.finalBalanceAssets")}<span class="projections-table-footnotes">**</span></th>
-    <th>${Localization.getString("stats.finalBalanceOperatingFunds")}<span class="projections-table-footnotes">***</span></th>
-    <th>${Localization.getString("stats.growth")}</th>
+    <th>${Localization.getString('stats.month')}</th>
+    <th>${Localization.getString('stats.previousBalance')}<span class="projections-table-footnotes">*</span></th>
+    <th>${Localization.getString('stats.finalBalance')}<span class="projections-table-footnotes">*</span></th>
+    <th>${Localization.getString('stats.finalBalanceAssets')}<span class="projections-table-footnotes">**</span></th>
+    <th>${Localization.getString('stats.finalBalanceOperatingFunds')}<span class="projections-table-footnotes">***</span></th>
+    <th>${Localization.getString('stats.growth')}</th>
     </tr>
     </thead>
     <tbody>
@@ -656,9 +765,9 @@ export const Stats = {
     font-size: small;
     }
     </style>
-    <p class="right-align grey-text text-accent-4 projections-table-footnotes">* ${Localization.getString("stats.projectionsTableFootnotes1")}</p>
-    <p class="right-align grey-text text-accent-4 projections-table-footnotes">** ${Localization.getString("stats.projectionsTableFootnotes2")}</p>
-    <p class="right-align grey-text text-accent-4 projections-table-footnotes">*** ${Localization.getString("stats.projectionsTableFootnotes3")}</p>
+    <p class="right-align grey-text text-accent-4 projections-table-footnotes">* ${Localization.getString('stats.projectionsTableFootnotes1')}</p>
+    <p class="right-align grey-text text-accent-4 projections-table-footnotes">** ${Localization.getString('stats.projectionsTableFootnotes2')}</p>
+    <p class="right-align grey-text text-accent-4 projections-table-footnotes">*** ${Localization.getString('stats.projectionsTableFootnotes3')}</p>
     `
 
   },
@@ -697,7 +806,7 @@ export const Stats = {
   setupPatrimonyProjectionsLineChart: (chartData, chartLabels, extraChartData) => {
     const ctx = document.getElementById('chart_pie_patrimony_projection').getContext('2d')
 
-    const chartTitle = Localization.getString("stats.netWorthEvolutionProjection")
+    const chartTitle = Localization.getString('stats.netWorthEvolutionProjection')
     const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
     const data = {
@@ -705,7 +814,7 @@ export const Stats = {
       datasets: [
         {
           data: chartData,
-          label: Localization.getString("stats.projectedBalanceAssetsPlusDebt"),
+          label: Localization.getString('stats.projectedBalanceAssetsPlusDebt'),
           borderColor: '#3e95cd',
           fill: true,
         },

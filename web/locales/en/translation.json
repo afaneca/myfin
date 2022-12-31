@@ -433,6 +433,7 @@
     "projectionsTableFootnotes2": "This value is projected from budget data, not taking debt into account",
     "projectionsTableFootnotes3": "This value is projected from budget data, not taking debt and investments into account",
     "netWorthEvolutionProjection": "Net Worth Evolution Projection",
-    "projectedBalanceAssetsPlusDebt": "Projected Balance (Assets + Debt)"
+    "projectedBalanceAssetsPlusDebt": "Projected Balance (Assets + Debt)",
+    "year": "Year"
   }
 }
