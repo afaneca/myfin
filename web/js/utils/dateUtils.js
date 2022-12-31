@@ -1,13 +1,15 @@
-const monthsShort = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-const monthsFull = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+import { PickerUtils } from './pickerUtils.js'
+
 export const DateUtils = {
+  getMonthsShort: () => PickerUtils.getDatePickerDefault18nStrings().monthsShort,
+  getMonthsFull: () => PickerUtils.getDatePickerDefault18nStrings().months,
   /**
    * Returns in DD/MMM/YYYY format (ex: 03/abr/2020)
    */
   convertUnixTimestampToDateString: (UNIX_timestamp) => {
     const a = new Date(UNIX_timestamp * 1000)
     const year = a.getFullYear()
-    const month = monthsShort[a.getMonth()]
+    const month = DateUtils.getMonthsShort()[a.getMonth()]
     const monthNumber = a.getMonth() - 1
     const date = a.getDate()
     const hour = a.getHours()
@@ -23,7 +25,7 @@ export const DateUtils = {
   convertUnixTimestampToDateFormat: (UNIX_timestamp) => {
     const a = new Date(UNIX_timestamp * 1000)
     const year = a.getFullYear()
-    const month = monthsShort[a.getMonth()]
+    const month = DateUtils.getMonthsShort()[a.getMonth()]
     const monthNumber = a.getMonth() - 1
     const date = a.getDate()
     const hour = a.getHours()
@@ -40,7 +42,7 @@ export const DateUtils = {
   convertUnixTimestampToEuropeanDateFormat: (UNIX_timestamp) => {
     const a = new Date(UNIX_timestamp * 1000)
     const year = a.getFullYear()
-    const month = monthsShort[a.getMonth()]
+    const month = DateUtils.getMonthsShort()[a.getMonth()]
     const monthNumber = a.getMonth() - 1
     const date = a.getDate()
     const hour = a.getHours()
@@ -74,10 +76,10 @@ export const DateUtils = {
     return moment(dateStr + ' 09:00', dateFormat + ' HH:mm').tz('UTC').unix().valueOf()
   },
   getMonthsFullName: (monthNumber) => {
-    return monthsFull[monthNumber - 1]
+    return DateUtils.getMonthsFull()[monthNumber - 1]
   },
   getMonthsShortName: (monthNumber) => {
-    return monthsShort[monthNumber - 1]
+    return DateUtils.getMonthsShort()[monthNumber - 1]
   },
   getCurrentMonth: () => {
     const a = new Date()

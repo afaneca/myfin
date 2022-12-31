@@ -1,4 +1,5 @@
 import { StringUtils } from '../utils/stringUtils.js'
+import { Localization } from '../utils/localization.js'
 
 export const InvestmentAssetsTableFunc = {
   renderAssetsTable: (assets, containerId, editAssetCallback, removeAssetCallback, updateValueCallback) => {
@@ -6,15 +7,15 @@ export const InvestmentAssetsTableFunc = {
       <table id="assets-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>Ticker</th>
-                <th>Nome</th>
-                <th>Tipo</th>
-                <th>Broker</th>
-                <th>Unidades</th>
-                <th>Valor Investido</th>
-                <th>Valor Atual</th>
-                <th>ROI Atual</th>
-                <th>Ações</th>
+                <th>${Localization.getString("investments.ticker")}</th>
+                <th>${Localization.getString("investments.name")}</th>
+                <th>${Localization.getString("common.type")}</th>
+                <th>${Localization.getString("investments.broker")}</th>
+                <th>${Localization.getString("investments.units")}</th>
+                <th>${Localization.getString("investments.investedValue")}</th>
+                <th>${Localization.getString("investments.currentValue")}</th>
+                <th>${Localization.getString("investments.currentROI")}</th>
+                <th>${Localization.getString("common.actions")}</th>
             </tr>
         </thead>
         <tbody>
@@ -72,7 +73,7 @@ export const InvestmentAssetsTableFunc = {
         <td>${asset.broker ? asset.broker : '-'}</td>
         <td>${asset.units}</td>
         <td>${StringUtils.formatMoney(asset.currently_invested_value)}<br>
-            <span class="" style="font-size: small;font-style: italic;">${StringUtils.formatMoney(asset.currently_invested_value / asset.units)} por unidade</span>
+            <span class="" style="font-size: small;font-style: italic;">${Localization.getString("investments.perUnitPrice", {price: StringUtils.formatMoney(asset.currently_invested_value / asset.units)}) }</span>
         </td>
         <td>${StringUtils.formatMoney(
       asset.current_value)}<i style="font-size: larger;color: var(--main-accent-color) !important;margin-left: 5px;vertical-align: text-bottom;"

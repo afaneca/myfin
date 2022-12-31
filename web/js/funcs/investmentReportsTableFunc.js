@@ -1,5 +1,6 @@
 import { InvestmentAssetsTableFunc } from './investmentAssetsTableFunc.js'
 import { StringUtils } from '../utils/stringUtils.js'
+import { Localization } from '../utils/localization.js'
 
 export const InvestmentReportsTableFunc = {
   buildReportsROIByAssetTable: (tableId, assetsList, totalInvestedValue) => {
@@ -7,12 +8,12 @@ export const InvestmentReportsTableFunc = {
       <table id="${tableId}" class="display browser-defaults" style="width:100%">
         <thead>
           <tr>
-              <th>Ativo</th>
-              <th>Classe de Ativo</th>
-              <th>Valor Investido</th>
-              <th>Valor Atual</th>
-              <th>ROI Ano Atual</th>
-              <th>ROI Global</th>
+              <th>${Localization.getString("investments.asset")}</th>
+              <th>${Localization.getString("investments.assetClass")}</th>
+              <th>${Localization.getString("investments.investedValue")}</th>
+              <th>${Localization.getString("investments.currentValue")}</th>
+              <th>${Localization.getString("investments.currentYearROI")}</th>
+              <th>${Localization.getString("investments.globalROI")}</th>
           </tr>
         </thead>
         <tbody>
@@ -42,11 +43,11 @@ export const InvestmentReportsTableFunc = {
       <table id="${tableId}" class="display browser-defaults" style="width:100%">
         <thead>
           <tr>
-              <th>Ano</th>
-              <th>Valor Investido</th>
-              <th>Valor Total</th>
-              <th>ROI (€)</th>
-              <th>ROI (%)</th>
+              <th>${Localization.getString("investments.year")}</th>
+              <th>${Localization.getString("investments.investedValue")}</th>
+              <th>${Localization.getString("investments.currentValue")}</th>
+              <th>${Localization.getString("investments.roi")} (€)</th>
+              <th>${Localization.getString("investments.roi")} (%)</th>
           </tr>
         </thead>
         <tbody>

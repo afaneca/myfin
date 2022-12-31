@@ -1,10 +1,12 @@
 import { LocalDataManager } from './utils/localDataManager.js'
 import { LoadingManager } from './utils/loadingManager.js'
+import { Localization } from './utils/localization.js'
+import { DialogUtils } from './utils/dialogUtils.js'
 
-const SIGN_UP_HTML = 'Ainda não está registado?'
-const SIGN_IN_HTML = 'Já está registado?'
-const SIGN_UP_BTN_TXT = 'Criar Conta'
-const SIGN_IN_BTN_TXT = 'Entrar'
+const SIGN_UP_HTML = Localization.getString('login.notYetRegisteredQuestion')
+const SIGN_IN_HTML = Localization.getString('login.alreadyRegisteredQuestion')
+const SIGN_UP_BTN_TXT = Localization.getString('login.alreadyRegisteredQuestion')
+const SIGN_IN_BTN_TXT = Localization.getString('login.signIn')
 
 var isSignUp = false
 
@@ -144,8 +146,7 @@ export async function checkPreAuth (failFunction = undefined, renewValidity = un
     {
       const { configs } = await import('./configs.js').then((c) => {
         window.location = c.defaultApp + '.html'
-      });
-
+      })
 
     } // Redirect to login page
   }
@@ -153,7 +154,7 @@ export async function checkPreAuth (failFunction = undefined, renewValidity = un
 
 function addUser (username, email, password) {
   if (!email || !username || !password) {
-    M.toast({ text: 'Não deixe campos em branco!' })
+    DialogUtils.showSuccessMessage(Localization.getString('login.fillAllFields'))
     return
   }
   disableLoginBtn()
@@ -176,14 +177,14 @@ function addUser (username, email, password) {
       url: pageUrl,
       success: (response) => {
         hideLoading().then(r => {
-          M.toast({ text: 'Utilizador adicionado com sucesso!' })
+          DialogUtils.showSuccessMessage('login.userSuccessfullyAdded')
           signUpLinkWasClicked()
           enableLoginBtn()
         })
       },
       error: (response) => {
         hideLoading().then(r => {
-          M.toast({ text: 'Ocorreu um erro. Tente novamente!' })
+          DialogUtils.showErrorMessage()
           enableLoginBtn()
         })
       },
@@ -202,7 +203,7 @@ function enableLoginBtn () {
 
 async function performLogin (username, password) {
   var pageUrl = REST_SERVER_PATH + 'auth/'
-  const { configs } = await import('./configs.js');
+  const { configs } = await import('./configs.js')
   disableLoginBtn()
   showLoading().then(r => {
     $.ajax({
@@ -242,7 +243,8 @@ async function performLogin (username, password) {
           if (response.status == EnsoShared.ENSO_REST_NOT_AUTHORIZED) {
             /* M.toast('Autenticação falhada.', 3000, 'rounded'); */
           }
-          M.toast({ text: 'Username/password errados. Tente novamente!' })
+          
+          DialogUtils.showErrorMessage(Localization.getString('login.wrongCredentialsError'))
         })
       },
     })

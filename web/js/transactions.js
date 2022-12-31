@@ -8,6 +8,7 @@ import { LoadingManager } from './utils/loadingManager.js'
 import { TransactionServices } from './services/transactionServices.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { StringUtils } from './utils/stringUtils.js'
+import { Localization } from './utils/localization.js'
 
 export var Transactions = {
   getTransactions: (fetchLimit = MYFIN.TRX_FETCH_LIMIT) => {
@@ -27,14 +28,17 @@ export var Transactions = {
   initTables: (dataset) => {
     $('#table-transactions-wrapper').html(Transactions.renderTable(dataset)
       +
-      `<p class="right-align grey-text text-accent-4 projections-table-footnotes" style="font-size: small">* Por defeito, esta pesquisa apenas devolve as últimas ${MYFIN.TRX_FETCH_LIMIT} transações.<br><a id="get-all-trxs-footnote-btn" style="cursor:pointer;">Clique aqui para recuperar a lista completa.</a></p>`)
+      `<p class="right-align grey-text text-accent-4 projections-table-footnotes" style="font-size: small">* ${Localization.getString(
+        'transactions.transactionsTableFootnotes1',
+        { limit: MYFIN.TRX_FETCH_LIMIT })}<br><a id="get-all-trxs-footnote-btn" style="cursor:pointer;">${Localization.getString(
+        'transactions.transactionsTableFootnotes2')}</a></p>`)
     tableUtils.setupStaticTable('#transactions-table', () => {
       // Click listener for edit trx click
       Transactions.bindClickListenersForEditAction()
       // Click listener for delete trx click
       Transactions.bindClickListenersForRemoveAction()
     })
-    $("#get-all-trxs-footnote-btn").click(() => Transactions.getTransactions(999999999999999))
+    $('#get-all-trxs-footnote-btn').click(() => Transactions.getTransactions(999999999999999))
     $(document).ready(function () {
       $('select').formSelect()
     })
@@ -71,11 +75,11 @@ export var Transactions = {
             <table id="transactions-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>Data</th>
-                <th>Fluxo</th>
-                <th>Descrição</th>
-                <th>Valor</th>
-                <th>Ações</th>
+                <th>${Localization.getString('common.date')}</th>
+                <th>${Localization.getString('transactions.flow')}</th>
+                <th>${Localization.getString('common.description')}</th>
+                <th>${Localization.getString('common.value')}</th>
+                <th>${Localization.getString('common.actions')}</th>
             </tr>
         </thead>
         <tbody>
@@ -88,20 +92,19 @@ export var Transactions = {
     return `
             <tr data-id='$trx.transaction_id'>
                 <td style="text-align: center;">
-                    <span><b>${DateUtils.getDayNumberFromUnixTimestamp(
-      trx.date_timestamp)}</b></span><br>${DateUtils.getMonthShortStringFromUnixTimestamp(
-      trx.date_timestamp)} '${DateUtils.getShortYearFromUnixTimestamp(
-      trx.date_timestamp)}         
+                    <span><b>${DateUtils.getDayNumberFromUnixTimestamp(trx.date_timestamp)}
+                    </b></span><br>
+${DateUtils.getMonthShortStringFromUnixTimestamp(trx.date_timestamp)} '${DateUtils.getShortYearFromUnixTimestamp(trx.date_timestamp)}         
                 </td>
-                <td>${Transactions.formatTypeToString(trx.type,
-      trx.account_from_name, trx.account_to_name)}</td>
-                <td>${trx.is_essential == true
-      ? LayoutUtils.buildEssentialTransactionBadge()
-      : ''}  ${trx.description}<p><i class="inline-icon material-icons">folder_shared</i>  ${(trx.category_name)
+                <td>${Transactions.formatTypeToString(trx.type, trx.account_from_name, trx.account_to_name)}</td>
+                <td>${trx.is_essential == true ? LayoutUtils.buildEssentialTransactionBadge() : ''}  
+${trx.description}
+<p><i class="inline-icon material-icons">folder_shared</i>  ${(trx.category_name)
       ? trx.category_name
-      : '<span class=\'medium-gray-color\'>Sem Categoria</span>'}&nbsp;&nbsp;&nbsp;<i class="inline-icon material-icons">business</i> ${(trx.entity_name)
+      : `<span class=\'medium-gray-color\'>${Localization.getString(
+        'common.noCategory')}</span>`}&nbsp;&nbsp;&nbsp;<i class="inline-icon material-icons">business</i> ${(trx.entity_name)
       ? trx.entity_name
-      : '<span class=\'medium-gray-color\'>Sem Entidade</span>'}</p></td>
+      : `<span class=\'medium-gray-color\'>${Localization.getString('common.noEntity')}</span>`}</p></td>
                 <td>${Transactions.formatCurrencyColumn(trx.type,
       StringUtils.formatMoney(trx.amount))}</td>
                 <td>
@@ -196,13 +199,14 @@ export var Transactions = {
                         </p>
                     </div>
                     <div class="input-field col s4">
-                        <span class="select2-top-label">Tipo de Transação</span>
+                        <span class="select2-top-label" data-i18n="transactions.typeOfTrx">${Localization.getString("transactions.typeOfTrx")}</span>
                         <select class="select-trxs-types" name="types">
                             ${typesArr.map(
           type => Transactions.renderTypesSelectOptions(type)).join('')}
                         </select>
                         <a id="auto-categorize-btn" class="waves-effect waves-light btn purple-gradient-bg scale-transition scale-out"
-                        style="margin: 10px 0;"><i class="material-icons left">lightbulb_outline</i>Auto-Categorizar</a>
+                        style="margin: 10px 0;"><i class="material-icons left">lightbulb_outline</i>${Localization.getString(
+          'transactions.autoCategorize')}</a>
                         
                     </div>
                 </div>
@@ -212,26 +216,26 @@ export var Transactions = {
                             <div class="input-field col s2">
                                 <i class="material-icons prefix">euro_symbol</i>
                                 <input id="trx_amount" type="number" step=".01" class="validate">
-                                <label for="trx_amount">Valor (€)</label>
+                                <label for="trx_amount">${Localization.getString('common.value')} (€)</label>
                             </div>
                              <div class="input-field col s3">
                                 <i class="material-icons prefix">date_range</i>
                                 <input id="trx_date" type="text" class="datepicker input-field">
-                                <label for="trx_date">Data da transação</label>
+                                <label for="trx_date">${Localization.getString('transactions.dateOfTransaction')}</label>
                             </div>     
                             <div class="col s7">
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description" class="materialize-textarea"></textarea>
-                                    <label for="trx-description">Descrição</label>
+                                    <label for="trx-description">${Localization.getString('common.description')}</label>
                                 </div>
                             </div>                        
                         </div>
                         <div class="row row-no-margin-bottom col s12">                     
                             <div class="input-field col s6">
-                            <span class="select2-top-label">Conta Origem</span>
+                            <span class="select2-top-label">${Localization.getString('transactions.originAccount')}</span>
                                 <select class="select-trxs-account_from" name="accounts" style="width: 100%;">
-                                    <option disabled selected value="-1">Conta Origem</option>
+                                    <option disabled selected value="-1">${Localization.getString('transactions.originAccount')}</option>
                                     ${accountsArr.map(
           account => Transactions.renderAccountsSelectOptions(account)).
           join('')}
@@ -239,9 +243,9 @@ export var Transactions = {
                                 
                             </div>
                             <div class="input-field col s6">
-                                <span class="select2-top-label">Conta Destino</span>
+                                <span class="select2-top-label">${Localization.getString('transactions.destinationAccount')}</span>
                                 <select class="select-trxs-account_to" name="accounts" style="width: 100%;">
-                                    <option disabled selected value="-1">Conta Destino</option>
+                                    <option disabled selected value="-1">${Localization.getString('transactions.destinationAccount')}</option>
                                     ${accountsArr.map(
           account => Transactions.renderAccountsSelectOptions(account)).
           join('')}
@@ -251,14 +255,14 @@ export var Transactions = {
                         </div>
                         <div class="row row-no-margin-bottom col s12">
                             <div class="input-field col s6">
-                                <span class="select2-top-label">Categoria</span>
+                                <span class="select2-top-label">${Localization.getString('transactions.category')}</span>
                                 <select class="select-trxs-categories" name="categories" style="width: 100%;">
                                     ${categoriesArr.map(
           cat => Transactions.renderCategoriesSelectOptions(cat)).join('')}
                                 </select>
                             </div>
                             <div class="input-field col s6">
-                                <span class="select2-top-label">Entidade</span>
+                                <span class="select2-top-label">${Localization.getString('transactions.entity')}</span>
                                 <select class="select-trxs-entities" name="entities" style="width: 100%;">
                                     ${entitiesArr.map(
           entity => Transactions.renderEntitiesSelectOptions(entity)).join('')}
@@ -269,8 +273,10 @@ export var Transactions = {
                 </div>
                 `
 
-        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-                    <a id="modal-action-add-trx" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`
+        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString(
+          'common.cancel')}</a>
+                    <a id="modal-action-add-trx" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString(
+          'common.add')}</a>`
         $('#modal-global .modal-content').html(txt)
         $('#modal-global .modal-footer').html(actionLinks)
         $('#modal-action-add-trx').click(() => Transactions.addTransaction())
@@ -279,7 +285,7 @@ export var Transactions = {
         $('select.select-trxs-entities').select2({
           dropdownParent: '#modal-global',
           allowClear: true,
-          placeholder: 'Sem Entidade',
+          placeholder: `${Localization.getString('common.noEntity')}`,
         })
         $('select.select-trxs-account_to').
           select2({ dropdownParent: '#modal-global' })
@@ -293,7 +299,7 @@ export var Transactions = {
         $('select.select-trxs-categories').select2({
           dropdownParent: '#modal-global',
           allowClear: true,
-          placeholder: 'Sem Categoria',
+          placeholder: `${Localization.getString('common.noCategory')}`,
         })
         $('.datepicker').datepicker({
           defaultDate: new Date(),
@@ -443,8 +449,18 @@ export var Transactions = {
         <option value="${acc.account_id}">${acc.name}</option>
     `,
   renderTypesSelectOptions: (type) => `
-        <option value="${type.letter}">${type.name}</option>
+        <option value="${type.letter}">${Transactions.mapTransactionTypeLetterToPrintableName(type.letter)}</option>
     `,
+  mapTransactionTypeLetterToPrintableName: (letter) => {
+    switch (letter) {
+      case MYFIN.TRX_TYPES.EXPENSE:
+        return Localization.getString('transactions.expense')
+      case MYFIN.TRX_TYPES.INCOME:
+        return Localization.getString('transactions.income')
+      case MYFIN.TRX_TYPES.TRANSFER:
+        return Localization.getString('transactions.transfer')
+    }
+  },
   renderCategoriesSelectOptions: (cat) => `
         <option value="${cat.category_id}">${cat.name}</option>
     `,
@@ -476,12 +492,12 @@ export var Transactions = {
 
     if (!ValidationUtils.checkIfFieldsAreFilled(
       [amount, type, date_timestamp])) {
-      DialogUtils.showErrorMessage('Por favor, preencha todos os campos!')
+      DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))
       return
     }
 
     if (amount <= 0) {
-      DialogUtils.showErrorMessage('O Campo Valor deve ser superior a zero!')
+      DialogUtils.showErrorMessage(Localization.getString('transactions.valueFieldMustHaveValueOverZero'))
       return
     }
 
@@ -493,29 +509,29 @@ export var Transactions = {
       (response) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Transação adicionada com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString('transactions.transactionsSuccessfullyAdded'))
         configs.goToPage('transactions', null, true)
       },
       (response) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   showRemoveTransactionModal: (trxID) => {
+
     $('#modal-global').modal('open')
     let txt = `
-                <h4>Remover transação #<b>${trxID}</b></h4>
+                <h4>${Localization.getString('transactions.deleteTransactionModalTitle', { id: trxID })}</h4>
                 <div class="row">
-                    <p>Tem a certeza de que pretende remover esta transação?</p>
-                    <b>Esta ação é irreversível!</b>
+                    <p data-i18n="transactions.deleteTransactionModalSubtitle">${Localization.getString("transactions.deleteTransactionModalSubtitle")}</p>
+                    <b data-i18n="transactions.deleteTransactionModalAlert">${Localization.getString("transactions.deleteTransactionModalAlert")}</b>
 
                 </div>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a data-trx-id="${trxID}" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text modal-action-delete-trx">Remover</a>`
+    let actionLinks = `<a class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text" data-i18n="common.cancel">${Localization.getString("common.cancel")}</a>
+            <a data-trx-id="${trxID}" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text modal-action-delete-trx" data-i18n="common.delete">${Localization.getString("common.delete")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
 
@@ -536,14 +552,13 @@ export var Transactions = {
       (response) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Transação removida com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString('transactions.transactionSuccessfullyDeleted'))
         configs.goToPage('transactions', null, true)
       }),
       (response) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       }
   },
   showEditTransactionModal: (
@@ -563,18 +578,18 @@ export var Transactions = {
         let txt = `
                     <div class="row row-no-margin-bottom">
                         <div class="input-field col s8">
-                            <h4>Editar transação <b>#${trxID}</b></h4>
+                            <h4>${Localization.getString('transactions.editTransactionModalTitle', { id: trxID })}</b></h4>
                             <p id="cb-essential-wrapper" class="scale-transition ${!selectedAccountToID ? 'scale-in' : 'scale-out'}">
                           <label>
                             <input id="cb-essential" type="checkbox"
                              ${isEssential == true ? 'checked="checked"' : ''}
                              class="checkbox-indigo filled-in" />
-                            <span>Essencial</span>
+                            <span>${Localization.getString('transactions.essential')}</span>
                           </label>
                         </p>
                         </div>
                         <div class="input-field col s4">
-                            <span class="select2-top-label">Tipo de Transação</span>
+                            <span class="select2-top-label" data-i18n="transactions.typeOfTrx">${Localization.getString("transactions.typeOfTrx")}</span>
                             <select class="select-trxs-types" name="types">
                                 ${typesArr.map(
           type => Transactions.renderTypesSelectOptions(type)).join('')}
@@ -586,27 +601,28 @@ export var Transactions = {
                             <div class="input-field col s2">
                                 <i class="material-icons prefix">euro_symbol</i>
                                 <input id="trx_amount" type="number" step=".01" class="validate">
-                                <label for="trx_amount" class="active">Valor (€)</label>
+                                <label for="trx_amount" class="active">${Localization.getString('common.value')} (€)</label>
                             </div>
                             
                              <div class="input-field col s3">
                                 <i class="material-icons prefix">date_range</i>
                                 <input id="trx_date" type="text" class="datepicker input-field">
-                                <label for="trx_date">Data da transação</label>
+                                <label for="trx_date" data-i18n="transactions.dateOfTransaction">${Localization.getString(
+          'transactions.dateOfTransaction')}</label>
                             </div>
                             <div class="col s7">
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description" class="materialize-textarea"></textarea>
-                                    <label class="active" for="trx-description">Descrição</label>
+                                    <label class="active" for="trx-description">${Localization.getString('common.description')}</label>
                                 </div>
                             </div>
                         </div>
                         <div class="row row-no-margin-bottom col s12">                     
                             <div class="input-field col s6">
-                                <span class="select2-top-label">Conta Origem</span>
+                                <span class="select2-top-label" data-i18n="transactions.originAccount"></span>
                                 <select class="select-trxs-account_from" name="accounts" style="width: 100%;">
-                                    <option disabled selected value="-1">Conta Origem</option>
+                                    <option disabled selected value="-1" data-i18n="transactions.originAccount"></option>
                                     ${accountsArr.map(
           account => Transactions.renderAccountsSelectOptions(account)).
           join('')}
@@ -614,9 +630,9 @@ export var Transactions = {
                                 
                             </div>
                             <div class="input-field col s6">
-                                <span class="select2-top-label">Conta Destino</span>
+                                <span class="select2-top-label" data-i18n="transactions.destinationAccount"></span>
                                 <select class="select-trxs-account_to" name="accounts" style="width: 100%;">
-                                    <option disabled selected value="-1">Conta Destino</option>
+                                    <option disabled selected value="-1" data-i18n="transactions.destinationAccount"></option>
                                     ${accountsArr.map(
           account => Transactions.renderAccountsSelectOptions(account)).
           join('')}
@@ -625,14 +641,14 @@ export var Transactions = {
                         </div>
                         <div class="row row-no-margin-bottom col s12">
                             <div class="input-field col s6">
-                                <span class="select2-top-label">Categoria</span>
+                                <span class="select2-top-label" data-i18n="transactions.category"></span>
                                 <select class="select-trxs-categories" name="categories" style="width: 100%;">
                                     ${categoriesArr.map(
           cat => Transactions.renderCategoriesSelectOptions(cat)).join('')}
                                 </select>
                             </div>
                             <div class="input-field col s6">
-                                <span class="select2-top-label">Entidade</span>
+                                <span class="select2-top-label" data-i18n="transactions.entity"></span>
                                 <select class="select-trxs-entities" name="entities" style="width: 100%;">
                                     ${entitiesArr.map(
           entity => Transactions.renderEntitiesSelectOptions(entity)).join('')}
@@ -646,15 +662,15 @@ export var Transactions = {
                                 <div class="input-field col s2">
                                     <i class="material-icons prefix">euro_symbol</i>
                                     <input id="trx_amount_2" type="number" step=".01" class="validate" style="width: auto;">
-                                    <label for="trx_amount_2">Valor (€)</label>
+                                    <label for="trx_amount_2">${Localization.getString('common.value')} (€) (€)</label>
                                 </div>
                                 <div class="input-field col s6 offset-s1">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description2" class="materialize-textarea"></textarea>
-                                    <label for="trx-description2">Descrição</label>
+                                    <label for="trx-description2">${Localization.getString('common.description')}</label>
                                 </div>
                                 <div class="input-field col s3">
-                                    <span class="select2-top-label" style="display: none;">Tipo de Transação</span>
+                                    <span class="select2-top-label" style="display: none;" data-i18n="transactions.typeOfTrx">${Localization.getString("transactions.typeOfTrx")}</span>
                                     <select class="select-trxs-types2" name="types" style="width: 100% !important">
                                         ${typesArr.map(
           type => Transactions.renderTypesSelectOptions(type)).join('')}
@@ -664,9 +680,9 @@ export var Transactions = {
                             
                             <div class="row row-no-margin-bottom">                     
                                 <div class="input-field col s6">
-                                    <span class="select2-top-label">Conta Origem</span>
+                                    <span class="select2-top-label" data-i18n="transactions.originAccount"></span>
                                     <select class="select-trxs-account_from2" name="accounts" style="width: 100%;">
-                                        <option disabled selected value="-1">Conta Origem</option>
+                                        <option disabled selected value="-1" data-i18n="transactions.originAccount"></option>
                                         ${accountsArr.map(
           account => Transactions.renderAccountsSelectOptions(account)).
           join('')}
@@ -674,9 +690,9 @@ export var Transactions = {
                                     
                                 </div>
                                 <div class="input-field col s6">
-                                    <span class="select2-top-label">Conta Destino</span>
+                                    <span class="select2-top-label" data-i18n="transactions.destinationAccount"></span>
                                     <select class="select-trxs-account_to2" name="accounts" style="width: 100%;">
-                                        <option disabled selected value="-1">Conta Destino</option>
+                                        <option disabled selected value="-1" data-i18n="transactions.destinationAccount"></option>
                                         ${accountsArr.map(
           account => Transactions.renderAccountsSelectOptions(account)).
           join('')}
@@ -685,14 +701,14 @@ export var Transactions = {
                             </div>
                             <div class="row row-no-margin-bottom">
                                 <div class="input-field col s6">
-                                    <span class="select2-top-label">Categoria</span>
+                                    <span class="select2-top-label" data-i18n="transactions.category"></span>
                                     <select class="select-trxs-categories2" name="categories" style="width: 100%;">
                                         ${categoriesArr.map(
           cat => Transactions.renderCategoriesSelectOptions(cat)).join('')}
                                     </select>
                                 </div>
                                 <div class="input-field col s6">
-                                    <span class="select2-top-label">Entidade</span>
+                                    <span class="select2-top-label" data-i18n="transactions.entity"></span>
                                     <select class="select-trxs-entities2" name="entities" style="width: 100%;">
                                         ${entitiesArr.map(
           entity => Transactions.renderEntitiesSelectOptions(entity)).join('')}
@@ -715,8 +731,10 @@ export var Transactions = {
                 </div>
                 `
 
-        let actionLinks = `<a id="split-trx-btn" class="waves-effect waves-light btn right-align transparent-bordered-btn-blue" onclick="" style="margin: 10px; float:left;"><i class="material-icons left"><span id="split-trx-btn-icon-id">call_split</span></i><span id="split-trx-btn-text">Dividir Transação</span></a><a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-                    <a data-trx-id="${trxID}" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text modal-action-edit-trx">Editar</a>`
+        let actionLinks = `<a id="split-trx-btn" class="waves-effect waves-light btn right-align transparent-bordered-btn-blue" onclick="" style="margin: 10px; float:left;"><i class="material-icons left"><span id="split-trx-btn-icon-id">call_split</span></i><span id="split-trx-btn-text" data-i18n="transactions.splitTransaction">${Localization.getString(
+          'transactions.splitTransaction')}</span></a><a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text" data-i18n="common.cancel"></a>
+                    <a data-trx-id="${trxID}" class="waves-effect waves-orange btn-flat enso-salmon-bg enso-border white-text modal-action-edit-trx">${Localization.getString(
+          'common.edit')}</a>`
 
         $('#modal-global .modal-content').html(txt)
         $('#modal-global .modal-footer').html(actionLinks)
@@ -724,12 +742,12 @@ export var Transactions = {
         $('select.select-trxs-entities').select2({
           dropdownParent: '#modal-global',
           allowClear: true,
-          placeholder: 'Sem Entidade',
+          placeholder: Localization.getString('common.noEntity'),
         })
         $('select.select-trxs-entities2').select2({
           dropdownParent: '#modal-global',
           allowClear: true,
-          placeholder: 'Sem Entidade',
+          placeholder: Localization.getString('common.noEntity'),
         })
         $('select.select-trxs-account_to').
           select2({ dropdownParent: '#modal-global' })
@@ -746,12 +764,12 @@ export var Transactions = {
         $('select.select-trxs-categories').select2({
           dropdownParent: '#modal-global',
           allowClear: true,
-          placeholder: 'Sem Categoria',
+          placeholder: Localization.getString('common.noCategory'),
         })
         $('select.select-trxs-categories2').select2({
           dropdownParent: '#modal-global',
           allowClear: true,
-          placeholder: 'Sem Categoria',
+          placeholder: Localization.getString('common.noCategory'),
         })
         $('.datepicker').datepicker({
           defaultDate: new Date(
@@ -905,23 +923,23 @@ export var Transactions = {
 
     if (!ValidationUtils.checkIfFieldsAreFilled(
       [new_amount, new_type, new_date_timestamp])) {
-      DialogUtils.showErrorMessage('Por favor, preencha todos os campos!')
+      DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))
       return
     }
 
     if (new_amount <= 0) {
-      DialogUtils.showErrorMessage('O Campo Valor deve ser superior a zero!')
+      DialogUtils.showErrorMessage(Localization.getString('transactions.valueFieldMustHaveValueOverZero'))
       return
     }
 
     if (isSplit) {
       if (!ValidationUtils.checkIfFieldsAreFilled([split_amount, split_type])) {
-        DialogUtils.showErrorMessage('Por favor, preencha todos os campos!')
+        DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))
         return
       }
 
       if (split_amount <= 0) {
-        DialogUtils.showErrorMessage('O Campo Valor deve ser superior a zero!')
+        DialogUtils.showErrorMessage(Localization.getString('transactions.valueFieldMustHaveValueOverZero'))
         return
       }
     }
@@ -937,14 +955,13 @@ export var Transactions = {
       () => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Transação atualizada com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString('transactions.transactionSuccessfullyUpdated'))
         configs.goToPage('transactions', null, true)
       },
       () => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
 }

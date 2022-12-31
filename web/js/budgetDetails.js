@@ -9,6 +9,7 @@ import { DateUtils } from './utils/dateUtils.js'
 import { StringUtils } from './utils/stringUtils.js'
 import { CategoryTooltipTransactionsFunc } from './funcs/categoryTooltipTransactionsFunc.js'
 import { buildEmojiPicker } from './components/emojiPicker.js'
+import { Localization } from './utils/localization.js'
 
 let currentBudgetID
 let BUDGET_INITIAL_BALANCE
@@ -21,26 +22,27 @@ export const BudgetDetails = {
     IS_OPEN = isOpen
     IS_NEW = isNew
     currentBudgetID = budgetID
+    $('#budgets-monthpicker').attr('placeholder', Localization.getString('budgetDetails.chooseAMonth'))
     if (isOpen == true) {
       $('#conclusion-close-btn').show()
-      $('#conclusion-close-btn-text').text('Fechar Orçamento')
-      $('#estimated_state_value').text('Aberto')
+      $('#conclusion-close-btn-text').text(Localization.getString('budgetDetails.closeBudgetCTA'))
+      $('#estimated_state_value').text(Localization.getString('budgetDetails.opened'))
       BudgetDetails.enableCloneMonthButton()
     }
     else {
       $('#conclusion-close-btn').hide()
       $('#conclusion-close-btn').show()
-      $('#conclusion-close-btn-text').text('Reabrir Orçamento')
-      $('#estimated_state_value').text('Fechado')
+      $('#conclusion-close-btn-text').text(Localization.getString('budgetDetails.reopenBudget'))
+      $('#estimated_state_value').text(Localization.getString('budgetDetails.closed'))
       BudgetDetails.disableCloneMonthButton()
     }
 
     if (isNew == true) {
-      $('#conclusion-btn-text').text('Adicionar Orçamento')
+      $('#conclusion-btn-text').text(Localization.getString('budgetDetails.addBudgetCTA'))
       BudgetDetails.initNewBudget()
     }
     else {
-      $('#conclusion-btn-text').text('Atualizar Orçamento')
+      $('#conclusion-btn-text').text(Localization.getString('budgetDetails.updateBudget'))
       BudgetDetails.initBudget(budgetID)
     }
 
@@ -112,7 +114,7 @@ export const BudgetDetails = {
     }, (err) => {
       // FAILURE
       LoadingManager.hideLoading()
-      DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+      DialogUtils.showErrorMessage()
     })
   },
   onCloneMonthClicked: () => {
@@ -138,7 +140,7 @@ export const BudgetDetails = {
     }, (err) => {
       // FAILURE
       LoadingManager.hideLoading()
-      DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+      DialogUtils.showErrorMessage()
     })
   },
   setupBudgetInputs: (selectorID, categoriesArr, isCredit, sameMonthLastYearLabel) => {
@@ -184,9 +186,9 @@ export const BudgetDetails = {
     return `
         <table class="responsive-table">
             <thead>
-                <th>Tipo</th>
-                <th>Valor Previsto</th>
-                <th>Valor Atual</th>
+                <th>${Localization.getString('common.type')}</th>
+                <th>${Localization.getString('budgetDetails.estimatedValue')}</th>
+                <th>${Localization.getString('budgetDetails.currentValue')}</th>
             </thead>
             <tbody>
                 ${BudgetDetails.buildTotalsRow(isCredit)}
@@ -209,7 +211,7 @@ export const BudgetDetails = {
     if (isCredit) {
       return `
                 <tr style="text-decoration: none; background: var(--main-light-gray-color);">
-                    <td>TOTAL</td>
+                    <td>${Localization.getString('common.total')}</td>
                     <td><span id="table_total_credit_expected">0.0€</span></td>
                     <td><span id="table_total_credit_current">0.0€</span></td>
                 </tr>
@@ -218,7 +220,7 @@ export const BudgetDetails = {
 
     return `
                 <tr style="text-decoration: none; background: var(--main-light-gray-color);">
-                    <td>TOTAL</td>
+                    <td>${Localization.getString('common.total')}</td>
                     <td><span id="table_total_debit_expected">0.0€</span></td>
                     <td><span id="table_total_debit_current">0.0€</span></td>
                 </tr>
@@ -238,9 +240,11 @@ export const BudgetDetails = {
       : ''}</span>
                         <div class="tooltiptext">
                         <span class="center-align" style="margin: 10px 0;font-style: italic;">
-                            <center>${(cat.description) ? cat.description : 'Sem descrição'}</center>
+                            <center>${(cat.description) ? cat.description : Localization.getString("budgetDetails.noDescription")}</center>
                         </span>
-                        ${cat.exclude_from_budgets === '1' ? '<center><i>(Excluída dos orçamentos)</i></center>' : ''}
+                        ${cat.exclude_from_budgets === '1'
+      ? `<center><i>(${Localization.getString('categories.excludedFromBudgets')})</i></center>`
+      : ''}
                         <hr>
                         <div class="row">
                             <div class="col s8">${sameMonthLastYearLabel}</div>
@@ -248,17 +252,17 @@ export const BudgetDetails = {
       isCredit ? cat.avg_same_month_previous_year_credit : cat.avg_same_month_previous_year_debit)}</strong></div>
                         </div>
                         <div class="row">
-                            <div class="col s8">Mês Anterior</div>
+                            <div class="col s8">${Localization.getString("budgetDetails.previousMonth")}</div>
                             <div class="col s4 right-align white-text"><strong class="white-text">${StringUtils.formatMoney(
       isCredit ? cat.avg_previous_month_credit : cat.avg_previous_month_debit)}</strong></div>
                         </div>
                         <div class="row">
-                            <div class="col s8">Média 12 meses</div>
+                            <div class="col s8">${Localization.getString("budgetDetails.12MonthAvg")}</div>
                             <div class="col s4 right-align white-text"><strong class="white-text">${StringUtils.formatMoney(
       isCredit ? cat.avg_12_months_credit : cat.avg_12_months_debit)}</strong></div>
                         </div>
                         <div class="row">
-                            <div class="col s8">Média Global</div>
+                            <div class="col s8">${Localization.getString("budgetDetails.globalAverage")}</div>
                             <div class="col s4 right-align"><strong class="white-text">${StringUtils.formatMoney(
       isCredit ? cat.avg_lifetime_credit : cat.avg_lifetime_debit)}</strong></div>
                         </div></div>
@@ -271,7 +275,7 @@ export const BudgetDetails = {
       : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')}" type="number" class="cat-input validate ${(isCredit)
       ? 'credit-input-estimated'
       : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" data-category-exclude-from-budgets="${cat.exclude_from_budgets}" required>
-                    <label for="${cat.category_id}" class="active">Previsto (€)</label>
+                    <label for="${cat.category_id}" class="active">${Localization.getString("budgetDetails.estimated")} (€)</label>
                 </div></td>
                 <td style="padding:0px !important;"><div class="input-field inline">
                     <input disabled id="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" value="${(isCredit)
@@ -279,7 +283,7 @@ export const BudgetDetails = {
       : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')}" type="number" class="validate ${(isCredit)
       ? 'credit-input-current'
       : 'debit-input-current'} input tooltipped" min="0.00" value="0.00" step="0.01" data-category-exclude-from-budgets="${cat.exclude_from_budgets}" required>
-                    <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" class="active">Atual (€)</label>
+                    <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" class="active">${Localization.getString("budgetDetails.current")} (€)</label>
                 </div></td>
             </tr>
             <tr>
@@ -348,9 +352,9 @@ export const BudgetDetails = {
 
     if (!IS_OPEN) {
       // update labels
-      $('span#estimated_expenses_label').text('Despesas Reais')
-      $('span#estimated_balance_label').text('Balanço Real')
-      $('span#estimated_income_label').text('Renda Real')
+      $('span#estimated_expenses_label').text(Localization.getString("budgetDetails.actualExpenses"))
+      $('span#estimated_balance_label').text(Localization.getString("budgetDetails.actualBalance"))
+      $('span#estimated_income_label').text(Localization.getString("budgetDetails.actualIncome"))
     }
 
     $(plannedCreditAmountsClassSelector).each((i, input) => {
@@ -416,7 +420,7 @@ export const BudgetDetails = {
     let catValuesArr = BudgetDetails.buildCatValuesArr()
 
     if (!datepickerValue || datepickerValue === '') {
-      DialogUtils.showErrorMessage('Por favor, preencha todos os campos!')
+      DialogUtils.showErrorMessage(Localization.getString("common.fillAllFieldsTryAgain"))
       return
     }
 
@@ -435,7 +439,7 @@ export const BudgetDetails = {
         }, (err) => {
           // FAILURE
           LoadingManager.hideLoading()
-          DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+          DialogUtils.showErrorMessage()
         })
     }
     else {
@@ -451,7 +455,7 @@ export const BudgetDetails = {
         }, (err) => {
           // FAILURE
           LoadingManager.hideLoading()
-          DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+          DialogUtils.showErrorMessage()
         })
     }
 
@@ -510,13 +514,13 @@ export const BudgetDetails = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   setDebitEssentialTransactionsTotal (debit_essential_trx_total) {
     $('#debit-essential-expenses-totals').
       html(`<span class="new badge" style="font-size: initial;" data-badge-caption="${StringUtils.formatMoney(
-        debit_essential_trx_total)}">Despesas Essenciais:</span>`)
+        debit_essential_trx_total)}">${Localization.getString("budgetDetails.essentialExpenses")}:</span>`)
   },
 }
 

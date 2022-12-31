@@ -3,8 +3,8 @@
         <div class="col s10">
             <input id="dashboard-monthpicker" type="text" placeholder="Escolha um mês"/>
         </div>
-        <div id="dashboard-last-update-timestamp" class="col s2 right-align"><strong>Última
-            atualização</strong><br><span id="dashboard-last-update-timestamp-value">N/D</span>
+        <div id="dashboard-last-update-timestamp" class="col s2 right-align"><strong><span
+                data-i18n="dashboard.lastUpdate"></span></strong><br><span id="dashboard-last-update-timestamp-value">N/D</span>
         </div>
     </div>
     <div class="row">
@@ -12,7 +12,7 @@
             <div class="card-panel green-gradient-bg dashboard-btn" onclick="configs.goToPage('transactions');">
                 <center>
                     <div class="card_quick_actions">
-                        <span><i class="material-icons no-accent-color left">library_add</i>Nova Transação</span>
+                        <span><i class="material-icons no-accent-color left">library_add</i><span data-i18n="dashboard.newTransaction"></span>
                     </div>
                 </center>
             </div>
@@ -22,7 +22,7 @@
                  onclick="configs.goToPage('budgetDetails',{'new': true, 'open' : true}, true);">
                 <center>
                     <div class="card_quick_actions">
-                        <span><i class="material-icons no-accent-color left">assignment</i>Novo Orçamento</span>
+                        <span><i class="material-icons no-accent-color left">assignment</i><span data-i18n="dashboard.newBudget"></span></span>
                     </div>
                 </center>
             </div>
@@ -31,7 +31,7 @@
             <div class="card-panel blue-gradient-bg dashboard-btn" onclick="configs.goToPage('transactions');">
                 <center>
                     <div class="card_quick_actions">
-                        <span><i class="material-icons no-accent-color left">library_books</i>Ver Movimentos</span>
+                        <span><i class="material-icons no-accent-color left">library_books</i><span data-i18n="dashboard.seeTransactions"></span></span>
                     </div>
                 </center>
             </div>
@@ -40,7 +40,7 @@
             <div class="card-panel red-gradient-bg dashboard-btn" onclick="configs.goToPage('stats');">
                 <center>
                     <div class="card_quick_actions">
-                        <span><i class="material-icons no-accent-color left">assessment</i>Ver Estatísticas</span>
+                        <span><i class="material-icons no-accent-color left">assessment</i><span data-i18n="dashboard.seeStats"></span></span>
                     </div>
                 </center>
             </div>
@@ -62,10 +62,11 @@
         </div>
         <div class="col s8">
             <div class="card-panel last_movements">
-                <span class="white-text">Movimentos Recentes</span> <span class="right-align"
-                                                                          style="float:right;"><a
-                    href="#!transactions" onclick="configs.goToPage('transactions')">[Ver
-                Mais...]</a></span>
+                <span class="white-text"><span data-i18n="dashboard.recentTransactions"></span> <span
+                        class="right-align"
+                        style="float:right;"><a
+                        href="#!transactions" onclick="configs.goToPage('transactions')">[<span
+                        data-i18n="common.seeMore"></span>...]</a></span>
                 <div id="last_movements_table_wrapper">
                 </div>
                 <div class="empty-view"></div>
@@ -75,13 +76,17 @@
     <div class="row">
         <div class="col s6">
             <div class="card-panel income_distribution" style="margin: 0 auto;">
-                <center><canvas id="chart_pie_income_distribution" class="dashboard-pie-chart-canvas"></canvas></center>
+                <center>
+                    <canvas id="chart_pie_income_distribution" class="dashboard-pie-chart-canvas"></canvas>
+                </center>
                 <div class="empty-view"></div>
             </div>
         </div>
         <div class="col s6">
             <div class="card-panel spending_distribution" style="margin: 0 auto;">
-                <center><canvas id="chart_pie_spending_distribution" class="dashboard-pie-chart-canvas"></canvas></center>
+                <center>
+                    <canvas id="chart_pie_spending_distribution" class="dashboard-pie-chart-canvas"></canvas>
+                </center>
                 <div class="empty-view"></div>
             </div>
         </div>
@@ -89,13 +94,17 @@
     <div class="row">
         <div class="col s6">
             <div class="card-panel investing_portfolio" style="margin: 0 auto;">
-                <center><canvas id="chart_pie_investing_portfolio" class="dashboard-pie-chart-canvas"></canvas></center>
+                <center>
+                    <canvas id="chart_pie_investing_portfolio" class="dashboard-pie-chart-canvas"></canvas>
+                </center>
                 <div class="empty-view"></div>
             </div>
         </div>
         <div class="col s6">
             <div class="card-panel debt-distribution" style="margin: 0 auto;">
-                <center><canvas id="chart_pie_debt_distribution" class="dashboard-pie-chart-canvas"></canvas></center>
+                <center>
+                    <canvas id="chart_pie_debt_distribution" class="dashboard-pie-chart-canvas"></canvas>
+                </center>
                 <div class="empty-view"></div>
             </div>
             <script type="module">

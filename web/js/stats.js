@@ -8,6 +8,7 @@ import { chartUtils } from './utils/chartUtils.js'
 import { tableUtils } from './utils/tableUtils.js'
 import { LocalDataManager } from './utils/localDataManager.js'
 import { UserServices } from './services/userServices.js'
+import { Localization } from './utils/localization.js'
 
 let EXPENSES_PER_CATEGORY_LINE_CHART
 let INCOME_PER_CATEGORY_LINE_CHART
@@ -31,7 +32,7 @@ export const Stats = {
     }, (err) => {
       // FAILURE
       LoadingManager.hideLoading()
-      DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+      DialogUtils.showErrorMessage()
     })
   },
   initTabProjections: () => {
@@ -58,14 +59,14 @@ export const Stats = {
           data: budgetsList.map(budget => parseFloat(budget.planned_final_balance_assets_only).toFixed(2) /*Stats.getFinalBalanceForAssetsOnly(budget.planned_final_balance)*/),
           fill: true,
           hidden: true,
-          label: 'Balanço Projetado (Ativos)',
+          label: Localization.getString("stats.projectedBalanceAssets"),
         }]
       Stats.setupPatrimonyProjectionsLineChart(chartData, chartLabels, extraChartData)
       Stats.setupPatrimonyProjectionsList(budgetsList)
     }, (err) => {
       // FAILURE
       LoadingManager.hideLoading()
-      DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+      DialogUtils.showErrorMessage()
     })
   },
   changeTabs: activeID => {
@@ -117,8 +118,8 @@ export const Stats = {
           Stats.initTabYearByYear()
         })
         /* SUCCESS */
-        const NET_INCOME_LABEL = 'Rendimento Líquido'
-        const OTHER_EXPENSES_LABEL = 'Outros'
+        const NET_INCOME_LABEL = Localization.getString("stats.netIncome")
+        const OTHER_EXPENSES_LABEL = Localization.getString("stats.others")
         const categories = resp.categories
         let dataset = []
         let yearlyCategorizedIncome = 0
@@ -173,7 +174,7 @@ export const Stats = {
       }, (err) => {
         /* ERROR */
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   setupIncomeExpenseTable: (categories, wrapperId, isCredit) => {
@@ -183,8 +184,8 @@ export const Stats = {
       <table id='${tableId}' class='display browser-defaults' style='width:100%'>
         <thead>
             <tr>
-              <th>Categoria</th>
-              <th>Valor</th>
+              <th>${Localization.getString("transactions.category")}</th>
+              <th>${Localization.getString("common.value")}</th>
             </tr>
         </thead>
         <tbody>
@@ -231,7 +232,7 @@ export const Stats = {
     if (YEAR_BY_YEAR_SANKEY_CHART) {
       YEAR_BY_YEAR_SANKEY_CHART.destroy()
     }
-    YEAR_BY_YEAR_SANKEY_CHART = chartUtils.setupSankeyChart('chart', 'Distribuição da receita por categorias de despesa', dataset, getColor)
+    YEAR_BY_YEAR_SANKEY_CHART = chartUtils.setupSankeyChart('chart', Localization.getString("stats.incomeDistributionByExpenseCategories"), dataset, getColor)
 
   },
   clearCanvasAndTableWrapper: (tableWrapperLocator, canvasLocator) => {
@@ -272,13 +273,13 @@ export const Stats = {
             }, (resp) => {
               // FAILURE
               LoadingManager.hideLoading()
-              DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+              DialogUtils.showErrorMessage()
             })
         })
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       },
     )
   },
@@ -293,7 +294,7 @@ export const Stats = {
 
     const ctx = document.getElementById('chart_pie_cat_expenses_evolution').getContext('2d')
 
-    const chartTitle = 'Evolução de Despesa'
+    const chartTitle = Localization.getString("stats.expensesEvolution")
     const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
     const data = {
@@ -301,7 +302,7 @@ export const Stats = {
       datasets: [
         {
           data: chartData,
-          label: 'Evolução de Despesa',
+          label: chartTitle,
           borderColor: '#3e95cd',
           fill: true,
           trendlineLinear: chartUtils.getTrendLineObject(),
@@ -322,9 +323,9 @@ export const Stats = {
       < table id='cat-expenses-evolution-table' class='display browser-defaults' style='width:100%'>
     <thead>
     <tr>
-    <th>Mês</th>
-    <th>Valor</th>
-    <th>Alteração (%)</th>
+    <th>${Localization.getString("stats.month")}</th>
+    <th>${Localization.getString("common.value")}</th>
+    <th>${Localization.getString("stats.variationPercentage")}</th>
     </tr>
     </thead>
     <tbody>
@@ -353,11 +354,11 @@ export const Stats = {
       `
     <div class='input-field col s3'>
     <select id='category_select' class='category-selection-select'>
-    <option value='' disabled selected>Escolha uma categoria</option>
-    <optgroup label="Categorias">
+    <option value='' disabled selected>${Localization.getString("stats.chooseACategory")}</option>
+    <optgroup label="${Localization.getString("stats.categories")}">
     ${categories.map(cat => Stats.renderCategorySelectOption(cat)).join('')}
     </optgroup>
-    <optgroup label="Entidades">
+    <optgroup label="${Localization.getString("stats.entities")}">
     ${entities.map(ent => Stats.renderEntitySelectOption(ent)).join('')}
     </optgroup>
     </select>
@@ -409,13 +410,13 @@ export const Stats = {
             }, (resp) => {
               // FAILURE
               LoadingManager.hideLoading()
-              DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+              DialogUtils.showErrorMessage()
             })
         })
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       },
     )
   },
@@ -432,7 +433,7 @@ export const Stats = {
 
     const ctx = document.getElementById('chart_pie_cat_income_evolution').getContext('2d')
 
-    const chartTitle = 'Evolução de Receita'
+    const chartTitle = Localization.getString("stats.incomeEvolution")
     const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
     const data = {
@@ -440,7 +441,7 @@ export const Stats = {
       datasets: [
         {
           data: chartData,
-          label: 'Evolução de Receita Por Categoria',
+          label: Localization.getString("stats.incomeEvolutionByCategory"),
           borderColor: '#3e95cd',
           fill: true,
           trendlineLinear: chartUtils.getTrendLineObject(),
@@ -462,9 +463,9 @@ export const Stats = {
     <table id='cat-income-evolution-table' class='display browser-defaults' style='width:100%'>
     <thead>
     <tr>
-    <th>Mês</th>
-    <th>Valor</th>
-    <th>Alteração (%)</th>
+    <th>${Localization.getString("stats.month")}</th>
+    <th>${Localization.getString("common.value")}</th>
+    <th>${Localization.getString("stats.variationPercentage")}</th>
     </tr>
     </thead>
     <tbody>
@@ -545,11 +546,11 @@ export const Stats = {
     <table id='ev-pat-table' class='centered' style='margin-top: 10px;'>
     <thead>
     <tr>
-    <th>Mês</th>
-    <th>Balanço Prévio</th>
-    <th>Balanço Final</th>
-    <th>Saldo Mensal</th>
-    <th>Crescimento</th>
+    <th>${Localization.getString("stats.month")}</th>
+    <th>${Localization.getString("stats.previousBalance")}</th>
+    <th>${Localization.getString("stats.finalBalance")}</th>
+    <th>${Localization.getString("stats.monthlyBalance")}</th>
+    <th>${Localization.getString("stats.growth")}</th>
     </tr>
     </thead>
     <tbody>
@@ -590,7 +591,7 @@ export const Stats = {
   setupPatrimonyLineChart: (chartData, chartLabels, extraChartData) => {
     const ctx = document.getElementById('chart_pie_patrimony_evolution').getContext('2d')
 
-    const chartTitle = 'Evolução do Património'
+    const chartTitle = Localization.getString("stats.netWorthEvolution")
     const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
     const data = {
@@ -598,7 +599,7 @@ export const Stats = {
       datasets: [
         {
           data: chartData,
-          label: 'Acumulado',
+          label: Localization.getString("common.accumulated"),
           borderColor: '#3e95cd',
           fill: true,
           /*lineTension: 0,*/
@@ -638,12 +639,12 @@ export const Stats = {
     <table id='ev-pat-projections-table' class='centered' style='margin-top: 10px;'>
     <thead>
     <tr>
-    <th>Mês</th>
-    <th>Balanço Prévio<span class="projections-table-footnotes">*</span></th>
-    <th>Balanço Final<span class="projections-table-footnotes">*</span></th>
-    <th>Balanço Final — ATIVOS<span class="projections-table-footnotes">**</span></th>
-    <th>Balanço Final — Fundo de Maneio<span class="projections-table-footnotes">***</span></th>
-    <th>Crescimento</th>
+    <th>${Localization.getString("stats.month")}</th>
+    <th>${Localization.getString("stats.previousBalance")}<span class="projections-table-footnotes">*</span></th>
+    <th>${Localization.getString("stats.finalBalance")}<span class="projections-table-footnotes">*</span></th>
+    <th>${Localization.getString("stats.finalBalanceAssets")}<span class="projections-table-footnotes">**</span></th>
+    <th>${Localization.getString("stats.finalBalanceOperatingFunds")}<span class="projections-table-footnotes">***</span></th>
+    <th>${Localization.getString("stats.growth")}</th>
     </tr>
     </thead>
     <tbody>
@@ -655,9 +656,9 @@ export const Stats = {
     font-size: small;
     }
     </style>
-    <p class="right-align grey-text text-accent-4 projections-table-footnotes">* Este é um valor projetado através dos dados orçamentados</p>
-    <p class="right-align grey-text text-accent-4 projections-table-footnotes">** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo</p>
-    <p class="right-align grey-text text-accent-4 projections-table-footnotes">*** Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo e contas de investimento</p>
+    <p class="right-align grey-text text-accent-4 projections-table-footnotes">* ${Localization.getString("stats.projectionsTableFootnotes1")}</p>
+    <p class="right-align grey-text text-accent-4 projections-table-footnotes">** ${Localization.getString("stats.projectionsTableFootnotes2")}</p>
+    <p class="right-align grey-text text-accent-4 projections-table-footnotes">*** ${Localization.getString("stats.projectionsTableFootnotes3")}</p>
     `
 
   },
@@ -696,7 +697,7 @@ export const Stats = {
   setupPatrimonyProjectionsLineChart: (chartData, chartLabels, extraChartData) => {
     const ctx = document.getElementById('chart_pie_patrimony_projection').getContext('2d')
 
-    const chartTitle = 'Projeção de Evolução do Património'
+    const chartTitle = Localization.getString("stats.netWorthEvolutionProjection")
     const customOptions = chartUtils.getDefaultCustomOptionsForLineChart(chartTitle)
 
     const data = {
@@ -704,7 +705,7 @@ export const Stats = {
       datasets: [
         {
           data: chartData,
-          label: 'Balanço Projetado (Ativos + Passivos)',
+          label: Localization.getString("stats.projectedBalanceAssetsPlusDebt"),
           borderColor: '#3e95cd',
           fill: true,
         },

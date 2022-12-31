@@ -1,14 +1,14 @@
 <div id="page-wrapper" xmlns="http://www.w3.org/1999/html">
 
     <div class="card-panel">
-        <span class="main-accent-color">Investimentos <b>(beta)</b></span><br>
+        <span class="main-accent-color"><span data-i18n="investments.investments"></span> <b>(beta)</b></span><br>
         <div class="row" style="margin-top: 10px;">
             <div class="col s12">
                 <ul class="tabs">
-                    <li class="tab col s3"><a href="#tab-inv-dashboard">Resumo</a></li>
-                    <li class="tab col s3"><a href="#tab-inv-assets">Ativos</a></li>
-                    <li class="tab col s3"><a href="#tab-inv-transactions">Transações</a></li>
-                    <li class="tab col s3"><a href="#tab-inv-reports">Relatórios</a></li>
+                    <li class="tab col s3"><a href="#tab-inv-dashboard" data-i18n="investments.summary"></a></li>
+                    <li class="tab col s3"><a href="#tab-inv-assets" data-i18n="investments.assets"></a></li>
+                    <li class="tab col s3"><a href="#tab-inv-transactions" data-i18n="investments.transactions"></a></li>
+                    <li class="tab col s3"><a href="#tab-inv-reports" data-i18n="investments.reports"></a></li>
                 </ul>
             </div>
 
@@ -21,7 +21,7 @@
                         <div class="card-panel empty-view hide"></div>
                     </div>
                     <div class="col s8">
-                        <b>Melhores Desempenhos</b>
+                        <b data-i18n="investments.topPerformers"></b>
                         <div id="invest-reports-top-performing-wrapper" style="text-align:left;"></div>
                     </div>
 
@@ -37,14 +37,14 @@
                         <div class="card-panel invest-dashboard-top-panel">
                             <p class="invest-dashboard-top-panel-value" id="invest-dashboard-top-panel-invested-value">
                                 -€</p>
-                            <p class="invest-dashboard-top-panel-description">Total Investido</p>
+                            <p class="invest-dashboard-top-panel-description" data-i18n="investments.totalInvested"></p>
                         </div>
                     </div>
                     <div class="col s3">
                         <div class="card-panel invest-dashboard-top-panel">
                             <p class="invest-dashboard-top-panel-value" id="invest-dashboard-top-panel-current-value">
                                 -€</p>
-                            <p class="invest-dashboard-top-panel-description">Valor Atual</p>
+                            <p class="invest-dashboard-top-panel-description" data-i18n="investments.currentValue"></p>
                         </div>
                     </div>
                     <div class="col s3">
@@ -60,7 +60,7 @@
                             <p class="invest-dashboard-top-panel-value"><span
                                     id="invest-dashboard-top-panel-roi-global-value">-€</span> (<span
                                     id="invest-dashboard-top-panel-roi-global-percentage">-%</span>)</p>
-                            <p class="invest-dashboard-top-panel-description">ROI Global</p>
+                            <p class="invest-dashboard-top-panel-description" data-i18n="investments.globalROI"></p>
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
             <div id="tab-inv-assets" class="col s12">
                 <div class="card-panel">
                     <a id="add-asset-btn" class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"><i
-                            class="material-icons left">add_circle</i>Adicionar Ativo</a>
+                            class="material-icons left">add_circle</i><span data-i18n="investments.addAssetCTA"></span></a>
                     <!--<hr>-->
                     <div id="table-wrapper"></div>
                 </div>
@@ -79,7 +79,7 @@
                         <a id="add-new-trx-btn" class="waves-effect waves-light btn green-gradient-bg"
                            style="margin: 10px;"
                         ><i
-                                class="material-icons left">add_circle</i>Adicionar Transação</a>
+                                class="material-icons left">add_circle</i><span data-i18n="investments.addTransactionCTA"></span> </a>
                         <!--<hr>-->
                         <div id="table-wrapper-transactions"></div>
                     </div>
@@ -90,30 +90,29 @@
                 <div class="row">
                     <!---->
                     <div class="col s12" style="margin-top:20px;">
-                        <p id="topic-distribution"><b style="font-size: x-large;">Distribuição</b></p>
+                        <p id="topic-distribution"><b style="font-size: x-large;" data-i18n="investments.distribution"></b></p>
                         <div class="col s6 no-margins" id="reports-dist-pie-chart">
                             <div id="reports_assets_distribution_pie_chart"
                                  style="height: 300px; margin-top: 10px;"></div>
                             <div class="card-panel empty-view hide"></div>
-                            <div style="text-align: center;font-style: italic;font-weight: 500;">Classes de Ativo</div>
+                            <div style="text-align: center;font-style: italic;font-weight: 500;"><span data-i18n="investments.assetClasses"></span> </div>
                         </div>
                         <div class="col s6 no-margins" id="reports-inv-dist-pie-chart">
                             <div id="reports_investments_distribution_pie_chart"
                                  style="height: 300px; margin-top: 10px;"></div>
                             <div class="card-panel empty-view hide"></div>
-                            <div style="text-align: center;font-style: italic;font-weight: 500;">Ativos</div>
+                            <div style="text-align: center;font-style: italic;font-weight: 500;"><span data-i18n="investments.assets"></span></div>
                         </div>
                     </div>
                     <!---->
                     <div class="col s12" style="margin-top:35px;">
-                        <p id="topic-roi-by-asset"><b style="font-size: x-large;">Retornos por Ativo (ROI)</b></p>
+                        <p id="topic-roi-by-asset"><b style="font-size: x-large;"><span data-i18n="investments.returnsByAsset"></span></b></p>
                         <div id="roi_by_asset_table_wrapper"></div>
                     </div>
                     <!---->
                     <div class="col s12" style="margin-top:35px;">
-                        <p id="topic-roi-by-asset-class"><b style="font-size: x-large;">Retornos por Classe de Ativo
-                            (ROI)</b></p>
-                        <p><i>Em breve...</i></p>
+                        <p id="topic-roi-by-asset-class"><b style="font-size: x-large;"><span data-i18n="investments.returnsByAssetClass"></span></b></p>
+                        <p><i><span data-i18n="common.soon"></span>...</i></p>
                         <!--<table>
                             <thead>
                             <tr>
@@ -146,7 +145,7 @@
                         </table>-->
                     </div>
                     <div class="col s12" style="margin-top:35px;">
-                        <p id="topic-roi-by-year"><b style="font-size: x-large;">Desempenho Combinado por Ano</b></p>
+                        <p id="topic-roi-by-year"><b style="font-size: x-large;" data-i18n="investments.combinedPerformanceByYear"></b></p>
                         <div id="table-wrapper-roi-by-year"></div>
                     </div>
                     <!---->
@@ -154,7 +153,7 @@
                         <!--<h5 style="text-transform: uppercase;font-weight: bold;">
                             <span class="green-gradient-bg" style="/* background: #4caf50; */padding: 4px;">Top de performance</span></h5>
                         <hr class="green-gradient-bg" style="background: white;height: 2px;margin-top: -5px;text-transform: capitalize;">-->
-                        <p id="topic-evo-chart"><b style="font-size: x-large;">Evolução do Portefólio</b></p>
+                        <p id="topic-evo-chart"><b style="font-size: x-large;" data-i18n="investments.portfolioEvolution"></b></p>
                         <div class="col s12 no-margins" id="evo-line-chart">
                             <canvas id="dashboard_evolution_line_chart" style="margin: 0px;" width="400px"
                                     height="130"></canvas>

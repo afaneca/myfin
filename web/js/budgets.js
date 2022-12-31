@@ -5,6 +5,7 @@ import { LoadingManager } from './utils/loadingManager.js'
 import { BudgetServices } from './services/budgetServices.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { StringUtils } from './utils/stringUtils.js'
+import { Localization } from './utils/localization.js'
 
 let showOnlyOpen = false
 
@@ -29,7 +30,7 @@ export const Budgets = {
       }, (err) => {
         // ERROR
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   initTable: (resp) => {
@@ -71,13 +72,13 @@ export const Budgets = {
         <thead>
             <tr>
                 <th></th>
-                <th>Mês</th>
-                <th>Observações</th>
-                <th>Despesa</th>
-                <th>Receita</th>
-                <th>Balanço</th>
-                <th>Poupança</th>
-                <th>Ações</th>
+                <th>${Localization.getString("budgets.month")}</th>
+                <th>${Localization.getString("budgets.observations")}</th>
+                <th>${Localization.getString("transactions.expense")}</th>
+                <th>${Localization.getString("transactions.income")}</th>
+                <th>${Localization.getString("budgets.balance")}</th>
+                <th>${Localization.getString("budgets.savings")}</th>
+                <th>${Localization.getString("common.actions")}</th>
             </tr>
         </thead>
         <tbody>
@@ -154,14 +155,14 @@ export const Budgets = {
   showRemoveBudgetModal: (budgetID, month, year) => {
     $('#modal-global').modal('open')
     let txt = `
-                <h4>Remover orçamento de <b>${month}/${year}</b></h4>
+                <h4>${Localization.getString("budgets.deleteBudgetModalTitle", {month: month, year: year})}</h4>
                 <div class="row">
-                    <p>Tem a certeza de que pretende remover este orçamento?</p>
-                    <b>Esta ação é irreversível!</b>
+                    <p>${Localization.getString("budgets.deleteBudgetModalSubtitle")}</p>
+                    <b>${Localization.getString("budgets.deleteBudgetModalAlert")}</b>
                 </div>
                 `
-    let actionLinks = `<a class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a id="modal-remove-budget-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`
+    let actionLinks = `<a class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
+            <a id="modal-remove-budget-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.delete")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
     $('#modal-remove-budget-btn').click(() => Budgets.removeBudget(budgetID))
@@ -177,7 +178,7 @@ export const Budgets = {
       (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage('Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
 }
