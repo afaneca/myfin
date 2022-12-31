@@ -18,8 +18,10 @@ let PROJECTIONS_LINE_CHART
 let YEAR_BY_YEAR_SANKEY_CHART
 let yearByYearCurrentlySelectedYear = DateUtils.getCurrentYear()
 let categoryIncomeEvolutionDataCache
+let categoryExpensesEvolutionDataCache
 
 const INCOME_EVO_TOGGLE_ID = 'income-evo'
+const EXPENSES_EVO_TOGGLE_ID = 'expenses-evo'
 const INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY = 'month'
 const INCOME_EXPENSES_EVO_TOGGLE_OPTION_YEAR_KEY = 'year'
 
@@ -251,6 +253,20 @@ export const Stats = {
   },
   initExpensesPerCatEvolution: () => {
     LoadingManager.showLoading()
+    const options = [
+      {
+        id: INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY,
+        name: Localization.getString('stats.month'),
+      },
+      {
+        id: INCOME_EXPENSES_EVO_TOGGLE_OPTION_YEAR_KEY,
+        name: Localization.getString('stats.year'),
+      },
+    ]
+    ToggleComponent.buildToggle(EXPENSES_EVO_TOGGLE_ID, 'expenses-month-year-toggle-wrapper', options, INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY,
+      (optionId) => {
+        Stats.onExpensesEvoFiltersChanged(true)
+      })
     UserServices.getAllCategoriesAndEntitiesForUser(
       (resp) => {
         // SUCCESS
@@ -259,30 +275,7 @@ export const Stats = {
 
         $('#tab-expenses-per-cat').find('select.category-selection-select').select2()
         $('select.category-selection-select').on('change', (v) => {
-          let selectedEntCatId = $('#tab-expenses-per-cat').find('select.category-selection-select').val()
-          let selectedCatId,
-            selectedEntId
-          if (selectedEntCatId.startsWith('cat-')) {
-            selectedCatId = selectedEntCatId.split('cat-')[1]
-          }
-          else if (selectedEntCatId.startsWith('ent-')) {
-            selectedEntId = selectedEntCatId.split('ent-')[1]
-          }
-
-          Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution')
-
-          LoadingManager.showLoading()
-          StatServices.getCategoryExpensesEvolution(selectedCatId, selectedEntId,
-            (resp) => {
-              // SUCCESS
-              LoadingManager.hideLoading()
-              Stats.renderExpensesPerCategoryTable(resp)
-              Stats.renderExpensesPerCategoryLineChart(resp)
-            }, (resp) => {
-              // FAILURE
-              LoadingManager.hideLoading()
-              DialogUtils.showErrorMessage()
-            })
+          Stats.onExpensesEvoFiltersChanged(false)
         })
       }, (err) => {
         // FAILURE
@@ -291,13 +284,63 @@ export const Stats = {
       },
     )
   },
-  renderExpensesPerCategoryLineChart: dataset => {
+  onExpensesEvoFiltersChanged: (useCachedData = false) => {
+    let selectedPeriod = ToggleComponent.getSelectedOptionId(EXPENSES_EVO_TOGGLE_ID)
+    let selectedEntCatId = $('#tab-expenses-per-cat').find('select.category-selection-select').val()
+    let selectedCatId,
+      selectedEntId
+    if (selectedEntCatId.startsWith('cat-')) {
+      selectedCatId = selectedEntCatId.split('cat-')[1]
+    }
+    else if (selectedEntCatId.startsWith('ent-')) {
+      selectedEntId = selectedEntCatId.split('ent-')[1]
+    }
+
+    Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution')
+    if (!useCachedData) {
+      LoadingManager.showLoading()
+      StatServices.getCategoryExpensesEvolution(selectedCatId, selectedEntId,
+        (resp) => {
+          // SUCCESS
+          // cache into memory
+          categoryExpensesEvolutionDataCache = resp
+          LoadingManager.hideLoading()
+          let usableData
+          if (selectedPeriod === INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY) {
+            usableData = resp
+          }
+          else {
+            usableData = Stats.transformMonthlyEvoDataToYearly(resp)
+          }
+          Stats.renderExpensesPerCategoryTable(usableData, selectedPeriod)
+          Stats.renderExpensesPerCategoryLineChart(usableData, selectedPeriod)
+        }, (resp) => {
+          // FAILURE
+          LoadingManager.hideLoading()
+          DialogUtils.showErrorMessage()
+        })
+    }
+    else {
+      let usableData
+      if (selectedPeriod === INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY) {
+        usableData = JSON.parse(JSON.stringify(categoryExpensesEvolutionDataCache))
+      }
+      else {
+        usableData = Stats.transformMonthlyEvoDataToYearly(categoryExpensesEvolutionDataCache)
+      }
+      Stats.renderExpensesPerCategoryTable(usableData, selectedPeriod)
+      Stats.renderExpensesPerCategoryLineChart(usableData, selectedPeriod)
+    }
+  },
+  renderExpensesPerCategoryLineChart: (dataset, selectedPeriod) => {
     let chartData = []
     let chartLabels = []
 
     for (var i = dataset.length - 1; i >= 0; i--) {
       chartData.push(dataset[i].value)
-      chartLabels.push(`${dataset[i].month} /${dataset[i].year}`)
+      chartLabels.push(selectedPeriod === INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY ?
+        `${dataset[i].month}/${dataset[i].year}` : `${dataset[i].year}`,
+      )
     }
 
     const ctx = document.getElementById('chart_pie_cat_expenses_evolution').getContext('2d')
@@ -326,7 +369,7 @@ export const Stats = {
       options: customOptions,
     })
   },
-  renderExpensesPerCategoryTable: data => {
+  renderExpensesPerCategoryTable: (data, period) => {
     $('div#chart_pie_cat_expenses_evolution_table').html(`
       <table id='cat-expenses-evolution-table' class='display browser-defaults' style='width:100%'>
         <thead>
@@ -337,7 +380,8 @@ export const Stats = {
           </tr>
         </thead>
       <tbody>
-      ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
+      ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month,
+      period !== INCOME_EXPENSES_EVO_TOGGLE_OPTION_YEAR_KEY)).
       join('')}
       </tbody>
     </table>
@@ -346,11 +390,11 @@ export const Stats = {
 
     tableUtils.setupStaticTable('table#cat-expenses-evolution-table')
   },
-  renderExpensesPerCategoryTableRow: (oldMonth, monthData) => {
+  renderExpensesPerCategoryTableRow: (oldMonth, monthData, isMonth) => {
 
     return `
     <tr>
-    <td>${monthData.month}/${monthData.year}</td>
+    <td>${isMonth ? monthData.month + '/' + monthData.year : monthData.year}</td>
     <td>${StringUtils.formatMoney(monthData.value)}</td>
     <td>${(!oldMonth) ? '-' : Stats.calculateGrowthPercentage(oldMonth.value, monthData.value)}</td>
     </tr>
@@ -403,7 +447,7 @@ export const Stats = {
             name: Localization.getString('stats.year'),
           },
         ]
-        ToggleComponent.buildToggle(INCOME_EVO_TOGGLE_ID, 'month-year-toggle-wrapper', options, INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY,
+        ToggleComponent.buildToggle(INCOME_EVO_TOGGLE_ID, 'income-month-year-toggle-wrapper', options, INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY,
           (optionId) => {
             Stats.onIncomeEvoFiltersChanged(true)
           })

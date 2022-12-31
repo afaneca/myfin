@@ -16,7 +16,7 @@ export const ToggleComponent = {
             margin: 1px;
             cursor: pointer;
             opacity: 0.75;
-            border-radius: 4px;
+            border-radius: 4px 2px;
         }
         
         .toggle-option-wrapper:hover {
@@ -25,7 +25,6 @@ export const ToggleComponent = {
         
         .selected {
             opacity: 1;
-            background: blue;
         }
       </style>
       
