@@ -1,6 +1,7 @@
 import { LayoutUtils } from '../utils/layoutUtils.js'
 import { chartUtils } from '../utils/chartUtils.js'
 import { StringUtils } from '../utils/stringUtils.js'
+import { Localization } from '../utils/localization.js'
 
 export const InvestmentDashboardChartsFunc = {
   buildInvestmentsvolutionLineChart: (canvasId, chartLabels, chartData, extraChartData) => {
@@ -10,26 +11,32 @@ export const InvestmentDashboardChartsFunc = {
     const chartTitle = 'Evolução do Património';
     var customOptions = {
       scales: {
-        yAxes: [{
-          gridLines: { display: true, },
-          ticks: { display: true, fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'), }
-        }],
-        xAxes: [{
-          gridLines: { display: true, },
-          ticks: { display: true, fontColor: LayoutUtils.getCSSVariableValue('--main-text-color'),}
-        }],
-      },
-      title: {
-        display: true,
-        text: chartTitle,
-        position: 'top',
-        fontColor: LayoutUtils.getCSSVariableValue('--main-text-color')
-      },
-      legend: {
-        labels: {
-          fontColor: LayoutUtils.getCSSVariableValue('--main-text-color')
+        y: {
+          ticks: {
+            color: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            beginAtZero: true,
+          },
         },
-        display: false,
+        x: {
+          ticks: {
+            color: LayoutUtils.getCSSVariableValue('--main-text-color'),
+            beginAtZero: true,
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: chartTitle,
+          position: 'top',
+          color: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
+        },
+        legend: {
+          labels: {
+            color: LayoutUtils.getCSSVariableValue('--main-text-color')
+          },
+          display: false,
+        },
       },
       tooltips: {
         callbacks: {
@@ -49,7 +56,7 @@ export const InvestmentDashboardChartsFunc = {
       labels: chartLabels,
       datasets: [{
         data: chartData,
-        label: 'Acumulado',
+        label: Localization.getString("common.accumulated"),
         borderColor: '#3e95cd',
         fill: true,
         /*lineTension: 0,*/

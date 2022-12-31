@@ -8,6 +8,7 @@ import { chartUtils } from './utils/chartUtils.js'
 import { tableUtils } from './utils/tableUtils.js'
 import { LocalDataManager } from './utils/localDataManager.js'
 import { UserServices } from './services/userServices.js'
+import { Localization } from './utils/localization.js'
 
 let EXPENSES_PER_CATEGORY_LINE_CHART
 let INCOME_PER_CATEGORY_LINE_CHART
@@ -598,7 +599,7 @@ export const Stats = {
       datasets: [
         {
           data: chartData,
-          label: 'Acumulado',
+          label: Localization.getString("common.accumulated"),
           borderColor: '#3e95cd',
           fill: true,
           /*lineTension: 0,*/

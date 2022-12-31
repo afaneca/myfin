@@ -70,10 +70,45 @@ export const StringUtils = {
     }
   },
   getInvestingAssetObjectById: id => {
-    return Object.values(MYFIN.INVEST_ASSETS_TYPES).find(asset => asset.id === id)
+    let asset = Object.values(MYFIN.INVEST_ASSETS_TYPES).find(asset => asset.id === id)
+    asset.name = StringUtils.localizeAssetTypeName(asset.id)
+    return asset
+  },
+  localizeAssetTypeName: type => {
+    switch (type) {
+      case MYFIN.INVEST_ASSETS_TYPES.STOCKS.id:
+        return Localization.getString('investments.stocks')
+      case MYFIN.INVEST_ASSETS_TYPES.P2P_LOANS.id:
+        return Localization.getString('investments.p2pLoans')
+      case MYFIN.INVEST_ASSETS_TYPES.PPR.id:
+        return Localization.getString('investments.ppr')
+      case MYFIN.INVEST_ASSETS_TYPES.ETF.id:
+        return Localization.getString('investments.etf')
+      case MYFIN.INVEST_ASSETS_TYPES.CRYPTO.id:
+        return Localization.getString('investments.crypto')
+      case MYFIN.INVEST_ASSETS_TYPES.INVESTMENT_FUNDS.id:
+        return Localization.getString('investments.investmentFunds')
+      case MYFIN.INVEST_ASSETS_TYPES.INDEX_FUNDS.id:
+        return Localization.getString('investments.indexFunds')
+      case MYFIN.INVEST_ASSETS_TYPES.FIXED_INCOME.id:
+        return Localization.getString('investments.fixedIncome')
+      default:
+        return Localization.getString('investments.fixedIncome')
+    }
   },
   getInvestingTransactionsTypeObjectById: id => {
-    return Object.values(MYFIN.INVEST_TRX_TYPES).find(type => type.id === id)
+    let trxType = Object.values(MYFIN.INVEST_TRX_TYPES).find(type => type.id === id)
+    trxType.name = StringUtils.getLocalizedTransactionType(trxType.id)
+    return trxType
+  },
+  getLocalizedTransactionType: type => {
+    switch (type) {
+      case MYFIN.INVEST_TRX_TYPES.BUY.id:
+        return Localization.getString('investments.buy')
+      case MYFIN.INVEST_TRX_TYPES.SELL.id:
+        return Localization.getString('investments.sell')
+      default: return Localization.getString('investments.sell')
+    }
   },
   parseStringToBoolean: str => {
     return str === 'true'
