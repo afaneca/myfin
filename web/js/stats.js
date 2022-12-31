@@ -320,18 +320,18 @@ export const Stats = {
   },
   renderExpensesPerCategoryTable: data => {
     $('div#chart_pie_cat_expenses_evolution_table').html(`
-      < table id='cat-expenses-evolution-table' class='display browser-defaults' style='width:100%'>
-    <thead>
-    <tr>
-    <th>${Localization.getString("stats.month")}</th>
-    <th>${Localization.getString("common.value")}</th>
-    <th>${Localization.getString("stats.variationPercentage")}</th>
-    </tr>
-    </thead>
-    <tbody>
-    ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
+      <table id='cat-expenses-evolution-table' class='display browser-defaults' style='width:100%'>
+        <thead>
+          <tr>
+            <th>${Localization.getString('stats.month')}</th>
+            <th>${Localization.getString('common.value')}</th>
+            <th>${Localization.getString('stats.variationPercentage')}</th>
+          </tr>
+        </thead>
+      <tbody>
+      ${data.map((month, index) => Stats.renderExpensesPerCategoryTableRow(((index < data.length) ? (data[index + 1]) : null), month)).
       join('')}
-    </tbody>
+      </tbody>
     </table>
     `,
     )
