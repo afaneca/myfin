@@ -262,8 +262,8 @@ export var Accounts = {
                 <label for="account_add_datepicker">Data do saldo</label>
             </div>
     */
-    let actionLinks = `<a class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a id="modal-add-account-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`
+    let actionLinks = `<a class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
+    <a id="modal-add-account-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.add")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
 

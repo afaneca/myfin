@@ -352,9 +352,9 @@ export const BudgetDetails = {
 
     if (!IS_OPEN) {
       // update labels
-      $('span#estimated_expenses_label').text('Despesas Reais')
-      $('span#estimated_balance_label').text('Balanço Real')
-      $('span#estimated_income_label').text('Renda Real')
+      $('span#estimated_expenses_label').text(Localization.getString("budgetDetails.actualExpenses"))
+      $('span#estimated_balance_label').text(Localization.getString("budgetDetails.actualBalance"))
+      $('span#estimated_income_label').text(Localization.getString("budgetDetails.actualIncome"))
     }
 
     $(plannedCreditAmountsClassSelector).each((i, input) => {

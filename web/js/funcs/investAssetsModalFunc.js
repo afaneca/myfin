@@ -44,8 +44,8 @@ export const InvestAssetsModalFunc = {
       </div>
     `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a id="add_asset_btn"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
+    <a id="add_asset_btn"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.add")}</a>`
     $(`${modalDivID} .modal-content`).html(html)
     $(`${modalDivID} .modal-footer`).html(actionLinks)
 

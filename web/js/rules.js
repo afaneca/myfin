@@ -13,6 +13,7 @@ var categoriesList1
 export const Rules = {
   init: () => {
     Rules.getRules()
+    $('#add-rule-collapsible-header').html(`<i class=\'material-icons\'>edit</i>${Localization.getString("rules.addRule")}`)
   },
   getRules: () => {
     LoadingManager.showLoading()
