@@ -43,7 +43,7 @@ it can be useful for you as well.
 Here are the main features of MyFin:
 
 - **Localization (Multilingual support)** - Native full support to both english and portuguese
-- **Transactions** - You can add transactions manually or batch import them from the clipboard (from a .csv file or
+- **Transactions** - You can add transactions manually or import them in batches from the clipboard (from a .csv file or
   directly from your bank's homebanking solution)
 - **Split Transactions** - Easily split an already added transaction into two different ones, all with a few clicks
 - **Accounts** - You can track all of your accounts, including their transactions and balances
