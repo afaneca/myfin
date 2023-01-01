@@ -836,19 +836,6 @@ export const chartUtils = {
     }
 
     // the y-order of nodes, smaller = higher
-    /*var priority = {
-      Oil: 1,
-      'Narural Gas': 2,
-      Coal: 3,
-      'Fossil Fuels': 1,
-      Electricity: 2,
-      Energy: 1,
-    }*/
-
-    /*var labels = {
-      Oil: 'black gold (label changed)',
-    }*/
-
     return new Chart(ctx, {
       type: 'sankey',
       data: {
@@ -868,6 +855,7 @@ export const chartUtils = {
         ],
       },
     })
+
   },
 }
 
