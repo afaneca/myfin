@@ -183,7 +183,6 @@ export const InvestAssetsModalFunc = {
 
     $(`${modalDivID} .modal-content`).html(html)
     $(`${modalDivID} .modal-footer`).html(actionLinks)
-
     $('#edit_asset_btn').click(() => {
       if (conclusionCallback) {
         const value = $('#asset_value').val()

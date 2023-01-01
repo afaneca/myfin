@@ -3,6 +3,7 @@ import { ValidationUtils } from '../utils/validationUtils.js'
 import { PickerUtils } from '../utils/pickerUtils.js'
 import { DateUtils } from '../utils/dateUtils.js'
 import { Localization } from '../utils/localization.js'
+import { ToggleComponent } from '../components/toggleComponent.js'
 
 export const InvestTransactionsModalFunc = {
   buildAddNewTransactionModal: (modalDivID = '#modal-global', assetsList, addTransactionBtnClickCallback) => {
@@ -12,12 +13,10 @@ export const InvestTransactionsModalFunc = {
                     <div class="input-field col s8">
                         <h4>${Localization.getString('investments.addNewTransaction')}</h4>
                     </div>
-                    <div class="input-field col s4">
-                        <span class="select2-top-label">${Localization.getString('investments.typeOfTransaction')}</span>
-                        <select class="select-trxs-types" name="types">
-                            <option value="${MYFIN.INVEST_TRX_TYPES.BUY.id}">${MYFIN.INVEST_TRX_TYPES.BUY.name}</option>
-                            <option value="${MYFIN.INVEST_TRX_TYPES.SELL.id}">${MYFIN.INVEST_TRX_TYPES.SELL.name}</option>
-                        </select>
+                    <div class="input-field" style="float:right;display: grid;">
+                        <span class="select2-top-label col s12" style="float:right;text-align: end;width: fit-content;">${Localization.getString(
+      'investments.typeOfTransaction')}</span>
+                        <div id="type-toggle-wrapper" class="col s12" style="margin-left: 10px;float: right;width: fit-content;"></div>
                     </div>
                 </div>
                 
@@ -65,7 +64,17 @@ export const InvestTransactionsModalFunc = {
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
 
-    $('select.select-trxs-types').select2({ dropdownParent: '#modal-global' })
+    const options = [
+      {
+        id: MYFIN.INVEST_TRX_TYPES.BUY.id,
+        name: MYFIN.INVEST_TRX_TYPES.BUY.name,
+      },
+      {
+        id: MYFIN.INVEST_TRX_TYPES.SELL.id,
+        name: MYFIN.INVEST_TRX_TYPES.SELL.name,
+      },
+    ]
+    ToggleComponent.buildToggle('type', 'type-toggle-wrapper', options, MYFIN.INVEST_TRX_TYPES.BUY.id, (optionId) => {})
     $('select.select-trxs-asset').select2({ dropdownParent: '#modal-global' })
 
     $('.datepicker').datepicker({
@@ -81,7 +90,7 @@ export const InvestTransactionsModalFunc = {
         const units = $('#trx_units').val()
         const amount = $('#trx_amount').val()
         const observations = $('#trx-description').val()
-        const type = $('select.select-trxs-types').val()
+        const type = ToggleComponent.getSelectedOptionId('type')
         const assetId = $('select.select-trxs-asset').val()
         if (ValidationUtils.checkIfFieldsAreFilled([date, units, amount, type, assetId])) {
           addTransactionBtnClickCallback(date, units, amount, type, observations, assetId)
@@ -123,16 +132,10 @@ export const InvestTransactionsModalFunc = {
                     <div class="input-field col s8">
                         <h4>${Localization.getString('investments.editTransaction')}</h4>
                     </div>
-                    <div class="input-field col s4">
-                        <span class="select2-top-label">${Localization.getString('investments.typeOfTransaction')}</span>
-                        <select class="select-trxs-types" name="types">
-                            <option ${trxType === MYFIN.INVEST_TRX_TYPES.BUY.id
-      ? ' selected '
-      : ''} value="${MYFIN.INVEST_TRX_TYPES.BUY.id}">${MYFIN.INVEST_TRX_TYPES.BUY.name}</option>
-                            <option ${trxType === MYFIN.INVEST_TRX_TYPES.SELL.id
-      ? ' selected '
-      : ''} value="${MYFIN.INVEST_TRX_TYPES.SELL.id}">${MYFIN.INVEST_TRX_TYPES.SELL.name}</option>
-                        </select>
+                    <div class="input-field" style="float:right;display: grid;">
+                        <span class="select2-top-label col s12" style="float:right;text-align: end;width: fit-content;">${Localization.getString(
+      'investments.typeOfTransaction')}</span>
+                        <div id="type-toggle-wrapper" class="col s12" style="margin-left: 10px;float: right;width: fit-content;"></div>
                     </div>
                 </div>
                 
@@ -186,8 +189,17 @@ export const InvestTransactionsModalFunc = {
       format: 'dd/mm/yyyy',
       i18n: PickerUtils.getDatePickerDefault18nStrings(),
     })
-
-    $('select.select-trxs-types').select2({ dropdownParent: '#modal-global' })
+    const options = [
+      {
+        id: MYFIN.INVEST_TRX_TYPES.BUY.id,
+        name: MYFIN.INVEST_TRX_TYPES.BUY.name,
+      },
+      {
+        id: MYFIN.INVEST_TRX_TYPES.SELL.id,
+        name: MYFIN.INVEST_TRX_TYPES.SELL.name,
+      },
+    ]
+    ToggleComponent.buildToggle('type-edit', 'type-toggle-wrapper', options, trxType, (optionId) => {})
     $('select.select-trxs-asset').select2({ dropdownParent: '#modal-global' })
 
     $('textarea#trx-description').val(observations)
@@ -199,7 +211,7 @@ export const InvestTransactionsModalFunc = {
         const totalPrice = $('#trx_amount').val()
         const units = $('#trx_units').val()
         const assetId = $('select.select-trxs-asset').val()
-        const type = $('select.select-trxs-types').val()
+        const type = ToggleComponent.getSelectedOptionId('type-edit')
 
         /*
         if (ValidationUtils.checkIfFieldsAreFilled([date, units, amount, type, assetId])) {*/
