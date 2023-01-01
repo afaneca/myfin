@@ -29,10 +29,11 @@ export const InvestmentReportsTableFunc = {
         <td>${asset.name}</td>
         <td>${StringUtils.getInvestingAssetObjectById(asset.type).name}</td>
         <td>${StringUtils.formatMoney(asset.invested_amount)}<br>
-            <span class="" style="font-size: small;font-style: italic;">${StringUtils.formatMoney(asset.invested_amount / asset.units)} por unidade</span>
+            <span class="" style="font-size: small;font-style: italic;">${Localization.getString('investments.perUnitPrice',
+      { price: StringUtils.formatMoney(asset.invested_amount / asset.units) })}</span>
         </td>
         <td>${StringUtils.formatMoney(asset.current_value)}</td>
-        <td>${'<i>Em breve...</i>'}</td>
+        <td>${`<i>${Localization.getString('common.soon')}...</i>`}</td>
         <td>${StringUtils.formatMoney(asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(asset.relative_roi_percentage, true)}</td>
       </tr>
     `;
