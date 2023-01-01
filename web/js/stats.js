@@ -238,12 +238,14 @@ export const Stats = {
         `
   },
   renderYearByYearCategoriesDistributionSankeyChart: (dataset, getColor) => {
+    if (dataset.length === 0) {
+      return
+    }
     if (YEAR_BY_YEAR_SANKEY_CHART) {
       YEAR_BY_YEAR_SANKEY_CHART.destroy()
     }
     YEAR_BY_YEAR_SANKEY_CHART = chartUtils.setupSankeyChart('chart', Localization.getString('stats.incomeDistributionByExpenseCategories'), dataset,
       getColor)
-
   },
   clearCanvasAndTableWrapper: (tableWrapperLocator, canvasLocator) => {
     $(tableWrapperLocator).html('')

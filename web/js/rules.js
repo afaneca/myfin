@@ -485,26 +485,26 @@ export const Rules = {
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-account-to-assign">
-                                <option value="" ${!assign_account_to_id ? 'selected' : ''}>${Localization.getString("rules.ignore")}</option>
+                                <option value="" ${!assign_account_to_id ? 'selected' : ''}>${Localization.getString('rules.ignore')}</option>
                                 ${accountsList.map(acc => Rules.renderAccountsSelectOption(acc.account_id, acc.name, assign_account_to_id)).join('')}
                             </select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s2">
-                            <p>${Localization.getString("rules.essential")}</p>
+                            <p>${Localization.getString('rules.essential')}</p>
                         </div>
                         <div class="input-field col s10">
                             <select id="value-select-essential-assign">
-                                <option value="" ${!assign_is_essential ? 'selected' : ''}>${Localization.getString("rules.ignore")}</option>
-                                <option value="0" ${assign_is_essential != true ? 'selected' : ''}>${Localization.getString("rules.no")}</option>
-                                <option value="1" ${assign_is_essential == true ? 'selected' : ''}>${Localization.getString("rules.no")}</option>
+                                <option value="" ${!assign_is_essential ? 'selected' : ''}>${Localization.getString('rules.ignore')}</option>
+                                <option value="0" ${assign_is_essential != true ? 'selected' : ''}>${Localization.getString('rules.no')}</option>
+                                <option value="1" ${assign_is_essential == true ? 'selected' : ''}>${Localization.getString('rules.yes')}</option>
                             </select>
                         </div>
                     </div>
 
                     <a id="add-rule-btn" class="waves-effect waves-light btn green-gradient-bg" style="margin: -15px; float:right;"><i
-                            class="material-icons left">add_circle</i>${Localization.getString("rules.addRule")}</a>
+                            class="material-icons left">add_circle</i>${Localization.getString('rules.addRule')}</a>
             `,
     )
 
