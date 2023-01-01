@@ -4,6 +4,7 @@ import { LoadingManager } from './utils/loadingManager.js'
 import { CategoryServices } from './services/categoryServices.js'
 import { StringUtils } from './utils/stringUtils.js'
 import { chartUtils } from './utils/chartUtils.js'
+import { Localization } from './utils/localization.js'
 
 export const Categories = {
   getCategories: (type = undefined) => {
@@ -79,7 +80,7 @@ export const Categories = {
         <thead>
             <tr>
                 <th>Nome</th>
-                <th>Descrição</th>
+                <th>${Localization.getString('common.description')}</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -94,11 +95,11 @@ export const Categories = {
             <table id="debit-categories-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>Cor</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Estado</th>
-                <th>Ações</th>
+                <th>${Localization.getString('categories.color')}</th>
+                <th>${Localization.getString('categories.name')}</th>
+                <th>${Localization.getString('common.description')}</th>
+                <th>${Localization.getString('categories.status')}</th>
+                <th>${Localization.getString('common.actions')}</th>
             </tr>
         </thead>
         <tbody>
@@ -114,7 +115,8 @@ export const Categories = {
                    ${Categories.renderColorColumn(cats.color_gradient)}
                 </td>
                 <td>${cats.name} ${cats.exclude_from_budgets === '1'
-      ? '<a class="tooltipped" data-position="right" data-tooltip="Excluída dos orçamentos"> <i class="tiny material-icons hoverable">do_not_disturb_on</i></a>'
+      ? `<a class="tooltipped" data-position="right" data-tooltip="${Localization.getString(
+        'categories.excludedFromBudgets')}"> <i class="tiny material-icons hoverable">do_not_disturb_on</i></a>`
       : ''}</td>
                 <td>${cats.description}</td>
                 <td><span class="${(cats.status === 'Ativa')
@@ -144,7 +146,7 @@ export const Categories = {
     $('#modal-global').modal('open')
     let txt = `
                 <div class="row">
-                    <h4 class="col s8">Adicionar nova categoria</h4>
+                    <h4 class="col s8">${Localization.getString('categories.addCategoryModalTitle')}</h4>
                     <div class="col s4 right-align">${Categories.renderColorPickerSelect(
       null)}</div>
                 </div>
@@ -154,27 +156,27 @@ export const Categories = {
                         <div class="input-field col s8">
                         <i class="material-icons prefix">folder</i>
                             <input id="category_name" type="text" class="validate">
-                            <label for="category_name">Nome da Categoria</label>
+                            <label for="category_name">${Localization.getString('categories.name')}</label>
                         </div>  
                         <div class="input-field col s4">
                             <i class="material-icons prefix">power_settings_new</i>
                             <select id="category_status_select">
-                                <option value="Ativa">Ativa</option>
-                                <option value="Inativa">Inativa</option>
+                                <option value="Ativa">${Localization.getString('categories.active')}</option>
+                                <option value="Inativa">${Localization.getString('categories.inactive')}</option>
                             </select>
-                            <label>Estado</label>
+                            <label>${Localization.getString('categories.status')}</label>
                         </div>
                      </div>
                      <div class="row">
                         <div class="input-field col s9">
                             <i class="material-icons prefix">description</i>
-                            <label for="category_description" class="active">Descrição da Categoria</label>
-                            <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                            <label for="category_description" class="active">${Localization.getString('categories.description')}</label>
+                            <textarea id="category_description" maxlength="50" placeholder="${Localization.getString('common.description')}..." class="materialize-textarea"></textarea>
                         </div>
                         <div class="input-field col s3">
                             <label>
                                 <input id="exclude_from_budgets" type="checkbox" />
-                                <span>Excluir dos Orçamentos</span>
+                                <span>${Localization.getString('common.excludeFromBudgets')}</span>
                             </label>
                         </div>
                      </div>
@@ -183,8 +185,10 @@ export const Categories = {
                 </div>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a id="modal-add-cat-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString(
+      'common.cancel')}</a>
+    <a id="modal-add-cat-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString(
+      'common.add')}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
     $('#category_status_select').formSelect()
@@ -218,7 +222,7 @@ export const Categories = {
     const excludeFromBudgets = $('#exclude_from_budgets').is(':checked')
 
     if (!catName || catName === '' /*|| !catType || catType === ""*/) {
-      DialogUtils.showErrorMessage('Por favor, preencha todos os campos!')
+      DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))
       return
     }
 
@@ -228,29 +232,28 @@ export const Categories = {
       (response) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Categoria adicionada com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString('categories.categorySuccessfullyAdded'))
         configs.goToPage('categories', null, true)
       },
       (response) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   showRemoveCategoryModal: (catName, catID) => {
     $('#modal-global').modal('open')
     let txt = `
-                <h4>Remover categoria <b>${catName}</b></h4>
+                <h4>${Localization.getString('categories.deleteCategoryModalTitle', { name: catName })}</h4>
                 <div class="row">
-                    <p>Tem a certeza de que pretende remover esta categoria?</p>
-                    <b>Esta ação é irreversível!</b>
+                    <p>${Localization.getString("categories.deleteCategoryModalSubtitle")}</p>
+                    <b>${Localization.getString("categories.deleteCategoryModalAlert")}</b>
 
                 </div>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a id="modal-remove-cat-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
+            <a id="modal-remove-cat-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.remove")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
     $('#modal-remove-cat-btn').click(() => Categories.removeCategory(catID))
@@ -266,14 +269,13 @@ export const Categories = {
       (response) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Categoria removida com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString("categories.categorySuccessfullyDeleted"))
         configs.goToPage('categories', null, true)
       }),
       (response) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       }
   },
   showEditCategoryModal: (
@@ -281,7 +283,7 @@ export const Categories = {
     $('#modal-global').modal('open')
     let txt = `
                 <div class="row">
-                    <h4 class="col s8">Editar categoria</h4>
+                    <h4 class="col s8">${Localization.getString("categories.editCategoryModalTitle")}</h4>
                     <div class="col s4 right-align">${Categories.renderColorPickerSelect()}</div>
                 </div>
                 <form class="col s12">
@@ -289,32 +291,32 @@ export const Categories = {
                         <div class="input-field col s8">
                         <i class="material-icons prefix">folder</i>
                             <input id="category_name" type="text" class="validate">
-                            <label for="category_name" class="active">Nome da Categoria</label>
+                            <label for="category_name" class="active">${Localization.getString("categories.name")}</label>
                         </div>
                         <div class="input-field col s4">
                             <i class="material-icons prefix">power_settings_new</i>
                             <select id="category_status_select">
-                                <option value="" disabled selected>Escolha uma opção</option>
+                                <option value="" disabled selected>${Localization.getString("common.chooseAnOption")}</option>
                                 <option ${(catStatus === 'Ativa')
       ? 'selected'
-      : ''} value="Ativa">Ativa</option>
+      : ''} value="Ativa">${Localization.getString("categories.active")}</option>
                                 <option ${(catStatus === 'Inativa')
       ? 'selected'
-      : ''} value="Inativa">Inativa</option>
+      : ''} value="Inativa">${Localization.getString("categories.inactive")}</option>
                             </select>
-                            <label>Estado</label>
+                            <label>${Localization.getString("categories.status")}</label>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s9">
                             <i class="material-icons prefix">description</i>
-                            <label for="category_description" class="active">Descrição da Categoria</label>
-                            <textarea id="category_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                            <label for="category_description" class="active">${Localization.getString("categories.description")}</label>
+                            <textarea id="category_description" maxlength="50" placeholder="${Localization.getString('common.description')}..." class="materialize-textarea"></textarea>
                         </div>
                         <div class="input-field col s3">
                             <label>
                                 <input id="exclude_from_budgets" type="checkbox" />
-                                <span>Excluir dos Orçamentos</span>
+                                <span>${Localization.getString("common.excludeFromBudgets")}</span>
                             </label>
                         </div>
                     </div>                        
@@ -322,8 +324,8 @@ export const Categories = {
             </div>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a id="modal-edit-cat-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Editar</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
+    <a id="modal-edit-cat-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.edit")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
     $('#modal-edit-cat-btn').click(() => Categories.editCategory(catID))
@@ -387,7 +389,7 @@ export const Categories = {
     let catNewStatus = $('select#category_status_select').val()
 
     if (!catName || catName === '' /*|| !catType || catType === ""*/) {
-      DialogUtils.showErrorMessage('Por favor, preencha todos os campos!')
+      DialogUtils.showErrorMessage(Localization.getString("common.fillAllFieldsTryAgain"))
       return
     }
 
@@ -397,14 +399,13 @@ export const Categories = {
       () => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Categoria atualizada com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString("categories.categorySuccessfullyUpdated"))
         configs.goToPage('categories', null, true)
       },
       () => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
 }

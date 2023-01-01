@@ -1,4 +1,5 @@
 import { DialogUtils } from './utils/dialogUtils.js'
+import { Localization } from './utils/localization.js'
 
 export var configs = {
   version: '1.0.0',
@@ -50,6 +51,7 @@ export var configs = {
     else {
       window.location.hash = newHash
     }
+    Localization.localize()
   },
 
   parseParams: function () {

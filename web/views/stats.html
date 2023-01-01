@@ -7,11 +7,11 @@
         <div class="row" style="margin-top:10px;">
             <div class="col s12">
                 <ul class="tabs">
-                    <li class="tab col s4"><a href="#tab-ev-pat">Evolução do Património</a></li>
-                    <li class="tab col s2"><a href="#tab-projections">Projeções</a></li>
-                    <li class="tab col s2"><a href="#tab-expenses-per-cat">Evolução de Despesa</a></li>
-                    <li class="tab col s2"><a href="#tab-income-per-cat">Evolução de Receita</a></li>
-                    <li class="tab col s2"><a href="#tab-year-by-year">Ano-a-Ano</a></li>
+                    <li class="tab col s4"><a href="#tab-ev-pat" data-i18n="stats.netWorthEvolution"></a></li>
+                    <li class="tab col s2"><a href="#tab-projections" data-i18n="stats.projections"></a></li>
+                    <li class="tab col s2"><a href="#tab-expenses-per-cat" data-i18n="stats.expenses"></a></li>
+                    <li class="tab col s2"><a href="#tab-income-per-cat" data-i18n="stats.income"></a></li>
+                    <li class="tab col s2"><a href="#tab-year-by-year" data-i18n="stats.yearByYear"></a></li>
                 </ul>
             </div>
 
@@ -37,6 +37,7 @@
             </div>
             <div id="tab-expenses-per-cat" class="col s12">
                 <div class="card-panel">
+                    <div id="expenses-month-year-toggle-wrapper" style="margin-left: 10px;"></div>
                     <div class="categories-select-wrapper"></div>
                     <div id="canvas_chart_expenses_evo_wrapper">
                         <canvas id="chart_pie_cat_expenses_evolution" width="800"
@@ -50,7 +51,9 @@
             </div>
             <div id="tab-income-per-cat" class="col s12">
                 <div class="card-panel">
+                    <div id="income-month-year-toggle-wrapper" style="margin-left: 10px;"></div>
                     <div class="categories-select-wrapper"></div>
+
                     <div id="canvas_chart_income_evo_wrapper">
                         <canvas id="chart_pie_cat_income_evolution" width="800"
                                 height="300"></canvas>
@@ -68,11 +71,11 @@
                     </div>
                     <div class="row">
                         <div class="col s6">
-                            <h4>Renda por categoria</h4>
+                            <h4 data-i18n="stats.incomeByCategory"></h4>
                             <div id="year-by-year-table-credit-wrapper" style="padding: 10px;"></div>
                         </div>
                         <div class="col s6">
-                            <h4>Despesa por categoria</h4>
+                            <h4 data-i18n="stats.expensesByCategory"></h4>
                             <div id="year-by-year-table-debit-wrapper" style="padding: 10px;"></div>
                         </div>
                     </div>

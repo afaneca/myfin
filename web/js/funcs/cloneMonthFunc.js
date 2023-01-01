@@ -2,6 +2,8 @@ import { DialogUtils } from '../utils/dialogUtils.js'
 import { BudgetDetails } from '../budgetDetails.js'
 import { LoadingManager } from '../utils/loadingManager.js'
 import { BudgetServices } from '../services/budgetServices.js'
+import { Localization } from '../utils/localization.js'
+import { DateUtils } from '../utils/dateUtils.js'
 
 export const CloneMonthFunc = {
     onCloneMonthClicked: () => {
@@ -21,7 +23,7 @@ export const CloneMonthFunc = {
     showBudgetsListModal: budgetsList => {
         $("#modal-global").modal("open")
         let txt = `
-                <h4>Clonar um mês anterior</b></h4>
+                <h4>${Localization.getString("budgetDetails.cloneAPreviousMonth")}</h4>
                 <div class="row">
                     <form class="col s12">
                         <div class="input-field col s6">
@@ -34,8 +36,8 @@ export const CloneMonthFunc = {
                 </div>
                 `;
 
-        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a id="modal-clone-month-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Clonar Orçamento</a>`;
+        let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
+            <a id="modal-clone-month-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("budgetDetails.cloneBudgetCTA")}</a>`;
 
         $("#modal-global .modal-content").html(txt);
         $("#modal-global .modal-footer").html(actionLinks);
@@ -48,8 +50,8 @@ export const CloneMonthFunc = {
         `
     },
     buildBudgetStringLabel: (month, year) => {
-        const monthsArr = new Array("Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro")
-        return monthsArr[month - 1] + " de " + year
+        const monthName = DateUtils.getMonthsFullName(month)
+        return monthName + " " + year
     },
     cloneSpecificMonth: () => {
         const selectedBudgetID = $("#specific-budget-select").val()
@@ -65,7 +67,7 @@ export const CloneMonthFunc = {
                 // FAILURE
                 LoadingManager.hideLoading()
                 $("#modal-global").modal("close")
-                DialogUtils.showErrorMessage("Ocorreu um erro. Por favor, tente novamente mais tarde!")
+                DialogUtils.showErrorMessage()
             })
     },
     bindCategoriesToValues: budgetCategories => {

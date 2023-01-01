@@ -6,6 +6,7 @@ import { chartUtils } from './utils/chartUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
 import { AccountServices } from './services/accountServices.js'
 import { DialogUtils } from './utils/dialogUtils.js'
+import { Localization } from './utils/localization.js'
 
 export var Accounts = {
   init: () => {
@@ -48,8 +49,7 @@ export var Accounts = {
       },
       (error) => {
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   populateOperatingFundsGroup: (accs) => {
@@ -156,12 +156,12 @@ export var Accounts = {
             <table id="accounts-table" class="display browser-defaults" style="width:100%">
         <thead>
             <tr>
-                <th>Cor</th>
-                <th>Nome</th>
-                <th>Tipo</th>
-                <th>Saldo</th>
-                <th>Estado</th>
-                <th>Ações</th>
+                <th>${Localization.getString('accounts.color')}</th>
+                <th>${Localization.getString('accounts.name')}</th>
+                <th>${Localization.getString('accounts.type')}</th>
+                <th>${Localization.getString('accounts.balance')}</th>
+                <th>${Localization.getString('accounts.status')}</th>
+                <th>${Localization.getString('common.actions')}</th>
             </tr>
         </thead>
         <tbody>
@@ -180,7 +180,7 @@ export var Accounts = {
                 <td>${StringUtils.formatMoney(account.balance)}</td>
                 <td><span class="${(account.status === 'Ativa')
       ? 'badge green-text text-accent-4'
-      : 'badge pink-text text-accent-1'} ">${account.status}</span></td>
+      : 'badge pink-text text-accent-1'} ">${Localization.getString(account.status === 'Ativa' ? 'accounts.active' : 'accounts.inactive')}</span></td>
                 <td>
                     <i data-acc-name="${account.name}"
                     data-acc-description="${StringUtils.normalizeString(account.description)}"
@@ -201,7 +201,7 @@ export var Accounts = {
     $('#modal-global').modal('open')
     let txt = `
                 <div class="row">
-                    <h4 class="col s8">Adicionar Nova Conta</h4>
+                    <h4 class="col s8">${Localization.getString('accounts.addNewAccountModalTitle')}</h4>
                     <div class="col s4 right-align">${Accounts.renderColorPickerSelect()}</div>
                 </div>
                 <div class="row">
@@ -209,45 +209,45 @@ export var Accounts = {
                         <div class="input-field col s6">
                         <i class="material-icons prefix">account_circle</i>
                             <input id="account_name" type="text" class="validate">
-                            <label for="account_name">Nome da Conta</label>
+                            <label for="account_name">${Localization.getString('accounts.accountName')}</label>
                         </div>
                         <div class="input-field col s6">
                             <i class="material-icons prefix">note</i>
                             <select id="account_type_select">
-                                <option value="" disabled selected>Escolha uma opção</option>
-                                <option value="CHEAC">Conta Corrente</option>
-                                <option value="SAVAC">Conta Poupança</option>
-                                <option value="INVAC">Investimento</option>
-                                <option value="CREAC">Crédito</option>
-                                <option value="MEALAC">Cartão-Refeição</option>
-                                <option value="WALLET">Carteira</option>
-                                <option value="OTHAC">Outra</option>
+                                <option value="" disabled selected>${Localization.getString('common.chooseAnOption')}</option>
+                                <option value="CHEAC">${Localization.getString('accounts.cheac')}</option>
+                                <option value="SAVAC">${Localization.getString('accounts.savac')}</option>
+                                <option value="INVAC">${Localization.getString('accounts.invac')}</option>
+                                <option value="CREAC">${Localization.getString('accounts.creac')}</option>
+                                <option value="MEALAC">${Localization.getString('accounts.mealac')}</option>
+                                <option value="WALLET">${Localization.getString('accounts.wallet')}</option>
+                                <option value="OTHAC">${Localization.getString('accounts.othac')}</option>
                             </select>
-                            <label>Tipo de Conta</label>
+                            <label>${Localization.getString('accounts.typeOfAccount')}</label>
                         </div>
                         <div class="input-field col s6">
                             <i class="material-icons prefix">power_settings_new</i>
                             <select id="account_status_select">
-                                <option value="" disabled selected>Escolha uma opção</option>
-                                <option value="Ativa">Ativa</option>
-                                <option value="Inativa">Inativa</option>
+                                <option value="" disabled selected>${Localization.getString('common.chooseAnOption')}</option>
+                                <option value="Ativa">${Localization.getString('accounts.active')}</option>
+                                <option value="Inativa">${Localization.getString('accounts.inactive')}</option>
                             </select>
-                            <label>Estado da Conta</label>
+                            <label>${Localization.getString('accounts.statusOfAccount')}</label>
                         </div>
                         <div class="input-field col s6">
                             <i class="material-icons prefix">euro_symbol</i>
                             <input id="current_balance" type="number" step="0.01" min="0.00" class="validate" value="0.00" disabled>
-                            <label for="current_balance" class="active">Saldo Atual (€)</label>
+                            <label for="current_balance" class="active">${Localization.getString('accounts.currentBalance')} (€)</label>
                         </div>
                         <div class="input-field col s6">
                             <i class="material-icons prefix">description</i>
-                            <label for="account_description" class="active">Descrição</label>
-                            <textarea id="account_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                            <label for="account_description" class="active">${Localization.getString('common.description')}</label>
+                            <textarea id="account_description" maxlength="50" placeholder="${Localization.getString('common.description')}..." class="materialize-textarea"></textarea>
                         </div>
                         <div class="input-field col s6">
                             <label>
                                 <input id="exclude_from_budgets" type="checkbox" />
-                                <span>Excluir dos Orçamentos</span>
+                                <span>${Localization.getString('common.excludeFromBudgets')}</span>
                             </label>
                         </div>
                        
@@ -262,8 +262,8 @@ export var Accounts = {
                 <label for="account_add_datepicker">Data do saldo</label>
             </div>
     */
-    let actionLinks = `<a class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a id="modal-add-account-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`
+    let actionLinks = `<a class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
+    <a id="modal-add-account-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.add")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
 
@@ -332,16 +332,16 @@ export var Accounts = {
   showRemoveAccountModal: (accName, accID) => {
     $('#modal-global').modal('open')
     let txt = `
-                <h4>Remover Conta <b>${accName}</b></h4>
+                <h4>${Localization.getString("accounts.deleteAccountModalTitle", {name: accName})}</h4>
                 <div class="row">
-                    <p>Tem a certeza de que pretende remover esta conta?</p>
-                    <b>Esta ação é irreversível!</b>
+                    <p>${Localization.getString("accounts.deleteAccountModalSubtitle")}</p>
+                    <b>${Localization.getString("accounts.deleteAccountModalAlert")}</b>
 
                 </div>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a id="modal-remove-acc-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.edit")}</a>
+            <a id="modal-remove-acc-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.delete")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
     $('#modal-remove-acc-btn').click(() => Accounts.removeAccount(accID))
@@ -356,14 +356,13 @@ export var Accounts = {
       (response) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Conta removida com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString("accounts.accountSuccessfullyDeleted"))
         configs.goToPage('accounts', null, true)
       }),
       (response) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       }
   },
   renderColorPickerSelect: cat => {
@@ -389,7 +388,7 @@ export var Accounts = {
     $('#modal-global').modal('open')
     let txt = `
                 <div class="row">
-                    <h4 class="col s8">Editar a conta <b>${accName}</b></h4>
+                    <h4 class="col s8">${Localization.getString('accounts.editAccountModalTitle', { name: accName })}</h4>
                     <div class="col s4 right-align">${Accounts.renderColorPickerSelect(
       null)}</div>
                 </div>
@@ -398,63 +397,63 @@ export var Accounts = {
                         <div class="input-field col s6">
                         <i class="material-icons prefix">account_circle</i>
                             <input id="account_name" type="text" class="validate">
-                            <label class="active" for="account_name">Nome da Conta</label>
+                            <label class="active" for="account_name">${Localization.getString('accounts.accountName')}</label>
                         </div>
                         <div class="input-field col s6">
                             <i class="material-icons prefix">note</i>
                             <select id="account_type_select">
-                                <option value="" disabled selected>Escolha uma opção</option>
+                                <option value="" disabled selected>${Localization.getString('common.chooseAnOption')}</option>
                                 <option ${(accType === 'CHEAC')
       ? 'selected'
-      : ''} value="CHEAC">Conta Corrente</option>
+      : ''} value="CHEAC">${Localization.getString('accounts.cheac')}</option>
                                 <option ${(accType === 'SAVAC')
       ? 'selected'
-      : ''} value="SAVAC">Conta Poupança</option>
+      : ''} value="SAVAC">${Localization.getString('accounts.savac')}</option>
                                 <option ${(accType === 'INVAC')
       ? 'selected'
-      : ''} value="INVAC">Investimento</option>
+      : ''} value="INVAC">${Localization.getString('accounts.invac')}</option>
                                 <option ${(accType === 'CREAC')
       ? 'selected'
-      : ''} value="CREAC">Crédito</option>
+      : ''} value="CREAC">${Localization.getString('accounts.creac')}</option>
                                 <option ${(accType === 'MEALAC')
       ? 'selected'
-      : ''} value="MEALAC">Cartão-Refeição</option>
+      : ''} value="MEALAC">${Localization.getString('accounts.mealac')}</option>
                                 <option ${(accType === 'WALLET')
       ? 'selected'
-      : ''} value="WALLET">Carteira</option>
+      : ''} value="WALLET">${Localization.getString('accounts.wallet')}</option>
                                 <option ${(accType === 'OTHAC')
       ? 'selected'
-      : ''} value="OTHAC">Outra</option>
+      : ''} value="OTHAC">${Localization.getString('accounts.othac')}</option>
                             </select>
-                            <label>Tipo de Conta</label>
+                            <label>${Localization.getString('accounts.typeOfAccount')}</label>
                         </div>
                         <div class="input-field col s6">
                             <i class="material-icons prefix">power_settings_new</i>
                             <select id="account_status_select">
-                                <option value="" disabled selected>Escolha uma opção</option>
+                                <option value="" disabled selected>${Localization.getString('common.chooseAnOption')}</option>
                                 <option ${(accStatus === 'Ativa')
       ? 'selected'
-      : ''} value="Ativa">Ativa</option>
+      : ''} value="Ativa">${Localization.getString('accounts.active')}</option>
                                 <option ${(accStatus === 'Inativa')
       ? 'selected'
-      : ''} value="Inativa">Inativa</option>
+      : ''} value="Inativa">${Localization.getString('accounts.inactive')}</option>
                             </select>
-                            <label>Estado da Conta</label>
+                            <label>${Localization.getString('accounts.statusOfAccount')}</label>
                         </div>
                         <div class="input-field col s6">
                             <i class="material-icons prefix">euro_symbol</i>
                             <input id="current_balance" type="number" step="0.01" min="0.00" class="validate">
-                            <label class="active" for="current_balance">Saldo Atual (€)</label>
+                            <label class="active" for="current_balance">${Localization.getString('accounts.currentBalance')} (€)</label>
                         </div>
                          <div class="input-field col s6">
                             <i class="material-icons prefix">description</i>
-                            <label for="account_description" class="active">Descrição</label>
-                            <textarea id="account_description" maxlength="50" placeholder="Descrição..." class="materialize-textarea"></textarea>
+                            <label for="account_description" class="active">${Localization.getString('common.description')}</label>
+                            <textarea id="account_description" maxlength="50" placeholder="${Localization.getString('common.description')}..." class="materialize-textarea"></textarea>
                         </div>
                         <div class="input-field col s6">
                             <label>
                                 <input id="exclude_from_budgets" type="checkbox" />
-                                <span>Excluir dos Orçamentos</span>
+                                <span>${Localization.getString('common.excludeFromBudgets')}</span>
                             </label>
                         </div>
                        
@@ -462,8 +461,10 @@ export var Accounts = {
                 </div>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a id="modal-edit-acc-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Editar</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString(
+      'common.cancel')}</a>
+    <a id="modal-edit-acc-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString(
+      'common.edit')}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
 
@@ -512,7 +513,7 @@ export var Accounts = {
     if (!name || name === '' || !type || type === ''
       /*|| !description || description === ""*/ || !status || status === ''
       || !current_balance || current_balance === '') {
-      DialogUtils.showErrorMessage('Por favor, preencha todos os campos!')
+      DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))
       return
     }
     LoadingManager.showLoading()
@@ -521,14 +522,13 @@ export var Accounts = {
       (response) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Conta atualizada com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString("accounts.accountSuccessfullyUpdated"))
         configs.goToPage('accounts', null, true)
       },
       (response) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
 }

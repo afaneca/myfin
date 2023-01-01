@@ -1,9 +1,11 @@
+import { Localization } from './localization.js'
+
 export var DialogUtils = {
   showGenericMessage: (messageToShow) => {
-    M.toast({ text: messageToShow });
+    M.toast({ html: messageToShow });
   },
   showErrorMessage: (errorMessage
-    = 'Ocorreu um erro. Por favor, tente novamente mais tarde!') => {
+    = Localization.getString("common.somethingWentWrongTryAgain")) => {
     DialogUtils.showGenericMessage(errorMessage);
   },
   showWarningMessage: (warningMessage) => {

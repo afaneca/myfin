@@ -1,12 +1,12 @@
 <div id="page-wrapper">
     <div class="card-panel">
-        <span class="main-accent-color">Novo Orçamento</span>
+        <span class="main-accent-color" data-i18n="budgetDetails.newBudget"></span>
         <a id="clone-month-btn" class="waves-effect waves-light btn right-align"
            style="margin: 10px; float:right;"><i
-                class="material-icons left">add_circle</i>Clonar outro orçamento</a>
+                class="material-icons left">add_circle</i><span data-i18n="budgetDetails.cloneAnotherBudget"></span></a>
         <div class="row" style="margin-top:25px">
             <div class="col s2">
-                <input id="budgets-monthpicker" type="text" placeholder="Escolha um mês"/>
+                <input id="budgets-monthpicker" type="text" placeholder=""/>
             </div>
             <div class="col s9 offset-s1">
                 <div id="observations-shortcuts">
@@ -30,29 +30,29 @@
                 <div class="card blue-gradient-bg darken-1" style="border-radius: 10px;">
                     <div class="card-content white-text">
                         <div class="row">
-                            <div class="col s4 center-align"><span id="estimated_expenses_label">Despesa Estimada</span><br><span
+                            <div class="col s4 center-align"><span id="estimated_expenses_label" data-i18n="budgetDetails.estimatedExpenses"></span><br><span
                                     id="estimated_expenses_value"
                                     class="new-budget-summary-card-values">0.00</span>
                             </div>
                             <div class="col s4 center-align"><span
-                                    id="estimated_balance_label">Balanço Estimado</span><br><span
+                                    id="estimated_balance_label" data-i18n="budgetDetails.estimatedBalance"></span><br><span
                                     id="estimated_balance_value"
                                     class="new-budget-summary-card-values">0.00</span>
                             </div>
-                            <div class="col s4 center-align"><span id="estimated_income_label">Renda Estimada</span><br><span
+                            <div class="col s4 center-align"><span id="estimated_income_label" data-i18n="budgetDetails.estimatedIncome"></span><br><span
                                     id="estimated_income_value"
                                     class="new-budget-summary-card-values">0.00</span>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col s4 center-align">Saldo Inicial<br><span id="estimated_initial_balance_value"
-                                                                                    class="new-budget-summary-card-values">0.00</span>
+                            <div class="col s4 center-align"><span data-i18n="budgetDetails.initialBalance"></span><br><span id="estimated_initial_balance_value"
+                                                                                                                             class="new-budget-summary-card-values">0.00</span>
                             </div>
-                            <div class="col s4 center-align">Estado<br><span id="estimated_state_value"
-                                                                             class="new-budget-summary-card-values">Aberto</span>
+                            <div class="col s4 center-align"><span data-i18n="budgetDetails.status"></span><br><span id="estimated_state_value"
+                                                                                                                     class="new-budget-summary-card-values" data-i18n="budgetDetails.opened">Aberto</span>
                             </div>
-                            <div class="col s4 center-align">Saldo Final<br><span id="estimated_closing_balance_value"
-                                                                                  class="new-budget-summary-card-values"><span
+                            <div class="col s4 center-align"><span data-i18n="budgetDetails.finalBalance"></span><br><span id="estimated_closing_balance_value"
+                                                                                                                           class="new-budget-summary-card-values"><span
                                     id="estimated_closing_balance_value_amount">0.00</span> (<span
                                     id="estimated_closing_balance_value_percentage">0</span>%)</span></div>
 
@@ -62,31 +62,30 @@
             </div>
         </div>
         <div id="live-calculator-wrapper" class="row" style="display:none;">
-            <div class="col s3 center-align"> Poupanças (Estimado): <b>2020.20€</b></div>
-            <div class="col s3 center-align"> Poupanças (LIVE): <b>2020.20€</b></div>
-            <div class="col s3 center-align"> Poupanças Acumuladas (Estimado): <b>2020.20€</b></b></div>
-            <div class="col s3 center-align"> Poupanças Acumuladas (LIVE): <b>2020.20€</b></div>
+            <div class="col s3 center-align"> Poupanças (Estimado): <b>-€</b></div>
+            <div class="col s3 center-align"> Poupanças (LIVE): <b>-€</b></div>
+            <div class="col s3 center-align"> Poupanças Acumuladas (Estimado): <b>-€</b></b></div>
+            <div class="col s3 center-align"> Poupanças Acumuladas (LIVE): <b>-€</b></div>
         </div>
         <div class="row">
             <div class="col s6">
-                <h4>Débito<span id="debit-essential-expenses-totals"></span>
+                <h4><span data-i18n="common.debit"></span><span id="debit-essential-expenses-totals"></span>
                 </h4>
                 <div id="new-budget-debit-inputs"></div>
             </div>
             <div class="col s6">
-                <h4>Crédito</h4>
+                <h4><span data-i18n="common.credit"></span></h4>
                 <div id="new-budget-credit-inputs"></div>
             </div>
         </div>
         <center class="add-budget-bottom-btns">
             <a id="conclusion-btn"
                class="waves-effect waves-light btn right-align btn-large green-gradient-bg" style="margin: 10px;"><i
-                    class="material-icons no-accent-color left">add_circle</i><span id="conclusion-btn-text">Adicionar
-                    Orçamento</span></a>
+                    class="material-icons no-accent-color left">add_circle</i><span id="conclusion-btn-text"></span></a>
             <span id="conclusion-close-btn"
                   class="waves-effect waves-light btn right-align btn-large orange orange-gradient-bg"
                   style="margin: 10px;display:none;"><i class="material-icons no-accent-color left">archive</i><span
-                    id="conclusion-close-btn-text">Fechar Orçamento</span></span>
+                    id="conclusion-close-btn-text"></span></span>
         </center>
 
     </div>

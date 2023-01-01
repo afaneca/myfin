@@ -2,6 +2,8 @@ import { DialogUtils } from '../utils/dialogUtils.js'
 import { ValidationUtils } from '../utils/validationUtils.js'
 import { PickerUtils } from '../utils/pickerUtils.js'
 import { DateUtils } from '../utils/dateUtils.js'
+import { Localization } from '../utils/localization.js'
+import { ToggleComponent } from '../components/toggleComponent.js'
 
 export const InvestTransactionsModalFunc = {
   buildAddNewTransactionModal: (modalDivID = '#modal-global', assetsList, addTransactionBtnClickCallback) => {
@@ -9,14 +11,12 @@ export const InvestTransactionsModalFunc = {
     let txt = `
                 <div class="row row-no-margin-bottom">
                     <div class="input-field col s8">
-                        <h4>Adicionar nova transação</h4>
+                        <h4>${Localization.getString('investments.addNewTransaction')}</h4>
                     </div>
-                    <div class="input-field col s4">
-                        <span class="select2-top-label">Tipo de Transação</span>
-                        <select class="select-trxs-types" name="types">
-                            <option value="${MYFIN.INVEST_TRX_TYPES.BUY.id}">${MYFIN.INVEST_TRX_TYPES.BUY.name}</option>
-                            <option value="${MYFIN.INVEST_TRX_TYPES.SELL.id}">${MYFIN.INVEST_TRX_TYPES.SELL.name}</option>
-                        </select>
+                    <div class="input-field" style="float:right;display: grid;">
+                        <span class="select2-top-label col s12" style="float:right;text-align: end;width: fit-content;">${Localization.getString(
+      'investments.typeOfTransaction')}</span>
+                        <div id="type-toggle-wrapper" class="col s12" style="margin-left: 10px;float: right;width: fit-content;"></div>
                     </div>
                 </div>
                 
@@ -25,20 +25,20 @@ export const InvestTransactionsModalFunc = {
                             <div class="input-field col s2">
                                 <i class="material-icons prefix">euro_symbol</i>
                                 <input id="trx_amount" type="number" step=".01" class="validate">
-                                <label for="trx_amount">Valor (€)</label>
+                                <label for="trx_amount">${Localization.getString('common.value')} (€)</label>
                             </div>
                             <div class="input-field col s2">
                                 <i class="material-icons prefix">fiber_smart_record</i>
                                 <input id="trx_units" type="number" step=".0001" class="validate">
-                                <label for="trx_units">Unidades</label>
+                                <label for="trx_units">${Localization.getString('investments.units')}</label>
                             </div>  
                              <div class="input-field col s3">
                                 <i class="material-icons prefix">date_range</i>
                                 <input id="trx_date" type="text" class="datepicker input-field">
-                                <label for="trx_date">Data da transação</label>
+                                <label for="trx_date">${Localization.getString('transactions.dateOfTransaction')}</label>
                             </div>               
                             <div class="input-field col s3 offset-s2">
-                            <span class="select2-top-label">Ativo associado</span>
+                            <span class="select2-top-label">${Localization.getString('investments.associatedAsset')}</span>
                                 <select class="select-trxs-asset" name="assets" style="width: 100%;">
                                     ${assetsList.map(asset => InvestTransactionsModalFunc.renderAssetsSelectOption(asset)).join('')}
                                 </select>   
@@ -49,7 +49,7 @@ export const InvestTransactionsModalFunc = {
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description" class="materialize-textarea"></textarea>
-                                    <label for="trx-description">Observações</label>
+                                    <label for="trx-description">${Localization.getString('investments.observations')}</label>
                                 </div>
                             </div> 
                         </div>                             
@@ -57,12 +57,24 @@ export const InvestTransactionsModalFunc = {
                 </div>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-                    <a id="add_trx_btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Adicionar</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString(
+      'common.cancel')}</a>
+                    <a id="add_trx_btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString(
+      'common.add')}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
 
-    $('select.select-trxs-types').select2({ dropdownParent: '#modal-global' })
+    const options = [
+      {
+        id: MYFIN.INVEST_TRX_TYPES.BUY.id,
+        name: MYFIN.INVEST_TRX_TYPES.BUY.name,
+      },
+      {
+        id: MYFIN.INVEST_TRX_TYPES.SELL.id,
+        name: MYFIN.INVEST_TRX_TYPES.SELL.name,
+      },
+    ]
+    ToggleComponent.buildToggle('type', 'type-toggle-wrapper', options, MYFIN.INVEST_TRX_TYPES.BUY.id, (optionId) => {})
     $('select.select-trxs-asset').select2({ dropdownParent: '#modal-global' })
 
     $('.datepicker').datepicker({
@@ -78,13 +90,13 @@ export const InvestTransactionsModalFunc = {
         const units = $('#trx_units').val()
         const amount = $('#trx_amount').val()
         const observations = $('#trx-description').val()
-        const type = $('select.select-trxs-types').val()
+        const type = ToggleComponent.getSelectedOptionId('type')
         const assetId = $('select.select-trxs-asset').val()
         if (ValidationUtils.checkIfFieldsAreFilled([date, units, amount, type, assetId])) {
           addTransactionBtnClickCallback(date, units, amount, type, observations, assetId)
         }
         else {
-          DialogUtils.showErrorMessage('Por favor preencha todos os campos obrigatórios e tente novamente.')
+          DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))
         }
       }
     })
@@ -95,16 +107,18 @@ export const InvestTransactionsModalFunc = {
   showRemoveTrxConfirmationModal: (modalDivId, trxId, assetId, removeTrxCallback) => {
     $('#modal-global').modal('open')
     let txt = `
-      <h4>Remover Transação <b>#${trxId}</b></h4>
+      <h4>${Localization.getString('investments.deleteTrxModalTitle', { id: trxId })}</h4>
       <div class="row">
-          <p>Tem a certeza de que pretende remover este ativo?</p>
-          <b>Esta ação é irreversível!</b>
+          <p>${Localization.getString("investments.deleteTrxModalSubtitle")}</p>
+          <b>${Localization.getString("investments.deleteTrxModalAlert")}</b>
   
       </div>
       `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-            <a id="action-remove-asset-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Remover</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString(
+      'common.cancel')}</a>
+            <a id="action-remove-asset-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString(
+      'common.delete')}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
     $('#action-remove-asset-btn').click(() => removeTrxCallback(trxId, assetId))
@@ -116,18 +130,12 @@ export const InvestTransactionsModalFunc = {
     let html = `
                 <div class="row row-no-margin-bottom">
                     <div class="input-field col s8">
-                        <h4>Editar transação</h4>
+                        <h4>${Localization.getString('investments.editTransaction')}</h4>
                     </div>
-                    <div class="input-field col s4">
-                        <span class="select2-top-label">Tipo de Transação</span>
-                        <select class="select-trxs-types" name="types">
-                            <option ${trxType === MYFIN.INVEST_TRX_TYPES.BUY.id
-      ? ' selected '
-      : ''} value="${MYFIN.INVEST_TRX_TYPES.BUY.id}">${MYFIN.INVEST_TRX_TYPES.BUY.name}</option>
-                            <option ${trxType === MYFIN.INVEST_TRX_TYPES.SELL.id
-      ? ' selected '
-      : ''} value="${MYFIN.INVEST_TRX_TYPES.SELL.id}">${MYFIN.INVEST_TRX_TYPES.SELL.name}</option>
-                        </select>
+                    <div class="input-field" style="float:right;display: grid;">
+                        <span class="select2-top-label col s12" style="float:right;text-align: end;width: fit-content;">${Localization.getString(
+      'investments.typeOfTransaction')}</span>
+                        <div id="type-toggle-wrapper" class="col s12" style="margin-left: 10px;float: right;width: fit-content;"></div>
                     </div>
                 </div>
                 
@@ -136,20 +144,20 @@ export const InvestTransactionsModalFunc = {
                             <div class="input-field col s2">
                                 <i class="material-icons prefix">euro_symbol</i>
                                 <input id="trx_amount" type="number" step=".01" class="validate" value="${totalPrice}">
-                                <label class="active" for="trx_amount">Valor (€)</label>
+                                <label class="active" for="trx_amount">${Localization.getString('common.value')} (€)</label>
                             </div>
                             <div class="input-field col s2">
                                 <i class="material-icons prefix">fiber_smart_record</i>
                                 <input id="trx_units" type="number" step=".0001" class="validate" value="${units}">
-                                <label class="active" for="trx_units">Unidades</label>
+                                <label class="active" for="trx_units">${Localization.getString('investments.units')}</label>
                             </div>  
                              <div class="input-field col s3">
                                 <i class="material-icons prefix">date_range</i>
                                 <input id="trx_date" type="text" class="datepicker input-field">
-                                <label class="active" for="trx_date">Data da transação</label>
+                                <label class="active" for="trx_date">${Localization.getString('transactions.dateOfTransaction')}</label>
                             </div>               
                             <div class="input-field col s3 offset-s2">
-                            <span class="select2-top-label">Ativo associado</span>
+                            <span class="select2-top-label">${Localization.getString('investments.associatedAsset')}</span>
                                 <select class="select-trxs-asset" name="assets" style="width: 100%;">
                                     ${assetsList.map(asset => InvestTransactionsModalFunc.renderAssetsSelectOption(asset, assetId)).join('')}
                                 </select>   
@@ -160,7 +168,7 @@ export const InvestTransactionsModalFunc = {
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">description</i>
                                     <textarea id="trx-description" class="materialize-textarea"></textarea>
-                                    <label class="active" for="trx-description">Observações</label>
+                                    <label class="active" for="trx-description">${Localization.getString('investments.observations')}</label>
                                 </div>
                             </div> 
                         </div>                             
@@ -168,8 +176,8 @@ export const InvestTransactionsModalFunc = {
                 </div>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a id="edit_asset_btn"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Editar</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString('common.cancel')}</a>
+    <a id="edit_asset_btn"  class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString('common.edit')}</a>`
     $(`${modalDivID} .modal-content`).html(html)
     $(`${modalDivID} .modal-footer`).html(actionLinks)
 
@@ -181,8 +189,17 @@ export const InvestTransactionsModalFunc = {
       format: 'dd/mm/yyyy',
       i18n: PickerUtils.getDatePickerDefault18nStrings(),
     })
-
-    $('select.select-trxs-types').select2({ dropdownParent: '#modal-global' })
+    const options = [
+      {
+        id: MYFIN.INVEST_TRX_TYPES.BUY.id,
+        name: MYFIN.INVEST_TRX_TYPES.BUY.name,
+      },
+      {
+        id: MYFIN.INVEST_TRX_TYPES.SELL.id,
+        name: MYFIN.INVEST_TRX_TYPES.SELL.name,
+      },
+    ]
+    ToggleComponent.buildToggle('type-edit', 'type-toggle-wrapper', options, trxType, (optionId) => {})
     $('select.select-trxs-asset').select2({ dropdownParent: '#modal-global' })
 
     $('textarea#trx-description').val(observations)
@@ -194,7 +211,7 @@ export const InvestTransactionsModalFunc = {
         const totalPrice = $('#trx_amount').val()
         const units = $('#trx_units').val()
         const assetId = $('select.select-trxs-asset').val()
-        const type = $('select.select-trxs-types').val()
+        const type = ToggleComponent.getSelectedOptionId('type-edit')
 
         /*
         if (ValidationUtils.checkIfFieldsAreFilled([date, units, amount, type, assetId])) {*/
@@ -203,7 +220,7 @@ export const InvestTransactionsModalFunc = {
           editAssetCallback(trxId, date_timestamp, note, totalPrice, units, assetId, type)
         }
         else {
-          DialogUtils.showErrorMessage('Por favor preencha todos os campos obrigatórios e tente novamente.')
+          DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))
         }
       }
     })

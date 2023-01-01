@@ -88,6 +88,26 @@ class InvestAssetModel extends Entity
         }
     }
 
+    public static function getAverageBuyingPriceForAsset($assetId, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT total_price/units as avg_price " .
+            "FROM( SELECT sum(total_price/100) as total_price, sum(units) as units FROM invest_transactions " .
+            "WHERE invest_assets_asset_id = :assetID AND type = 'B') dataset ";
+
+        $values = array();
+        $values[':assetID'] = $assetId;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetch();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
     public static function getTransactionForUser($trxID, $userID, $transactional = false)
     {
         $db = new EnsoDB($transactional);

@@ -12,6 +12,7 @@ import { tableUtils } from './utils/tableUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
 import { InvestServices } from './services/investServices.js'
 import { StringUtils } from './utils/stringUtils.js'
+import { Localization } from './utils/localization.js'
 
 export const Investments = {
   addNewAssetClicked: () => {
@@ -28,8 +29,7 @@ export const Investments = {
     }, (err) => {
       // FAILURE
       LoadingManager.hideLoading()
-      DialogUtils.showErrorMessage(
-        'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+      DialogUtils.showErrorMessage()
     })
 
   },
@@ -39,7 +39,7 @@ export const Investments = {
       assetId, type,
       (res) => {
         // SUCCESS
-        DialogUtils.showSuccessMessage('Transação adicionada com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString('investments.transactionSuccessfullyAdded'))
         /*$('#modal-global')
           .modal('close');
         Investments.changeTabs('tab-inv-transactions');*/
@@ -53,14 +53,12 @@ export const Investments = {
           }, (err2) => {
             // FAILURE
             LoadingManager.hideLoading()
-            DialogUtils.showErrorMessage(
-              'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+            DialogUtils.showErrorMessage()
           })
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   addAsset: (name, ticker, type, broker) => {
@@ -69,14 +67,13 @@ export const Investments = {
       (res) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage('Ativo adicionado com sucesso!')
+        DialogUtils.showSuccessMessage(Localization.getString('investments.assetSuccessfullyAdded'))
         $('#modal-global').modal('close')
         Investments.changeTabs('tab-inv-assets')
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   editAssetClicked: (assetId, ticker, name, type, broker) => {
@@ -98,8 +95,7 @@ export const Investments = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       },
     )
   },
@@ -114,8 +110,7 @@ export const Investments = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       },
     )
   },
@@ -149,8 +144,7 @@ export const Investments = {
         }, (err) => {
           // FAILURE
           LoadingManager.hideLoading()
-          DialogUtils.showErrorMessage(
-            'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+          DialogUtils.showErrorMessage()
         })
         window.history.replaceState(null, null, '#!investments?tab=assets')
         break
@@ -163,8 +157,7 @@ export const Investments = {
         }, (err) => {
           // FAILURE
           LoadingManager.hideLoading()
-          DialogUtils.showErrorMessage(
-            'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+          DialogUtils.showErrorMessage()
         })
         window.history.replaceState(null, null,
           '#!investments?tab=transactions')
@@ -199,11 +192,11 @@ export const Investments = {
   buildTopicsIndex: () => {
     $('#topics-index-wrapper').html(`
         <center style="padding: 25px;">
-          <a id="topic-distribution-card" class="card topics-index-wrapper-card">Distribuição</a>
-          <a id="topic-roi-by-asset-card" class="card topics-index-wrapper-card">Retornos por Ativo (ROI)</a>
-          <a id="topic-roi-by-asset-class-card" class="card topics-index-wrapper-card">Retornos por Classe de Ativo (ROI)</a>
-          <a id="topic-roi-by-year-card" class="card topics-index-wrapper-card">Desempenho Combinado por Ano</a>
-          <a id="topic-evo-chart-card" class="card topics-index-wrapper-card">Evolução do Portefólio</a>
+          <a id="topic-distribution-card" class="card topics-index-wrapper-card">${Localization.getString('investments.distribution')}</a>
+          <a id="topic-roi-by-asset-card" class="card topics-index-wrapper-card">${Localization.getString('investments.returnsByAsset')}</a>
+          <a id="topic-roi-by-asset-class-card" class="card topics-index-wrapper-card">${Localization.getString('investments.returnsByAssetClass')}</a>
+          <a id="topic-roi-by-year-card" class="card topics-index-wrapper-card">${Localization.getString('investments.combinedPerformanceByYear')}</a>
+          <a id="topic-evo-chart-card" class="card topics-index-wrapper-card">${Localization.getString('investments.portfolioEvolution')}</a>
         </center>
       `)
 
@@ -239,8 +232,10 @@ export const Investments = {
       asset1.type).name : '-'}
                     <br>${(asset1 && totalInvestedValue &&
       totalInvestedValue !== 0)
-      ? StringUtils.formatStringToPercentage(
-      (asset1.current_value / totalInvestedValue) * 100) + ' do portefólio'
+      ? Localization.getString('investments.percentageOfPortfolio', {
+        percentage: StringUtils.formatStringToPercentage(
+          (asset1.current_value / totalInvestedValue) * 100),
+      })
       : '-'}
                 <span class="secondary-content" style="font-size: larger;">${asset1
       ? StringUtils.formatSignedMoney(asset1.absolute_roi_value)
@@ -254,9 +249,10 @@ export const Investments = {
                 <p>${asset2 ? StringUtils.getInvestingAssetObjectById(
       asset2.type).name : '-'}<br>
                     ${(asset2 && totalInvestedValue && totalInvestedValue !== 0)
-      ? StringUtils.formatStringToPercentage(
-      (asset2.current_value / totalInvestedValue) * 100) + ' do portefólio'
-      : '-'}
+      ? Localization.getString('investments.percentageOfPortfolio', {
+        percentage: StringUtils.formatStringToPercentage(
+          (asset2.current_value / totalInvestedValue) * 100),
+      }) : '-'}
                 </p>
                 <!--<a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>-->
                 <span class="secondary-content">${asset2
@@ -271,9 +267,10 @@ export const Investments = {
                 <p>${asset3 ? StringUtils.getInvestingAssetObjectById(
       asset3.type).name : '-'}<br>
                     ${(asset3 && totalInvestedValue && totalInvestedValue !== 0)
-      ? StringUtils.formatStringToPercentage(
-      (asset3.current_value / totalInvestedValue) * 100) + ' do portefólio'
-      : '-'}
+      ? Localization.getString('investments.percentageOfPortfolio', {
+        percentage: StringUtils.formatStringToPercentage(
+          (asset3.current_value / totalInvestedValue) * 100),
+      }) : '-'}
                 </p>
                 <span class="secondary-content">${asset3
       ? StringUtils.formatSignedMoney(asset3.absolute_roi_value)
@@ -402,8 +399,7 @@ export const Investments = {
         Investments.editTransaction)
     }, (err) => {
       LoadingManager.hideLoading()
-      DialogUtils.showErrorMessage(
-        'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+      DialogUtils.showErrorMessage()
     })
 
   },
@@ -426,8 +422,7 @@ export const Investments = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   removeTransaction: (trxId, assetId) => {
@@ -448,14 +443,12 @@ export const Investments = {
           }, (err2) => {
             // FAILURE
             LoadingManager.hideLoading()
-            DialogUtils.showErrorMessage(
-              'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+            DialogUtils.showErrorMessage()
           })
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       },
     )
   },
@@ -479,14 +472,12 @@ export const Investments = {
           }, (err2) => {
             // FAILURE
             LoadingManager.hideLoading()
-            DialogUtils.showErrorMessage(
-              'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+            DialogUtils.showErrorMessage()
           })
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       },
     )
   },

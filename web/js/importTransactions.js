@@ -6,6 +6,7 @@ import { DateUtils } from './utils/dateUtils.js'
 import { ValidationUtils } from './utils/validationUtils.js'
 import { StringUtils } from './utils/stringUtils.js'
 import { LocalDataManager } from './utils/localDataManager.js'
+import { Localization } from './utils/localization.js'
 
 let importedObjData = {
   data: [],
@@ -75,7 +76,7 @@ export const ImportTransactions = {
       if (permissionStatus.state !== 'granted' && permissionStatus.state !==
         'prompt') {
         DialogUtils.showGenericMessage(
-          'Para poder continuar a importação, tem que aceitar a permissão de leitura do clipboard!')
+          Localization.getString('transactions.clipboardPermissionMessage'))
       }
       else {
         ImportTransactions.readFromClipboard()
@@ -88,8 +89,7 @@ export const ImportTransactions = {
             $('#continue_import_btn').removeAttr('disabled')
           }, (err) => {
             // FAILURE
-            DialogUtils.showErrorMessage(
-              'Aconteceu algo de errado. Por favor, tente novamente.')
+            DialogUtils.showErrorMessage()
           },
         )
       }
@@ -104,7 +104,7 @@ export const ImportTransactions = {
     $('#account-select').html(`
             <div class="input-field">
                 <select class="select-trxs-account" name="accounts">
-                    <option disabled selected value="-1">Conta Origem</option>
+                    <option disabled selected value="-1">${Localization.getString('transactions.originAccount')}</option>
                     ${accsList.map(
       account => ImportTransactions.renderAccountsSelectOptions(account)).
       join('')}
@@ -127,7 +127,7 @@ export const ImportTransactions = {
       //console.log(text)
       ImportTransactions.createHTMLTableFromData(text)
     }).catch(err => {
-      console.log('ERRO ERRO ERRO')
+      console.log(err)
     })
   },
   createHTMLTableFromData: (data) => {
@@ -170,19 +170,19 @@ export const ImportTransactions = {
       headerRow.append(`
                 <th data-id="${column}"> 
                     <select id="field-mapping-${column}" class="field-mapping-select">
-                        <option value="${column}_${FIELD_MAPPING.IGNORE}">Ignorar</option>
+                        <option value="${column}_${FIELD_MAPPING.IGNORE}">${Localization.getString("common.ignore")}</option>
                         <option value="${column}_${FIELD_MAPPING.DATE}" ${checkIfTextIsAssociatedWithHeaderLabel(
-        headerLabel, FIELD_MAPPING.DATE) ? ' selected ' : ''}>Data (DD-MM-YYYY)</option>
+        headerLabel, FIELD_MAPPING.DATE) ? ' selected ' : ''}>${Localization.getString("common.date")} (DD-MM-YYYY)</option>
                         <option value="${column}_${FIELD_MAPPING.DESCRIPTION}" ${checkIfTextIsAssociatedWithHeaderLabel(
-        headerLabel, FIELD_MAPPING.DESCRIPTION) ? ' selected ' : ''}>Descrição</option>
+        headerLabel, FIELD_MAPPING.DESCRIPTION) ? ' selected ' : ''}>${Localization.getString('common.description')}</option>
                         <option value="${column}_${FIELD_MAPPING.AMOUNT}" ${checkIfTextIsAssociatedWithHeaderLabel(
-        headerLabel, FIELD_MAPPING.AMOUNT) ? ' selected ' : ''}>Montante</option>
+        headerLabel, FIELD_MAPPING.AMOUNT) ? ' selected ' : ''}>${Localization.getString('common.amount')}</option>
                         <option value="${column}_${FIELD_MAPPING.CREDIT}" ${checkIfTextIsAssociatedWithHeaderLabel(
-        headerLabel, FIELD_MAPPING.CREDIT) ? ' selected ' : ''}>Crédito</option>
+        headerLabel, FIELD_MAPPING.CREDIT) ? ' selected ' : ''}>${Localization.getString("common.credit")}</option>
                         <option value="${column}_${FIELD_MAPPING.DEBIT}" ${checkIfTextIsAssociatedWithHeaderLabel(
-        headerLabel, FIELD_MAPPING.DEBIT) ? ' selected ' : ''}>Débito</option>
+        headerLabel, FIELD_MAPPING.DEBIT) ? ' selected ' : ''}>${Localization.getString("common.debit")}</option>
                         <option value="${column}_${FIELD_MAPPING.TYPE}" ${checkIfTextIsAssociatedWithHeaderLabel(
-        headerLabel, FIELD_MAPPING.TYPE) ? ' selected ' : ''}>Tipo</option>
+        headerLabel, FIELD_MAPPING.TYPE) ? ' selected ' : ''}>${Localization.getString("common.type")}</option>
                     </select>
                 </th>
             `)
@@ -293,7 +293,7 @@ export const ImportTransactions = {
         hasDuplicatedFieldsGlobal = true
         IMPORT_STEP--
         DialogUtils.showErrorMessage(
-          'Por favor, não selecione campos duplicados!')
+          Localization.getString('transactions.pleaseDoNotSelectDuplicatedFields'))
         return
       }
     })
@@ -305,13 +305,13 @@ export const ImportTransactions = {
       (!amountColumn && !creditColumn && !debitColumn && !typeColumn)
       || (typeColumn && !amountColumn)) {
       DialogUtils.showErrorMessage(
-        'Por favor, selecione todos os campos necessários!')
+        Localization.getString('common.fillAllFieldsTryAgain'))
       IMPORT_STEP--
       return
     }
     if (!selectedAccountID) {
       DialogUtils.showErrorMessage(
-        'Por favor, selecione uma conta para associar às transações.')
+        Localization.getString('transactions.pleaseSelectAnAccountToAssociateWithTrx'))
       IMPORT_STEP--
       return
     }
@@ -396,8 +396,7 @@ export const ImportTransactions = {
       (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(
-          'Ocorreu um erro. Por favor, tente novamente mais tarde!')
+        DialogUtils.showErrorMessage()
       })
   },
   renderStep2Table: resp => {
@@ -411,13 +410,13 @@ export const ImportTransactions = {
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Data</th>
-                        <th>Valor</th>
-                        <th>Descrição</th>
-                        <th>Entidade</th>
-                        <th>Categoria</th>
-                        <th>Conta</th>
-                        <th>Essencial</th>
+                        <th>${Localization.getString('common.date')}</th>
+                        <th>${Localization.getString('common.value')}</th>
+                        <th>${Localization.getString('common.description')}</th>
+                        <th>${Localization.getString('transactions.entity')}</th>
+                        <th>${Localization.getString('transactions.category')}</th>
+                        <th>${Localization.getString('common.account')}</th>
+                        <th>${Localization.getString('transactions.essential')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -462,25 +461,25 @@ export const ImportTransactions = {
           }],
       'pageLength': 50,
       'language': {
-        'lengthMenu': 'A mostrar _MENU_ registos por página',
-        'zeroRecords': 'Nenhum registo encontrado',
-        'info': 'A mostrar a página _PAGE_ de _PAGES_',
-        'infoEmpty': 'Nenhum registo encontrado',
-        'infoFiltered': '(filtrado de um total de _MAX_ registos)',
-        'search': 'Pesquisa:',
+        'lengthMenu': Localization.getString('common.tableLengthMenu'),
+        'zeroRecords': Localization.getString('common.tableZeroRecords'),
+        'info': Localization.getString('common.tableInfo'),
+        'infoEmpty': Localization.getString('common.tableInfoEmpty'),
+        'infoFiltered': Localization.getString('common.tableInfoFiltered'),
+        'search': `${Localization.getString('common.search')}:`,
         'paginate': {
-          'next': 'Página Seguinte',
-          'previous': 'Página Anterior',
+          'next': Localization.getString('common.tablePaginateNext'),
+          'previous': Localization.getString('common.tablePaginatePrevious'),
         },
       },
       drawCallback: function () {
         $('select.entities-select').select2({
           allowClear: true,
-          placeholder: 'Sem Entidade',
+          placeholder: Localization.getString('common.noEntity'),
         })
         $('select.categories-select').select2({
           allowClear: true,
-          placeholder: 'Sem Categoria',
+          placeholder: Localization.getString('common.noCategory'),
         })
         $('select.accounts-select2').select2()
         $('.datepicker').datepicker({
@@ -530,7 +529,7 @@ export const ImportTransactions = {
   renderEntitiesSelect: selectedEntityID => {
     return `
             <select style="width:100%" class="entities-select">
-                <option value="" selected disabled>Entidade</option>
+                <option value="" selected disabled>${Localization.getString('transactions.entity')}</option>
                 ${entitiesList.map(
       entity => ImportTransactions.renderEntitiesSelectOptions(entity.entity_id,
         entity.name, selectedEntityID))}
@@ -548,7 +547,7 @@ export const ImportTransactions = {
   renderCategoriesSelect: selectedCategoryID => {
     return `
             <select style="width:100%" class="categories-select">
-                <option value="" selected disabled>Categoria</option>
+                <option value="" selected disabled>${Localization.getString('transactions.category')}</option>
                 ${categoriesList.map(
       category => ImportTransactions.renderCategoriesSelectOptions(
         category.category_id, category.name, selectedCategoryID))}
@@ -565,7 +564,7 @@ export const ImportTransactions = {
   renderAccountsSelect: (selectedAccountID) => {
     return `
             <select style="width:45%" class="select2 accounts-select2">
-                <option value="" selected>${EXTERNAL_ACCOUNT_LABEL}</option>
+                <option value="" selected>** ${Localization.getString('common.externalAccounts')} **</option>
                 ${accountsList.map(
       account => ImportTransactions.renderAccountsSelectOptions2(
         account.account_id, account.name, selectedAccountID))}
@@ -651,17 +650,20 @@ export const ImportTransactions = {
     let accountName = LocalDataManager.getUserAccount(selectedAccountID).name
 
     let txt = `
-                <h4>Concluir Importação?</h4>
-                <p>Transações Importadas: ${trxCnt}</p>
-                <p>Novo saldo da conta ${accountName}: ${StringUtils.formatMoney(
-      newBalanceCalc)}</p>
+                <h4>${Localization.getString('transactions.completeImportQuestion')}</h4>
+                <p>${Localization.getString('transactions.importedTransactionsCnt', { count: trxCnt })}</p>
+                <p>${Localization.getString('transactions.newBalanceForAccountValue', {
+      account: accountName,
+      value: StringUtils.formatMoney(
+        newBalanceCalc),
+    })}</p>
                 `
 
-    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">Cancelar</a>
-    <a id="do-step2-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">Importar</a>`
+    let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
+    <a id="do-step2-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("transactions.import")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
-    $("#do-step2-btn").click(() => ImportTransactions.doStep2())
+    $('#do-step2-btn').click(() => ImportTransactions.doStep2())
   },
   calculateNewBalance: () => {
     const account = LocalDataManager.getUserAccount(selectedAccountID)
@@ -690,7 +692,7 @@ export const ImportTransactions = {
         // SUCCESS
         LoadingManager.hideLoading()
         configs.goToPage('transactions')
-        DialogUtils.showGenericMessage('Transações importadas com sucesso!')
+        DialogUtils.showGenericMessage(Localization.getString("transactions.transactionsSuccessfullyImported"))
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
