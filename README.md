@@ -25,7 +25,9 @@ MyFin is my <u>attempt</u> to solve all of these issues. It has helped me manage
   <img src="/web/screenshots/2.PNG" alt="MyFin" width="400">
   <img src="/web/screenshots/3.PNG" alt="MyFin" width="400">
   <img src="/web/screenshots/4.PNG" alt="MyFin" width="400">
+  <img src="/web/screenshots/13.PNG" alt="MyFin" width="400">
   <img src="/web/screenshots/14.PNG" alt="MyFin" width="400">
+  <img src="/web/screenshots/15.PNG" alt="MyFin" width="400">
   <img src="/web/screenshots/16.PNG" alt="MyFin" width="400">
   <img src="/web/screenshots/17.PNG" alt="MyFin" width="400">
   <img src="/web/screenshots/18.PNG" alt="MyFin" width="400">
