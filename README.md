@@ -1,17 +1,17 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-***The android mobile app project is available [here](https://github.com/aFaneca/myfin-android/).***
+📱 ***The android mobile app project is available [here](https://github.com/aFaneca/myfin-android/).*** 📱
 
-# MyFin - Personal Finances Platform
+#  🏦📈💳 MyFin - Personal Finances Platform 
 
-- [About MyFin](#about-myfin)
-  - [Features](#features)
-  - [Roadmap](#roadmap)
-- [Getting Started](#getting-started)
-- [Contributing](#contributing)
-- [Dependencies](#dependencies)
+- [About MyFin](#-about-myfin)
+  - [Features](#-features)
+  - [Roadmap](#%EF%B8%8F-roadmap)
+- [Getting Started](#-getting-started)
+- [Contributing](#%EF%B8%8F-contributing)
+- [Dependencies](#-dependencies)
 
-# About MyFin
+# ⚡ About MyFin
 
 MyFin originated as my own passion project in 2020. At that point, I'd already tried a bunch of other FPM's, but all of
 them lacked in at least one of the following points:
@@ -38,7 +38,7 @@ it can be useful for you as well.
   <img src="/web/screenshots/15.PNG" alt="MyFin" width="400">
 </p>
 
-## Features
+## ✨ Features
 
 Here are the main features of MyFin:
 
@@ -58,7 +58,7 @@ Here are the main features of MyFin:
 - **Investing** - keeping track of your investments (currently in beta!)
 - **Theming** - multiple (white & dark) themes to choose from!
 
-## Roadmap
+## 🛣️ Roadmap
 
 Here's some of the features currently in development or planned for the near future:
 
@@ -67,7 +67,7 @@ Here's some of the features currently in development or planned for the near fut
 - **Better Stats** - add more complex & interesting stats
 - & much more...
 
-# Getting Started
+# 🔰 Getting Started
 
 This project relies on PHP's Slim framework for its backend and there's where most of the initial setup will take place
 if you want to deploy this solution to your own server.
@@ -75,12 +75,12 @@ if you want to deploy this solution to your own server.
 [Here](https://github.com/aFaneca/myfin/wiki/Project-Setup#initial-setup) you can find the full documentation on the
 first steps to get started.
 
-# Contributing
+# 🙋‍♂️ Contributing
 
 This was never meant to be anything other than a little passion project of mine. However, if you're interested in taking
 this project and make it your own or add something to it, you're more than welcome to do so. Just get in touch :)
 
-# Dependencies
+# 📦 Dependencies
 
 ## Web
 
