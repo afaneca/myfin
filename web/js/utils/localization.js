@@ -23,6 +23,8 @@ export var Localization = {
         backend: {
           loadPath: '../../locales/{{lng}}/{{ns}}.json',
         },
+        maxRetries: 3,
+        retryTimeout: 200,
       }, (err, t) => {
         if (err) {
           return console.error(err)
@@ -40,7 +42,7 @@ export var Localization = {
   localize: () => {
     setTimeout(() => {
       $('body').localize()
-    }, 100)
+    }, 300)
   },
   /*getString: (key) => {
     return i18next.t(key)
