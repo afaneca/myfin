@@ -22,12 +22,12 @@ export const tableUtils = {
       drawCallback: onDrawCallback,
     })
   },
-  setupStaticTableWithCustomColumnWidths: (tableID, customColumnWidths, onDrawCallback, ordering = false) => {
+  setupStaticTableWithCustomColumnWidths: (tableID, customColumnWidths, onDrawCallback, ordering = false, pageLegth = 50) => {
     $(tableID).DataTable({
       /*"order": [[0, "desc"]],*/
       'ordering': ordering,
       'lengthChange': false,
-      'pageLength': 50,
+      'pageLength': pageLegth,
       'columnDefs': customColumnWidths,
       'language': {
         'lengthMenu':'',

@@ -12,3 +12,16 @@
     color: var(--main-text-color);
     font-size: small;
 }
+
+#dashboard-trx-list-see-more {
+    font-weight: bold;
+    text-decoration: underline;
+    text-underline-position: under;
+    text-decoration-thickness: 2px;
+    transition: 1s;
+}
+
+#dashboard-trx-list-see-more:hover {
+    text-decoration: none;
+    transition: 1s;
+}

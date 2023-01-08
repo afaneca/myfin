@@ -343,7 +343,19 @@
     "noDescription": "No description",
     "transactionsList": "Transactions list",
     "cloneAPreviousMonth": "Clone a previous month",
-    "cloneBudgetCTA": "Clone budget"
+    "cloneBudgetCTA": "Clone budget",
+    "catRemainderCreditUnder": "You've received <b>{{amount}}</b> <b>under</b> the budgeted amount so far \uD83D\uDC4E",
+    "catRemainderCreditEqual": "You've received <b>EXACTLY</b> what you've budgeted for in this category!",
+    "catRemainderCreditOver": "You've received <b>{{amount}}</b> <b>over</b> the expected amount so far \uD83D\uDC4D",
+    "catRemainderDebitUnder": "You still have <b>{{amount}}</b> available for spending in this category \uD83D\uDC4D",
+    "catRemainderDebitEqual": "You've spent <b>EXACTLY</b> what you've budgeted for in this category!",
+    "catRemainderDebitOver": "You've overspent in this category by <b>{{amount}}</b> so far \uD83D\uDC4E",
+    "catRemainderCreditUnderClosed": "You've received <b>{{amount}}</b> <b>under</b> the budgeted amount \uD83D\uDC4E",
+    "catRemainderCreditEqualClosed": "You've received <b>EXACTLY</b> what you've budgeted for in this category!",
+    "catRemainderCreditOverClosed": "You've received <b>{{amount}}</b> <b>over</b> the expected amount so far \uD83D\uDC4D",
+    "catRemainderDebitUnderClosed": "You've <b>underspent</b> in this category by <b>{{amount}}</b> \uD83D\uDC4D",
+    "catRemainderDebitEqualClosed": "You've spent <b>EXACTLY</b> what you've budgeted for in this category!",
+    "catRemainderDebitOverClosed": "You've <b>overspent</b> in this category by <b>{{amount}}</b> \uD83D\uDC4E"
   },
   "investments": {
     "investments": "Investments",

@@ -8,6 +8,7 @@ import { TransactionServices } from './services/transactionServices.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { StatServices } from './services/statServices.js'
 import { Localization } from './utils/localization.js'
+import { TransactionsListComponent } from './components/transactionsListComponent.js'
 
 let CHART_INCOME_DISTRIBUTION
 let CHART_EXPENSES_DISTRIBUTION
@@ -99,31 +100,7 @@ export var Dashboard = {
       })
   },
   setupLastMovementsTable: list => {
-    $('#last_movements_table_wrapper').html(`
-         <table class="responsive-table myfin-table">
-            <thead>
-                <th>${Localization.getString("common.date")}</th>
-                <th>${Localization.getString("common.description")}</th>
-                <th>${Localization.getString("common.amount")}</th>
-            </thead>
-            <tbody>
-                ${list.map(mov => Dashboard.renderLastMovementsRow(mov)).
-      join('')}
-            </tbody>
-        </table>
-      
-      `)
-  },
-  renderLastMovementsRow: mov => {
-    return `
-            <tr data-id='${mov.transaction_id}'>
-                <td>${DateUtils.convertUnixTimestampToDateString(
-      mov.date_timestamp)}</td>
-                <td>${mov.description}</td>
-                <td>${Dashboard.formatCurrencyColumn(mov.type,
-      StringUtils.formatMoney(mov.amount))}</td>
-            </tr>
-        `
+    TransactionsListComponent.buildTransactionsList("id", "last_movements_table_wrapper", list)
   },
   formatCurrencyColumn: (type, formattedCurrencyString) => {
     switch (type) {
