@@ -42,7 +42,7 @@ export const Budgets = {
       }], () => {
       Budgets.bindClickListenersForGoToDetailsAction()
       Budgets.bindClickListenersForRemoveAction()
-    })
+    }, false, 20)
     LayoutUtils.scrollToWithAnimation('.highlighted-budget-item', 400)
   },
   bindClickListenersForGoToDetailsAction: () => {

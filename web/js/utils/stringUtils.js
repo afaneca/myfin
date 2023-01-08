@@ -65,7 +65,6 @@ export const StringUtils = {
         (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : '') + '' + currency
     }
     catch (e) {
-      console.log(e)
       return StringUtils.formatMoney('0', decimalCount, decimal, thousands, currency)
     }
   },
@@ -107,7 +106,8 @@ export const StringUtils = {
         return Localization.getString('investments.buy')
       case MYFIN.INVEST_TRX_TYPES.SELL.id:
         return Localization.getString('investments.sell')
-      default: return Localization.getString('investments.sell')
+      default:
+        return Localization.getString('investments.sell')
     }
   },
   parseStringToBoolean: str => {
