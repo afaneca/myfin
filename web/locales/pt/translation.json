@@ -343,7 +343,19 @@
     "noDescription": "Sem descrição",
     "transactionsList": "Lista de transações",
     "cloneAPreviousMonth": "Clonar um mês anterior",
-    "cloneBudgetCTA": "Clonar orçamento"
+    "cloneBudgetCTA": "Clonar orçamento",
+    "catRemainderCreditUnder": "Recebeu <b>menos</b> <b>{{amount}}</b> do que o esperado até ao momento \uD83D\uDC4E",
+    "catRemainderCreditEqual": "Recebeu <b>EXATAMENTE</b> o que orçamentou para esta categoria!",
+    "catRemainderCreditOver": "Recebeu <b>mais</b> <b>{{amount}}</b> do que o esperado até ao momento \uD83D\uDC4D",
+    "catRemainderDebitUnder": "Ainda tem <b>{{amount}}</b> disponíveis para gastar nesta categoria \uD83D\uDC4D",
+    "catRemainderDebitEqual": "Gastou <b>EXATAMENTE</b> o que orçamentou para esta categoria!",
+    "catRemainderDebitOver": "Gastou <b>{{amount}}</b> <b>a mais</b> nesta categoria até ao momento \uD83D\uDC4E",
+    "catRemainderCreditUnderClosed": "Recebeu <b>menos</b> <b>{{amount}}</b> do que o esperado \uD83D\uDC4E",
+    "catRemainderCreditEqualClosed": "Recebeu <b>EXATAMENTE</b> o que orçamentou para esta categoria!",
+    "catRemainderCreditOverClosed": "Recebeu <b>mais</b> <b>{{amount}}</b> do que o esperado \uD83D\uDC4D",
+    "catRemainderDebitUnderClosed": "Gastou <b>menos</b> <b>{{amount}}</b> do que o orçamentado para esta categoria \uD83D\uDC4D",
+    "catRemainderDebitEqualClosed": "Gastou <b>EXATAMENTE</b> o que orçamentou para esta categoria!",
+    "catRemainderDebitOverClosed": "Gastou <b>mais</b> <b>{{amount}}</b> do que o orçamentado para esta categoria \uD83D\uDC4E"
   },
   "investments": {
     "investments": "Investimentos",
