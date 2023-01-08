@@ -5,7 +5,7 @@ function RemoveLastDirectoryPartOf (the_url) {
 }
 
 var MYFIN = {
-  APP_VERSION: '4.2.0',
+  APP_VERSION: '4.3.0',
   TRX_TYPES: {
     INCOME: 'I',
     EXPENSE: 'E',
@@ -35,12 +35,14 @@ var MYFIN = {
     DARK_GRAY: './css/themes/dark_gray_theme.css',
     LIGHT: './css/themes/light_theme.css',
     SOLARIZED_GREEN: './css/themes/solarized_green_theme.css',
+    MAUVE_THEME: './css/themes/mauve_theme.css',
   },
   APP_THEMES: {
     DARK_BLUE: 'DARK_BLUE',
     DARK_GRAY: 'DARK_GRAY',
     LIGHT: 'LIGHT',
     SOLARIZED_GREEN: 'SOLARIZED_GREEN',
+    MAUVE_THEME: 'MAUVE_THEME'
   },
   TRX_FETCH_LIMIT: 300,
   INVEST_ASSETS_TYPES: {

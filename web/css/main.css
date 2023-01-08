@@ -20,7 +20,7 @@
     --main-dark-on-dark-background: #1f2029;
     --main-text-color: #ffffff;
     --main-text-headline-color: white;
-    --main-light-gray-color: #515558;
+    --main-light-gray-color: #b2b7bb;
 
     --main-accent-color: var(--main-light-blue);
     --main-body-background: var(--main-dark-background);
@@ -1032,4 +1032,26 @@ svg:not(:root) {
 .hoverable:hover {
     opacity: 1;
     transition: 0.5s ease;
+}
+
+[type=checkbox]+span:not(.lever) {
+    color: var(--main-text-color);
+}
+
+
+[type=checkbox]:checked+span:not(.lever):before {
+    border-right: 2px solid var(--main-accent-color);
+    border-bottom: 2px solid var(--main-accent-color);
+}
+
+.select-wrapper .caret {
+    fill: var(--main-accent-color);
+}
+
+[type=checkbox]+span:not(.lever):before, [type=checkbox]:not(.filled-in)+span:not(.lever):after {
+    border: 2px solid var(--main-accent-color);
+}
+
+[type=radio]:not(:checked)+span:before, [type=radio]:not(:checked)+span:after {
+    border: 2px solid var(--main-accent-color);
 }

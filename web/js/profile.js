@@ -26,7 +26,7 @@ export const Profile = {
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(Localization.getString("common.somethingWentWrongTryAgain"))
+        DialogUtils.showErrorMessage(Localization.getString('common.somethingWentWrongTryAgain'))
       },
     )
   },
@@ -57,12 +57,12 @@ export const Profile = {
     const newPassword2 = $('input#new_pw_repeat').val()
 
     if (!ValidationUtils.checkIfFieldsAreFilled([oldPassword, newPassword1, newPassword2])) {
-      DialogUtils.showErrorMessage(Localization.getString("common.fillAllFieldsTryAgain"))
+      DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))
       return
     }
 
     if (newPassword1 !== newPassword2) {
-      DialogUtils.showErrorMessage(Localization.getString("profile.passwordsDoNotMatchMessage"))
+      DialogUtils.showErrorMessage(Localization.getString('profile.passwordsDoNotMatchMessage'))
       return
     }
 
@@ -70,11 +70,11 @@ export const Profile = {
     UserServices.changeUserPassword(oldPassword, newPassword1,
       (resp) => {
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage(Localization.getString("profile.changePasswordSuccessMessage"))
+        DialogUtils.showSuccessMessage(Localization.getString('profile.changePasswordSuccessMessage'))
         resetSession()
       }, (err) => {
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(Localization.getString("common.somethingWentWrongTryAgain"))
+        DialogUtils.showErrorMessage(Localization.getString('common.somethingWentWrongTryAgain'))
       })
   },
   initChangeLanguageOptions: () => {
@@ -132,6 +132,13 @@ export const Profile = {
                             <span>Solarized Green</span>
                         </label>
                     </p>
+                    <p>
+                        <label>
+                            <input name="theme-group" type="radio" value="${MYFIN.APP_THEMES.MAUVE_THEME}"  ${(currentTheme ===
+      MYFIN.APP_THEMES.MAUVE_THEME) ? ' checked ' : ''} />
+                            <span>Mauve</span>
+                        </label>
+                    </p>
                    `
 
     $('#change-theme-radio-group-wrapper').html(html)
@@ -146,11 +153,11 @@ export const Profile = {
       (resp) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        DialogUtils.showSuccessMessage(Localization.getString("common.taskSuccessfullyCompleted"))
+        DialogUtils.showSuccessMessage(Localization.getString('common.taskSuccessfullyCompleted'))
       }, (err) => {
         // FAILURE
         LoadingManager.hideLoading()
-        DialogUtils.showErrorMessage(Localization.getString("common.somethingWentWrongTryAgain"))
+        DialogUtils.showErrorMessage(Localization.getString('common.somethingWentWrongTryAgain'))
       },
     )
   },

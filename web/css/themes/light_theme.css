@@ -2,7 +2,7 @@
     --main-text-color: #000000E5 !important;
     --main-text-headline-color: rgb(0 0 0 / 100%) !important;
 
-    --main-light-gray-color: #dedfe0;
+    --main-light-gray-color: #7f8285;
     --main-accent-color: var(--main-light-blue);
     --main-body-background: linear-gradient(rgb(248, 250, 253) 0%, rgba(248, 250, 253, 0) 413px); /*var(--main-light-gray-color);*/
     --main-sidebar-background: white;
@@ -125,4 +125,12 @@ table.dataTable thead th, table.dataTable thead td {
 
 table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
     background-color: #dedfe0 !important;
+}
+
+.white-text {
+    color: var(--main-text-color) !important;
+}
+
+.badge.white-text {
+    color: white !important;
 }

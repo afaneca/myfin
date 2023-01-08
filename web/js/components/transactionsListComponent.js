@@ -55,7 +55,7 @@ const TransactionsListInternals = {
         </div>
         <div class="t-row-item trx-type-middle">
             <p style="font-weight: bold;margin: 0px 0px 0.0625rem;">${trx.entity_name ? trx.entity_name : Localization.getString("common.noEntity")}</p>
-            <span style="color: #e4efef;">${trx.description}</span>
+            <span style="color: var(--main-light-gray-color);">${trx.description}</span>
         </div>
         <div class="t-row-item valign-wrapper trx-type-amount">${TransactionsListInternals.buildAmount(trx)}</div>
     </div>
@@ -87,19 +87,19 @@ const TransactionsListInternals = {
       case MYFIN.TRX_TYPES.TRANSFER:
         return `
       <div class="orange-gradient-bg" style="width: 40px; height: 40px;border-radius:10px;">
-        <i class="grey-text material-icons inner-icon">compare_arrows</i>
+        <i class="white-text grey-text material-icons inner-icon" style="color: white !important;">compare_arrows</i>
       </div>
     `
       case MYFIN.TRX_TYPES.INCOME:
         return `
       <div class="green-gradient-bg" style="width: 40px; height: 40px;border-radius:10px;">
-        <i class="grey-text material-icons inner-icon">arrow_forward</i>
+        <i class="white-text grey-text material-icons inner-icon" style="color: white !important;">arrow_forward</i>
       </div>
     `
       case MYFIN.TRX_TYPES.EXPENSE:
         return `
       <div class="red-gradient-bg" style="width: 40px; height: 40px;border-radius:10px;">
-        <i class="grey-text material-icons inner-icon">arrow_back</i>
+        <i class="white-text grey-text material-icons inner-icon" style="color: white !important;">arrow_back</i>
       </div>
     `
     }
