@@ -1,12 +1,12 @@
 :root {
-    /* Dark Gray theme */
+    /* Solarized green theme */
     --main-body-background: #0B525B;
     --main-sidebar-background: #006466;
     --main-card-background: #006466;
     --main-modal-background: #0B525B;
     --main-disabled-color: #1B3A4B;
     --main-accent-color: #ffffff;
-    --main-light-gray-color: #0b525b;
+    --main-light-gray-color: #becbcd;
 }
 
 .main-dark-bg {

@@ -8,104 +8,113 @@ export var LayoutUtils = {
     }, animationDurationInMs)
   },
   getCSSVariableValue: (varName) => {
-    return getComputedStyle(document.documentElement)
-      .getPropertyValue(varName);
+    return getComputedStyle(document.documentElement).getPropertyValue(varName)
   },
   changeTheme: (themeName) => {
     switch (themeName) {
       case MYFIN.APP_THEMES.DARK_BLUE:
         // unload dark gray theme and light theme css
-        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY + '\']')
-          .remove();
-        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.LIGHT + '\']')
-          .remove();
-        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN + '\']')
-          .remove();
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
         LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.DARK_BLUE);
         break;
       case MYFIN.APP_THEMES.DARK_GRAY:
       default:
         // unload light theme css
-        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.LIGHT + '\']')
-          .remove();
-        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN + '\']')
-          .remove();
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
         // load dark gray theme css
-        $('head')
-          .append('<link type="text/css" rel="stylesheet" href="' + MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY + '" id="removable-css">');
-        LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.DARK_GRAY);
-        break;
+        LayoutUtils.loadTheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
+        LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.DARK_GRAY)
+        break
       case MYFIN.APP_THEMES.LIGHT:
         // unload dark gray theme css
-        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY + '\']')
-          .remove();
-        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN + '\']')
-          .remove();
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
         // load dark gray theme css
-        $('head')
-          .append('<link type="text/css" rel="stylesheet" href="' + MYFIN.APP_THEMES_CSS_PATH.LIGHT + '" id="removable-css">');
-        LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.LIGHT);
+        LayoutUtils.loadTheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
+        LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.LIGHT)
         // custom logo for light theme
-        $('#side-nav-logo-img')
-          .attr('src', '../img/logo/logo_transparent_bg_v2.png');
-        break;
+        $('#side-nav-logo-img').attr('src', '../img/logo/logo_transparent_bg_v2.png')
+        break
       case MYFIN.APP_THEMES.SOLARIZED_GREEN:
         // unload dark gray theme and light theme css
-        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY + '\']')
-          .remove();
-        $('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.LIGHT + '\']')
-          .remove();
-        /*$('link[href=\'' + MYFIN.APP_THEMES_CSS_PATH.DARK_BLUE + '\']')
-          .remove();*/
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
         // load solarized green theme css
-        $('head')
-          .append('<link type="text/css" rel="stylesheet" href="' + MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN + '" id="removable-css">');
-        LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.SOLARIZED_GREEN);
-        break;
+        LayoutUtils.loadTheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
+        LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.SOLARIZED_GREEN)
+        break
+      case MYFIN.APP_THEMES.MAUVE_THEME:
+        // unload dark gray theme and light theme css
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
+        // load solarized green theme css
+        LayoutUtils.loadTheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
+        LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.MAUVE_THEME)
+        break
     }
+
+  },
+  unloadAllThemes: (excludeThemePath) => {
+    if (excludeThemePath !== MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY) {
+      LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
+    }
+    if (excludeThemePath !== MYFIN.APP_THEMES_CSS_PATH.LIGHT) {
+      LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
+    }
+    if (excludeThemePath !== MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN) {
+      LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
+    }
+    if (excludeThemePath !== MYFIN.APP_THEMES_CSS_PATH.DARK_BLUE) {
+      LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_BLUE)
+    }
+    if (excludeThemePath !== MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME) {
+      LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
+    }
+  },
+  unloadtheme: (themePath) => {
+    $('link[href=\'' + themePath + '\']').remove()
+  },
+  loadTheme: (themePath) => {
+    $('head').append('<link type="text/css" rel="stylesheet" href="' + themePath + '" id="removable-css">')
+  },
+  getCurrentThemeName: () => {
+    return LocalDataManager.getCurrentTheme() ? LocalDataManager.getCurrentTheme() : MYFIN.APP_THEMES.DARK_GRAY
   },
   getCurrentThemePath: () => {
     switch (LocalDataManager.getCurrentTheme()) {
       case MYFIN.APP_THEMES.DARK_GRAY:
       default:
-        return MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY;
+        return MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY
       case MYFIN.APP_THEMES.DARK_BLUE:
-        return MYFIN.APP_THEMES_CSS_PATH.DARK_BLUE;
+        return MYFIN.APP_THEMES_CSS_PATH.DARK_BLUE
       case MYFIN.APP_THEMES.LIGHT:
-        return MYFIN.APP_THEMES_CSS_PATH.LIGHT;
+        return MYFIN.APP_THEMES_CSS_PATH.LIGHT
 
     }
   },
-  getCurrentThemeName: () => {
-    return LocalDataManager.getCurrentTheme() ? LocalDataManager.getCurrentTheme() : MYFIN.APP_THEMES.DARK_GRAY;
-  },
   scrollToWithAnimation: (elementLocator, scrollInterval = 500) => {
-    $('html, body')
-      .animate({
-        scrollTop: $(elementLocator)
-          .offset().top
-      }, scrollInterval);
+    $('html, body').animate({
+      scrollTop: $(elementLocator).offset().top,
+    }, scrollInterval)
   },
   buildEssentialTransactionBadge: () => {
     return `
       <span class="badge white-text purple-gradient-bg" style="font-size:small;" data-badge-caption="">${Localization.getString(
       'transactions.essential')}</span>
-    `;
+    `
   },
   scaleOutElement: (elementLocator) => {
-    $(elementLocator)
-      .removeClass('scale-transition')
-      .removeClass('scale-in')
-      .addClass('scale-transition')
-      .addClass('scale-out');
+    $(elementLocator).removeClass('scale-transition').removeClass('scale-in').addClass('scale-transition').addClass('scale-out')
   },
   scaleInElement: (elementLocator) => {
-    $(elementLocator)
-      .removeClass('scale-transition')
-      .removeClass('scale-out')
-      .addClass('scale-transition')
-      .addClass('scale-in');
+    $(elementLocator).removeClass('scale-transition').removeClass('scale-out').addClass('scale-transition').addClass('scale-in')
   },
-};
+}
 
 //# sourceURL=js/utils/layoutUtils.js
