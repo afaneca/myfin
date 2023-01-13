@@ -210,7 +210,7 @@ export const BudgetDetails = {
   buildTotalsRow: isCredit => {
     if (isCredit) {
       return `
-                <tr style="text-decoration: none; background: var(--main-light-gray-color);">
+                <tr style="text-decoration: none; background: var(--main-body-background);">
                     <td>${Localization.getString('common.total')}</td>
                     <td><span id="table_total_credit_expected">0.0€</span></td>
                     <td><span id="table_total_credit_current">0.0€</span></td>
@@ -219,7 +219,7 @@ export const BudgetDetails = {
     }
 
     return `
-                <tr style="text-decoration: none; background: var(--main-light-gray-color);">
+                <tr style="text-decoration: none; background: var(--main-body-background);">
                     <td>${Localization.getString('common.total')}</td>
                     <td><span id="table_total_debit_expected">0.0€</span></td>
                     <td><span id="table_total_debit_current">0.0€</span></td>
