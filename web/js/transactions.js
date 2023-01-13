@@ -734,7 +734,8 @@ ${trx.description}
                 `
 
         let actionLinks = `<a id="split-trx-btn" class="waves-effect waves-light btn right-align transparent-bordered-btn-blue" onclick="" style="margin: 10px; float:left;"><i class="material-icons left"><span id="split-trx-btn-icon-id">call_split</span></i><span id="split-trx-btn-text" data-i18n="transactions.splitTransaction">${Localization.getString(
-          'transactions.splitTransaction')}</span></a><a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text" data-i18n="common.cancel"></a>
+          'transactions.splitTransaction')}</span></a><a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString(
+          'common.cancel')}</a>
                     <a data-trx-id="${trxID}" class="waves-effect waves-orange btn-flat enso-salmon-bg enso-border white-text modal-action-edit-trx">${Localization.getString(
           'common.edit')}</a>`
 

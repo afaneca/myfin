@@ -102,7 +102,7 @@ export const ImportTransactions = {
   renderAccountSelect: (accsList) => {
 
     $('#account-select').html(`
-            <div class="input-field">
+            <div class="input-field" style="border: 1px solid var(--main-body-background);width: fit-content;border-radius: 5px;">
                 <select class="select-trxs-account" name="accounts">
                     <option disabled selected value="-1">${Localization.getString('transactions.originAccount')}</option>
                     ${accsList.map(
