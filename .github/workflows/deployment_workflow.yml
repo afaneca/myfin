@@ -15,7 +15,7 @@ jobs:
         host: ${{ secrets.MYFIN_SSH_HOST }}
         username: ${{ secrets.MYFIN_SSH_USERNAME }}
         key: ${{ secrets.MYFIN_SECRET }}
-        port: 22
+        port: ${{ secrets.MYFIN_SSH_PORT }}
         script: |
           ./update_myfin.sh
         
