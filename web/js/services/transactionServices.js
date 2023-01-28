@@ -10,14 +10,18 @@ export const TransactionServices = {
         authusername: Cookies.get('username'),
         sessionkey: Cookies.get('sessionkey'),
       },
-      data: { trx_limit: trxLimit },
+      data: {trx_limit: trxLimit},
       url: pageUrl,
-      success: function (response) {
-        if (successCallback) successCallback(response);
+      success: function(response) {
+        if (successCallback) {
+          successCallback(response);
+        }
       },
-      error: function (response) {
-        if (errorCallback) errorCallback(response);
-      }
+      error: function(response) {
+        if (errorCallback) {
+          errorCallback(response);
+        }
+      },
     });
   },
   getXTransactions: (nrOfTransactions, successCallback, errorCallback) => {
@@ -31,17 +35,22 @@ export const TransactionServices = {
         authusername: Cookies.get('username'),
         sessionkey: Cookies.get('sessionkey'),
       },
-      data: { trx_limit: nrOfTransactions },
+      data: {trx_limit: nrOfTransactions},
       url: pageUrl,
-      success: function (response) {
-        if (successCallback) successCallback(response);
+      success: function(response) {
+        if (successCallback) {
+          successCallback(response);
+        }
       },
-      error: function (response) {
-        if (errorCallback) errorCallback(response);
-      }
+      error: function(response) {
+        if (errorCallback) {
+          errorCallback(response);
+        }
+      },
     });
   },
-  getTransactionsFromMonthAndCategory: (month, year, cat_id, type, successCallback, errorCallback) => {
+  getTransactionsFromMonthAndCategory: (
+      month, year, cat_id, type, successCallback, errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'trxs/inMonthAndCategory';
     $.ajax({
       async: true,
@@ -56,15 +65,19 @@ export const TransactionServices = {
         month,
         year,
         cat_id,
-        type
+        type,
       },
       url: pageUrl,
-      success: function (response) {
-        if (successCallback) successCallback(response);
+      success: function(response) {
+        if (successCallback) {
+          successCallback(response);
+        }
       },
-      error: function (response) {
-        if (errorCallback) errorCallback(response);
-      }
+      error: function(response) {
+        if (errorCallback) {
+          errorCallback(response);
+        }
+      },
     });
   },
   getAddTransactionStep0: (successCallback, errorCallback) => {
@@ -77,19 +90,26 @@ export const TransactionServices = {
       cache: false,
       headers: {
         authusername: Cookies.get('username'),
-        sessionkey: Cookies.get('sessionkey')
+        sessionkey: Cookies.get('sessionkey'),
       },
       data: {},
       url: pageUrl,
-      success: function (response) {
-        if (successCallback) successCallback(response);
+      success: function(response) {
+        if (successCallback) {
+          successCallback(response);
+        }
       },
-      error: function (response) {
-        if (errorCallback) errorCallback(response);
-      }
+      error: function(response) {
+        if (errorCallback) {
+          errorCallback(response);
+        }
+      },
     });
   },
-  addTransaction: (amount, type, description, entity_id, account_from_id, account_to_id, category_id, date_timestamp, is_essential, successCallback, errorCallback) => {
+  addTransaction: (
+      amount, type, description, entity_id, account_from_id, account_to_id,
+      category_id, date_timestamp, is_essential, successCallback,
+      errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'trxs/step1';
 
     $.ajax({
@@ -110,15 +130,19 @@ export const TransactionServices = {
         account_to_id,
         category_id,
         date_timestamp,
-        is_essential
+        is_essential,
       },
       url: pageUrl,
-      success: function (response) {
-        if (successCallback) successCallback(response);
+      success: function(response) {
+        if (successCallback) {
+          successCallback(response);
+        }
       },
-      error: function (response) {
-        if (errorCallback) errorCallback(response);
-      }
+      error: function(response) {
+        if (errorCallback) {
+          errorCallback(response);
+        }
+      },
     });
   },
   /*editTransaction: (trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp, successCallback, errorCallback) => {
@@ -153,12 +177,21 @@ export const TransactionServices = {
           }
       });
   },*/
-  editTransaction: (trxID, new_amount, new_type, new_description, new_entity_id, new_account_from_id, new_account_to_id, new_category_id, new_date_timestamp, new_is_essential,
-    is_split, split_amount, split_category, split_entity, split_type, split_account_from, split_account_to, split_description, split_is_essential, successCallback, errorCallback) => {
+  editTransaction: (trxID, new_amount, new_type, new_description, new_entity_id,
+      new_account_from_id, new_account_to_id, new_category_id,
+      new_date_timestamp, new_is_essential,
+      is_split, split_amount, split_category, split_entity, split_type,
+      split_account_from, split_account_to, split_description,
+      split_is_essential,
+      successCallback, errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'trxs/';
 
-    if (new_type !== MYFIN.TRX_TYPES.EXPENSE) new_is_essential = false;
-    if (split_type !== MYFIN.TRX_TYPES.EXPENSE) split_is_essential = false;
+    if (new_type !== MYFIN.TRX_TYPES.EXPENSE) {
+      new_is_essential = false;
+    }
+    if (split_type !== MYFIN.TRX_TYPES.EXPENSE) {
+      split_is_essential = false;
+    }
 
     $.ajax({
       async: true,
@@ -191,12 +224,16 @@ export const TransactionServices = {
         split_is_essential,
       },
       url: pageUrl,
-      success: function (response) {
-        if (successCallback) successCallback(response);
+      success: function(response) {
+        if (successCallback) {
+          successCallback(response);
+        }
       },
-      error: function (response) {
-        if (errorCallback) errorCallback(response);
-      }
+      error: function(response) {
+        if (errorCallback) {
+          errorCallback(response);
+        }
+      },
     });
   },
   removeTransaction: (trxID, successCallback, errorCallback) => {
@@ -215,16 +252,23 @@ export const TransactionServices = {
         transaction_id: trxID,
       },
       url: pageUrl,
-      success: function (response) {
-        if (successCallback) successCallback(response);
+      success: function(response) {
+        if (successCallback) {
+          successCallback(response);
+        }
       },
-      error: function (response) {
-        if (errorCallback) errorCallback(response);
-      }
+      error: function(response) {
+        if (errorCallback) {
+          errorCallback(response);
+        }
+      },
     });
   },
-  autoCategorizeTrxByDescription: (description, successCallback, errorCallback) => {
-    var pageUrl = REST_SERVER_PATH + 'trxs/auto-cat-description';
+  autoCategorizeTrx: (
+      description, amount, type, account_from_id, account_to_id,
+      successCallback, errorCallback) => {
+
+    var pageUrl = REST_SERVER_PATH + 'trxs/auto-cat-trx';
 
     $.ajax({
       async: true,
@@ -237,14 +281,22 @@ export const TransactionServices = {
       },
       data: {
         description,
+        amount,
+        type,
+        account_from_id,
+        account_to_id,
       },
       url: pageUrl,
-      success: function (response) {
-        if (successCallback) successCallback(response);
+      success: function(response) {
+        if (successCallback) {
+          successCallback(response);
+        }
       },
-      error: function (response) {
-        if (errorCallback) errorCallback(response);
-      }
+      error: function(response) {
+        if (errorCallback) {
+          errorCallback(response);
+        }
+      },
     });
   },
 };

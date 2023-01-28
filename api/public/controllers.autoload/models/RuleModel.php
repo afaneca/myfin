@@ -36,9 +36,6 @@ class RuleModel extends Entity
             ["users_user_id" => $userID]
         );
 
-        /*print_r($rules);
-        die();*/
-
         foreach ($rules as $rule) {
             $hasMatched = false;
 
@@ -53,28 +50,28 @@ class RuleModel extends Entity
                     if (RuleModel::contains(strtoupper($ruleValue), strtoupper($trx["description"]))) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_CONTAINS) {
                     if (!RuleModel::contains($ruleValue, $trx["description"])) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
                     if ($ruleValue == $trx["description"]) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
                     if ($ruleValue != $trx["description"]) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 }
@@ -91,28 +88,28 @@ class RuleModel extends Entity
                     if (RuleModel::contains($ruleValue, Input::convertFloatToIntegerAmount($trx["amount"]))) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_CONTAINS) {
                     if (!RuleModel::contains($ruleValue, Input::convertFloatToIntegerAmount($trx["amount"]))) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
                     if ($ruleValue == Input::convertFloatToIntegerAmount($trx["amount"])) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
                     if ($ruleValue != Input::convertFloatToIntegerAmount($trx["amount"])) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 }

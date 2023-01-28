@@ -65,7 +65,7 @@ class InvestAssets
 
             // Sort assets array by current value (DESC)
             usort($res, function ($first, $second) {
-                return $first["current_value"] < $second["current_value"];
+                return $second["current_value"] <=> $first["current_value"];
             });
 
             return sendResponse($response, EnsoShared::$REST_OK, $res);
@@ -477,7 +477,7 @@ class InvestAssets
             }
             // Sort assets array by absolute roi value (DESC)
             usort($fullAssetsDetailsArr, function ($first, $second) {
-                return $first["absolute_roi_value"] < $second["absolute_roi_value"];
+                return $second["absolute_roi_value"] <=> $first["absolute_roi_value"];
             });
             $res["top_performing_assets"] = /*array_slice(*/
                 $fullAssetsDetailsArr/*, 0, 3)*/
