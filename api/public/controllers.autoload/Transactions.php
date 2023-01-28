@@ -866,16 +866,20 @@ class Transactions
         }
     }
 
-    public static function autoCategorizeTransactionByDescription(Request $request, Response $response, $args)
+    public static function autoCategorizeTransaction(Request $request, Response $response, $args)
     {
         try {
             $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
-            $trx["description"] = Input::validate($request->getParsedBody()['description'], Input::$STRING);
+            $trx["description"] = Input::validate($request->getParsedBody()['description'], Input::$STRING, 2);
+            $trx["amount"] = Input::validate($request->getParsedBody()['amount'], Input::$FLOAT, 3);
+            $trx["type"] = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 4);
+            $trx["accounts_account_from_id"] = Input::validate($request->getParsedBody()['account_from_id'], Input::$INT, 5);
+            $trx["accounts_account_to_id"] = Input::validate($request->getParsedBody()['account_to_id'], Input::$INT, 6);
 
             if ($request->getHeaderLine('mobile') != null) {
-                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 7);
             } else {
                 $mobile = false;
             }
@@ -899,16 +903,12 @@ class Transactions
              * accounts: [],
              */
             // Set trx object to ignore matching certain fields
-            $trx["amount"] = RuleModel::RULES_MATCHING_IGNORE;
-            $trx["type"] = RuleModel::RULES_MATCHING_IGNORE;
             $trx["selectedCategoryID"] = RuleModel::RULES_MATCHING_IGNORE;
             $trx["selectedEntityID"] = RuleModel::RULES_MATCHING_IGNORE;
-            $trx["accounts_account_to_id"] = RuleModel::RULES_MATCHING_IGNORE;
-            $trx["accounts_account_from_id"] = RuleModel::RULES_MATCHING_IGNORE;
 
+            // Rule matching
             $foundRule = RuleModel::getRuleForTransaction($userID, $trx, true);
-            /*print_r($foundRule);
-            die();*/
+            $outgoing["matching_rule"] = $foundRule ? $foundRule["rule_id"] : null;
             $outgoing["date"] = array_key_exists("date", $trx) ? $trx["date"] : null;
             $outgoing["description"] = array_key_exists("description", $trx) ? $trx["description"] : null;
             $outgoing["amount"] = array_key_exists("amount", $trx) ? $trx["amount"] : null;
@@ -918,17 +918,6 @@ class Transactions
             $outgoing["selectedAccountFromID"] = (($foundRule) ? $foundRule["assign_account_from_id"] : null);
             $outgoing["selectedAccountToID"] = (($foundRule) ? $foundRule["assign_account_to_id"] : null);
             $outgoing["isEssential"] = (($foundRule) ? $foundRule["assign_is_essential"] : null);
-
-            /*  array_push($outgoingArr["fillData"], [
-                "date" => $trx["date"],
-                "description" => $trx["description"],
-                "amount" => $trx["amount"],
-                "type" => $trx["type"],
-                "selectedCategoryID" => null,
-                "selectedEntityID" => null,
-                "accountFromID" => null,
-                "accountToID" => null
-            ]); */
 
             $db->getDB()->commit();
 
@@ -953,5 +942,5 @@ $app->post('/trxs/import/step0', 'Transactions::importTransactionsStep0');
 $app->post('/trxs/import/step1', 'Transactions::importTransactionsStep1');
 $app->post('/trxs/import/step2', 'Transactions::importTransactionsStep2');
 $app->get('/trxs/page/{page}', 'Transactions::getTransactionsForUserByPage');
-$app->post('/trxs/auto-cat-description', 'Transactions::autoCategorizeTransactionByDescription');
+$app->post('/trxs/auto-cat-trx', 'Transactions::autoCategorizeTransaction');
 
