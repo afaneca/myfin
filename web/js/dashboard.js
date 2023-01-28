@@ -216,9 +216,10 @@ export var Dashboard = {
             labelsDebit.push(cat.name)
             catColorsDebit.push(cat.color_gradient)
           }
-
-          totalExpensesRealAmount += parseFloat(cat.current_amount_debit)
-          totalExpensesBudgetedAmount += parseFloat(cat.planned_amount_debit)
+          if(parseFloat(cat.exclude_from_budgets) !== 1){
+            totalExpensesRealAmount += parseFloat(cat.current_amount_debit)
+            totalExpensesBudgetedAmount += parseFloat(cat.planned_amount_debit)
+          }
         })
 
         // sort by credit amount desc
