@@ -600,5 +600,72 @@ class AccountModel extends Entity
         }
     }
 
+    public static function createMockAccounts($userId, $quantity = 5, $transactional = false)
+    {
+        for ($i = 1; $i <= $quantity; $i++) {
+            // OPERATING FUND ACCOUNT
+            $name = "Checking Acc $i";
+            $type = DEFAULT_ACCOUNT_TYPE_CURRENT_ACCOUNT;
+            $excludeFromBudgets = 0;
+            if (!AccountModel::exists([
+                "name" => $name,
+            ])) {
+
+                AccountModel::insert([
+                    "name" => $name,
+                    "type" => $type,
+                    "description" => "A description for $name",
+                    "exclude_from_budgets" => $excludeFromBudgets,
+                    "status" => Utils::checkWithProbability(0.8) ? DEFAULT_CATEGORY_ACTIVE_STATUS : DEFAULT_CATEGORY_INACTIVE_STATUS,
+                    "users_user_id" => $userId,
+                    "current_balance" => 0,
+                    "created_timestamp" => time(),
+                    "color_gradient" => Utils::getRandomColorGradient(),
+                ], $transactional);
+            }
+
+            // CREDIT ACCOUNT
+            $name = "Credit Acc $i";
+            $type = DEFAULT_ACCOUNT_TYPE_CREDIT_ACCOUNT;
+            $excludeFromBudgets = 1;
+            if (!AccountModel::exists([
+                "name" => $name,
+            ])) {
+
+                AccountModel::insert([
+                    "name" => $name,
+                    "type" => $type,
+                    "description" => "A description for $name",
+                    "exclude_from_budgets" => $excludeFromBudgets,
+                    "status" => Utils::checkWithProbability(0.8) ? DEFAULT_CATEGORY_ACTIVE_STATUS : DEFAULT_CATEGORY_INACTIVE_STATUS,
+                    "users_user_id" => $userId,
+                    "current_balance" => 0,
+                    "created_timestamp" => time(),
+                    "color_gradient" => Utils::getRandomColorGradient(),
+                ], $transactional);
+            }
+
+            // INVESTMENT ACCOUNT
+            $name = "Invest Acc $i";
+            $type = DEFAULT_ACCOUNT_TYPE_INVESTMENT_ACCOUNT;
+            $excludeFromBudgets = 0;
+            if (!AccountModel::exists([
+                "name" => $name,
+            ])) {
+
+                AccountModel::insert([
+                    "name" => $name,
+                    "type" => $type,
+                    "description" => "A description for $name",
+                    "exclude_from_budgets" => $excludeFromBudgets,
+                    "status" => Utils::checkWithProbability(0.8) ? DEFAULT_CATEGORY_ACTIVE_STATUS : DEFAULT_CATEGORY_INACTIVE_STATUS,
+                    "users_user_id" => $userId,
+                    "current_balance" => 0,
+                    "created_timestamp" => time(),
+                    "color_gradient" => Utils::getRandomColorGradient(),
+                ], $transactional);
+            }
+        }
+    }
 
 }

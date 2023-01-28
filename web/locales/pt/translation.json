@@ -41,7 +41,8 @@
     "goBack": "Voltar",
     "soon": "Em breve",
     "update": "Update",
-    "accumulated": "Acumulado"
+    "accumulated": "Acumulado",
+    "confirm": "Confirmar"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -146,9 +147,12 @@
     "nrAccountsCreated": "Nr. de contas criadas",
     "nrBudgetsCreated": "Nr. de orçamentos criados",
     "nrRulesCreated": "Nr. de regras criadas",
-    "recalculateBalancesOfAllAccounts": "Recalcular saldos de todas as contas",
+    "recalculateBalancesOfAllAccounts": "➥ Recalcular saldos de todas as contas",
     "changePasswordSuccessMessage": "Password atualizada com sucesso. Por favor, volte a iniciar sessão.",
-    "passwordsDoNotMatchMessage": "As passwords não coincidem. Por favor, verifique o seu input e tente novamente."
+    "passwordsDoNotMatchMessage": "As passwords não coincidem. Por favor, verifique o seu input e tente novamente.",
+    "autoPopulateDemoData": "➥ Popular automaticamente com dados demonstrativos",
+    "demoDataConfirmationTitle": "Tem a certeza de que pretende popular com dados de demonstração?",
+    "demoDataConfirmationSubtitle": "Todos os dados atuais serão perdidos!"
   },
   "transactions": {
     "transactions": "Transações",
