@@ -29,7 +29,7 @@ require_once 'consts.php';
 
 class Users
 {
-    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     public static function addUser($request, $response, $args)
     {
@@ -176,9 +176,89 @@ class Users
         }
     }
 
+    public static function autoPopulateDemoData($request, $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN);
+            } else {
+                $mobile = false;
+            }
+
+            /* 1. autenticação — validação do token */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* 4. executar operações */
+            /*$db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();*/
+
+            $userID = UserModel::getUserIdByName($authusername, false);
+
+            // DELETE ALL CURRENT BUDGETS
+            BudgetModel::delete([
+                "users_user_id" => $userID,
+            ], false);
+
+            // DELETE ALL CURRENT TRANSACTIONS
+            TransactionModel::removeAllTransactionsFromUser($userID, false);
+
+            // DELETE ALL CURRENT CATEGORIES
+            CategoryModel::delete([
+                "users_user_id" => $userID,
+            ], false);
+
+            // DELETE ALL CURRENT ENTITIES
+            EntityModel::delete([
+                "users_user_id" => $userID,
+            ], false);
+
+
+
+            // Create mock categories
+            CategoryModel::createMockCategories($userID, 5, false);
+
+            // Create mock entities
+            EntityModel::createMockEntities($userID, 5, false);
+
+            // Create mock accounts
+            AccountModel::createMockAccounts($userID, 5, false);
+
+            // Create mock transactions
+            TransactionModel::createMockTransactions($userID, 100, false);
+
+            // Create mock budgets
+            BudgetModel::createMockBudgets($userID, false);
+
+            $userAccounts = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"]);
+
+
+            foreach ($userAccounts as $account) {
+                AccountModel::setNewAccountBalance($account["account_id"],
+                    AccountModel::recalculateBalanceForAccountIncrementally($account["account_id"], 0, time() + 1, false),
+                    false);
+            }
+
+            /*$db->getDB()->commit();*/
+            /* 5. response */
+            return sendResponse($response, EnsoShared::$REST_OK, "Demo data successfully populated.");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (PermissionDeniedException $e) {
+            return sendResponse($response, EnsoShared::$REST_FORBIDDEN, $e);
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getMessage());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
 }
 
 /*$app->get('/users/{userID}', 'Users::getUserInfo');*/
 $app->get('/user/categoriesAndEntities', 'Users::getUserCategoriesAndEntities');
 $app->post('/users/', 'Users::addUser');
 $app->put('/users/changePW/', 'Users::changeUserPassword');
+$app->post('/users/demo/', 'Users::autoPopulateDemoData');

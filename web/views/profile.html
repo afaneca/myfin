@@ -105,6 +105,8 @@
                     <ul>
                         <li>
                             <b><a data-i18n="profile.recalculateBalancesOfAllAccounts" id="ask-for-balances-recalculation-btn" style="cursor:pointer;"></a></b></li>
+                        <li>
+                            <b><a data-i18n="profile.autoPopulateDemoData" id="auto-populate-demo-data-btn" style="cursor:pointer;"></a></b></li>
                     </ul>
 
                 </div>
@@ -114,7 +116,7 @@
             <p><b><span data-i18n="profile.version"></span>:</b> <span id="global-web-app-version"></span></p>
         </div>
 
-    </div>
+        </span></div>
 </div>
 
 
@@ -126,5 +128,6 @@
     Profile.init()
 
     $('#ask-for-balances-recalculation-btn').click(() => Profile.askForRecalculationOfAllAccountsBalances())
+    $('#auto-populate-demo-data-btn').click(() => Profile.showAutoPopulateWithMockDataConfirmationDialog())
   })
 </script>

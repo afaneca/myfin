@@ -6,6 +6,9 @@
  * E - Expense
  * T - Transfer
  */
+
+require_once 'consts.php';
+
 class TransactionModel extends Entity
 {
     protected static $table = "transactions";
@@ -180,6 +183,79 @@ class TransactionModel extends Entity
             return $db->fetch(PDO::FETCH_COLUMN);
         } catch (Exception $e) {
             return $e;
+        }
+    }
+
+    public static function removeAllTransactionsFromUser($userId, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+
+        $sql = "DELETE transactions FROM transactions " .
+            "LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id " .
+            "WHERE acc_to.users_user_id = :userID " .
+            "OR acc_from.users_user_id = :userID ";
+
+        $values = array();
+        $values[':userID'] = $userId;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    public static function createMockTransactions($userId, $quantity = 100, $transactional = false)
+    {
+        $userAccounts = AccountModel::getWhere(["users_user_id" => $userId, "status" => DEFAULT_ACCOUNT_ACTIVE_STATUS]);
+        $userEntities = EntityModel::getWhere(["users_user_id" => $userId]);
+        $userCategories = CategoryModel::getWhere(["users_user_id" => $userId, "status" => DEFAULT_ACCOUNT_ACTIVE_STATUS]);
+
+        $endTimestamp = strtotime("now");
+        $startTimestamp = strtotime("-1 year");
+
+        for ($i = 1; $i <= $quantity; $i++) {
+            $description = "Transaction n. $i";
+            $dateTimestamp = Utils::getRandomDateTimestamp($startTimestamp, $endTimestamp);
+
+            $type = Utils::checkWithProbability(0.8) ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
+            $categoryID = $userCategories[array_rand($userCategories, 1)]["category_id"];
+            $entityID = $userEntities[array_rand($userEntities, 1)]["entity_id"];
+            if ($type == DEFAULT_TYPE_EXPENSE_TAG) {
+                $amount = rand(0.01, 1000.0);
+                $accountFrom = $userAccounts[array_rand($userAccounts, 1)]["account_id"];
+                $accountTo = null;
+                $isEssential = (int)Utils::checkWithProbability(0.2);
+            } else {
+                $amount = rand(1000.0, 3000.0);
+                $accountTo = $userAccounts[array_rand($userAccounts, 1)]["account_id"];
+                $accountFrom = null;
+                $isEssential = false;
+            }
+
+
+            if (!TransactionModel::exists([
+                "description" => $description,
+            ])) {
+                TransactionModel::insert([
+                    "date_timestamp" => $dateTimestamp,
+                    "amount" => $amount,
+                    "type" => $type,
+                    "description" => $description,
+                    "entities_entity_id" => $entityID,
+                    "accounts_account_from_id" => $accountFrom,
+                    "accounts_account_to_id" => $accountTo,
+                    "categories_category_id" => $categoryID,
+                    "is_essential" => $isEssential,
+                ], $transactional);
+            } else {
+                TransactionModel::editWhere([
+                    "description" => $description,
+                ], ["date_timestamp" => $dateTimestamp, "amount" => $amount], $transactional);
+            }
         }
     }
 

@@ -177,7 +177,7 @@ function addUser (username, email, password) {
       url: pageUrl,
       success: (response) => {
         hideLoading().then(r => {
-          DialogUtils.showSuccessMessage('login.userSuccessfullyAdded')
+          DialogUtils.showSuccessMessage(Localization.getString('login.userSuccessfullyAdded'))
           signUpLinkWasClicked()
           enableLoginBtn()
         })

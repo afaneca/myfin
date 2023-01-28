@@ -7,6 +7,7 @@ import { StatServices } from './services/statServices.js'
 import { UserServices } from './services/userServices.js'
 import { LocalDataManager } from './utils/localDataManager.js'
 import { Localization } from './utils/localization.js'
+import { ProfileMockDataModalFunc } from './funcs/profileMockDataModalFunc.js'
 
 export const Profile = {
   init: () => {
@@ -150,6 +151,23 @@ export const Profile = {
   askForRecalculationOfAllAccountsBalances: () => {
     LoadingManager.showLoading()
     AccountServices.recalculateAllUserAccountsBalances(
+      (resp) => {
+        // SUCCESS
+        LoadingManager.hideLoading()
+        DialogUtils.showSuccessMessage(Localization.getString('common.taskSuccessfullyCompleted'))
+      }, (err) => {
+        // FAILURE
+        LoadingManager.hideLoading()
+        DialogUtils.showErrorMessage(Localization.getString('common.somethingWentWrongTryAgain'))
+      },
+    )
+  },
+  showAutoPopulateWithMockDataConfirmationDialog: () => {
+    ProfileMockDataModalFunc.showMockDataConfirmationModal('#modal-global', () => Profile.askForAutoPopulationWithMockData())
+  },
+  askForAutoPopulationWithMockData: () => {
+    LoadingManager.showLoading()
+    UserServices.populateWithDemoData(
       (resp) => {
         // SUCCESS
         LoadingManager.hideLoading()
