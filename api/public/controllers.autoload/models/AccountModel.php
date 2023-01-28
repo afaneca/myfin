@@ -440,7 +440,6 @@ class AccountModel extends Entity
         return $totalBalance;
     }
 
-
     public static function recalculateBalanceForAccountIncrementally($accountID, $fromDate, $toDate, $transactional = false)
     {
         /*
@@ -448,6 +447,16 @@ class AccountModel extends Entity
          * I will need to recalculate from the beginning of the previous month relative to $fromDate all the way to the end of
          * month after associated with $toDate.
         */
+
+        /*
+         * Loop through all the months that are being recalculated to clean up the data
+         * Very important in case there are months with no transactions at all
+         */
+        $month1 = date("m", $fromDate);
+        $year1 = date("Y", $fromDate);
+        $month2 = date("m", $toDate);
+        $year2 = date("Y", $toDate);
+        AccountModel::removeBalanceSnapshotsForAccountBetweenMonths($accountID, $month1, $year1, $month2, $year2, $transactional);
 
         $beginMonth = date('m', $fromDate);
         $beginYear = date('Y', $fromDate);
@@ -500,16 +509,6 @@ class AccountModel extends Entity
 
         /*echo($initialBalance);
         die();*/
-
-        /*
-         * Loop through all of the months that are being recalculated to clean up the data
-         * Very important in case there are months with no transactions at all
-         */
-        /*$month1 = date("m", $fromDate);
-        $year1 = date("Y", $fromDate);
-        $month2 = date("m", $toDate);
-        $year2 = date("Y", $toDate);
-        AccountModel::removeBalanceSnapshotsForAccountBetweenMonths($accountID, $month1, $year1, $month2, $year2, $transactional);*/
 
         foreach ($trxList as $trx) {
             $trxDate = $trx["date_timestamp"];
