@@ -201,6 +201,27 @@ class AccountModel extends Entity
     }
 
     public
+    static function removeBalanceSnapshotsForUser($userId, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "DELETE balances_snapshot FROM balances_snapshot " .
+            "LEFT JOIN accounts ON accounts.account_id = balances_snapshot.accounts_account_id " .
+            "WHERE users_user_id = :userID ";
+
+        $values = array();
+        $values[':userID'] = $userId;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    public
     static function deprecated_getBalancesSnapshotForUser($userID, $transactional = false)
     {
         $db = new EnsoDB($transactional);
@@ -599,72 +620,24 @@ class AccountModel extends Entity
         }
     }
 
-    public static function createMockAccounts($userId, $quantity = 5, $transactional = false)
+    public static function createAccount($userId, $name, $description, $type, $excludeFromBudgets, $status, $colorGradient, $transactional = false)
     {
-        for ($i = 1; $i <= $quantity; $i++) {
-            // OPERATING FUND ACCOUNT
-            $name = "Checking Acc $i";
-            $type = DEFAULT_ACCOUNT_TYPE_CURRENT_ACCOUNT;
-            $excludeFromBudgets = 0;
-            if (!AccountModel::exists([
+        if (!AccountModel::exists([
+            "name" => $name,
+            "users_user_id" => $userId,
+        ])) {
+            return AccountModel::insert([
                 "name" => $name,
-            ])) {
-
-                AccountModel::insert([
-                    "name" => $name,
-                    "type" => $type,
-                    "description" => "A description for $name",
-                    "exclude_from_budgets" => $excludeFromBudgets,
-                    "status" => Utils::checkWithProbability(0.8) ? DEFAULT_CATEGORY_ACTIVE_STATUS : DEFAULT_CATEGORY_INACTIVE_STATUS,
-                    "users_user_id" => $userId,
-                    "current_balance" => 0,
-                    "created_timestamp" => time(),
-                    "color_gradient" => Utils::getRandomColorGradient(),
-                ], $transactional);
-            }
-
-            // CREDIT ACCOUNT
-            $name = "Credit Acc $i";
-            $type = DEFAULT_ACCOUNT_TYPE_CREDIT_ACCOUNT;
-            $excludeFromBudgets = 1;
-            if (!AccountModel::exists([
-                "name" => $name,
-            ])) {
-
-                AccountModel::insert([
-                    "name" => $name,
-                    "type" => $type,
-                    "description" => "A description for $name",
-                    "exclude_from_budgets" => $excludeFromBudgets,
-                    "status" => Utils::checkWithProbability(0.8) ? DEFAULT_CATEGORY_ACTIVE_STATUS : DEFAULT_CATEGORY_INACTIVE_STATUS,
-                    "users_user_id" => $userId,
-                    "current_balance" => 0,
-                    "created_timestamp" => time(),
-                    "color_gradient" => Utils::getRandomColorGradient(),
-                ], $transactional);
-            }
-
-            // INVESTMENT ACCOUNT
-            $name = "Invest Acc $i";
-            $type = DEFAULT_ACCOUNT_TYPE_INVESTMENT_ACCOUNT;
-            $excludeFromBudgets = 0;
-            if (!AccountModel::exists([
-                "name" => $name,
-            ])) {
-
-                AccountModel::insert([
-                    "name" => $name,
-                    "type" => $type,
-                    "description" => "A description for $name",
-                    "exclude_from_budgets" => $excludeFromBudgets,
-                    "status" => Utils::checkWithProbability(0.8) ? DEFAULT_CATEGORY_ACTIVE_STATUS : DEFAULT_CATEGORY_INACTIVE_STATUS,
-                    "users_user_id" => $userId,
-                    "current_balance" => 0,
-                    "created_timestamp" => time(),
-                    "color_gradient" => Utils::getRandomColorGradient(),
-                ], $transactional);
-            }
-        }
+                "type" => $type,
+                "description" => $description,
+                "exclude_from_budgets" => $excludeFromBudgets,
+                "status" => $status,
+                "users_user_id" => $userId,
+                "current_balance" => 0,
+                "created_timestamp" => time(),
+                "color_gradient" => $colorGradient,
+            ], $transactional);
+        } else return null;
     }
 
 }

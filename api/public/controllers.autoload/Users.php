@@ -25,7 +25,7 @@ use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 require_once 'consts.php';
-
+require_once 'includes/DemoDataManager.php';
 
 class Users
 {
@@ -192,56 +192,15 @@ class Users
             if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
 
             /* 4. executar operações */
-            /*$db = new EnsoDB(true);
-            $db->getDB()->beginTransaction();*/
+            $transactional = false;
+            $db = new EnsoDB($transactional);
+            $db->getDB()->beginTransaction();
 
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, $transactional);
 
-            // DELETE ALL CURRENT BUDGETS
-            BudgetModel::delete([
-                "users_user_id" => $userID,
-            ], false);
+            DemoDataManager::createMockData($userID, $transactional);
 
-            // DELETE ALL CURRENT TRANSACTIONS
-            TransactionModel::removeAllTransactionsFromUser($userID, false);
-
-            // DELETE ALL CURRENT CATEGORIES
-            CategoryModel::delete([
-                "users_user_id" => $userID,
-            ], false);
-
-            // DELETE ALL CURRENT ENTITIES
-            EntityModel::delete([
-                "users_user_id" => $userID,
-            ], false);
-
-
-
-            // Create mock categories
-            CategoryModel::createMockCategories($userID, 5, false);
-
-            // Create mock entities
-            EntityModel::createMockEntities($userID, 5, false);
-
-            // Create mock accounts
-            AccountModel::createMockAccounts($userID, 5, false);
-
-            // Create mock transactions
-            TransactionModel::createMockTransactions($userID, 100, false);
-
-            // Create mock budgets
-            BudgetModel::createMockBudgets($userID, false);
-
-            $userAccounts = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"]);
-
-
-            foreach ($userAccounts as $account) {
-                AccountModel::setNewAccountBalance($account["account_id"],
-                    AccountModel::recalculateBalanceForAccountIncrementally($account["account_id"], 0, time() + 1, false),
-                    false);
-            }
-
-            /*$db->getDB()->commit();*/
+            $db->getDB()->commit();
             /* 5. response */
             return sendResponse($response, EnsoShared::$REST_OK, "Demo data successfully populated.");
         } catch (BadInputValidationException $e) {
