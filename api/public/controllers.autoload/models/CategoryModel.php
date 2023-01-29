@@ -67,27 +67,21 @@ class CategoryModel extends Entity
         return CategoryModel::getAmountForCategoryInPeriod($category_id, $beginTimestamp->getTimestamp(), $endTimestamp->getTimestamp(), $includeTransfers, $transactional);
     }
 
-    public static function createMockCategories($userId, $quantity = 5, $transactional = false)
+    public static function createCategory($userId, $name, $description, $colorGradient, $status, $excludeFromBudgets, $transactional = false)
     {
-        for ($i = 1; $i <= $quantity; $i++) {
-            $categoryName = "Category $i " . Utils::getRandomIcon();
-            $description = "A description for $categoryName";
-            $colorGradient = Utils::getRandomColorGradient();
-            $status = Utils::checkWithProbability(0.8) ? DEFAULT_CATEGORY_ACTIVE_STATUS : DEFAULT_CATEGORY_INACTIVE_STATUS;
-
-            if (!CategoryModel::exists([
-                "name" => $categoryName,
-            ])){
-                CategoryModel::insert([
-                    "name" => $categoryName,
-                    "type" => "M",
-                    "description" => $description,
-                    "users_user_id" => $userId,
-                    "color_gradient" => $colorGradient,
-                    "status" => $status,
-                    "exclude_from_budgets" => 0,
-                ], $transactional);
-            }
-        }
+        if (!CategoryModel::exists([
+            "name" => $name,
+            "users_user_id" => $userId,
+        ])) {
+            return CategoryModel::insert([
+                "name" => $name,
+                "type" => "M",
+                "description" => $description,
+                "users_user_id" => $userId,
+                "color_gradient" => $colorGradient,
+                "status" => $status,
+                "exclude_from_budgets" => $excludeFromBudgets,
+            ], $transactional);
+        } else return null;
     }
 }
