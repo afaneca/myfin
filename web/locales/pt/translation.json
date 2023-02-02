@@ -78,11 +78,11 @@
     "may": "Mai",
     "jun": "Jun",
     "jul": "Jul",
-    "Aug": "Ago",
-    "Sep": "Set",
-    "Oct": "Out",
-    "Nov": "Nov",
-    "Dec": "Dez"
+    "aug": "Ago",
+    "sep": "Set",
+    "oct": "Out",
+    "nov": "Nov",
+    "dec": "Dez"
   },
   "monthsLong": {
     "january": "Janeiro",
