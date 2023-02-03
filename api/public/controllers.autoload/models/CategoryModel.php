@@ -3,6 +3,7 @@
 /* TYPES OF CATEGORIES:
     - C - credit
     - D - debit */
+require_once 'consts.php';
 
 class CategoryModel extends Entity
 {
@@ -64,5 +65,23 @@ class CategoryModel extends Entity
         $beginTimestamp = new DateTime("$year-01-01", $tz);
         $endTimestamp = new DateTime("$year-12-31", $tz);
         return CategoryModel::getAmountForCategoryInPeriod($category_id, $beginTimestamp->getTimestamp(), $endTimestamp->getTimestamp(), $includeTransfers, $transactional);
+    }
+
+    public static function createCategory($userId, $name, $description, $colorGradient, $status, $excludeFromBudgets, $transactional = false)
+    {
+        if (!CategoryModel::exists([
+            "name" => $name,
+            "users_user_id" => $userId,
+        ])) {
+            return CategoryModel::insert([
+                "name" => $name,
+                "type" => "M",
+                "description" => $description,
+                "users_user_id" => $userId,
+                "color_gradient" => $colorGradient,
+                "status" => $status,
+                "exclude_from_budgets" => $excludeFromBudgets,
+            ], $transactional);
+        } else return null;
     }
 }

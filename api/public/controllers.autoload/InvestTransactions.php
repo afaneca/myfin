@@ -77,26 +77,7 @@ class InvestTransactions
             }
 
             /* Execute Operations */
-            $db = new EnsoDB(true);
-            $db->getDB()->beginTransaction();
-
-
-            $transactionId = InvestTransactionModel::insert([
-                "date_timestamp" => $date,
-                "units" => $units,
-                "total_price" => $totalPrice,
-                "note" => $note,
-                "type" => $type,
-                "invest_assets_asset_id" => $assetID,
-                "created_at" => time(),
-                "updated_at" => time(),
-            ], true);
-
-            /* Recalculate snapshot */
-            $latestSnapshot = InvestAssetEvoSnapshotModel::recalculateSnapshotForAssetsIncrementally($assetID, $date - 1, time() + 1, true);
-            InvestAssetModel::editWhere(["asset_id" => $assetID], ["units" => $latestSnapshot["units"]], true);
-
-            $db->getDB()->commit();
+            InvestTransactionModel::addTransaction($date, $units, $totalPrice, $note, $type, $assetID, true);
 
             return sendResponse($response, EnsoShared::$REST_OK, "New transaction added!");
         } catch (BadInputValidationException $e) {

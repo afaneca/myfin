@@ -1,4 +1,5 @@
 <?php
+
 class Utils
 {
 
@@ -58,5 +59,36 @@ class Utils
     public static function setPublicFileChecker()
     {
         file_put_contents(UPDATE_CHECK_TEMP_FILE, "");
+    }
+
+    public static function getRandomIcon()
+    {
+        $arr = ["🍎", "🎁", "🏡", "🛒", "🛍️", "🦮", "🍿", "🎉"];
+
+        return $arr[array_rand($arr, 1)];
+    }
+
+    public static function getRandomColorGradient()
+    {
+        $arr = ["red-gradient", "blue-gradient", "green-gradient",
+            "orange-gradient", "dark-gray-gradient", "purple-gradient",
+            "pink-gradient", "dark-blue-gradient", "brown-gradient",
+            "light-green-gradient", "dark-red-gradient", "yellow-gradient",
+            "roseanna-gradient", "mauve-gradient", "lush-gradient",
+            "pale-wood-gradient", "aubergine-gradient", "orange-coral-gradient",
+            "decent-gradient", "dusk-gradient"];
+
+        return $arr[array_rand($arr, 1)];
+    }
+
+    public static function checkWithProbability($probability = 0.1, $length = 10000)
+    {
+        $test = mt_rand(1, $length);
+        return $test <= $probability * $length;
+    }
+
+    public static function getRandomDateTimestamp($startTimestamp = 0, $endTimestamp)
+    {
+        return rand($startTimestamp, $endTimestamp);
     }
 }

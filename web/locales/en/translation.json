@@ -41,7 +41,8 @@
     "goBack": "Go back",
     "soon": "Soon",
     "update": "Update",
-    "accumulated": "Accumulated"
+    "accumulated": "Accumulated",
+    "confirm": "Confirm"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -146,9 +147,12 @@
     "nrAccountsCreated": "Nr of accounts created",
     "nrBudgetsCreated": "Nr of budgets created",
     "nrRulesCreated": "Nr of rules created",
-    "recalculateBalancesOfAllAccounts": "Recalculate balances of all accounts",
+    "recalculateBalancesOfAllAccounts": "➥ Recalculate balances of all accounts",
     "changePasswordSuccessMessage": "Password successfully updated. Please, log back in.",
-    "passwordsDoNotMatchMessage": "Passwords don't match. Please, verify your input and try again."
+    "passwordsDoNotMatchMessage": "Passwords don't match. Please, verify your input and try again.",
+    "autoPopulateDemoData": "➥ Automatically populate with mock data",
+    "demoDataConfirmationTitle": "Are you sure you want to feed your account with demo data?",
+    "demoDataConfirmationSubtitle": "All your current data will be lost!"
   },
   "transactions": {
     "transactions": "Transactions",

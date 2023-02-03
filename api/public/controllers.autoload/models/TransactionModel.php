@@ -6,6 +6,9 @@
  * E - Expense
  * T - Transfer
  */
+
+require_once 'consts.php';
+
 class TransactionModel extends Entity
 {
     protected static $table = "transactions";
@@ -183,4 +186,26 @@ class TransactionModel extends Entity
         }
     }
 
+    public static function removeAllTransactionsFromUser($userId, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+
+        $sql = "DELETE transactions FROM transactions " .
+            "LEFT JOIN accounts acc_to ON acc_to.account_id = transactions.accounts_account_to_id " .
+            "LEFT JOIN accounts acc_from ON acc_from.account_id = transactions.accounts_account_from_id " .
+            "WHERE acc_to.users_user_id = :userID " .
+            "OR acc_from.users_user_id = :userID ";
+
+        $values = array();
+        $values[':userID'] = $userId;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 }
