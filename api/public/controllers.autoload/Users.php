@@ -29,7 +29,7 @@ require_once 'includes/DemoDataManager.php';
 
 class Users
 {
-    const DEBUG_MODE = true; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
+    const DEBUG_MODE = false; // USE ONLY WHEN DEBUGGING THIS SPECIFIC CONTROLLER (this skips sessionkey validation)
 
     public static function addUser($request, $response, $args)
     {
@@ -197,10 +197,10 @@ class Users
             $db->getDB()->beginTransaction();
 
             $userID = UserModel::getUserIdByName($authusername, $transactional);
-
+            $db->getDB()->commit();
             DemoDataManager::createMockData($userID, $transactional);
 
-            $db->getDB()->commit();
+
             /* 5. response */
             return sendResponse($response, EnsoShared::$REST_OK, "Demo data successfully populated.");
         } catch (BadInputValidationException $e) {

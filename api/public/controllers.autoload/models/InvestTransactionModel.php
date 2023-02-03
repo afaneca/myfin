@@ -138,4 +138,28 @@ class InvestTransactionModel extends Entity
             return $e;
         }
     }
+
+    public static function addTransaction($date, $units, $totalPrice, $note, $type, $assetID, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+        $db->getDB()->beginTransaction();
+
+
+        $transactionId = InvestTransactionModel::insert([
+            "date_timestamp" => $date,
+            "units" => $units,
+            "total_price" => $totalPrice,
+            "note" => $note,
+            "type" => $type,
+            "invest_assets_asset_id" => $assetID,
+            "created_at" => time(),
+            "updated_at" => time(),
+        ], $transactional);
+
+        /* Recalculate snapshot */
+        $latestSnapshot = InvestAssetEvoSnapshotModel::recalculateSnapshotForAssetsIncrementally($assetID, $date - 1, time() + 1, $transactional);
+        InvestAssetModel::editWhere(["asset_id" => $assetID], ["units" => $latestSnapshot["units"]], $transactional);
+
+        $db->getDB()->commit();
+    }
 }

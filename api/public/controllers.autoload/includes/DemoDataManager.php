@@ -58,15 +58,17 @@ class DemoDataManager
 
         // Create mock budgets
         DemoDataManager::createMockBudgets($userID, $transactional);
+
         // Create mock investment rules
         DemoDataManager::createMockRules($userID, $transactional);
+
         // Create mock investment assets
         DemoDataManager::createMockAssets($userID, $transactional);
-        // Create mock investment transactions - TODO
+
+        // Create mock investment transactions
+        DemoDataManager::createMockAssetTransactions($userID, $transactional);
 
         $userAccounts = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"]);
-
-
         foreach ($userAccounts as $account) {
             AccountModel::setNewAccountBalance($account["account_id"],
                 AccountModel::recalculateBalanceForAccountIncrementally($account["account_id"], 0, time() + 1, false),
@@ -74,7 +76,8 @@ class DemoDataManager
         }
     }
 
-    private static function deleteAllUserData($userID, $transactional): void
+    private
+    static function deleteAllUserData($userID, $transactional): void
     {
         // DELETE ALL CURRENT BUDGETS
         BudgetHasCategoriesModel::delete(["budgets_users_user_id" => $userID], $transactional);
@@ -106,17 +109,34 @@ class DemoDataManager
             "users_user_id" => $userID,
         ], $transactional);
 
+        // DELETE ALL CURRENT INVESTMENT TRANSACTIONS
+        InvestTransactionModel::removeAllForUser($userID, $transactional);
+        InvestAssetEvoSnapshotModel::delete(
+            ["invest_assets_asset_id" => self::$ASSET_FIXED_INC1],
+            $transactional
+        );
+        InvestAssetEvoSnapshotModel::delete(
+            ["invest_assets_asset_id" => self::$ASSET_FIXED_INC2],
+            $transactional
+        );
+        InvestAssetEvoSnapshotModel::delete(
+            ["invest_assets_asset_id" => self::$ASSET_ETF1],
+            $transactional
+        );
+        InvestAssetEvoSnapshotModel::delete(
+            ["invest_assets_asset_id" => self::$ASSET_CRYPTO1],
+            $transactional
+        );
+
         // DELETE ALL CURRENT INVESTMENT ASSETS
         InvestAssetModel::delete([
             "users_user_id" => $userID,
         ], $transactional);
         InvestAssetEvoSnapshotModel::removeAllForUser($userID, $transactional);
-
-        // DELETE ALL CURRENT INVESTMENT TRANSACTIONS
-        InvestTransactionModel::removeAllForUser($userID, $transactional);
     }
 
-    private static function createMockCategories($userId, $transactional = false): void
+    private
+    static function createMockCategories($userId, $transactional = false): void
     {
 
         // CAT 1
@@ -229,7 +249,8 @@ class DemoDataManager
         );
     }
 
-    private static function createMockEntities($userId, $transactional = false): void
+    private
+    static function createMockEntities($userId, $transactional = false): void
     {
         self::$ENT_SUPERMARKET1_ID = EntityModel::createEntity($userId, "ABC Supermarket", $transactional);
 
@@ -243,7 +264,8 @@ class DemoDataManager
         self::$ENT_BANK2_ID = EntityModel::createEntity($userId, "BBank", $transactional);
     }
 
-    private static function createMockAccounts($userId, $transactional = false): void
+    private
+    static function createMockAccounts($userId, $transactional = false): void
     {
 
         // ACC 1
@@ -307,7 +329,8 @@ class DemoDataManager
         );
     }
 
-    private static function createMockTransactions($userID, mixed $transactional = false): void
+    private
+    static function createMockTransactions($userID, mixed $transactional = false): void
     {
         // Start adding transactions from 3 months ago
 
@@ -536,7 +559,8 @@ class DemoDataManager
         ], $transactional);
     }
 
-    private static function createMockBudgets($userId, $transactional = false): void
+    private
+    static function createMockBudgets($userId, $transactional = false): void
     {
         // Start adding transactions from 2 months ago
 
@@ -809,7 +833,8 @@ class DemoDataManager
         ]);
     }
 
-    private static function createMockRules($userId, $transactional = false): void
+    private
+    static function createMockRules($userId, $transactional = false): void
     {
         RuleModel::insert(
             ["users_user_id" => $userId,
@@ -854,7 +879,8 @@ class DemoDataManager
         );
     }
 
-    private static function createMockAssets($userId, $transactional = false): void
+    private
+    static function createMockAssets($userId, $transactional = false): void
     {
         self::$ASSET_FIXED_INC1 = InvestAssetModel::insert([
             "name" => "High Yield Savings Acc",
@@ -899,5 +925,64 @@ class DemoDataManager
             "created_at" => strtotime("-3 months"),
             "updated_at" => strtotime("-3 months"),
         ], $transactional);
+    }
+
+    private
+    static function createMockAssetTransactions($userId, $transactional = false): void
+    {
+
+        $time = strtotime("now");
+        $month = date("m", $time);
+        $year = date("Y", $time);
+
+        InvestTransactionModel::addTransaction(
+            strtotime("04-$month-$year 12:00:00"),
+            1500,
+            1500_00,
+            "Initial investment",
+            DEFAULT_INVESTING_TRANSACTIONS_BUY,
+            self::$ASSET_FIXED_INC1,
+            $transactional);
+
+        InvestTransactionModel::addTransaction(
+            strtotime("04-$month-$year"),
+            800,
+            800_00,
+            "Initial investment",
+            DEFAULT_INVESTING_TRANSACTIONS_BUY,
+            self::$ASSET_FIXED_INC2,
+            $transactional);
+
+        InvestTransactionModel::addTransaction(
+            strtotime("04-$month-$year"),
+            5,
+            510_00,
+            "Initial investment",
+            DEFAULT_INVESTING_TRANSACTIONS_BUY,
+            self::$ASSET_ETF1,
+            $transactional);
+
+        InvestTransactionModel::addTransaction(
+            strtotime("11-$month-$year"),
+            0.5,
+            12_350_00,
+            "Initial investment",
+            DEFAULT_INVESTING_TRANSACTIONS_BUY,
+            self::$ASSET_CRYPTO1,
+            $transactional);
+
+        InvestTransactionModel::addTransaction(
+            strtotime("13-$month-$year"),
+            2.3,
+            0,
+            "Yield",
+            DEFAULT_INVESTING_TRANSACTIONS_BUY,
+            self::$ASSET_FIXED_INC1,
+            $transactional);
+
+        InvestAssetEvoSnapshotModel::updateAssetValue($userId, self::$ASSET_FIXED_INC1, $month, $year, 1502.3, true);
+        InvestAssetEvoSnapshotModel::updateAssetValue($userId, self::$ASSET_FIXED_INC2, $month, $year, 800, true);
+        InvestAssetEvoSnapshotModel::updateAssetValue($userId, self::$ASSET_ETF1, $month, $year, 510 + 32, true);
+        InvestAssetEvoSnapshotModel::updateAssetValue($userId, self::$ASSET_CRYPTO1, $month, $year, 12350 - 1200, true);
     }
 }

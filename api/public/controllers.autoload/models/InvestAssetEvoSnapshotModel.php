@@ -336,4 +336,38 @@ class InvestAssetEvoSnapshotModel extends Entity
             return $e;
         }
     }
+
+    public static function updateAssetValue($userID, $assetID, $month, $year, $newValue, $createBuffer = true)
+    {
+        $units = InvestAssetModel::getWhere(["users_user_id" => $userID, "asset_id" => $assetID], ["units"])[0]["units"];
+        $withdrawnAmount = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($assetID, null, null)[0]["withdrawn_amount"];
+        InvestAssetEvoSnapshotModel::updateCurrentAssetValue($month, $year, $assetID, $units, $withdrawnAmount, $newValue);
+
+        if ($createBuffer) {
+            // Snapshot next 6 months also, to create a buffer (in case no more snapshots are added till then)
+            $nextMonth = ($month + 1 > 12) ? 1 : ($month + 1);
+            $nextMonthsYear = ($nextMonth > 12) ? $year + 1 : $year;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
+
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
+
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
+
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
+
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
+
+            $nextMonth = ($nextMonth + 1 > 12) ? 1 : ($nextMonth + 1);
+            $nextMonthsYear = ($nextMonth == 1) ? $nextMonthsYear + 1 : $nextMonthsYear;
+            InvestAssetEvoSnapshotModel::updateCurrentAssetValue($nextMonth, $nextMonthsYear, $assetID, $units, $withdrawnAmount, $newValue);
+        }
+    }
 }
