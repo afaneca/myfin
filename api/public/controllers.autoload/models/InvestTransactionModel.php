@@ -117,4 +117,49 @@ class InvestTransactionModel extends Entity
             return $e;
         }
     }
+
+    public
+    static function removeAllForUser($userId, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "DELETE invest_transactions FROM invest_transactions " .
+            "LEFT JOIN invest_assets ON invest_assets.asset_id = invest_transactions.invest_assets_asset_id " .
+            "WHERE users_user_id = :userID ";
+
+        $values = array();
+        $values[':userID'] = $userId;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    public static function addTransaction($date, $units, $totalPrice, $note, $type, $assetID, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+        $db->getDB()->beginTransaction();
+
+
+        $transactionId = InvestTransactionModel::insert([
+            "date_timestamp" => $date,
+            "units" => $units,
+            "total_price" => $totalPrice,
+            "note" => $note,
+            "type" => $type,
+            "invest_assets_asset_id" => $assetID,
+            "created_at" => time(),
+            "updated_at" => time(),
+        ], $transactional);
+
+        /* Recalculate snapshot */
+        $latestSnapshot = InvestAssetEvoSnapshotModel::recalculateSnapshotForAssetsIncrementally($assetID, $date - 1, time() + 1, $transactional);
+        InvestAssetModel::editWhere(["asset_id" => $assetID], ["units" => $latestSnapshot["units"]], $transactional);
+
+        $db->getDB()->commit();
+    }
 }
