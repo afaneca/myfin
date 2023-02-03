@@ -247,44 +247,6 @@ class BudgetModel extends Entity
             return $e;
         }
     }
-
-    public static function createMockBudgets($userId, $transactional = false)
-    {
-        $userCategories = CategoryModel::getWhere(["users_user_id" => $userId, "status" => DEFAULT_ACCOUNT_ACTIVE_STATUS]);
-        $endTimestamp = strtotime("+1 month");
-        $startTimestamp = strtotime("-1 year");
-        $startMonth = intval(date("m", $startTimestamp));
-        $startYear = intval(date("Y", $startTimestamp));
-        $endMonth = intval(date("m", $endTimestamp));
-
-        $currentMonth = $startMonth;
-
-        do {
-            $nextMonth = $currentMonth % 12 + 1;
-            $month = $currentMonth;
-            $year = ($currentMonth >= $startMonth) ? $startYear : $startYear + 1;
-            $observations = "🚘 Auto repair • 🎁 Hanna's birthday • 🐶 Pet training";
-            if (BudgetModel::exists(["month" => $month, "year" => $year, "users_user_id" => $userId])) {
-                $currentMonth = $nextMonth;
-                continue;
-            }
-            $budgetID = BudgetModel::insert([
-                "month" => $month,
-                "year" => $year,
-                "observations" => $observations,
-                "is_open" => $currentMonth == date("m") ? 1 : 0,
-                "users_user_id" => $userId
-            ], $transactional);
-
-            foreach ($userCategories as $category) {
-                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget(
-                    $userId, $budgetID, $category["category_id"],
-                    rand(0, 1_000_000), rand(0, 100_000), $transactional);
-            }
-
-            $currentMonth = $nextMonth;
-        } while ($year == $startYear || $currentMonth > $endMonth);
-    }
 }
 
 

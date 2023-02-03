@@ -315,4 +315,25 @@ class InvestAssetEvoSnapshotModel extends Entity
             return $e;
         }
     }
+
+    public
+    static function removeAllForUser($userId, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "DELETE invest_asset_evo_snapshot FROM invest_asset_evo_snapshot " .
+            "LEFT JOIN invest_assets ON invest_assets.asset_id = invest_asset_evo_snapshot.invest_assets_asset_id " .
+            "WHERE users_user_id = :userID ";
+
+        $values = array();
+        $values[':userID'] = $userId;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 }

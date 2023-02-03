@@ -117,4 +117,25 @@ class InvestTransactionModel extends Entity
             return $e;
         }
     }
+
+    public
+    static function removeAllForUser($userId, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "DELETE invest_transactions FROM invest_transactions " .
+            "LEFT JOIN invest_assets ON invest_assets.asset_id = invest_transactions.invest_assets_asset_id " .
+            "WHERE users_user_id = :userID ";
+
+        $values = array();
+        $values[':userID'] = $userId;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetchAll();
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 }

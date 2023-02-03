@@ -18,6 +18,7 @@ class DemoDataManager
     private static int $CAT_LOAN_PAYMENTS_ID = -1;
     private static int $CAT_LOAN_INTEREST_ID = -1;
     private static int $CAT_ENTERTAINMENT_ID = -1;
+    private static int $CAT_AUTO_MAINTENANCE = -1;
 
     // ENTITIES
     private static int $ENT_SUPERMARKET1_ID = -1;
@@ -27,9 +28,15 @@ class DemoDataManager
     private static int $ENT_RESTAURANT1_ID = -1;
     private static int $ENT_RESTAURANT2_ID = -1;
     private static int $ENT_CINEMA1 = -1;
-
     private static int $ENT_BANK1_ID = -1;
     private static int $ENT_BANK2_ID = -1;
+
+    // ASSETS
+    private static int $ASSET_FIXED_INC1 = -1;
+
+    private static int $ASSET_FIXED_INC2 = -1;
+    private static int $ASSET_ETF1 = -1;
+    private static int $ASSET_CRYPTO1 = -1;
 
 
     public static function createMockData($userID, $transactional = false): void
@@ -49,11 +56,12 @@ class DemoDataManager
         // Create mock transactions
         DemoDataManager::createMockTransactions($userID, $transactional);
 
-        // Create mock budgets - TODO
-        /*BudgetModel::createMockBudgets($userID, $transactional);*/
-
-        // Create mock investment rules - TODO
-        // Create mock investment assets - TODO
+        // Create mock budgets
+        DemoDataManager::createMockBudgets($userID, $transactional);
+        // Create mock investment rules
+        DemoDataManager::createMockRules($userID, $transactional);
+        // Create mock investment assets
+        DemoDataManager::createMockAssets($userID, $transactional);
         // Create mock investment transactions - TODO
 
         $userAccounts = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"]);
@@ -92,6 +100,20 @@ class DemoDataManager
         AccountModel::delete([
             "users_user_id" => $userID,
         ], $transactional);
+
+        // DELETE ALL CURRENT RULES
+        RuleModel::delete([
+            "users_user_id" => $userID,
+        ], $transactional);
+
+        // DELETE ALL CURRENT INVESTMENT ASSETS
+        InvestAssetModel::delete([
+            "users_user_id" => $userID,
+        ], $transactional);
+        InvestAssetEvoSnapshotModel::removeAllForUser($userID, $transactional);
+
+        // DELETE ALL CURRENT INVESTMENT TRANSACTIONS
+        InvestTransactionModel::removeAllForUser($userID, $transactional);
     }
 
     private static function createMockCategories($userId, $transactional = false): void
@@ -114,7 +136,7 @@ class DemoDataManager
             "Wages 💼",
             "Job salaries & related comp",
             Utils::getRandomColorGradient(),
-            Utils::checkWithProbability(0.8) ? DEFAULT_CATEGORY_ACTIVE_STATUS : DEFAULT_CATEGORY_INACTIVE_STATUS,
+            DEFAULT_CATEGORY_ACTIVE_STATUS,
             0,
             $transactional
         );
@@ -178,6 +200,17 @@ class DemoDataManager
             $userId,
             "Entertainment & Eating Out 🍿",
             "Eating out, going to the movies, etc...",
+            Utils::getRandomColorGradient(),
+            DEFAULT_CATEGORY_ACTIVE_STATUS,
+            0,
+            $transactional
+        );
+
+        // CAT 9
+        self::$CAT_AUTO_MAINTENANCE = CategoryModel::createCategory(
+            $userId,
+            "Auto Maintenance 🚗",
+            "Car repairs, upgrades, etc...",
             Utils::getRandomColorGradient(),
             DEFAULT_CATEGORY_ACTIVE_STATUS,
             0,
@@ -274,7 +307,7 @@ class DemoDataManager
         );
     }
 
-    private static function createMockTransactions($userID, mixed $transactional): void
+    private static function createMockTransactions($userID, mixed $transactional = false): void
     {
         // Start adding transactions from 3 months ago
 
@@ -360,7 +393,7 @@ class DemoDataManager
             "entities_entity_id" => self::$ENT_COMPANY1_ID,
             "accounts_account_from_id" => null,
             "accounts_account_to_id" => self::$ACCOUNT_CURRENT1_ID,
-            "categories_category_id" => null,
+            "categories_category_id" => self::$CAT_WAGES_ID,
             "is_essential" => 0,
         ], $transactional);
 
@@ -474,7 +507,7 @@ class DemoDataManager
             "entities_entity_id" => self::$ENT_COMPANY1_ID,
             "accounts_account_from_id" => null,
             "accounts_account_to_id" => self::$ACCOUNT_CURRENT1_ID,
-            "categories_category_id" => null,
+            "categories_category_id" => self::$CAT_WAGES_ID,
             "is_essential" => 0,
         ], $transactional);
 
@@ -500,6 +533,371 @@ class DemoDataManager
             "accounts_account_to_id" => null,
             "categories_category_id" => self::$CAT_GROCERIES_ID,
             "is_essential" => 1,
+        ], $transactional);
+    }
+
+    private static function createMockBudgets($userId, $transactional = false): void
+    {
+        // Start adding transactions from 2 months ago
+
+        // MONTH 1
+        $time = strtotime("-2 months");
+        $month = date("m", $time);
+        $year = date("Y", $time);
+        $observations = "🚘 Auto repair • 🎁 Hanna's birthday • 🐶 Pet training";
+        $budgetId = BudgetModel::insert([
+            "month" => $month,
+            "year" => $year,
+            "observations" => $observations,
+            "is_open" => 0,
+            "users_user_id" => $userId
+        ], $transactional);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_ENTERTAINMENT_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 200_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_WAGES_ID,
+            "planned_amount_credit" => 3500_00,
+            "planned_amount_debit" => 0,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_LOAN_INTEREST_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 177_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_LOAN_PAYMENTS_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 270_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_GROCERIES_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 800_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_AUTO_MAINTENANCE,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 20_00,
+            "current_amount" => 0,
+        ]);
+
+        // MONTH 2
+        $time = strtotime("-1 months");
+        $month = date("m", $time);
+        $year = date("Y", $time);
+        $observations = "⛱️ Trip to Tenerife";
+        $budgetId = BudgetModel::insert([
+            "month" => $month,
+            "year" => $year,
+            "observations" => $observations,
+            "is_open" => 0,
+            "users_user_id" => $userId
+        ], $transactional);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_ENTERTAINMENT_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 200_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_WAGES_ID,
+            "planned_amount_credit" => 3500_00,
+            "planned_amount_debit" => 0,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_LOAN_INTEREST_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 177_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_LOAN_PAYMENTS_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 270_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_GROCERIES_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 800_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_AUTO_MAINTENANCE,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 20_00,
+            "current_amount" => 0,
+        ]);
+
+        // MONTH 3 (CURRENT)
+        $time = time();
+        $month = date("m", $time);
+        $year = date("Y", $time);
+        $observations = "🚘 Auto repair • 🎁 Hanna's birthday • 🐶 Pet training";
+        $budgetId = BudgetModel::insert([
+            "month" => $month,
+            "year" => $year,
+            "observations" => $observations,
+            "is_open" => 1,
+            "users_user_id" => $userId
+        ], $transactional);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_ENTERTAINMENT_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 200_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_WAGES_ID,
+            "planned_amount_credit" => 3500_00,
+            "planned_amount_debit" => 0,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_LOAN_INTEREST_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 177_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_LOAN_PAYMENTS_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 270_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_GROCERIES_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 800_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_AUTO_MAINTENANCE,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 20_00,
+            "current_amount" => 0,
+        ]);
+
+        // MONTH 4 (FUTURE)
+        $time = strtotime("+1 months");
+        $month = date("m", $time);
+        $year = date("Y", $time);
+        $observations = "💸🚘 Car Insurance";
+        $budgetId = BudgetModel::insert([
+            "month" => $month,
+            "year" => $year,
+            "observations" => $observations,
+            "is_open" => 1,
+            "users_user_id" => $userId
+        ], $transactional);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_ENTERTAINMENT_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 200_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_WAGES_ID,
+            "planned_amount_credit" => 3500_00,
+            "planned_amount_debit" => 0,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_LOAN_INTEREST_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 177_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_LOAN_PAYMENTS_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 270_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_GROCERIES_ID,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 800_00,
+            "current_amount" => 0,
+        ]);
+
+        BudgetHasCategoriesModel::insert([
+            "budgets_budget_id" => $budgetId,
+            "budgets_users_user_id" => $userId,
+            "categories_category_id" => self::$CAT_AUTO_MAINTENANCE,
+            "planned_amount_credit" => 0,
+            "planned_amount_debit" => 20_00,
+            "current_amount" => 0,
+        ]);
+    }
+
+    private static function createMockRules($userId, $transactional = false): void
+    {
+        RuleModel::insert(
+            ["users_user_id" => $userId,
+                "matcher_description_operator" => DEFAULT_RULES_OPERATOR_CONTAINS,
+                "matcher_description_value" => "wage",
+                "matcher_amount_operator" => DEFAULT_RULES_OPERATOR_EQUALS,
+                "matcher_amount_value" => 3500_00,
+                "matcher_type_operator" => DEFAULT_RULES_OPERATOR_EQUALS,
+                "matcher_type_value" => DEFAULT_TYPE_INCOME_TAG,
+                "matcher_account_to_id_operator" => DEFAULT_RULES_OPERATOR_IGNORE,
+                "matcher_account_to_id_value" => null,
+                "matcher_account_from_id_operator" => DEFAULT_RULES_OPERATOR_IGNORE,
+                "matcher_account_from_id_value" => null,
+                "assign_category_id" => self::$CAT_WAGES_ID,
+                "assign_entity_id" => self::$ENT_COMPANY1_ID,
+                "assign_account_to_id" => null,
+                "assign_account_from_id" => null,
+                "assign_type" => null,
+                "assign_is_essential" => 0,
+            ], $transactional
+        );
+
+        RuleModel::insert(
+            ["users_user_id" => $userId,
+                "matcher_description_operator" => DEFAULT_RULES_OPERATOR_CONTAINS,
+                "matcher_description_value" => "movies",
+                "matcher_amount_operator" => DEFAULT_RULES_OPERATOR_IGNORE,
+                "matcher_amount_value" => 0,
+                "matcher_type_operator" => DEFAULT_RULES_OPERATOR_IGNORE,
+                "matcher_type_value" => null,
+                "matcher_account_to_id_operator" => DEFAULT_RULES_OPERATOR_IGNORE,
+                "matcher_account_to_id_value" => null,
+                "matcher_account_from_id_operator" => DEFAULT_RULES_OPERATOR_IGNORE,
+                "matcher_account_from_id_value" => null,
+                "assign_category_id" => self::$CAT_ENTERTAINMENT_ID,
+                "assign_entity_id" => self::$ENT_CINEMA1,
+                "assign_account_to_id" => null,
+                "assign_account_from_id" => null,
+                "assign_type" => null,
+                "assign_is_essential" => 0,
+            ], $transactional
+        );
+    }
+
+    private static function createMockAssets($userId, $transactional = false): void
+    {
+        self::$ASSET_FIXED_INC1 = InvestAssetModel::insert([
+            "name" => "High Yield Savings Acc",
+            "ticker" => "HYSA",
+            "units" => 0,
+            "type" => DEFAULT_ASSETS_TYPE_FIXED_INCOME,
+            "broker" => "BBank",
+            "users_user_id" => $userId,
+            "created_at" => strtotime("-3 months"),
+            "updated_at" => strtotime("-3 months"),
+        ], $transactional);
+
+        self::$ASSET_FIXED_INC2 = InvestAssetModel::insert([
+            "name" => "Emergency Fund",
+            "ticker" => "EF",
+            "units" => 0,
+            "type" => DEFAULT_ASSETS_TYPE_FIXED_INCOME,
+            "broker" => "BBank",
+            "users_user_id" => $userId,
+            "created_at" => strtotime("-3 months"),
+            "updated_at" => strtotime("-3 months"),
+        ], $transactional);
+
+        self::$ASSET_CRYPTO1 = InvestAssetModel::insert([
+            "name" => "Bitcoin",
+            "ticker" => "BTC",
+            "units" => 0,
+            "type" => DEFAULT_ASSETS_TYPE_CRYPTO,
+            "broker" => "Binance",
+            "users_user_id" => $userId,
+            "created_at" => strtotime("-3 months"),
+            "updated_at" => strtotime("-3 months"),
+        ], $transactional);
+
+        self::$ASSET_ETF1 = InvestAssetModel::insert([
+            "name" => "Vanguard FTSE All-World UCITS ETF USD Acc",
+            "ticker" => "VWCE",
+            "units" => 0,
+            "type" => DEFAULT_ASSETS_TYPE_ETF,
+            "broker" => "DEGIRO",
+            "users_user_id" => $userId,
+            "created_at" => strtotime("-3 months"),
+            "updated_at" => strtotime("-3 months"),
         ], $transactional);
     }
 }
