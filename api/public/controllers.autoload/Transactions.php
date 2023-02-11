@@ -306,6 +306,7 @@ class Transactions
                 ["amount", "date_timestamp", "type", "accounts_account_from_id", "accounts_account_to_id"]
             )[0];
 
+
             $oldAmount = $trxObj["amount"];
             $oldTimestamp = $trxObj["date_timestamp"];
             $oldType = $trxObj["type"];
@@ -315,6 +316,14 @@ class Transactions
 
             if (isset($trxObj["accounts_account_from_id"]))
                 $oldAccountFrom = $trxObj["accounts_account_from_id"];
+
+            // Make sure accounts belong to user
+            if (!AccountModel::exists([
+                "users_user_id" => $userID,
+                "account_id" => $oldAccountFrom ?? $oldAccountTo,
+            ])) {
+                throw new BadValidationTypeException("Account not found!");
+            }
 
             TransactionModel::delete([
                 "transaction_id" => $trxID
@@ -493,6 +502,14 @@ class Transactions
 
             if (isset($trxObj["accounts_account_from_id"]))
                 $oldAccountFrom = $trxObj["accounts_account_from_id"];
+
+            // Make sure accounts belong to user
+            if (!AccountModel::exists([
+                "users_user_id" => $userID,
+                "account_id" => $oldAccountFrom ?? $oldAccountTo,
+            ])) {
+                throw new BadValidationTypeException("Account not found!");
+            }
 
             TransactionModel::editWhere([
                 "transaction_id" => $trxID,
