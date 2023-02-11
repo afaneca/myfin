@@ -220,7 +220,8 @@ class Transactions
             }
 
             /* Execute Operations */
-            $db = new EnsoDB(true);
+            $transactional = true;
+            $db = new EnsoDB($transactional);
             $db->getDB()->beginTransaction();
 
 
@@ -234,29 +235,29 @@ class Transactions
                 "accounts_account_to_id" => $accountTo,
                 "categories_category_id" => $categoryID,
                 "is_essential" => $isEssential,
-            ], true);
+            ], $transactional);
 
-            $userID = UserModel::getUserIdByName($authusername, true);
-            UserModel::setLastUpdateTimestamp($userID, time(), true);
+            $userID = UserModel::getUserIdByName($authusername, $transactional);
+            UserModel::setLastUpdateTimestamp($userID, time(), $transactional);
 
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     AccountModel::setNewAccountBalance($userID, $accountTo,
-                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, true),
-                        true);
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, $transactional),
+                        $transactional);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     AccountModel::setNewAccountBalance($userID, $accountFrom,
-                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, true),
-                        true);
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, $transactional),
+                        $transactional);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
                     AccountModel::setNewAccountBalance($userID, $accountTo,
-                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, true),
-                        true);
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, $transactional),
+                        $transactional);
                     AccountModel::setNewAccountBalance($userID, $accountFrom,
-                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, true),
-                        true);
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, $transactional),
+                        $transactional);
                     break;
             }
 

@@ -468,7 +468,7 @@ class AccountModel extends Entity
          * I will need to recalculate from the beginning of the previous month relative to $fromDate all the way to the end of
          * month after associated with $toDate.
         */
-
+        $debugMode = false; // If debugging, echo's log data and die() at the end to avoid commiting the changes to the DB
         /*
          * Loop through all the months that are being recalculated to clean up the data
          * Very important in case there are months with no transactions at all
@@ -482,14 +482,19 @@ class AccountModel extends Entity
         $beginMonth = date('m', $fromDate);
         $beginYear = date('Y', $fromDate);
 
-        /*echo "begin month & year::\n$beginMonth\t$beginYear\n";*/
+        if ($debugMode) {
+            echo "begin month & year::\n$beginMonth\t$beginYear\n";
+        }
+
         $priorMonthsBalance = Input::convertFloatToIntegerAmount(AccountModel::getBalanceSnapshotAtMonth($accountID, ($beginMonth > 2) ? ($beginMonth - 2) : 12 - 2 + (int)$beginMonth,
             ($beginMonth > 2) ? $beginYear : ($beginYear - 1), $transactional)["balance"] ?? 0);
         if (!$priorMonthsBalance)
             $priorMonthsBalance = 0;
 
-        /*echo("\nprior months balance: $priorMonthsBalance\n");*/
-        /*die();*/
+        if ($debugMode) {
+            echo("\nprior months balance: $priorMonthsBalance\n");
+        }
+
 
         AccountModel::addCustomBalanceSnapshot($accountID, $beginMonth, $beginYear,
             $priorMonthsBalance, $transactional);
@@ -507,7 +512,10 @@ class AccountModel extends Entity
 
         $endMonth = date('m', $toDate);
         $endYear = date('Y', $toDate);
-        /*echo "end month & year::\n$endMonth\t$endYear\n";*/
+
+        if ($debugMode) {
+            echo "end month & year::\n$endMonth\t$endYear\n";
+        }
 
         // Increase end month by 1
         if ($endMonth < 12) $endMonth++;
@@ -515,21 +523,18 @@ class AccountModel extends Entity
             $endMonth = 1;
             $endYear++;
         }
-        /*echo "beginMonth - 1 = $beginMonth/$beginYear\n";
-        echo "endMonth + 1  = $endMonth/$endYear\n";*/
+
         $fromDate = strtotime("1-$beginMonth-$beginYear");
         $toDate = strtotime("1-$endMonth-$endYear");
-        /*echo("$fromDate\n");
-        echo($toDate);
-        die();*/
         $trxList = AccountModel::getAllTransactionsForAccountBetweenDates($accountID, $fromDate, $toDate, $transactional);
-        /*print_r($trxList);
-        die();*/
+
         $initialBalance = $priorMonthsBalance;//AccountModel::getBalanceSnapshotAtMonth($accountID, $beginMonth, $beginYear, $transactional)["balance"];
         if (!$initialBalance) $initialBalance = 0;
 
-        /*echo($initialBalance);
-        die();*/
+        if ($debugMode) {
+            echo($initialBalance);
+        }
+
 
         foreach ($trxList as $trx) {
             $trxDate = $trx["date_timestamp"];
@@ -544,19 +549,26 @@ class AccountModel extends Entity
                     && $trx["accounts_account_from_id"] == $accountID)) {
                 $trxAmount *= -1;
             }
-            //print_r($trxList);
-            /*echo("\n#### new transaction of " . Input::convertIntegerToFloatAmount($trxAmount) . " € on " . gmdate("Y-m-d", $trxDate) . " (type: $trxType)\n");
-            echo("\ninitial balance before:  " . Input::convertIntegerToFloatAmount($initialBalance));*/
-            $initialBalance += $trxAmount;
+            if ($debugMode) {
+                echo("\n#### new transaction of " . Input::convertIntegerToFloatAmount($trxAmount) . " € on " . gmdate("Y-m-d", $trxDate) . " (type: $trxType)\n");
+                echo("\ninitial balance before:  " . Input::convertIntegerToFloatAmount($initialBalance));
+            }
 
-            /*echo("\ninitial balance after: " . Input::convertIntegerToFloatAmount($initialBalance));
-            echo("\n\n--- adding custom balance snapshot to account $accountID, for month $month & year $year, with balance " . Input::convertIntegerToFloatAmount($initialBalance));
-            echo("\n\n----------------------------------------------------------------------\n\n");*/
+            $initialBalance += $trxAmount;
+            if ($debugMode) {
+                echo("\ninitial balance after: " . Input::convertIntegerToFloatAmount($initialBalance));
+                echo("\n\n--- adding custom balance snapshot to account $accountID, for month $month & year $year, with balance " . Input::convertIntegerToFloatAmount($initialBalance));
+                echo("\n\n----------------------------------------------------------------------\n\n");
+            }
             AccountModel::addCustomBalanceSnapshot($accountID, $month, $year, $initialBalance, $transactional);
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 12) ? $month + 1 : 1, ($month < 12) ? $year : $year + 1, $initialBalance, $transactional);
             AccountModel::addCustomBalanceSnapshot($accountID, ($month < 11) ? $month + 2 : 1, ($month < 11) ? $year : $year + 1, $initialBalance, $transactional);
         }
-        /*die();*/
+
+        if ($debugMode) {
+            die();
+        }
+
 
         return $initialBalance;
     }
@@ -592,7 +604,7 @@ class AccountModel extends Entity
             "users_user_id" => $userId,
             "account_id" => $accountId
         ], [
-            "current_balance" => (int)$balance
+            "current_balance" => $balance
         ], $transactional);
     }
 
