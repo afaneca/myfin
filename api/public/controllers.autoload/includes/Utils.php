@@ -87,7 +87,7 @@ class Utils
         return $test <= $probability * $length;
     }
 
-    public static function getRandomDateTimestamp($startTimestamp = 0, $endTimestamp)
+    public static function getRandomDateTimestamp($startTimestamp = 0, $endTimestamp = PHP_INT_MAX)
     {
         return rand($startTimestamp, $endTimestamp);
     }

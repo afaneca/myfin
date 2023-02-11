@@ -339,7 +339,7 @@ class Rules
             $userID = UserModel::getUserIdByName($authusername, false);
 
             RuleModel::editWhere(
-                ["rule_id" => $ruleID],
+                ["rule_id" => $ruleID, "users_user_id" => $userID],
                 ["users_user_id" => $userID,
                     "matcher_description_operator" => $matcherDescriptionOperator,
                     "matcher_description_value" => $matcherDescriptionValue,
@@ -399,7 +399,7 @@ class Rules
             die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
 
-            RuleModel::delete(["rule_id" => $ruleID]);
+            RuleModel::delete(["rule_id" => $ruleID, "users_user_id" => $userID]);
 
             /* $db->getDB()->commit(); */
 

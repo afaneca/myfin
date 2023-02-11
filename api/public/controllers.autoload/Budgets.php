@@ -429,7 +429,7 @@ class Budgets
 
             // EDIT BUDGET
             BudgetModel::editWhere(
-                ["budget_id" => $budgetID],
+                ["budget_id" => $budgetID, "users_user_id" => $userID],
                 [
                     "month" => $month,
                     "year" => $year,
@@ -496,7 +496,7 @@ class Budgets
 
             // ADD BUDGET
             BudgetModel::editWhere(
-                ["budget_id" => $budgetID],
+                ["budget_id" => $budgetID, "users_user_id" => $userID],
                 [
                     "is_open" => $isOpen
                 ], true
@@ -552,7 +552,7 @@ class Budgets
             }
 
             if ($plannedExpense == null && $plannedIncome == null) {
-                throw new BadInputValidationException("required input not found");
+                throw new BadInputValidationException("Required input not found");
             }
 
             $currentAmounts = BudgetHasCategoriesModel::getWhere([

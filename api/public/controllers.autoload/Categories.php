@@ -158,6 +158,12 @@ class Categories
             die(); */
             $userID = UserModel::getUserIdByName($authusername, true);
 
+            // Make sure category belongs to user
+            if (!CategoryModel::exists([
+                "users_user_id" => $userID,
+            ])) {
+                throw new BadValidationTypeException("Category not found!");
+            }
 
             BudgetHasCategoriesModel::delete([
                 "categories_category_id" => $categoryID,
