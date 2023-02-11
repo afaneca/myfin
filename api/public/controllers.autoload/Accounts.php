@@ -155,6 +155,13 @@ class Accounts
 
             $userID = UserModel::getUserIdByName($authusername, true);
 
+            // Make sure account belongs to user
+            if (!AccountModel::exists([
+                "users_user_id" => $userID,
+            ])) {
+                throw new BadValidationTypeException("Account not found!");
+            }
+
             TransactionModel::delete([
                 "accounts_account_from_id" => $accountID
             ]);
@@ -350,7 +357,7 @@ class Accounts
 
 
             foreach ($userAccounts as $account) {
-                AccountModel::setNewAccountBalance($account["account_id"],
+                AccountModel::setNewAccountBalance($userID, $account["account_id"],
                     AccountModel::recalculateBalanceForAccountIncrementally($account["account_id"], 0, time() + 1, false),
                     false);
             }

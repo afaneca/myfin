@@ -70,7 +70,7 @@ class DemoDataManager
 
         $userAccounts = AccountModel::getWhere(["users_user_id" => $userID], ["account_id"]);
         foreach ($userAccounts as $account) {
-            AccountModel::setNewAccountBalance($account["account_id"],
+            AccountModel::setNewAccountBalance($userID, $account["account_id"],
                 AccountModel::recalculateBalanceForAccountIncrementally($account["account_id"], 0, time() + 1, false),
                 $transactional);
         }
