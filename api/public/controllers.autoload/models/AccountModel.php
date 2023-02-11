@@ -585,10 +585,11 @@ class AccountModel extends Entity
         }
     }
 
-    public static function setNewAccountBalance($accountId, $balance, bool $transactional = false)
+    public static function setNewAccountBalance($userId, $accountId, $balance, bool $transactional = false)
     {
 
         AccountModel::editWhere([
+            "users_user_id" => $userId,
             "account_id" => $accountId
         ], [
             "current_balance" => (int)$balance

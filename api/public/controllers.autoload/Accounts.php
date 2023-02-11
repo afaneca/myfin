@@ -350,7 +350,7 @@ class Accounts
 
 
             foreach ($userAccounts as $account) {
-                AccountModel::setNewAccountBalance($account["account_id"],
+                AccountModel::setNewAccountBalance($userID, $account["account_id"],
                     AccountModel::recalculateBalanceForAccountIncrementally($account["account_id"], 0, time() + 1, false),
                     false);
             }
