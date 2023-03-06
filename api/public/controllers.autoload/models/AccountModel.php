@@ -613,8 +613,11 @@ class AccountModel extends Entity
         $db = new EnsoDB($transactional);
 
         $sql = "DELETE FROM balances_snapshot " .
-            "WHERE accounts_account_id = :accID " .
-            "AND ((year > :year1 AND year < :year2) OR (year = :year1 AND month >= :month1) OR (year = :year2 AND month <= :month2))";
+            "WHERE accounts_account_id = :accID ";
+        if ($year1 != $year2)
+            $sql .= "AND ((year > :year1 AND year < :year2) OR (year = :year1 AND month >= :month1) OR (year = :year2 AND month <= :month2))";
+        else
+            $sql .= "AND month >= :month1 AND month <= :month2";
 
         $values = array();
         $values[':accID'] = $accountID;
