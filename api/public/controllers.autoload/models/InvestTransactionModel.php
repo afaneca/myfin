@@ -17,6 +17,7 @@ class InvestTransactionModel extends Entity
         "note",
         "total_price",
         "units",
+        "fees_taxes",
         "invest_assets_asset_id",
         "created_at",
         "updated_at"
@@ -25,7 +26,7 @@ class InvestTransactionModel extends Entity
     public static function getAllTransactionsForUser($userID, $transactional = false)
     {
         $db = new EnsoDB($transactional);
-        $sql = "SELECT transaction_id, date_timestamp, invest_transactions.type as 'trx_type', invest_assets.type as 'asset_type', note, (total_price/100) as 'total_price', invest_transactions.units, invest_assets_asset_id, name, ticker, broker, invest_assets.asset_id " .
+        $sql = "SELECT transaction_id, date_timestamp, invest_transactions.type as 'trx_type', invest_assets.type as 'asset_type', note, (total_price/100) as 'total_price', invest_transactions.units, invest_assets_asset_id, name, ticker, broker, invest_assets.asset_id, (fees_taxes / 100) as 'fees_taxes' " .
             "FROM invest_transactions INNER JOIN invest_assets ON invest_assets.asset_id = invest_assets_asset_id " .
             "WHERE users_user_id = :userID ORDER BY date_timestamp DESC;";
 
@@ -89,6 +90,34 @@ class InvestTransactionModel extends Entity
         }
     }
 
+    public static function getCombinedFeesAndTaxesBetweenDatesForUser($userId, $beginTimestamp, $endTimestamp, $transactional = false)
+    {
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT (SUM(fees_taxes)/100) as 'invested_fees' " .
+            "FROM invest_transactions " .
+            "INNER JOIN invest_assets ON invest_assets_asset_id = asset_id " .
+            "WHERE users_user_id = :userId AND date_timestamp BETWEEN :date1 and :date2";
+
+        $values = array();
+        $values[':userId'] = $userId;
+        $values[':date1'] = $beginTimestamp;
+        $values[':date2'] = $endTimestamp;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+
+            $result = $db->fetchAll();
+
+            if (!$result) return 0;
+            return floatval($result[0]["invested_fees"]);
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
     public static function getCombinedInvestedAndWithdrawnBalancesBetweenDatesForUser($userId, $beginTimestamp, $endTimestamp, $transactional = false)
     {
 
@@ -139,7 +168,7 @@ class InvestTransactionModel extends Entity
         }
     }
 
-    public static function addTransaction($date, $units, $totalPrice, $note, $type, $assetID, $transactional = false)
+    public static function addTransaction($date, $units, $fees, $totalPrice, $note, $type, $assetID, $transactional = false)
     {
         $db = new EnsoDB($transactional);
         $db->getDB()->beginTransaction();
@@ -148,6 +177,7 @@ class InvestTransactionModel extends Entity
         $transactionId = InvestTransactionModel::insert([
             "date_timestamp" => $date,
             "units" => $units,
+            "fees_taxes" => $fees,
             "total_price" => $totalPrice,
             "note" => $note,
             "type" => $type,
