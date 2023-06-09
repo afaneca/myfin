@@ -39,28 +39,30 @@ class InvestAssets
                 $investedValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["invested_amount"] : 0);
                 $withdrawnAmount = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["withdrawn_amount"] : 0);
                 $currentValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["current_value"] : 0);
+                $feesAndTaxes = doubleval(InvestAssetModel::getTotalFeesAndTaxesForAsset($asset["asset_id"]));
                 $currently_invested_value = doubleval($investedValue) - doubleval($withdrawnAmount);
                 if ($currently_invested_value < 0) $currently_invested_value = 0;
-                $roiValue = ($currentValue + $withdrawnAmount) - $investedValue;
-                $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
-                $pricePerUnit = InvestAssetModel::getAverageBuyingPriceForAsset($asset["asset_id"])["avg_price"];
+                $roiValue = ($currentValue + $withdrawnAmount) - ($investedValue + $feesAndTaxes);
+                $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / ($investedValue + $feesAndTaxes)) * 100;
+                $pricePerUnit = InvestAssetModel::getAverageBuyingPriceForAsset($asset["asset_id"]);
 
-                array_push($res, [
-                        "asset_id" => $asset["asset_id"],
-                        "name" => $asset["name"],
-                        "ticker" => $asset["ticker"],
-                        "type" => $asset["type"],
-                        "units" => floatval($asset["units"]),
-                        "broker" => $asset["broker"],
-                        "invested_value" => $investedValue,
-                        "currently_invested_value" => $currently_invested_value,
-                        "withdrawn_amount" => $withdrawnAmount,
-                        "current_value" => $currentValue,
-                        "absolute_roi_value" => $roiValue,
-                        "relative_roi_percentage" => $roiPercentage,
-                        "price_per_unit" => $pricePerUnit,
-                    ]
-                );
+
+                $res[] = [
+                    "asset_id" => $asset["asset_id"],
+                    "name" => $asset["name"],
+                    "ticker" => $asset["ticker"],
+                    "type" => $asset["type"],
+                    "units" => floatval($asset["units"]),
+                    "broker" => $asset["broker"],
+                    "invested_value" => $investedValue,
+                    "currently_invested_value" => $currently_invested_value,
+                    "withdrawn_amount" => $withdrawnAmount,
+                    "current_value" => $currentValue,
+                    "absolute_roi_value" => $roiValue,
+                    "relative_roi_percentage" => $roiPercentage,
+                    "price_per_unit" => $pricePerUnit,
+                    "fees_taxes" => $feesAndTaxes
+                ];
             }
 
             // Sort assets array by current value (DESC)
@@ -386,13 +388,14 @@ class InvestAssets
                 $investedValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["invested_amount"] : 0);
                 $currentValue = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["current_value"] : 0);
                 $withdrawnAmount = Input::convertIntegerToFloatAmount($snapshot ? $snapshot["withdrawn_amount"] : 0);
+                $feesAndTaxes = doubleval(InvestAssetModel::getTotalFeesAndTaxesForAsset($asset["asset_id"]));
 
                 $asset["invested_amount"] = $investedValue;
                 $asset["current_value"] = $currentValue;
                 $asset["absolute_roi_value"] = $currentValue - $investedValue;
 
-                $roiValue = $currentValue - $investedValue + $withdrawnAmount;
-                $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / $investedValue) * 100;
+                $roiValue = ($currentValue + $withdrawnAmount) - ($investedValue + $feesAndTaxes);
+                $roiPercentage = ($investedValue == 0) ? "∞" : ($roiValue / ($investedValue + $feesAndTaxes)) * 100;
                 $asset["relative_roi_percentage"] = $roiPercentage;
                 $lastYearsSnapshot = InvestAssetEvoSnapshotModel::getLatestSnapshotForAsset($asset["asset_id"], 12, $currentYear - 1);
                 if ($lastYearsSnapshot) {
@@ -411,21 +414,21 @@ class InvestAssets
                     $currentValuesByAssetType[$asset["type"]] = $currentValue;
                 }
 
-                array_push($fullAssetsDetailsArr, [
-                        "asset_id" => $asset["asset_id"],
-                        "name" => $asset["name"],
-                        "ticker" => $asset["ticker"],
-                        "type" => $asset["type"],
-                        "units" => floatval($asset["units"]),
-                        "broker" => $asset["broker"],
-                        "original_invested_value" => $investedValue,
-                        "invested_value" => $investedValue - $withdrawnAmount,
-                        "current_value" => $currentValue,
-                        "withdrawn_value" => $withdrawnAmount,
-                        "absolute_roi_value" => $roiValue,
-                        "relative_roi_percentage" => $roiPercentage,
-                    ]
-                );
+                $fullAssetsDetailsArr[] = [
+                    "asset_id" => $asset["asset_id"],
+                    "name" => $asset["name"],
+                    "ticker" => $asset["ticker"],
+                    "type" => $asset["type"],
+                    "units" => floatval($asset["units"]),
+                    "broker" => $asset["broker"],
+                    "original_invested_value" => $investedValue,
+                    "invested_value" => $investedValue - $withdrawnAmount,
+                    "current_value" => $currentValue,
+                    "withdrawn_value" => $withdrawnAmount,
+                    "absolute_roi_value" => $roiValue,
+                    "relative_roi_percentage" => $roiPercentage,
+                    "fees_taxes" => $feesAndTaxes,
+                ];
             }
 
             $res["total_invested_value"] = $fullInvestedValue - $fullWithdrawnValue;

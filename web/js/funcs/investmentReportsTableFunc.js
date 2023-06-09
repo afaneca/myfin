@@ -11,6 +11,7 @@ export const InvestmentReportsTableFunc = {
               <th>${Localization.getString("investments.asset")}</th>
               <th>${Localization.getString("investments.assetClass")}</th>
               <th>${Localization.getString("investments.investedValue")}</th>
+              <th>${Localization.getString("investments.feesAndTaxes")}</th>
               <th>${Localization.getString("investments.currentValue")}</th>
               <th>${Localization.getString("investments.currentYearROI")}</th>
               <th>${Localization.getString("investments.globalROI")}</th>
@@ -32,6 +33,7 @@ export const InvestmentReportsTableFunc = {
             <span class="" style="font-size: small;font-style: italic;">${Localization.getString('investments.perUnitPrice',
       { price: StringUtils.formatMoney(asset.invested_amount / asset.units) })}</span>
         </td>
+        <td>${StringUtils.formatMoney(asset.fees_taxes)}</td>
         <td>${StringUtils.formatMoney(asset.current_value)}</td>
         <td>${`<i>${Localization.getString('common.soon')}...</i>`}</td>
         <td>${StringUtils.formatMoney(asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(asset.relative_roi_percentage, true)}</td>
@@ -46,6 +48,7 @@ export const InvestmentReportsTableFunc = {
           <tr>
               <th>${Localization.getString("investments.year")}</th>
               <th>${Localization.getString("investments.investedValue")}</th>
+              <th>${Localization.getString("investments.feesAndTaxes")}</th>
               <th>${Localization.getString("investments.currentValue")}</th>
               <th>${Localization.getString("investments.roi")} (€)</th>
               <th>${Localization.getString("investments.roi")} (%)</th>
@@ -63,6 +66,7 @@ export const InvestmentReportsTableFunc = {
       <tr>
         <td>${year}</td>
         <td>${StringUtils.formatMoney(roiObj.invested_in_year_amount)}</td>
+        <td>${StringUtils.formatMoney(roiObj.fees_taxes)}</td>
         <td>${StringUtils.formatMoney(roiObj.value_total_amount)}</td>
         <td>${StringUtils.formatMoney(roiObj.roi_amount)}</td>
         <td>${InvestmentAssetsTableFunc.buildRoiPercentage(roiObj.roi_percentage)}</td>

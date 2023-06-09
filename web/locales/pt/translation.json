@@ -416,7 +416,8 @@
     "currentYearROI": "ROI do Ano Atual",
     "year": "Ano",
     "roi": "ROI",
-    "assetClass": "Classe de Ativos"
+    "assetClass": "Classe de Ativos",
+    "feesAndTaxes": "Taxas e impostos"
   },
   "stats": {
     "stats": "Estatísticas",
