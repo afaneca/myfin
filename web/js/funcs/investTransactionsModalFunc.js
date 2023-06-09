@@ -44,14 +44,17 @@ export const InvestTransactionsModalFunc = {
                                 </select>   
                             </div>
                         </div>
-                        <div class="row row-no-margin-bottom col s12">                     
-                            <div class="col s12">
-                                <div class="input-field col s12">
-                                    <i class="material-icons prefix">description</i>
-                                    <textarea id="trx-description" class="materialize-textarea"></textarea>
-                                    <label for="trx-description">${Localization.getString('investments.observations')}</label>
-                                </div>
-                            </div> 
+                        <div class="row row-no-margin-bottom">                                            
+                            <div class="input-field col s7">
+                                <i class="material-icons prefix">description</i>
+                                <textarea id="trx-description" class="materialize-textarea"></textarea>
+                                <label for="trx-description">${Localization.getString('investments.observations')}</label>
+                            </div>
+                            <div class="input-field col s3 offset-s2">
+                              <i class="material-icons prefix">control_point_duplicate</i>
+                              <input id="trx_fees" type="number" step=".01" class="validate" value="0">
+                              <label for="trx_fees" class="active">${Localization.getString('investments.feesAndTaxes')} (€)</label>
+                            </div>
                         </div>                             
                     </form>
                 </div>
@@ -88,12 +91,13 @@ export const InvestTransactionsModalFunc = {
       if (addTransactionBtnClickCallback) {
         const date = DateUtils.convertDateToUnixTimestamp($('.datepicker').val())
         const units = $('#trx_units').val()
+        const fees = $('#trx_fees').val()
         const amount = $('#trx_amount').val()
         const observations = $('#trx-description').val()
         const type = ToggleComponent.getSelectedOptionId('type')
         const assetId = $('select.select-trxs-asset').val()
-        if (ValidationUtils.checkIfFieldsAreFilled([date, units, amount, type, assetId])) {
-          addTransactionBtnClickCallback(date, units, amount, type, observations, assetId)
+        if (ValidationUtils.checkIfFieldsAreFilled([date, units, amount, type, assetId, fees])) {
+          addTransactionBtnClickCallback(date, units, fees, amount, type, observations, assetId)
         }
         else {
           DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))
@@ -124,9 +128,10 @@ export const InvestTransactionsModalFunc = {
     $('#action-remove-asset-btn').click(() => removeTrxCallback(trxId, assetId))
   },
   showEditTransactionModal: (
-    modalDivID, assetsList, trxId, date_timestamp, trxType, totalPrice, name, assetType, ticker, broker, units, observations, assetId,
+    modalDivID, assetsList, trxId, date_timestamp, trxType, totalPrice, name, assetType, ticker, broker, units, fees, observations, assetId,
     editAssetCallback) => {
     $(modalDivID).modal('open')
+
     let html = `
                 <div class="row row-no-margin-bottom">
                     <div class="input-field col s8">
@@ -164,13 +169,16 @@ export const InvestTransactionsModalFunc = {
                             </div>
                         </div>
                         <div class="row row-no-margin-bottom col s12">                     
-                            <div class="col s12">
-                                <div class="input-field col s12">
-                                    <i class="material-icons prefix">description</i>
-                                    <textarea id="trx-description" class="materialize-textarea"></textarea>
-                                    <label class="active" for="trx-description">${Localization.getString('investments.observations')}</label>
-                                </div>
-                            </div> 
+                            <div class="input-field col s7">
+                                <i class="material-icons prefix">description</i>
+                                <textarea id="trx-description" class="materialize-textarea"></textarea>
+                                <label class="active" for="trx-description">${Localization.getString('investments.observations')}</label>
+                            </div>
+                            <div class="input-field col s3 offset-s2">
+                              <i class="material-icons prefix">control_point_duplicate</i>
+                              <input id="trx_fees" type="number" step=".01" class="validate" value="${parseFloat(fees) ? fees : 0}">
+                              <label for="trx_fees" class="active">${Localization.getString('investments.feesAndTaxes')} (€)</label>
+                            </div>
                         </div>                             
                     </form>
                 </div>
@@ -210,14 +218,15 @@ export const InvestTransactionsModalFunc = {
         const note = $('#trx-description').val()
         const totalPrice = $('#trx_amount').val()
         const units = $('#trx_units').val()
+        const fees = $('#trx_fees').val()
         const assetId = $('select.select-trxs-asset').val()
         const type = ToggleComponent.getSelectedOptionId('type-edit')
 
         /*
         if (ValidationUtils.checkIfFieldsAreFilled([date, units, amount, type, assetId])) {*/
 
-        if (ValidationUtils.checkIfFieldsAreFilled([date_timestamp, units, totalPrice, type, assetId])) {
-          editAssetCallback(trxId, date_timestamp, note, totalPrice, units, assetId, type)
+        if (ValidationUtils.checkIfFieldsAreFilled([date_timestamp, units, fees, totalPrice, type, assetId])) {
+          editAssetCallback(trxId, date_timestamp, note, totalPrice, units, fees, assetId, type)
         }
         else {
           DialogUtils.showErrorMessage(Localization.getString('common.fillAllFieldsTryAgain'))

@@ -102,7 +102,26 @@ class InvestAssetModel extends Entity
         try {
             $db->prepare($sql);
             $db->execute($values);
-            return $db->fetch();
+            return $db->fetch()["avg_price"];
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
+
+    public static function getTotalFeesAndTaxesForAsset($assetId, $transactional = false)
+    {
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT sum(fees_taxes / 100) as fees_taxes FROM invest_transactions " .
+            "WHERE invest_assets_asset_id = :assetID";
+
+        $values = array();
+        $values[':assetID'] = $assetId;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return $db->fetch()["fees_taxes"];
         } catch (Exception $e) {
             return $e;
         }
@@ -222,19 +241,21 @@ AND date_timestamp BETWEEN 0 and 1*/
             // 4 - extract data
             $investedInYearAmount = InvestTransactionModel::getCombinedInvestedBalanceBetweenDatesForUser($userId, $fromDate, $toDate, $transactional);
             $fullCurrentValue = Input::convertIntegerToFloatAmount(InvestAssetModel::getTotalInvestmentValueAtDate($userId, $maxDate, $yearInLoop, $transactional));
-            $expectedBreakEvenValue = $lastYearsTotalValue + $investedInYearAmount; // If the user had a 0% profit, this would be the current portfolio value
+            $feesAndTaxes = InvestTransactionModel::getCombinedFeesAndTaxesBetweenDatesForUser($userId, $fromDate, $toDate, $transactional);
+            $expectedBreakEvenValue = $lastYearsTotalValue + $investedInYearAmount + $feesAndTaxes; // If the user had a 0% profit, this would be the current portfolio value
 
             $roiAmount = $fullCurrentValue - $expectedBreakEvenValue;
             $roiPercentage = ($expectedBreakEvenValue != 0) ? ($roiAmount / $expectedBreakEvenValue) * 100 : "-";;
 
-            array_push($roiByYear[$yearInLoop], [
+            $roiByYear[$yearInLoop][] = [
                 "invested_in_year_amount" => $investedInYearAmount,
                 "value_total_amount" => $fullCurrentValue,
                 "roi_amount" => $roiAmount,
                 "roi_percentage" => $roiPercentage,
+                "fees_taxes" => $feesAndTaxes,
                 "LAST_YEARS_TOTAL_VALUE" => $lastYearsTotalValue,
                 "EXPECTED_BREAKEVEN_VALUE" => $expectedBreakEvenValue,
-            ]);
+            ];
             $lastYearsTotalValue = $fullCurrentValue;
             $yearInLoop++;
         }

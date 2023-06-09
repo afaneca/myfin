@@ -56,8 +56,10 @@ class InvestTransactions
             $note = Input::validate($request->getParsedBody()['note'], Input::$STRING, 4);
             $totalPrice = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['total_price'], Input::$FLOAT, 5));
             $units = Input::validate($request->getParsedBody()['units'], Input::$FLOAT, 6);
-            $assetID = Input::validate($request->getParsedBody()['asset_id'], Input::$INT, 7);
+            $fees = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['fees'], Input::$FLOAT, 7));
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 8);
+            $assetID = Input::validate($request->getParsedBody()['asset_id'], Input::$INT, 9);
+
             if (
                 $type !== DEFAULT_INVESTING_TRANSACTIONS_BUY && $type !== DEFAULT_INVESTING_TRANSACTIONS_SELL
             ) {
@@ -77,7 +79,7 @@ class InvestTransactions
             }
 
             /* Execute Operations */
-            InvestTransactionModel::addTransaction($date, $units, $totalPrice, $note, $type, $assetID, true);
+            InvestTransactionModel::addTransaction($date, $units, $fees, $totalPrice, $note, $type, $assetID, true);
 
             return sendResponse($response, EnsoShared::$REST_OK, "New transaction added!");
         } catch (BadInputValidationException $e) {
@@ -153,8 +155,9 @@ class InvestTransactions
             $note = Input::validate($request->getParsedBody()['note'], Input::$STRING, 5);
             $totalPrice = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['total_price'], Input::$FLOAT, 6));
             $units = Input::validate($request->getParsedBody()['units'], Input::$FLOAT, 7);
-            $assetID = Input::validate($request->getParsedBody()['asset_id'], Input::$INT, 8);
-            $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 9);
+            $fees = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['fees'], Input::$FLOAT, 8));
+            $assetID = Input::validate($request->getParsedBody()['asset_id'], Input::$INT, 9);
+            $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 10);
             if (
                 $type !== DEFAULT_INVESTING_TRANSACTIONS_BUY && $type !== DEFAULT_INVESTING_TRANSACTIONS_SELL
             ) {
@@ -192,6 +195,7 @@ class InvestTransactions
             ], [
                 "date_timestamp" => $date,
                 "units" => $units,
+                "fees_taxes" => $fees,
                 "total_price" => $totalPrice,
                 "note" => $note,
                 "type" => $type,

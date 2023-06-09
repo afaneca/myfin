@@ -39,6 +39,7 @@ export const InvestmentTransactionsTableFunc = {
           this.dataset.trxTicker,
           this.dataset.trxBroker,
           this.dataset.trxUnits,
+          this.dataset.trxFees,
           this.dataset.trxNote,
           this.dataset.trxAssetId,
         )
@@ -61,22 +62,26 @@ export const InvestmentTransactionsTableFunc = {
       <tr data-id='${trx.transaction_id}'>
         <td style="text-align: center;">
                     <span><b>${DateUtils.getDayNumberFromUnixTimestamp(
-      trx.date_timestamp)}</b></span><br>${DateUtils.getMonthShortStringFromUnixTimestamp(
-      trx.date_timestamp)} '${DateUtils.getShortYearFromUnixTimestamp(trx.date_timestamp)}         
+        trx.date_timestamp)}</b></span><br>${DateUtils.getMonthShortStringFromUnixTimestamp(
+        trx.date_timestamp)} '${DateUtils.getShortYearFromUnixTimestamp(
+        trx.date_timestamp)}         
         </td>
-        <td>${trx.name + '<br><span style="font-size: small;">' + StringUtils.getInvestingAssetObjectById(trx.asset_type).name + '</span>'}</td>
+        <td>${trx.name + '<br><span style="font-size: small;">' +
+    StringUtils.getInvestingAssetObjectById(trx.asset_type).name + '</span>'}</td>
         <td>${InvestmentTransactionsTableFunc.renderTrxTypeRow(trx.trx_type)}</td>
         <td>${trx.units} ${trx.ticker ? trx.ticker : ''}</td>
         <td>${trx.broker ? trx.broker : '-'}</td>
         <td>${StringUtils.formatMoney(trx.total_price)}
           <br>
-          <span class="" style="font-size: small;font-style: italic;">${Localization.getString("investments.perUnitPrice", {price: StringUtils.formatMoney(trx.total_price / trx.units)})}</span>
+          <span class="" style="font-size: small;font-style: italic;">${Localization.getString(
+        "investments.perUnitPrice",
+        {price: StringUtils.formatMoney(trx.total_price / trx.units)})}</span>
         </td>
         <td>${trx.note ? trx.note : '-'}</td>
         <td>
             <i data-trx-id="${trx.transaction_id}" data-date-timestamp="${trx.date_timestamp}" data-trx-type="${trx.trx_type}"
             data-trx-total-price="${trx.total_price}" data-trx-name="${trx.name}" data-trx-asset-type="${trx.asset_type}"
-            data-trx-ticker="${trx.ticker}" data-trx-broker="${trx.broker}" data-trx-units="${trx.units}"
+            data-trx-ticker="${trx.ticker}" data-trx-broker="${trx.broker}" data-trx-units="${trx.units}" data-trx-fees="${trx.fees_taxes}"
             data-trx-note="${trx.note}" data-trx-asset-id="${trx.asset_id}"
             class="material-icons table-action-icons action-edit">create</i>
             <i data-trx-id="${trx.transaction_id}" data-trx-asset-id="${trx.asset_id}" class="material-icons table-action-icons action-remove" style="margin-left:10px">delete</i>

@@ -416,7 +416,8 @@
     "currentYearROI": "Current Year's ROI",
     "year": "Year",
     "roi": "ROI",
-    "assetClass": "Asset Class"
+    "assetClass": "Asset Class",
+    "feesAndTaxes": "Fees & taxes"
   },
   "stats": {
     "stats": "Stats",
