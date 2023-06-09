@@ -180,7 +180,7 @@
     "editTransactionModalTitle": "Editar transação #<b>{{id}}</b>",
     "splitTransaction": "Dividir Transação",
     "transactionSuccessfullyUpdated": "Transação atualizada com sucesso!",
-    "transactionsTableFootnotes1": "Por defeito, esta pesquisa apenas devolve as últimas {{LIMIT}} transações.",
+    "transactionsTableFootnotes1": "Por defeito, esta pesquisa apenas devolve as últimas {{limit}} transações.",
     "transactionsTableFootnotes2": "Clique aqui para recuperar a lista completa.",
     "importTransactions": "Importar Transações",
     "importFromCsv": "Import de .csv",
