@@ -18,13 +18,13 @@ export var Transactions = {
         fetchLimit,
         Transactions.getColumnsRenderingArray(),
         (page, searchQuery, callback) => {
+          LoadingManager.showLoading();
           TransactionServices.getTransactionsByPage(page, fetchLimit,
               searchQuery,
               (resp) => {
                 // SUCCESS
                 LoadingManager.hideLoading();
                 callback({
-                  // draw: data.draw,
                   data: resp.results,
                   recordsTotal: resp.total_count,
                   recordsFiltered: resp.filtered_count,
