@@ -1,24 +1,28 @@
 import { Localization } from './localization.js'
 
-export const tableUtils = {
+export const TableUtils = {
+  setupDynamicTable: (tableId, fetchLimit, columnsRenderingArr, renderPageCallback, drawCallback) => {
+    return $(tableId).DataTable({
+      paging: true,
+      pageLength: fetchLimit,
+      ajax: function(data, callback, settings) {
+        const page = data.start / data.length;
+        renderPageCallback(page, data.search.value, callback)
+      },
+      serverSide: true,
+      processing: false,
+      'language': TableUtils.getLocalizedLanguageObject(),
+      drawCallback: drawCallback,
+      columns: columnsRenderingArr,
+    });
+  },
   setupStaticTable: (tableID, onDrawCallback, ordering = false, customOrdering = undefined, pageLength = 50) => {
     $(tableID).DataTable({
       "order": customOrdering, /*[[0, "desc"]], */
       'ordering': ordering,
       'lengthChange': true,
       'pageLength': pageLength,
-      'language': {
-        'lengthMenu': '',
-        'zeroRecords': Localization.getString("common.tableZeroRecords"),
-        'info': Localization.getString("common.tableInfo"),
-        'infoEmpty': Localization.getString("common.tableInfoEmpty"),
-        'infoFiltered': Localization.getString("common.tableInfoFiltered"),
-        'search': `${Localization.getString('common.search')}:`,
-        'paginate': {
-          'next': Localization.getString("common.tablePaginateNext"),
-          'previous': Localization.getString("common.tablePaginatePrevious"),
-        },
-      },
+      'language': TableUtils.getLocalizedLanguageObject(),
       drawCallback: onDrawCallback,
     })
   },
@@ -29,20 +33,23 @@ export const tableUtils = {
       'lengthChange': false,
       'pageLength': pageLegth,
       'columnDefs': customColumnWidths,
-      'language': {
-        'lengthMenu':'',
-        'zeroRecords': Localization.getString("common.tableZeroRecords"),
-        'info': Localization.getString("common.tableInfo"),
-        'infoEmpty': Localization.getString("common.tableInfoEmpty"),
-        'infoFiltered': Localization.getString("common.tableInfoFiltered"),
-        'search': `${Localization.getString('common.search')}:`,
-        'paginate': {
-          'next': Localization.getString("common.tablePaginateNext"),
-          'previous': Localization.getString("common.tablePaginatePrevious"),
-        },
-      },
+      'language': TableUtils.getLocalizedLanguageObject(),
       drawCallback: onDrawCallback,
     })
+  },
+  getLocalizedLanguageObject: () => {
+    return {
+      'lengthMenu': '',
+      'zeroRecords': Localization.getString("common.tableZeroRecords"),
+      'info': Localization.getString("common.tableInfo"),
+      'infoEmpty': Localization.getString("common.tableInfoEmpty"),
+      'infoFiltered': Localization.getString("common.tableInfoFiltered"),
+      'search': `${Localization.getString('common.search')}:`,
+      'paginate': {
+        'next': Localization.getString("common.tablePaginateNext"),
+        'previous': Localization.getString("common.tablePaginatePrevious"),
+      },
+    }
   },
 }
 

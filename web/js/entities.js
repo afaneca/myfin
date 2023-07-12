@@ -1,5 +1,5 @@
 import { DialogUtils } from './utils/dialogUtils.js'
-import { tableUtils } from './utils/tableUtils.js'
+import { TableUtils } from './utils/tableUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
 import { EntityServices } from './services/entityServices.js'
 import { StringUtils } from './utils/stringUtils.js'
@@ -22,7 +22,7 @@ export const Entities = {
   },
   initTables: (entityList) => {
     $('#table-entities-wrapper').html(Entities.renderEntitiesTable(entityList))
-    tableUtils.setupStaticTableWithCustomColumnWidths('#entities-table',
+    TableUtils.setupStaticTableWithCustomColumnWidths('#entities-table',
       [
         {
           'width': '90%',

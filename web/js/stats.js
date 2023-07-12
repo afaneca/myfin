@@ -5,7 +5,7 @@ import { StatServices } from './services/statServices.js'
 import { account_types_tag, StringUtils } from './utils/stringUtils.js'
 import { DateUtils } from './utils/dateUtils.js'
 import { chartUtils } from './utils/chartUtils.js'
-import { tableUtils } from './utils/tableUtils.js'
+import { TableUtils } from './utils/tableUtils.js'
 import { LocalDataManager } from './utils/localDataManager.js'
 import { UserServices } from './services/userServices.js'
 import { Localization } from './utils/localization.js'
@@ -205,7 +205,7 @@ export const Stats = {
     `
 
     $(wrapperId).html(html)
-    tableUtils.setupStaticTable(`table#${tableId}`, undefined, true, [[1, 'desc']], 5)
+    TableUtils.setupStaticTable(`table#${tableId}`, undefined, true, [[1, 'desc']], 5)
   },
   renderIncomeExpenseTableRow: (category, isCredit) => {
     return `
@@ -390,7 +390,7 @@ export const Stats = {
     `,
     )
 
-    tableUtils.setupStaticTable('table#cat-expenses-evolution-table')
+    TableUtils.setupStaticTable('table#cat-expenses-evolution-table')
   },
   renderExpensesPerCategoryTableRow: (oldMonth, monthData, isMonth) => {
 
@@ -587,7 +587,7 @@ export const Stats = {
     `,
     )
 
-    tableUtils.setupStaticTable('table#cat-income-evolution-table')
+    TableUtils.setupStaticTable('table#cat-income-evolution-table')
   },
   renderIncomePerCategoryTableRow: (oldMonth, monthData, isMonth) => {
 
@@ -646,7 +646,7 @@ export const Stats = {
     }
     Stats.setupPatrimonyLineChart(cAggData, cLabels, extraChartData)
     Stats.setupPatrimonyTable(cAggData.slice().reverse(), cLabels.slice().reverse())
-    tableUtils.setupStaticTable('#ev-pat-table')
+    TableUtils.setupStaticTable('#ev-pat-table')
 
   },
   setupPatrimonyTable: (sumArr, sumLabels) => {
@@ -729,7 +729,7 @@ export const Stats = {
   },
   setupPatrimonyProjectionsList (resp) {
     $('#patrimony-projections-table').html(Stats.renderPatrimonyProjectionsTable(resp))
-    tableUtils.setupStaticTable('#ev-pat-projections-table')
+    TableUtils.setupStaticTable('#ev-pat-projections-table')
   },
   getInitialAssetsBalance (accs) {
     const allAccs = accs//LocalDataManager.getUserAccounts()

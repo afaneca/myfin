@@ -1,6 +1,6 @@
 import { DialogUtils } from './utils/dialogUtils.js'
 import { LayoutUtils } from './utils/layoutUtils.js'
-import { tableUtils } from './utils/tableUtils.js'
+import { TableUtils } from './utils/tableUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
 import { BudgetServices } from './services/budgetServices.js'
 import { DateUtils } from './utils/dateUtils.js'
@@ -35,7 +35,7 @@ export const Budgets = {
   },
   initTable: (resp) => {
     $('#table-wrapper').html(Budgets.renderTable(resp))
-    tableUtils.setupStaticTableWithCustomColumnWidths('#budgets-table', [
+    TableUtils.setupStaticTableWithCustomColumnWidths('#budgets-table', [
       {
         'width': '5%',
         'targets': 1,
