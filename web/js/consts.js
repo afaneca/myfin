@@ -45,6 +45,7 @@ var MYFIN = {
     MAUVE_THEME: 'MAUVE_THEME'
   },
   TRX_FETCH_LIMIT: 50,
+  BUDGETS_FETCH_LIMIT: 15,
   INVEST_ASSETS_TYPES: {
     PPR: {
       id: 'ppr',

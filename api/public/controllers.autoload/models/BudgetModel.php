@@ -16,37 +16,6 @@ class BudgetModel extends Entity
         "users_user_id"
     ];
 
-
-    /*public static function getBudgetsForUser($userID, $isOpen, $transactional = false)
-    {
-
-        $db = new EnsoDB($transactional);
-
-        $sql = "SELECT month, year, budget_id,  observations,  is_open, initial_balance, budgets.users_user_id, categories_category_id, categories.name, planned_amount, current_amount " .
-            "FROM myfin.budgets " .
-            "LEFT JOIN budgets_has_categories " .
-            "ON budgets_has_categories.budgets_users_user_id = budgets.users_user_id " .
-            "LEFT JOIN categories " .
-            "ON categories.category_id = budgets_has_categories.categories_category_id " .
-            "WHERE budgets.users_user_id = :userID ";
-
-
-        if ($isOpen !== null)
-            $sql .= "AND is_open = $isOpen ";
-
-        $sql .= "ORDER BY year ASC, month ASC ";
-        $values = array();
-        $values[':userID'] = $userID;
-
-
-        try {
-            $db->prepare($sql);
-            $db->execute($values);
-            return $db->fetchAll();
-        } catch (Exception $e) {
-            return $e;
-        }
-    }*/
     public static function getBudgetsAfterCertainMonth($userID, int $previousMonth, int $previousMonthsYear, $transactional = false)
     {
         $db = new EnsoDB($transactional);
@@ -284,6 +253,70 @@ class BudgetModel extends Entity
 
             $currentMonth = $nextMonth;
         } while ($year == $startYear || $currentMonth > $endMonth);
+    }
+
+    public static function getBudgetsForUserByPage($id_user, $page, $pageSize, $searchQuery = "", $status = "", $transactional = false)
+    {
+        $offsetValue = intval($page * $pageSize);
+        $db = new EnsoDB($transactional);
+
+        // clause for $searchQuery filtered entries
+        $whereClause = " WHERE (users_user_id = :userID) " .
+            "AND (observations LIKE :searchQuery OR month LIKE :searchQuery " .
+            "OR year LIKE :searchQuery) ";
+
+        if (isset($status))
+            switch ($status) {
+                case "O":
+                    $whereClause .= "AND is_open = 1 ";
+                    break;
+                case "C":
+                    $whereClause .= "AND is_open = 0 ";
+                    break;
+            }
+
+        // main query for list of results (limited by $pageSize and $offsetValue)
+        $sqlLimit = "SELECT budget_id, month, year, observations, is_open, users_user_id " .
+            "FROM budgets " .
+            $whereClause .
+            "GROUP BY budget_id " .
+            "ORDER BY year DESC, month DESC " .
+            "LIMIT $pageSize OFFSET $offsetValue";
+
+        // count of total of filtered results
+        $sqlCount = "SELECT count(*) as 'count'" .
+            "FROM (SELECT budget_id from budgets " .
+            $whereClause .
+            "GROUP BY budget_id) budget";
+
+        // count of total of results
+        $sqlCountTotal = "SELECT count(*) as 'count' " .
+            "FROM budgets " .
+            "WHERE users_user_id = :userID";
+
+        try {
+            $values = array();
+            $values[':userID'] = $id_user;
+            $values[':searchQuery'] = "%$searchQuery%";
+
+            $db->prepare($sqlLimit);
+            $db->execute($values);
+            $res["results"] = $db->fetchAll();
+
+            $db->prepare($sqlCount);
+            $db->execute($values);
+            $res["filtered_count"] = $db->fetch()["count"];
+
+            $values = array();
+            $values[':userID'] = $id_user;
+            $db->prepare($sqlCountTotal);
+            $db->execute($values);
+            $res["total_count"] = $db->fetch()["count"];
+
+            return $res;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
     }
 }
 

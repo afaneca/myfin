@@ -98,6 +98,75 @@ class Budgets
         }
     }
 
+    public static function getFilteredBudgetsForUserByPage(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+            } else {
+                $mobile = false;
+            }
+
+            if ($request->getQueryParams() != null && array_key_exists('page_size', $request->getQueryParams())) {
+                $pageSize = Input::validate($request->getQueryParams()['page_size'], Input::$INT, 3);
+            } else {
+                $pageSize = DEFAULT_TRANSACTIONS_FETCH_LIMIT;
+            }
+
+            if ($request->getQueryParams() != null && array_key_exists('query', $request->getQueryParams())) {
+                $searchQuery = Input::validate($request->getQueryParams()['query'], Input::$STRING, 4);
+            } else {
+                $searchQuery = "";
+            }
+
+            $page = Input::validate($args['page'], Input::$INT, 5);
+
+            if (array_key_exists('status', $request->getQueryParams())) {
+                /*
+                    status = null, C(losed), or O(pen)
+                    Used to allow filtering, if desired
+                */
+                $status = Input::validate($request->getQueryParams()['status'], Input::$STRING, 6);
+                if ($status !== 'C' && $status !== 'O') $status = null;
+            }
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* Execute Operations */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
+
+            $userID = UserModel::getUserIdByName($authusername, true);
+
+            $budgetsArr = BudgetModel::getBudgetsForUserByPage($userID, $page, $pageSize, $searchQuery, $status, true);
+
+            foreach ($budgetsArr["results"] as &$budget) {
+                $budget["balance_value"] = BudgetModel::calculateBudgetBalance($userID, $budget, true);//"-343.54";
+                $budget["balance_change_percentage"] = BudgetModel::calculateBudgetBalanceChangePercentage($userID, $budget, $budget["balance_value"], true);
+                $budgetSums = BudgetModel::getSumAmountsForBudget($userID, $budget, true);
+                $budget["credit_amount"] = $budgetSums["balance_credit"];
+                $budget["debit_amount"] = $budgetSums["balance_debit"];
+                if (doubleval($budget["credit_amount"]) == 0) $budget["savings_rate_percentage"] = 0;
+                else $budget["savings_rate_percentage"] = (doubleval($budget["balance_value"]) / doubleval($budget["credit_amount"])) * 100;
+            }
+
+            $db->getDB()->commit();
+
+            return sendResponse($response, EnsoShared::$REST_OK, $budgetsArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
     public static function getBudgetsListForUser(Request $request, Response $response, $args)
     {
         try {
@@ -587,3 +656,4 @@ $app->put('/budgets/', 'Budgets::editBudget');
 $app->put('/budgets/status', 'Budgets::changeBudgetStatus');
 $app->put('/budgets/{id}', 'Budgets::updateBudgetCategoryPlannedValues');
 $app->delete('/budgets/', 'Budgets::removeBudget');
+$app->get("/budgets/filteredByPage/{page}", 'Budgets::getFilteredBudgetsForUserByPage');
