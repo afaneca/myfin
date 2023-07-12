@@ -14,7 +14,7 @@ import {
 } from './funcs/investTransactionsModalFunc.js';
 import {InvestmentReportsTableFunc} from './funcs/investmentReportsTableFunc.js';
 import {GraphEmptyViewComponent} from './components/graphEmptyView.js';
-import {tableUtils} from './utils/tableUtils.js';
+import {TableUtils} from './utils/tableUtils.js';
 import {LoadingManager} from './utils/loadingManager.js';
 import {InvestServices} from './services/investServices.js';
 import {StringUtils} from './utils/stringUtils.js';
@@ -228,14 +228,14 @@ export const Investments = {
     $(`#${tableWrapperId}`).
         html(InvestmentReportsTableFunc.buildReportsROIByYearTable(
             'table-reports-roi-by-year', roiByYearList));
-    tableUtils.setupStaticTable('#table-reports-roi-by-year');
+    TableUtils.setupStaticTable('#table-reports-roi-by-year');
   },
   buildReportsROIByAssetTable: (
       tableWrapperId, assetsList, totalInvestedValue) => {
     $(`#${tableWrapperId}`).
         html(InvestmentReportsTableFunc.buildReportsROIByAssetTable(
             'table-reports-roi-by-asset', assetsList, totalInvestedValue));
-    tableUtils.setupStaticTable('#table-reports-roi-by-asset');
+    TableUtils.setupStaticTable('#table-reports-roi-by-asset');
   },
   initTopPerformingAssetsStats: (
       asset1, asset2, asset3, totalInvestedValue) => {
@@ -394,7 +394,7 @@ export const Investments = {
         Investments.editAssetClicked, Investments.removeAssetClicked,
         Investments.updateAssetValueClicked);
 
-    tableUtils.setupStaticTable('#assets-table');
+    TableUtils.setupStaticTable('#assets-table');
     LoadingManager.hideLoading();
   },
   initTabTransactions: (trxList) => {
@@ -402,7 +402,7 @@ export const Investments = {
         '#table-wrapper-transactions', Investments.editTransactionClicked,
         Investments.removeTransactionClicked);
 
-    tableUtils.setupStaticTable('#transactions-table');
+    TableUtils.setupStaticTable('#transactions-table');
     LoadingManager.hideLoading();
   },
   editTransactionClicked: (

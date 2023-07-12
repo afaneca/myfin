@@ -5,7 +5,7 @@ function RemoveLastDirectoryPartOf (the_url) {
 }
 
 var MYFIN = {
-  APP_VERSION: '4.7.0',
+  APP_VERSION: '4.8.0',
   TRX_TYPES: {
     INCOME: 'I',
     EXPENSE: 'E',
@@ -44,7 +44,8 @@ var MYFIN = {
     SOLARIZED_GREEN: 'SOLARIZED_GREEN',
     MAUVE_THEME: 'MAUVE_THEME'
   },
-  TRX_FETCH_LIMIT: 300,
+  TRX_FETCH_LIMIT: 50,
+  BUDGETS_FETCH_LIMIT: 15,
   INVEST_ASSETS_TYPES: {
     PPR: {
       id: 'ppr',

@@ -105,6 +105,12 @@ export const DateUtils = {
     const a = new Date(date_unix * 1000)
     return a.getFullYear().toString().substring(2)
   },
+  isCurrentMonthAndYear: (month, year) => {
+    const currentMonth = moment().month() + 1;
+    const currentYear = moment().year();
+    return (month == currentMonth && year ==
+        currentYear);
+  }
 }
 //# sourceURL=js/utils/stringUtils.js
 

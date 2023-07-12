@@ -3,7 +3,7 @@ import {LocalDataManager} from './utils/localDataManager.js';
 import {ValidationUtils} from './utils/validationUtils.js';
 import {DialogUtils} from './utils/dialogUtils.js';
 import {PickerUtils} from './utils/pickerUtils.js';
-import {tableUtils} from './utils/tableUtils.js';
+import {TableUtils} from './utils/tableUtils.js';
 import {LoadingManager} from './utils/loadingManager.js';
 import {TransactionServices} from './services/transactionServices.js';
 import {DateUtils} from './utils/dateUtils.js';
@@ -12,41 +12,97 @@ import {Localization} from './utils/localization.js';
 import {ToggleComponent} from './components/toggleComponent.js';
 
 export var Transactions = {
-  getTransactions: (fetchLimit = MYFIN.TRX_FETCH_LIMIT) => {
-    LoadingManager.showLoading();
-    TransactionServices.getAllTransactions(fetchLimit,
-        (response) => {
-          // SUCCESS
-          LoadingManager.hideLoading();
-          Transactions.initTables(response);
+  setupTransactionsTable: (fetchLimit = MYFIN.TRX_FETCH_LIMIT) => {
+    $('#table-transactions-wrapper').html(Transactions.renderTable());
+    TableUtils.setupDynamicTable('#transactions-table',
+        fetchLimit,
+        Transactions.getColumnsRenderingArray(),
+        (page, searchQuery, callback) => {
+          LoadingManager.showLoading();
+          TransactionServices.getTransactionsByPage(page, fetchLimit,
+              searchQuery,
+              (resp) => {
+                // SUCCESS
+                LoadingManager.hideLoading();
+                callback({
+                  data: resp.results,
+                  recordsTotal: resp.total_count,
+                  recordsFiltered: resp.filtered_count,
+                });
+              }, (err) => {LoadingManager.hideLoading();});
+        }, () => {
+          // Click listener for edit trx click
+          Transactions.bindClickListenersForEditAction();
+          // Click listener for delete trx click
+          Transactions.bindClickListenersForRemoveAction();
         },
-        (response) => {
-          // FAILURE
-          LoadingManager.hideLoading();
-
-        });
+    );
   },
-  initTables: (dataset) => {
-    $('#table-transactions-wrapper').html(Transactions.renderTable(dataset)
-        +
-        `<p class="right-align grey-text text-accent-4 projections-table-footnotes" style="font-size: small">* ${Localization.getString(
-            'transactions.transactionsTableFootnotes1',
-            {limit: MYFIN.TRX_FETCH_LIMIT})}<br><a id="get-all-trxs-footnote-btn" style="cursor:pointer;">${Localization.getString(
-            'transactions.transactionsTableFootnotes2')}</a></p>`);
-    tableUtils.setupStaticTable('#transactions-table', () => {
-      // Click listener for edit trx click
-      Transactions.bindClickListenersForEditAction();
-      // Click listener for delete trx click
-      Transactions.bindClickListenersForRemoveAction();
-    });
-    $('#get-all-trxs-footnote-btn').
-        click(() => Transactions.getTransactions(999999999999999));
-    $(document).ready(function() {
-      $('select').formSelect();
-    });
-
-    LoadingManager.hideLoading();
+  getColumnsRenderingArray: () => {
+    return [
+      {
+        data: Transactions.buildDateColumnForTable,
+      },
+      {
+        data: Transactions.buildFlowColumnForTable,
+      },
+      {
+        data: Transactions.buildDescriptionColumnForTable,
+      },
+      {
+        data: Transactions.buildAmountColumnForTable,
+      }, {
+        data: Transactions.buildActionsColumnForTable,
+      }];
   },
+  buildDateColumnForTable: (trx, type, val, meta) =>
+      `<div style="text-align: center;">
+        <span><b>${DateUtils.getDayNumberFromUnixTimestamp(trx.date_timestamp)}</b></span><br>
+        ${DateUtils.getMonthShortStringFromUnixTimestamp(
+          trx.date_timestamp)} '${DateUtils.getShortYearFromUnixTimestamp(
+          trx.date_timestamp)}</div>`,
+  buildFlowColumnForTable: (
+      trx, type, val, meta) => `${Transactions.formatTypeToString(trx.type,
+      trx.account_from_name, trx.account_to_name)}`,
+  buildDescriptionColumnForTable: (trx, type, val, meta) =>
+      `${trx.is_essential == true
+          ? LayoutUtils.buildEssentialTransactionBadge()
+          : ''}  
+          ${trx.description}
+          <p><i class="inline-icon material-icons">folder_shared</i>  ${(trx.category_name)
+          ? trx.category_name
+          : `<span class=\'medium-gray-color\'>${Localization.getString(
+              'common.noCategory')}</span>`}&nbsp;&nbsp;&nbsp;<i class="inline-icon material-icons">business</i> ${(trx.entity_name)
+          ? trx.entity_name
+          : `<span class=\'medium-gray-color\'>${Localization.getString(
+              'common.noEntity')}</span>`}</p>`,
+  buildAmountColumnForTable: (
+      trx, type, val, meta) => `${Transactions.formatCurrencyColumn(trx.type,
+      StringUtils.formatMoney(trx.amount))}`,
+  buildActionsColumnForTable: (trx, type, val, meta) =>
+      `<i id="edit-${trx.transaction_id}"
+         data-trx-id="${trx.transaction_id}"
+         data-trx-amount="${trx.amount}"
+         data-date-timestamp="${trx.date_timestamp}"
+         data-entity-id="${trx.entity_id ? trx.entity_id : ''}"
+         data-category-id="${trx.categories_category_id
+          ? trx.categories_category_id
+          : ''}"
+         data-account-from-id="${trx.accounts_account_from_id
+          ? trx.accounts_account_from_id
+          : ''}"
+         data-account-to-id="${trx.accounts_account_to_id
+          ? trx.accounts_account_to_id
+          : ''}"
+         data-trx-type="${trx.type}"
+         data-description="${StringUtils.removeLineBreaksFromString(
+          trx.description)}"
+         data-is-essential="${trx.is_essential}"
+         class="material-icons table-action-icons action-edit-trx">create</i>
+        <i data-trx-id="${trx.transaction_id}"
+          class="material-icons table-action-icons action-delete-trx"
+          style="margin-left:10px">delete</i>
+    `,
   bindClickListenersForEditAction: () => {
     $('.table-action-icons.action-edit-trx').each(function() {
       $(this).on('click', function() {
@@ -72,7 +128,7 @@ export var Transactions = {
       });
     });
   },
-  renderTable: (entitiesList) => {
+  renderTable: () => {
     return `
             <table id="transactions-table" class="display browser-defaults" style="width:100%">
         <thead>
@@ -85,61 +141,8 @@ export var Transactions = {
             </tr>
         </thead>
         <tbody>
-        ${entitiesList.map(trx => Transactions.renderRow(trx)).join('')}
         </tbody>
         </table>
-        `;
-  },
-  renderRow: trx => {
-    return `
-            <tr data-id='$trx.transaction_id'>
-                <td style="text-align: center;">
-                    <span><b>${DateUtils.getDayNumberFromUnixTimestamp(
-        trx.date_timestamp)}
-                    </b></span><br>
-${DateUtils.getMonthShortStringFromUnixTimestamp(
-        trx.date_timestamp)} '${DateUtils.getShortYearFromUnixTimestamp(
-        trx.date_timestamp)}         
-                </td>
-                <td>${Transactions.formatTypeToString(trx.type,
-        trx.account_from_name, trx.account_to_name)}</td>
-                <td>${trx.is_essential == true
-        ? LayoutUtils.buildEssentialTransactionBadge()
-        : ''}  
-${trx.description}
-<p><i class="inline-icon material-icons">folder_shared</i>  ${(trx.category_name)
-        ? trx.category_name
-        : `<span class=\'medium-gray-color\'>${Localization.getString(
-            'common.noCategory')}</span>`}&nbsp;&nbsp;&nbsp;<i class="inline-icon material-icons">business</i> ${(trx.entity_name)
-        ? trx.entity_name
-        : `<span class=\'medium-gray-color\'>${Localization.getString(
-            'common.noEntity')}</span>`}</p></td>
-                <td>${Transactions.formatCurrencyColumn(trx.type,
-        StringUtils.formatMoney(trx.amount))}</td>
-                <td>
-                    <i id="edit-${trx.transaction_id}"
-                     data-trx-id="${trx.transaction_id}"
-                     data-trx-amount="${trx.amount}"
-                     data-date-timestamp="${trx.date_timestamp}"
-                     data-entity-id="${trx.entity_id ? trx.entity_id : ''}"
-                     data-category-id="${trx.categories_category_id
-        ? trx.categories_category_id
-        : ''}"
-                     data-account-from-id="${trx.accounts_account_from_id
-        ? trx.accounts_account_from_id
-        : ''}"
-                     data-account-to-id="${trx.accounts_account_to_id
-        ? trx.accounts_account_to_id
-        : ''}"
-                     data-trx-type="${trx.type}"
-                     data-description="${StringUtils.removeLineBreaksFromString(
-        trx.description)}"
-                     data-is-essential="${trx.is_essential}"
-                     class="material-icons table-action-icons action-edit-trx">create</i>
-                    <i data-trx-id="${trx.transaction_id}" class="material-icons table-action-icons action-delete-trx" style="margin-left:10px">delete</i>
-                </td>
-            </tr>
-
         `;
   },
   formatCurrencyColumn: (type, formattedCurrencyString) => {

@@ -1,5 +1,5 @@
 import { DialogUtils } from './utils/dialogUtils.js'
-import { tableUtils } from './utils/tableUtils.js'
+import { TableUtils } from './utils/tableUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
 import { CategoryServices } from './services/categoryServices.js'
 import { StringUtils } from './utils/stringUtils.js'
@@ -30,7 +30,7 @@ export const Categories = {
     $('#table-merged-wrapper').
       html(Categories.renderCreditCategoriesTable(catsList))
     $('.tooltipped').tooltip()
-    tableUtils.setupStaticTable('#debit-categories-table', () => {
+    TableUtils.setupStaticTable('#debit-categories-table', () => {
       // Click listener for edit cat click
       Categories.bindClickListenersForEditAction()
       // Click listener for edit cat click
@@ -68,7 +68,7 @@ export const Categories = {
     $('#table-crebit-wrapper').
       html(Categories.renderCreditCategoriesTable(creditCatsList))
 
-    tableUtils.setupStaticTable('#debit-categories-table')
+    TableUtils.setupStaticTable('#debit-categories-table')
     $('select.cat-color-select').select2()
     $('.tooltipped').tooltip()
 

@@ -180,8 +180,6 @@
     "editTransactionModalTitle": "Edit transaction #<b>{{id}}</b>",
     "splitTransaction": "Split Transaction",
     "transactionSuccessfullyUpdated": "Transaction successfully updated",
-    "transactionsTableFootnotes1": "By default, this search only returns the last {{limit}} transactions.",
-    "transactionsTableFootnotes2": "Click here to get the full list.",
     "importTransactions": "Import Transactions",
     "importFromCsv": "Import from .csv",
     "importFromClipboard": "Import from clipboard",
