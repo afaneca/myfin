@@ -5,6 +5,7 @@ export const TableUtils = {
       tableId, fetchLimit, columnsRenderingArr, renderPageCallback,
       drawCallback, customRowId = null, customConfigs = {}) => {
     const mainConfig = {
+      ordering: false,
       paging: true,
       pageLength: fetchLimit,
       ajax: function(data, callback, settings) {
