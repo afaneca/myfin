@@ -1,5 +1,5 @@
 import { LocalDataManager } from './utils/localDataManager.js'
-import { tableUtils } from './utils/tableUtils.js'
+import { TableUtils } from './utils/tableUtils.js'
 import { DialogUtils } from './utils/dialogUtils.js'
 import { LayoutUtils } from './utils/layoutUtils.js'
 import { LoadingManager } from './utils/loadingManager.js'
@@ -36,7 +36,7 @@ export const Rules = {
   },
   initRulesTable: (rulesArr) => {
     $('#table-wrapper').html(Rules.renderRulesTable(rulesArr))
-    tableUtils.setupStaticTable('#rules-table', () => {
+    TableUtils.setupStaticTable('#rules-table', () => {
       // Click listener for edit click
       Rules.bindClickListenersForEditAction()
       // Click listener for remove click

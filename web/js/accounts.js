@@ -1,5 +1,5 @@
 import { LocalDataManager } from './utils/localDataManager.js'
-import { tableUtils } from './utils/tableUtils.js'
+import { TableUtils } from './utils/tableUtils.js'
 import { account_types_tag, StringUtils } from './utils/stringUtils.js'
 import { Categories } from './categories.js'
 import { chartUtils } from './utils/chartUtils.js'
@@ -122,7 +122,7 @@ export var Accounts = {
   },
   initTable: (accountsList) => {
     $('#table-wrapper').html(Accounts.renderAccountsTable(accountsList))
-    tableUtils.setupStaticTable('#accounts-table', () => {
+    TableUtils.setupStaticTable('#accounts-table', () => {
       // Click listener for edit click
       $('.table-action-icons.action-edit-account').each(function () {
         $(this).on('click', function () {
