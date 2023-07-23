@@ -1,7 +1,4 @@
-
-"use strict";
-
-var ProgressbarUtils = {
+export const ProgressbarUtils = {
     getCorrectPercentageValue: (current_value, budgeted_value) => {
         if(current_value == 0) return 0
         if(budgeted_value == 0) return 100

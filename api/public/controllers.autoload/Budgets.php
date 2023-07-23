@@ -1,11 +1,7 @@
 <?php
 
-use App\Application\Actions\User\ListUsersAction;
-use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\App;
-use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 require_once 'consts.php';
 
@@ -81,11 +77,82 @@ class Budgets
             });
 
             foreach ($budgetsArr as &$budget) {
-                $budget["balance_value"] = BudgetModel::calculateBudgetBalance($userID, $budget);//"-343.54";
-                $budget["balance_change_percentage"] = BudgetModel::calculateBudgetBalanceChangePercentage($userID, $budget, $budget["balance_value"]);
-                $budgetSums = BudgetModel::getSumAmountsForBudget($userID, $budget);
+                $budget["balance_value"] = BudgetModel::calculateBudgetBalance($userID, $budget, true);//"-343.54";
+                $budget["balance_change_percentage"] = BudgetModel::calculateBudgetBalanceChangePercentage($userID, $budget, $budget["balance_value"], true);
+                $budgetSums = BudgetModel::getSumAmountsForBudget($userID, $budget, true);
                 $budget["credit_amount"] = $budgetSums["balance_credit"];
                 $budget["debit_amount"] = $budgetSums["balance_debit"];
+                if (doubleval($budget["credit_amount"]) == 0) $budget["savings_rate_percentage"] = 0;
+                else $budget["savings_rate_percentage"] = (doubleval($budget["balance_value"]) / doubleval($budget["credit_amount"])) * 100;
+            }
+
+            $db->getDB()->commit();
+
+            return sendResponse($response, EnsoShared::$REST_OK, $budgetsArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    public static function getFilteredBudgetsForUserByPage(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+            } else {
+                $mobile = false;
+            }
+
+            if ($request->getQueryParams() != null && array_key_exists('page_size', $request->getQueryParams())) {
+                $pageSize = Input::validate($request->getQueryParams()['page_size'], Input::$INT, 3);
+            } else {
+                $pageSize = DEFAULT_TRANSACTIONS_FETCH_LIMIT;
+            }
+
+            if ($request->getQueryParams() != null && array_key_exists('query', $request->getQueryParams())) {
+                $searchQuery = Input::validate($request->getQueryParams()['query'], Input::$STRING, 4);
+            } else {
+                $searchQuery = "";
+            }
+
+            $page = Input::validate($args['page'], Input::$INT, 5);
+
+            if (array_key_exists('status', $request->getQueryParams())) {
+                /*
+                    status = null, C(losed), or O(pen)
+                    Used to allow filtering, if desired
+                */
+                $status = Input::validate($request->getQueryParams()['status'], Input::$STRING, 6);
+                if ($status !== 'C' && $status !== 'O') $status = null;
+            }
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* Execute Operations */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
+
+            $userID = UserModel::getUserIdByName($authusername, true);
+
+            $budgetsArr = BudgetModel::getBudgetsForUserByPage($userID, $page, $pageSize, $searchQuery, $status, true);
+
+            foreach ($budgetsArr["results"] as &$budget) {
+                $budget["balance_value"] = BudgetModel::calculateBudgetBalance($userID, $budget, true);//"-343.54";
+                $budget["balance_change_percentage"] = BudgetModel::calculateBudgetBalanceChangePercentage($userID, $budget, $budget["balance_value"], true);
+                $budgetSums = BudgetModel::getSumAmountsForBudget($userID, $budget, true);
+                $budget["credit_amount"] = $budgetSums["balance_credit"];
+                $budget["debit_amount"] = $budgetSums["balance_debit"];
+                if (doubleval($budget["credit_amount"]) == 0) $budget["savings_rate_percentage"] = 0;
+                else $budget["savings_rate_percentage"] = (doubleval($budget["balance_value"]) / doubleval($budget["credit_amount"])) * 100;
             }
 
             $db->getDB()->commit();
@@ -175,9 +242,9 @@ class Budgets
             $month = intval($list["month"]);
             $year = intval($list["year"]);
 
-            $list["initial_balance"] = AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, false);
+            $list["initial_balance"] = AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, true, false);
             $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
-
+            $list["debit_essential_trx_total"] = BudgetModel::getTotalEssentialDebitTransactionsAmountForBudget($userID, $list, false);
             foreach ($list["categories"] as &$category) {
                 $monthToUse = $list["month"];
                 $yearToUse = $list["year"];
@@ -188,28 +255,31 @@ class Budgets
                 $type = ($category["type"] == 'D') ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
 
                 $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse, true)[0];
-                $current_amount_credit = $calculatedAmounts["category_balance_credit"];
-                $current_amount_debit = $calculatedAmounts["category_balance_debit"];
-                $category["current_amount_credit"] = abs(Input::convertIntegerToFloat($current_amount_credit));
-                $category["current_amount_debit"] = abs(Input::convertIntegerToFloat($current_amount_debit));
+                $calculatedAmountsFromInvestmentAccounts = AccountModel::getAmountForInvestmentAccountsInMonth($category["category_id"], $monthToUse, $yearToUse, true)[0];
+                $creditFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_credit"]; // Unrealized gains
+                $expensesFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_debit"]; // Unrealized losses
+                $current_amount_credit = $calculatedAmounts["category_balance_credit"] - $creditFromInvestmentAccounts; // remove unrealized gains from budget calcs
+                $current_amount_debit = $calculatedAmounts["category_balance_debit"] - $expensesFromInvestmentAccounts; // remove unrealized losses from budget calcs
+                $category["current_amount_credit"] = abs(Input::convertIntegerToFloatAmount($current_amount_credit));
+                $category["current_amount_debit"] = abs(Input::convertIntegerToFloatAmount($current_amount_debit));
 
                 $previousMonth = ($monthToUse > 1) ? $monthToUse - 1 : 12;
                 $previousMonthsYear = ($monthToUse > 1) ? $yearToUse : $yearToUse - 1;
                 $previousMonthAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $previousMonth, $previousMonthsYear, true)[0];
-                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_credit"]));
-                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_debit"]));
+                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloatAmount($previousMonthAmounts["category_balance_credit"]));
+                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloatAmount($previousMonthAmounts["category_balance_debit"]));
 
                 $sameMonthPreviousYearAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse - 1, true)[0];
-                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_credit"]));
-                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_debit"]));
+                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloatAmount($sameMonthPreviousYearAmounts["category_balance_credit"]));
+                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloatAmount($sameMonthPreviousYearAmounts["category_balance_debit"]));
 
                 $last12MonthsAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLast12Months($category["category_id"], true)[0];
-                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_credit"]));
-                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_debit"]));
+                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloatAmount($last12MonthsAverageAmounts["category_balance_credit"]));
+                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloatAmount($last12MonthsAverageAmounts["category_balance_debit"]));
 
                 $lifetimeAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLifetime($category["category_id"], true)[0];
-                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_credit"]));
-                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_debit"]));
+                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloatAmount($lifetimeAverageAmounts["category_balance_credit"]));
+                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloatAmount($lifetimeAverageAmounts["category_balance_debit"]));
             }
 
             // we need to also add uncategorized transactions to the calculations
@@ -261,7 +331,7 @@ class Budgets
             $userID = UserModel::getUserIdByName($authusername, false);
 
 
-            $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type", "description", "status"]);
+            $catsArr = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type", "description", "status", "exclude_from_budgets"]);
 
             foreach ($catsArr as &$category) {
                 $monthToUse = date('m');
@@ -270,20 +340,20 @@ class Budgets
                 $previousMonth = ($monthToUse > 1) ? $monthToUse - 1 : 12;
                 $previousMonthsYear = ($monthToUse > 1) ? $yearToUse : $yearToUse - 1;
                 $previousMonthAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $previousMonth, $previousMonthsYear, true)[0];
-                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_credit"]));
-                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloat($previousMonthAmounts["category_balance_debit"]));
+                $category["avg_previous_month_credit"] = abs(Input::convertIntegerToFloatAmount($previousMonthAmounts["category_balance_credit"]));
+                $category["avg_previous_month_debit"] = abs(Input::convertIntegerToFloatAmount($previousMonthAmounts["category_balance_debit"]));
 
                 $sameMonthPreviousYearAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse - 1, true)[0];
-                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_credit"]));
-                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloat($sameMonthPreviousYearAmounts["category_balance_debit"]));
+                $category["avg_same_month_previous_year_credit"] = abs(Input::convertIntegerToFloatAmount($sameMonthPreviousYearAmounts["category_balance_credit"]));
+                $category["avg_same_month_previous_year_debit"] = abs(Input::convertIntegerToFloatAmount($sameMonthPreviousYearAmounts["category_balance_debit"]));
 
                 $last12MonthsAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLast12Months($category["category_id"], true)[0];
-                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_credit"]));
-                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloat($last12MonthsAverageAmounts["category_balance_debit"]));
+                $category["avg_12_months_credit"] = abs(Input::convertIntegerToFloatAmount($last12MonthsAverageAmounts["category_balance_credit"]));
+                $category["avg_12_months_debit"] = abs(Input::convertIntegerToFloatAmount($last12MonthsAverageAmounts["category_balance_debit"]));
 
                 $lifetimeAverageAmounts = BudgetHasCategoriesModel::getAverageAmountForCategoryInLifetime($category["category_id"], true)[0];
-                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_credit"]));
-                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloat($lifetimeAverageAmounts["category_balance_debit"]));
+                $category["avg_lifetime_credit"] = abs(Input::convertIntegerToFloatAmount($lifetimeAverageAmounts["category_balance_credit"]));
+                $category["avg_lifetime_debit"] = abs(Input::convertIntegerToFloatAmount($lifetimeAverageAmounts["category_balance_debit"]));
             }
 
             $list['categories'] = $catsArr;
@@ -343,8 +413,8 @@ class Budgets
             foreach ($catValuesArr as $item) {
 
                 $catID = $item['category_id'];
-                $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
-                $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
+                $plannedValueCredit = Input::convertFloatToIntegerAmount(floatval($item['planned_value_credit']));
+                $plannedValueDebit = Input::convertFloatToIntegerAmount(floatval($item['planned_value_debit']));
 
                 BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit, true);
             }
@@ -428,7 +498,7 @@ class Budgets
 
             // EDIT BUDGET
             BudgetModel::editWhere(
-                ["budget_id" => $budgetID],
+                ["budget_id" => $budgetID, "users_user_id" => $userID],
                 [
                     "month" => $month,
                     "year" => $year,
@@ -449,8 +519,8 @@ class Budgets
             foreach ($catValuesArr as $item) {
 
                 $catID = $item['category_id'];
-                $plannedValueCredit = Input::convertFloatToInteger(floatval($item['planned_value_credit']));
-                $plannedValueDebit = Input::convertFloatToInteger(floatval($item['planned_value_debit']));
+                $plannedValueCredit = Input::convertFloatToIntegerAmount(floatval($item['planned_value_credit']));
+                $plannedValueDebit = Input::convertFloatToIntegerAmount(floatval($item['planned_value_debit']));
 
                 BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID, $plannedValueCredit, $plannedValueDebit, true);
             }
@@ -495,7 +565,7 @@ class Budgets
 
             // ADD BUDGET
             BudgetModel::editWhere(
-                ["budget_id" => $budgetID],
+                ["budget_id" => $budgetID, "users_user_id" => $userID],
                 [
                     "is_open" => $isOpen
                 ], true
@@ -504,6 +574,69 @@ class Budgets
             $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, "Budget successfully updated!");
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    public static function updateBudgetCategoryPlannedValues(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 2);
+            } else {
+                $mobile = false;
+            }
+
+            $budgetID = Input::validate($args['id'], Input::$INT, 3);
+
+            $catID = Input::validate($request->getParsedBody()['category_id'], Input::$INT, 4);
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+
+            /* Execute Operations */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
+
+            $userID = UserModel::getUserIdByName($authusername, true);
+
+            if (array_key_exists('planned_expense', $request->getParsedBody()) && $request->getParsedBody()['planned_expense'] !== "") {
+                $plannedExpense = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['planned_expense'], Input::$FLOAT, 5));
+            } else {
+                $plannedExpense = null;
+            }
+
+            if (array_key_exists('planned_income', $request->getParsedBody()) && $request->getParsedBody()['planned_income'] !== "") {
+                $plannedIncome = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['planned_income'], Input::$FLOAT, 6));
+            } else {
+                $plannedIncome = null;
+            }
+
+            if ($plannedExpense == null && $plannedIncome == null) {
+                throw new BadInputValidationException("Required input not found");
+            }
+
+            $currentAmounts = BudgetHasCategoriesModel::getWhere([
+                "budgets_budget_id" => $budgetID,
+                "categories_category_id" => $catID,
+                "budgets_users_user_id" => $userID,
+            ], ["planned_amount_credit", "planned_amount_debit"])[0];
+
+            BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget($userID, $budgetID, $catID,
+                $plannedIncome ?? $currentAmounts["planned_amount_credit"],
+                $plannedExpense ?? $currentAmounts["planned_amount_debit"], true);
+
+            $db->getDB()->commit();
+
+            return sendResponse($response, EnsoShared::$REST_OK, "Update was successful");
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
         } catch (AuthenticationException $e) {
@@ -521,4 +654,6 @@ $app->post('/budgets/step0', 'Budgets::addBudgetStep0');
 $app->post('/budgets/step1', 'Budgets::addBudget');
 $app->put('/budgets/', 'Budgets::editBudget');
 $app->put('/budgets/status', 'Budgets::changeBudgetStatus');
+$app->put('/budgets/{id}', 'Budgets::updateBudgetCategoryPlannedValues');
 $app->delete('/budgets/', 'Budgets::removeBudget');
+$app->get("/budgets/filteredByPage/{page}", 'Budgets::getFilteredBudgetsForUserByPage');

@@ -16,37 +16,6 @@ class BudgetModel extends Entity
         "users_user_id"
     ];
 
-
-    /*public static function getBudgetsForUser($userID, $isOpen, $transactional = false)
-    {
-
-        $db = new EnsoDB($transactional);
-
-        $sql = "SELECT month, year, budget_id,  observations,  is_open, initial_balance, budgets.users_user_id, categories_category_id, categories.name, planned_amount, current_amount " .
-            "FROM myfin.budgets " .
-            "LEFT JOIN budgets_has_categories " .
-            "ON budgets_has_categories.budgets_users_user_id = budgets.users_user_id " .
-            "LEFT JOIN categories " .
-            "ON categories.category_id = budgets_has_categories.categories_category_id " .
-            "WHERE budgets.users_user_id = :userID ";
-
-
-        if ($isOpen !== null)
-            $sql .= "AND is_open = $isOpen ";
-
-        $sql .= "ORDER BY year ASC, month ASC ";
-        $values = array();
-        $values[':userID'] = $userID;
-
-
-        try {
-            $db->prepare($sql);
-            $db->execute($values);
-            return $db->fetchAll();
-        } catch (Exception $e) {
-            return $e;
-        }
-    }*/
     public static function getBudgetsAfterCertainMonth($userID, int $previousMonth, int $previousMonthsYear, $transactional = false)
     {
         $db = new EnsoDB($transactional);
@@ -83,17 +52,17 @@ class BudgetModel extends Entity
             $balance -= $budgetCat["planned_amount_debit"];
         }
 
-        return Input::convertIntegerToFloat($balance);
+        return Input::convertIntegerToFloatAmount($balance);
     }
 
-    public static function calculateBudgetBalance($userID, $budget)
+    public static function calculateBudgetBalance($userID, $budget, $transactional = false)
     {
         $budgetID = $budget["budget_id"];
         $month = intval($budget["month"]);
         $year = intval($budget["year"]);
         $isOpen = intval($budget["is_open"]);
 
-        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+        $categories = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, $transactional);
 
         $balance = 0;
 
@@ -102,12 +71,15 @@ class BudgetModel extends Entity
             $yearToUser = $year;
 
             if ($isOpen) {
-                $amount_credit = abs(Input::convertFloatToInteger($category["planned_amount_credit"]));
-                $amount_debit = abs(Input::convertFloatToInteger($category["planned_amount_debit"]));
+                $amount_credit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_credit"]));
+                $amount_debit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_debit"]));
             } else {
                 $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
-                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
-                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);
+                $calculatedAmountsFromInvestmentAccounts = AccountModel::getAmountForInvestmentAccountsInMonth($category["category_id"], $monthToUse, $yearToUser, true)[0];
+                $creditFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_credit"]; // Unrealized gains
+                $expensesFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_debit"]; // Unrealized losses
+                $amount_credit = abs($calculatedAmounts["category_balance_credit"]) - $creditFromInvestmentAccounts; // remove unrealized gains from budget calcs
+                $amount_debit = abs($calculatedAmounts["category_balance_debit"]) - $expensesFromInvestmentAccounts; // remove unrealized losses from budget calcs
             }
             $balance += $amount_credit;
             $balance -= $amount_debit;
@@ -127,17 +99,17 @@ class BudgetModel extends Entity
             echo "\n------------------------------------\n";
             die();
         }*/
-        return Input::convertIntegerToFloat($balance);
+        return Input::convertIntegerToFloatAmount($balance);
     }
 
-    public static function calculateBudgetBalanceChangePercentage($userID, $budget, $budgetBalance)
+    public static function calculateBudgetBalanceChangePercentage($userID, $budget, $budgetBalance, $transactional = false)
     {
         $month = intval($budget["month"]);
         $year = intval($budget["year"]);
 
         $initialBalance =
             AccountModel::getBalancesSnapshotForMonthForUser($userID, ($month > 1) ? $month - 1 : 12,
-                ($month > 1) ? $year : $year - 1, false);
+                ($month > 1) ? $year : $year - 1, true, $transactional);
         $finalBalance = $initialBalance + $budgetBalance;
 
         if ($initialBalance == 0) return "NaN";
@@ -164,21 +136,59 @@ class BudgetModel extends Entity
 
         foreach ($categories as &$category) {
             $monthToUse = $month;
-            $yearToUser = $year;
+            $yearToUse = $year;
 
             if ($isOpen) {
-                $amount_credit = abs(Input::convertFloatToInteger($category["planned_amount_credit"]));
-                $amount_debit = abs(Input::convertFloatToInteger($category["planned_amount_debit"]));
+                $amount_credit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_credit"]));
+                $amount_debit = abs(Input::convertFloatToIntegerAmount($category["planned_amount_debit"]));
             } else {
-                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
-                $amount_credit = abs($calculatedAmounts["category_balance_credit"]);
-                $amount_debit = abs($calculatedAmounts["category_balance_debit"]);
+                $calculatedAmounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUse)[0];
+                $calculatedAmountsFromInvestmentAccounts = AccountModel::getAmountForInvestmentAccountsInMonth($category["category_id"], $monthToUse, $yearToUse, true)[0];
+                $creditFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_credit"]; // Unrealized gains
+                $expensesFromInvestmentAccounts = $calculatedAmountsFromInvestmentAccounts["account_balance_debit"]; // Unrealized losses
+                $amount_credit = abs($calculatedAmounts["category_balance_credit"] - $creditFromInvestmentAccounts); // remove unrealized gains from budget calcs
+                $amount_debit = abs($calculatedAmounts["category_balance_debit"] - $expensesFromInvestmentAccounts); // remove unrealized losses from budget calcs
             }
-            $balance_credit += $amount_credit;
-            $balance_debit += $amount_debit;
+            if (!$category["exclude_from_budgets"]) {
+                $balance_credit += $amount_credit;
+                $balance_debit += $amount_debit;
+            }
         }
 
-        return ["balance_credit" => Input::convertIntegerToFloat($balance_credit), "balance_debit" => Input::convertIntegerToFloat($balance_debit)];
+        return ["balance_credit" => Input::convertIntegerToFloatAmount($balance_credit), "balance_debit" => Input::convertIntegerToFloatAmount($balance_debit)];
+    }
+
+    public static function getTotalEssentialDebitTransactionsAmountForBudget($userID, $budget, $transactional = false)
+    {
+        $month = intval($budget["month"]);
+        $year = intval($budget["year"]);
+
+        $db = new EnsoDB($transactional);
+
+        $sql = "SELECT sum(amount) as 'amount' FROM transactions " .
+            "inner join accounts on transactions.accounts_account_from_id = accounts.account_id " .
+            "where users_user_id = :userId " .
+            "and date_timestamp between :beginTimestamp AND :endTimestamp " .
+            "and transactions.is_essential IS TRUE " .
+            "and transactions.type = :type";
+
+        $tz = new DateTimeZone('UTC');
+        $beginTimestamp = new DateTime("$year-$month-01", $tz);
+        $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t 23:59:59'), $tz);
+
+        $values = array();
+        $values[':userId'] = $userID;
+        $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
+        $values[':endTimestamp'] = $endTimestamp->getTimestamp();
+        $values[':type'] = DEFAULT_TYPE_EXPENSE_TAG;
+
+        try {
+            $db->prepare($sql);
+            $db->execute($values);
+            return Input::convertIntegerToFloatAmount($db->fetch()["amount"] ?? 0);
+        } catch (Exception $e) {
+            return $e;
+        }
     }
 
     public static function getBudgetsUntilCertainMonth($userID, int $nextMonth, int $nextMonthsYear, string $orderByDate = "ASC", $transactional = false)
@@ -204,6 +214,108 @@ class BudgetModel extends Entity
             return $db->fetchAll();
         } catch (Exception $e) {
             return $e;
+        }
+    }
+
+    public static function createMockBudgets($userId, $transactional = false)
+    {
+        $userCategories = CategoryModel::getWhere(["users_user_id" => $userId, "status" => DEFAULT_ACCOUNT_ACTIVE_STATUS]);
+        $endTimestamp = strtotime("+1 month");
+        $startTimestamp = strtotime("-1 year");
+        $startMonth = intval(date("m", $startTimestamp));
+        $startYear = intval(date("Y", $startTimestamp));
+        $endMonth = intval(date("m", $endTimestamp));
+
+        $currentMonth = $startMonth;
+
+        do {
+            $nextMonth = $currentMonth % 12 + 1;
+            $month = $currentMonth;
+            $year = ($currentMonth >= $startMonth) ? $startYear : $startYear + 1;
+            $observations = "🚘 Auto repair • 🎁 Hanna's birthday • 🐶 Pet training";
+            if (BudgetModel::exists(["month" => $month, "year" => $year, "users_user_id" => $userId])) {
+                $currentMonth = $nextMonth;
+                continue;
+            }
+            $budgetID = BudgetModel::insert([
+                "month" => $month,
+                "year" => $year,
+                "observations" => $observations,
+                "is_open" => $currentMonth == date("m") ? 1 : 0,
+                "users_user_id" => $userId
+            ], $transactional);
+
+            foreach ($userCategories as $category) {
+                BudgetHasCategoriesModel::addOrUpdateCategoryValueInBudget(
+                    $userId, $budgetID, $category["category_id"],
+                    rand(0, 1_000_000), rand(0, 100_000), $transactional);
+            }
+
+            $currentMonth = $nextMonth;
+        } while ($year == $startYear || $currentMonth > $endMonth);
+    }
+
+    public static function getBudgetsForUserByPage($id_user, $page, $pageSize, $searchQuery = "", $status = "", $transactional = false)
+    {
+        $offsetValue = intval($page * $pageSize);
+        $db = new EnsoDB($transactional);
+
+        // clause for $searchQuery filtered entries
+        $whereClause = " WHERE (users_user_id = :userID) " .
+            "AND (observations LIKE :searchQuery OR month LIKE :searchQuery " .
+            "OR year LIKE :searchQuery) ";
+
+        if (isset($status))
+            switch ($status) {
+                case "O":
+                    $whereClause .= "AND is_open = 1 ";
+                    break;
+                case "C":
+                    $whereClause .= "AND is_open = 0 ";
+                    break;
+            }
+
+        // main query for list of results (limited by $pageSize and $offsetValue)
+        $sqlLimit = "SELECT budget_id, month, year, observations, is_open, users_user_id " .
+            "FROM budgets " .
+            $whereClause .
+            "GROUP BY budget_id " .
+            "ORDER BY year DESC, month DESC " .
+            "LIMIT $pageSize OFFSET $offsetValue";
+
+        // count of total of filtered results
+        $sqlCount = "SELECT count(*) as 'count'" .
+            "FROM (SELECT budget_id from budgets " .
+            $whereClause .
+            "GROUP BY budget_id) budget";
+
+        // count of total of results
+        $sqlCountTotal = "SELECT count(*) as 'count' " .
+            "FROM budgets " .
+            "WHERE users_user_id = :userID";
+
+        try {
+            $values = array();
+            $values[':userID'] = $id_user;
+            $values[':searchQuery'] = "%$searchQuery%";
+
+            $db->prepare($sqlLimit);
+            $db->execute($values);
+            $res["results"] = $db->fetchAll();
+
+            $db->prepare($sqlCount);
+            $db->execute($values);
+            $res["filtered_count"] = $db->fetch()["count"];
+
+            $values = array();
+            $values[':userID'] = $id_user;
+            $db->prepare($sqlCountTotal);
+            $db->execute($values);
+            $res["total_count"] = $db->fetch()["count"];
+
+            return $res;
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
     }
 }
@@ -257,7 +369,7 @@ class BudgetHasCategoriesModel extends Entity
     {
         $db = new EnsoDB($transactional);
 
-        $sql = "SELECT users_user_id, category_id, name, status, type, description, color_gradient, budgets_budget_id, truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit, truncate((coalesce(planned_amount_debit, 0) / 100), 2) as planned_amount_debit, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
+        $sql = "SELECT users_user_id, category_id, name, status, type, description, color_gradient, budgets_budget_id, exclude_from_budgets, truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit, truncate((coalesce(planned_amount_debit, 0) / 100), 2) as planned_amount_debit, truncate((coalesce(current_amount, 0) / 100), 2) as current_amount " .
             "FROM " .
             "(SELECT * FROM budgets_has_categories WHERE budgets_users_user_id = :userID AND (budgets_budget_id = :budgetID)) b " .
             "RIGHT JOIN categories ON categories.category_id = b.categories_category_id " .
@@ -320,42 +432,12 @@ class BudgetHasCategoriesModel extends Entity
        AND categories_category_id IS :cat_id
    */
 
-    public static function getAmountForCategoryInMonth($category_id, $month, $year, $transactional = false)
+    public static function getAmountForCategoryInMonth($category_id, $month, $year, $includeTransfers = true, $transactional = false)
     {
-        $listOfAccountsToExclude = AccountModel::getWhere(["exclude_from_budgets" => true]);
-        if (!$listOfAccountsToExclude || sizeof($listOfAccountsToExclude) == 0) {
-            $accsExclusionSQLExcerptAccountsTo = " 1 = 1 ";
-            $accsExclusionSQLExcerptAccountsFrom = " 1 = 1 ";
-        } else {
-            $accountsToExcludeListInSQL = BudgetHasCategoriesModel::buildSQLForExcludedAccountsList($listOfAccountsToExclude);
-            $accsExclusionSQLExcerptAccountsTo = "accounts_account_to_id NOT IN $accountsToExcludeListInSQL ";
-            $accsExclusionSQLExcerptAccountsFrom = "accounts_account_from_id NOT IN $accountsToExcludeListInSQL ";
-        }
-
-        $db = new EnsoDB($transactional);
-
-        $sql = "SELECT sum(if(type = 'I' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsTo), amount, 0)) as 'category_balance_credit', sum(if(type = 'E' OR (type = 'T' AND $accsExclusionSQLExcerptAccountsFrom), amount, 0)) as 'category_balance_debit' " .
-            "FROM transactions " .
-            "WHERE date_timestamp between :beginTimestamp AND :endTimestamp " .
-            "AND categories_category_id = :cat_id ";
-
         $tz = new DateTimeZone('UTC');
         $beginTimestamp = new DateTime("$year-$month-01", $tz);
         $endTimestamp = new DateTime($beginTimestamp->format('Y-m-t 23:59:59'), $tz);
-
-        $values = array();
-        $values[':cat_id'] = $category_id;
-        $values[':beginTimestamp'] = $beginTimestamp->getTimestamp();
-        $values[':endTimestamp'] = $endTimestamp->getTimestamp();
-
-
-        try {
-            $db->prepare($sql);
-            $db->execute($values);
-            return $db->fetchAll();
-        } catch (Exception $e) {
-            return $e;
-        }
+        return CategoryModel::getAmountForCategoryInPeriod($category_id, $beginTimestamp->getTimestamp(), $endTimestamp->getTimestamp(), $includeTransfers, $transactional);
     }
 
     public static function getAverageAmountForCategoryInLast12Months($category_id, $transactional = false)
@@ -509,7 +591,7 @@ class BudgetHasCategoriesModel extends Entity
         }
     }
 
-    private static function buildSQLForExcludedAccountsList($excludedAccs)
+    public static function buildSQLForExcludedAccountsList($excludedAccs)
     {
         if (!$excludedAccs || sizeof($excludedAccs) == 0) return " 1 = 1 ";
         /*print_r($excludedAccs);

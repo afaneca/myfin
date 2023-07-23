@@ -53,7 +53,7 @@ progress[value]::-webkit-progress-value.cat_progressbar_credit {
 
 /* https://codepen.io/j_holtslander/pen/pYvKdg */
 #modded .progress {
-    min-height: 36px;
+    min-height: 6px;
     overflow: hidden;
     position: relative;
 }

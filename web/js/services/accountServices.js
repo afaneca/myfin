@@ -1,6 +1,4 @@
-"use strict";
-
-var AccountServices = {
+export const AccountServices = {
     getAllAccounts: (successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "accounts/"
         $.ajax({

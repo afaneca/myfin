@@ -9,9 +9,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!-- Compiled and minified JavaScript -->
     <link rel="stylesheet" href="css/main.css">
+    <!-- Localization -->
+    <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-i18next@1.2.1/jquery-i18next.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.3.2/i18nextHttpBackend.min.js"></script>
+    <script src="js/utils/localization.js" type="module"></script>
 </head>
 
-<body onload="checkCredentials()">
+<body>
 <div id="login-bg"></div>
 <div id="login-wrap">
     <div class="login-box enso-border">
@@ -25,13 +31,13 @@
             <input autocomplete="off" id="pw-input" type="password" placeholder="password"
                    class="validate enso-border login-input"/>
             <button class="waves-effect waves-light btn login-btn green-gradient-bg" id="btn-login"
-                    type="submit">Iniciar Sessão
-            </button>
+                    type="submit" data-i18n="login.signIn"></button>
         </form>
         <div style="margin-top: 31px;border-top: 1px solid #eeeeee;">
-            <p><span id="change-login-type">Ainda não está registado?</span> <a style="color:#243b55;cursor: pointer;"
-                                                                                onclick="signUpLinkWasClicked()">Clique
-                aqui</a>.</p>
+            <p><span id="change-login-type" data-i18n="login.notYetRegisteredQuestion"></span> <a id="signup-link"
+                                                                                                  style="color:#243b55;cursor: pointer;"
+                                                                                                  data-i18n="common.clickHere"></a>.
+            </p>
         </div>
     </div>
 </div>
@@ -40,13 +46,13 @@
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-<script src="./js/utils/dialogUtils.js"></script>
-<script src="js/utils/localDataManager.js"></script>
-<script src="./js/configs.js"></script>
+<script src="./js/utils/dialogUtils.js" type="module"></script>
+<script src="js/utils/localDataManager.js" type="module"></script>
+<script src="./js/configs.js" type="module"></script>
 <script src="./js/consts.js"></script>
 <script src="./js/ensoshared_js_lib/ensoshared.js"></script>
-<script src="./js/utils/loadingManager.js"></script>
-<script src="./js/login.js"></script>
+<script src="./js/utils/loadingManager.js" type="module"></script>
+<script src="./js/login.js" type="module"></script>
 
 <!-- Compiled and minified JavaScript -->
 <!-- <script src="./js/js.cookie.js" type="text/javascript"></script>
@@ -58,6 +64,17 @@
 <script src="./js/misc.js"></script>
 <script src="./js/actions/UserActions.js"></script>
 -->
+<script type="module">
+  import { checkCredentials, signUpLinkWasClicked } from './js/login.js'
+  import { Localization } from './js/utils/localization.js'
+
+  $(window).on('load', function () {
+    Localization.initLocale()
+    checkCredentials()
+
+    $('#signup-link').click(() => signUpLinkWasClicked())
+  })
+</script>
 </body>
 
 </html>

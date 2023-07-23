@@ -4,6 +4,8 @@ require_once 'consts.php';
 
 class RuleModel extends Entity
 {
+    public const RULES_MATCHING_IGNORE = "RULES_MATCHING_IGNORE";
+
     protected static $table = "rules";
 
     protected static $columns = [
@@ -23,6 +25,7 @@ class RuleModel extends Entity
         "assign_account_to_id",
         "assign_account_from_id",
         "assign_type",
+        "assign_is_essential",
         "users_user_id"
     ];
 
@@ -33,94 +36,94 @@ class RuleModel extends Entity
             ["users_user_id" => $userID]
         );
 
-        /*print_r($rules);
-        die();*/
-
         foreach ($rules as $rule) {
             $hasMatched = false;
 
             /* description matcher */
-            if ($rule["matcher_description_operator"] && $rule["matcher_description_value"]) {
+            if ($rule["matcher_description_operator"] && $rule["matcher_description_value"]
+                && $trx["description"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_description_operator"];
                 $ruleValue = $rule["matcher_description_value"];
 
                 if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
-                    if (RuleModel::contains($ruleValue, $trx["description"])) {
+                    if (RuleModel::contains(strtoupper($ruleValue), strtoupper($trx["description"]))) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_CONTAINS) {
                     if (!RuleModel::contains($ruleValue, $trx["description"])) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
                     if ($ruleValue == $trx["description"]) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
                     if ($ruleValue != $trx["description"]) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 }
             }
 
             /* amount matcher */
-            if ($rule["matcher_amount_operator"] && $rule["matcher_amount_value"]) {
+            if ($rule["matcher_amount_operator"] && $rule["matcher_amount_value"]
+                && $trx["amount"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_amount_operator"];
                 $ruleValue = $rule["matcher_amount_value"];
 
                 if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
-                    if (RuleModel::contains($ruleValue, Input::convertFloatToInteger($trx["amount"]))) {
+                    if (RuleModel::contains($ruleValue, Input::convertFloatToIntegerAmount($trx["amount"]))) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_CONTAINS) {
-                    if (!RuleModel::contains($ruleValue, Input::convertFloatToInteger($trx["amount"]))) {
+                    if (!RuleModel::contains($ruleValue, Input::convertFloatToIntegerAmount($trx["amount"]))) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
-                    if ($ruleValue == Input::convertFloatToInteger($trx["amount"])) {
+                    if ($ruleValue == Input::convertFloatToIntegerAmount($trx["amount"])) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
-                    if ($ruleValue != Input::convertFloatToInteger($trx["amount"])) {
+                    if ($ruleValue != Input::convertFloatToIntegerAmount($trx["amount"])) {
                         $hasMatched = true;
                     } else {
-                        // Fails the validation -> try to next rule
+                        // Fails the validation -> try the next rule
                         continue;
                     }
                 }
             }
 
             /* type matcher */
-            if ($rule["matcher_type_operator"] && $rule["matcher_type_value"]) {
+            if ($rule["matcher_type_operator"] && $rule["matcher_type_value"]
+                && $trx["type"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_type_operator"];
                 $ruleValue = $rule["matcher_type_value"];
 
                 if ($ruleOperator == DEFAULT_RULES_OPERATOR_CONTAINS) {
-                    if (RuleModel::contains($ruleValue, $trx["type"])) {
+                    if (array_key_exists("type", $trx) && RuleModel::contains($ruleValue, $trx["type"])) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
@@ -134,14 +137,14 @@ class RuleModel extends Entity
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
-                    if ($ruleValue == $trx["type"]) {
+                    if (array_key_exists("type", $trx) && $ruleValue == $trx["type"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
-                    if ($ruleValue != $trx["type"]) {
+                    if (array_key_exists("type", $trx) && $ruleValue != $trx["type"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
@@ -151,7 +154,8 @@ class RuleModel extends Entity
             }
 
             /* account_to_id matcher */
-            if ($rule["matcher_account_to_id_operator"] && $rule["matcher_account_to_id_value"]) {
+            if ($rule["matcher_account_to_id_operator"] && $rule["matcher_account_to_id_value"]
+                && $trx["accounts_account_to_id"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_account_to_id_operator"];
                 $ruleValue = $rule["matcher_account_to_id_value"];
@@ -188,7 +192,8 @@ class RuleModel extends Entity
             }
 
             /* account_from_id matcher */
-            if ($rule["matcher_account_from_id_operator"] && $rule["matcher_account_from_id_value"]) {
+            if ($rule["matcher_account_from_id_operator"] && $rule["matcher_account_from_id_value"]
+                && $trx["accounts_account_from_id"] !== self::RULES_MATCHING_IGNORE) {
                 // If it is defined, check if it matches
                 $ruleOperator = $rule["matcher_account_from_id_operator"];
                 $ruleValue = $rule["matcher_account_from_id_value"];
@@ -208,14 +213,16 @@ class RuleModel extends Entity
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_EQUALS) {
-                    if ($ruleValue == $trx["accounts_account_from_id"]) {
+                    if (array_key_exists("accounts_account_from_id", $trx)
+                        && $ruleValue == $trx["accounts_account_from_id"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule
                         continue;
                     }
                 } else if ($ruleOperator == DEFAULT_RULES_OPERATOR_NOT_EQUALS) {
-                    if ($ruleValue != $trx["accounts_account_from_id"]) {
+                    if (array_key_exists("accounts_account_from_id", $trx)
+                        && $ruleValue != $trx["accounts_account_from_id"]) {
                         $hasMatched = true;
                     } else {
                         // Fails the validation -> try to next rule

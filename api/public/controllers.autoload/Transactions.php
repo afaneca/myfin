@@ -169,7 +169,7 @@ class Transactions
             $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
-            $amount = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['amount'], Input::$FLOAT, 2));
+            $amount = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['amount'], Input::$FLOAT, 2));
             $type = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 3);
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 4);
 
@@ -212,6 +212,7 @@ class Transactions
                 $mobile = false;
             }
 
+            $isEssential = (int)Input::validate($request->getParsedBody()['is_essential'], Input::$BOOLEAN, 11);
 
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
@@ -219,7 +220,8 @@ class Transactions
             }
 
             /* Execute Operations */
-            $db = new EnsoDB(true);
+            $transactional = true;
+            $db = new EnsoDB($transactional);
             $db->getDB()->beginTransaction();
 
 
@@ -231,30 +233,31 @@ class Transactions
                 "entities_entity_id" => $entityID,
                 "accounts_account_from_id" => $accountFrom,
                 "accounts_account_to_id" => $accountTo,
-                "categories_category_id" => $categoryID
-            ], true);
+                "categories_category_id" => $categoryID,
+                "is_essential" => $isEssential,
+            ], $transactional);
 
-            $userID = UserModel::getUserIdByName($authusername, true);
-            UserModel::setLastUpdateTimestamp($userID, time(), true);
+            $userID = UserModel::getUserIdByName($authusername, $transactional);
+            UserModel::setLastUpdateTimestamp($userID, time(), $transactional);
 
             switch ($type) {
                 case DEFAULT_TYPE_INCOME_TAG:
-                    AccountModel::setNewAccountBalance($accountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
-                        true);
+                    AccountModel::setNewAccountBalance($userID, $accountTo,
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, $transactional),
+                        $transactional);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
-                    AccountModel::setNewAccountBalance($accountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
-                        true);
+                    AccountModel::setNewAccountBalance($userID, $accountFrom,
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, $transactional),
+                        $transactional);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::setNewAccountBalance($accountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
-                        true);
-                    AccountModel::setNewAccountBalance($accountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
-                        true);
+                    AccountModel::setNewAccountBalance($userID, $accountTo,
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, $transactional),
+                        $transactional);
+                    AccountModel::setNewAccountBalance($userID, $accountFrom,
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, $transactional),
+                        $transactional);
                     break;
             }
 
@@ -304,6 +307,7 @@ class Transactions
                 ["amount", "date_timestamp", "type", "accounts_account_from_id", "accounts_account_to_id"]
             )[0];
 
+
             $oldAmount = $trxObj["amount"];
             $oldTimestamp = $trxObj["date_timestamp"];
             $oldType = $trxObj["type"];
@@ -314,6 +318,14 @@ class Transactions
             if (isset($trxObj["accounts_account_from_id"]))
                 $oldAccountFrom = $trxObj["accounts_account_from_id"];
 
+            // Make sure accounts belong to user
+            if (!AccountModel::exists([
+                "users_user_id" => $userID,
+                "account_id" => $oldAccountFrom ?? $oldAccountTo,
+            ])) {
+                throw new BadValidationTypeException("Account not found!");
+            }
+
             TransactionModel::delete([
                 "transaction_id" => $trxID
             ], true);
@@ -322,23 +334,23 @@ class Transactions
             switch ($oldType) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::setNewAccountBalance($oldAccountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
+                    AccountModel::setNewAccountBalance($userID, $oldAccountTo,
+                        AccountModel::recalculateBalanceForAccountIncrementally($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
                         true);
 
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
-                    AccountModel::setNewAccountBalance($oldAccountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
+                    AccountModel::setNewAccountBalance($userID, $oldAccountFrom,
+                        AccountModel::recalculateBalanceForAccountIncrementally($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
                         true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::setNewAccountBalance($oldAccountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
+                    AccountModel::setNewAccountBalance($userID, $oldAccountFrom,
+                        AccountModel::recalculateBalanceForAccountIncrementally($oldAccountFrom, $oldTimestamp - 1, time() + 1, true),
                         true);
-                    AccountModel::setNewAccountBalance($oldAccountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
+                    AccountModel::setNewAccountBalance($userID, $oldAccountTo,
+                        AccountModel::recalculateBalanceForAccountIncrementally($oldAccountTo, $oldTimestamp - 1, time() + 1, true),
                         true);
                     break;
             }
@@ -362,7 +374,7 @@ class Transactions
             $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
             $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
 
-            $amount = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['new_amount'], Input::$FLOAT, 2));
+            $amount = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['new_amount'], Input::$FLOAT, 2));
             $type = Input::validate($request->getParsedBody()['new_type'], Input::$STRICT_STRING, 3);
             $description = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 4);
 
@@ -414,7 +426,7 @@ class Transactions
             }
 
             if (array_key_exists('split_amount', $request->getParsedBody()) && $request->getParsedBody()['split_amount'] !== "") {
-                $split_amount = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['split_amount'], Input::$FLOAT, 13));
+                $split_amount = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['split_amount'], Input::$FLOAT, 13));
             } else {
                 $split_amount = 0;
             }
@@ -455,6 +467,15 @@ class Transactions
                 $split_description = "";
             }
 
+            if (array_key_exists('split_is_essential', $request->getParsedBody()) && $request->getParsedBody()['split_is_essential'] !== "") {
+                $split_is_essential = (int)Input::validate($request->getParsedBody()['split_is_essential'], Input::$BOOLEAN, 20);
+            } else {
+                $split_is_essential = "";
+            }
+
+            $isEssential = (int)Input::validate($request->getParsedBody()['new_is_essential'], Input::$BOOLEAN, 21);
+
+
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
@@ -483,6 +504,14 @@ class Transactions
             if (isset($trxObj["accounts_account_from_id"]))
                 $oldAccountFrom = $trxObj["accounts_account_from_id"];
 
+            // Make sure accounts belong to user
+            if (!AccountModel::exists([
+                "users_user_id" => $userID,
+                "account_id" => $oldAccountFrom ?? $oldAccountTo,
+            ])) {
+                throw new BadValidationTypeException("Account not found!");
+            }
+
             TransactionModel::editWhere([
                 "transaction_id" => $trxID,
             ], [
@@ -493,7 +522,8 @@ class Transactions
                 "entities_entity_id" => $entityID,
                 "accounts_account_from_id" => $accountFrom,
                 "accounts_account_to_id" => $accountTo,
-                "categories_category_id" => $categoryID
+                "categories_category_id" => $categoryID,
+                "is_essential" => $isEssential,
             ], true);
 
 
@@ -502,18 +532,18 @@ class Transactions
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
                     AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, true);
-                    //AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, false);
+                    AccountModel::recalculateBalanceForAccountIncrementally($oldAccountTo, $oldTimestamp - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
                     AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, true);
-                    //AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, false);
+                    AccountModel::recalculateBalanceForAccountIncrementally($oldAccountFrom, $oldTimestamp - 1, time() + 1, true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
                     AccountModel::changeBalance($userID, $oldAccountFrom, $oldAmount, true);
                     AccountModel::changeBalance($userID, $oldAccountTo, -$oldAmount, true);
-                    /*AccountModel::recalculateIterativelyBalanceForAccount($oldAccountTo, $oldTimestamp - 1, time() + 1, false);
-                    AccountModel::recalculateIterativelyBalanceForAccount($oldAccountFrom, $oldTimestamp - 1, time() + 1, false);*/
+                    AccountModel::recalculateBalanceForAccountIncrementally($oldAccountTo, $oldTimestamp - 1, time() + 1, true);
+                    AccountModel::recalculateBalanceForAccountIncrementally($oldAccountFrom, $oldTimestamp - 1, time() + 1, true);
                     break;
             }
 
@@ -522,26 +552,26 @@ class Transactions
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
                     //AccountModel::changeBalance($userID, $accountTo, $amount, true);
-                    AccountModel::setNewAccountBalance($accountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                    AccountModel::setNewAccountBalance($userID, $accountTo,
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
                         true);
 
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
                     //AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
-                    AccountModel::setNewAccountBalance($accountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                    AccountModel::setNewAccountBalance($userID, $accountFrom,
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
                         true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
                     //AccountModel::changeBalance($userID, $accountFrom, -$amount, true);
                     //AccountModel::changeBalance($userID, $accountTo, +$amount, true);
-                    AccountModel::setNewAccountBalance($accountTo,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                    AccountModel::setNewAccountBalance($userID, $accountTo,
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountTo, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
                         true);
-                    AccountModel::setNewAccountBalance($accountFrom,
-                        AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
+                    AccountModel::setNewAccountBalance($userID, $accountFrom,
+                        AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true),
                         true);
                     break;
             }
@@ -555,29 +585,30 @@ class Transactions
                     "entities_entity_id" => $split_entity_id,
                     "accounts_account_from_id" => $split_accountFromID,
                     "accounts_account_to_id" => $split_accountToID,
-                    "categories_category_id" => $split_cat_id
+                    "categories_category_id" => $split_cat_id,
+                    "is_essential" => $split_is_essential,
                 ], true);
             }
 
             switch ($split_type) {
                 case DEFAULT_TYPE_INCOME_TAG:
                     // Decrement $oldAmount to level it out
-                    AccountModel::setNewAccountBalance($split_accountToID,
-                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true), true);
+                    AccountModel::setNewAccountBalance($userID, $split_accountToID,
+                        AccountModel::recalculateBalanceForAccountIncrementally($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1, true), true);
                     break;
                 case DEFAULT_TYPE_EXPENSE_TAG:
                     // Increment $oldAmount to level it out, by reimbursing the amount
                     /*AccountModel::changeBalance($userID, $accountFrom, -$split_amount, true);*/
-                    AccountModel::setNewAccountBalance($split_accountFromID,
-                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
+                    AccountModel::setNewAccountBalance($userID, $split_accountFromID,
+                        AccountModel::recalculateBalanceForAccountIncrementally($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
                             true), true);
                     break;
                 case DEFAULT_TYPE_TRANSFER_TAG:
-                    AccountModel::setNewAccountBalance($split_accountToID,
-                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
+                    AccountModel::setNewAccountBalance($userID, $split_accountToID,
+                        AccountModel::recalculateBalanceForAccountIncrementally($split_accountToID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
                             true), true);
-                    AccountModel::setNewAccountBalance($split_accountFromID,
-                        AccountModel::recalculateIterativelyBalanceForAccount($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
+                    AccountModel::setNewAccountBalance($userID, $split_accountFromID,
+                        AccountModel::recalculateBalanceForAccountIncrementally($split_accountFromID, min($oldTimestamp, $date_timestamp) - 1, time() + 1,
                             true), true);
                     break;
             }
@@ -685,7 +716,8 @@ class Transactions
                     "selectedCategoryID" => ($foundRule) ? $foundRule["assign_category_id"] : null,
                     "selectedEntityID" => ($foundRule) ? $foundRule["assign_entity_id"] : null,
                     "selectedAccountFromID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? (($foundRule) ? $foundRule["assign_account_from_id"] : null) : $accountID,
-                    "selectedAccountToID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? $accountID : (($foundRule) ? $foundRule["assign_account_to_id"] : null)
+                    "selectedAccountToID" => ($trx["type"] == DEFAULT_TYPE_INCOME_TAG) ? $accountID : (($foundRule) ? $foundRule["assign_account_to_id"] : null),
+                    "isEssential" => ($foundRule) ? $foundRule["assign_is_essential"] : "0",
                 ];
                 /*  array_push($outgoingArr["fillData"], [
                     "date" => $trx["date"],
@@ -747,13 +779,14 @@ class Transactions
 
             foreach ($trxList as $trx) {
                 $date_timestamp = $trx["date_timestamp"];
-                $amount = Input::convertFloatToInteger($trx["amount"]);
+                $amount = Input::convertFloatToIntegerAmount($trx["amount"]);
                 $type = $trx["type"];
                 $description = $trx["description"];
                 $entityID = $trx["entity_id"];
                 $accountFrom = (isset($trx["account_from_id"])) ? $trx["account_from_id"] : null;
                 $accountTo = (isset($trx["account_to_id"])) ? $trx["account_to_id"] : null;
                 $categoryID = $trx["category_id"];
+                $isEssential = (int)$trx["is_essential"];
 
                 if (!$date_timestamp || !$amount || !$type || (!$accountFrom && !$accountTo)) {
                     continue;
@@ -768,27 +801,28 @@ class Transactions
                     "entities_entity_id" => $entityID,
                     "accounts_account_from_id" => $accountFrom,
                     "accounts_account_to_id" => $accountTo,
-                    "categories_category_id" => $categoryID
+                    "categories_category_id" => $categoryID,
+                    "is_essential" => $isEssential,
                 ], true);
 
 
                 switch ($type) {
                     case DEFAULT_TYPE_INCOME_TAG:
-                        AccountModel::setNewAccountBalance($accountTo,
-                            AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                        AccountModel::setNewAccountBalance($userID, $accountTo,
+                            AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, true),
                             true);
                         break;
                     case DEFAULT_TYPE_EXPENSE_TAG:
-                        AccountModel::setNewAccountBalance($accountFrom,
-                            AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                        AccountModel::setNewAccountBalance($userID, $accountFrom,
+                            AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, true),
                             true);
                         break;
                     case DEFAULT_TYPE_TRANSFER_TAG:
-                        AccountModel::setNewAccountBalance($accountTo,
-                            AccountModel::recalculateIterativelyBalanceForAccount($accountTo, $date_timestamp - 1, time() + 1, true),
+                        AccountModel::setNewAccountBalance($userID, $accountTo,
+                            AccountModel::recalculateBalanceForAccountIncrementally($accountTo, $date_timestamp - 1, time() + 1, true),
                             true);
-                        AccountModel::setNewAccountBalance($accountFrom,
-                            AccountModel::recalculateIterativelyBalanceForAccount($accountFrom, $date_timestamp - 1, time() + 1, true),
+                        AccountModel::setNewAccountBalance($userID, $accountFrom,
+                            AccountModel::recalculateBalanceForAccountIncrementally($accountFrom, $date_timestamp - 1, time() + 1, true),
                             true);
                         break;
                 }
@@ -807,6 +841,14 @@ class Transactions
         }
     }
 
+    /**
+     * @deprecated will be removed when the android app migrates to the new endpoint.
+     * @see Transactions::getFilteredTransactionsForUserByPage() replacement method
+     * @param Request $request
+     * @param Response $response
+     * @param $args
+     * @return mixed
+     */
     public static function getTransactionsForUserByPage(Request $request, Response $response, $args)
     {
         try {
@@ -837,10 +879,124 @@ class Transactions
             $db->getDB()->beginTransaction();
 
             $userID = UserModel::getUserIdByName($authusername, true);
-            $trxArr = TransactionModel::getTransactionsForUserByPage($userID, $page, $pageSize, true);
+            $trxArr = TransactionModel::getTransactionsForUserByPage($userID, $page, $pageSize, "", true);
+            $db->getDB()->commit();
+
+            return sendResponse($response, EnsoShared::$REST_OK, $trxArr["results"]);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    public static function getFilteredTransactionsForUserByPage(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            if ($request->getQueryParams() != null && array_key_exists('page_size', $request->getQueryParams())) {
+                $pageSize = Input::validate($request->getQueryParams()['page_size'], Input::$INT, 4);
+            } else {
+                $pageSize = DEFAULT_TRANSACTIONS_FETCH_LIMIT;
+            }
+
+            if ($request->getQueryParams() != null && array_key_exists('query', $request->getQueryParams())) {
+                $searchQuery = Input::validate($request->getQueryParams()['query'], Input::$STRING, 5);
+            } else {
+                $searchQuery = "";
+            }
+
+            $page = Input::validate($args['page'], Input::$INT, 6);
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
+
+            $userID = UserModel::getUserIdByName($authusername, true);
+            $trxArr = TransactionModel::getTransactionsForUserByPage($userID, $page, $pageSize, $searchQuery, true);
             $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $trxArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    public static function autoCategorizeTransaction(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            $trx["description"] = Input::validate($request->getParsedBody()['description'], Input::$STRING, 2);
+            $trx["amount"] = Input::validate($request->getParsedBody()['amount'], Input::$FLOAT, 3);
+            $trx["type"] = Input::validate($request->getParsedBody()['type'], Input::$STRICT_STRING, 4);
+            $trx["accounts_account_from_id"] = Input::validate($request->getParsedBody()['account_from_id'], Input::$INT, 5);
+            $trx["accounts_account_to_id"] = Input::validate($request->getParsedBody()['account_to_id'], Input::$INT, 6);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 7);
+            } else {
+                $mobile = false;
+            }
+
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            $db = new EnsoDB(true);
+            $db->getDB()->beginTransaction();
+
+            $userID = UserModel::getUserIdByName($authusername, true);
+
+            $outgoingArr = [];
+            /**
+             * fillData: trx[] => [date, description, amount, type, selectedCategoryID, selectedEntityID, accountFromID, accountToID],
+             * categories: [],
+             * entities: [],
+             * accounts: [],
+             */
+            // Set trx object to ignore matching certain fields
+            $trx["selectedCategoryID"] = RuleModel::RULES_MATCHING_IGNORE;
+            $trx["selectedEntityID"] = RuleModel::RULES_MATCHING_IGNORE;
+
+            // Rule matching
+            $foundRule = RuleModel::getRuleForTransaction($userID, $trx, true);
+            $outgoing["matching_rule"] = $foundRule ? $foundRule["rule_id"] : null;
+            $outgoing["date"] = array_key_exists("date", $trx) ? $trx["date"] : null;
+            $outgoing["description"] = array_key_exists("description", $trx) ? $trx["description"] : null;
+            $outgoing["amount"] = array_key_exists("amount", $trx) ? $trx["amount"] : null;
+            $outgoing["type"] = array_key_exists("type", $trx) ? $trx["type"] : null;
+            $outgoing["selectedCategoryID"] = ($foundRule) ? $foundRule["assign_category_id"] : null;
+            $outgoing["selectedEntityID"] = ($foundRule) ? $foundRule["assign_entity_id"] : null;
+            $outgoing["selectedAccountFromID"] = (($foundRule) ? $foundRule["assign_account_from_id"] : null);
+            $outgoing["selectedAccountToID"] = (($foundRule) ? $foundRule["assign_account_to_id"] : null);
+            $outgoing["isEssential"] = (($foundRule) ? $foundRule["assign_is_essential"] : null);
+
+            $db->getDB()->commit();
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outgoing);
         } catch (BadInputValidationException $e) {
             return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
         } catch (AuthenticationException $e) {
@@ -861,4 +1017,6 @@ $app->post('/trxs/import/step0', 'Transactions::importTransactionsStep0');
 $app->post('/trxs/import/step1', 'Transactions::importTransactionsStep1');
 $app->post('/trxs/import/step2', 'Transactions::importTransactionsStep2');
 $app->get('/trxs/page/{page}', 'Transactions::getTransactionsForUserByPage');
+$app->get('/trxs/filteredByPage/{page}', 'Transactions::getFilteredTransactionsForUserByPage');
+$app->post('/trxs/auto-cat-trx', 'Transactions::autoCategorizeTransaction');
 

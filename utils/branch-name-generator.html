@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>MyFin - Branch Name Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+<body>
+<h1>Branch Name Generator</h1>
+<input type="number" id="ticket_number" placeholder="Ticket number"/>
+<input type="text" id="ticket_name" placeholder="Ticket name"/>
+<input type="text" id="generated_branch_name" placeholder="Generated Branch Name" disabled/>
+
+<script>
+  const ticketNumber = document.getElementById('ticket_number')
+  const ticketName = document.getElementById('ticket_name')
+  const result = document.getElementById('generated_branch_name')
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    ticketNumber.addEventListener('input', onInputChange)
+    ticketName.addEventListener('input', onInputChange)
+  })
+
+  function onInputChange (e) {
+    result.value = generateBranchName(ticketNumber.value, ticketName.value)
+  }
+
+  function generateBranchName (number, name) {
+    return number + '/' + name.replaceAll(' ', '_').
+      replaceAll('/', '_').
+      replaceAll(':', '-').
+      replaceAll('>', '-').
+      replaceAll('"', '').
+      replaceAll('\'', '')
+  }
+
+
+</script>
+</body>
+</html>

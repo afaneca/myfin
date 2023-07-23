@@ -39,7 +39,7 @@ class Rules
             $outputArr["rules"] = RuleModel::getWhere(["users_user_id" => $userID]);
             foreach ($outputArr["rules"] as &$rule) {
                 if ($rule["matcher_amount_value"]) {
-                    $rule["matcher_amount_value"] = Input::convertIntegerToFloat($rule["matcher_amount_value"]);
+                    $rule["matcher_amount_value"] = Input::convertIntegerToFloatAmount($rule["matcher_amount_value"]);
                 }
             }
             $outputArr["categories"] = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name"]);
@@ -90,7 +90,7 @@ class Rules
             }
 
             if (array_key_exists('matcher_amount_value', $request->getParsedBody()) && $request->getParsedBody()['matcher_amount_value'] !== "") {
-                $matcherAmountValue = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$FLOAT, 6));
+                $matcherAmountValue = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$FLOAT, 6));
             } else {
                 $matcherAmountValue = null;
             }
@@ -161,6 +161,12 @@ class Rules
                 $assignType = null;
             }
 
+            if (array_key_exists('assign_essential', $request->getParsedBody()) && $request->getParsedBody()['assign_essential'] !== "") {
+                $assignEssential = (int)Input::validate($request->getParsedBody()['assign_essential'], Input::$BOOLEAN, 18);
+            } else {
+                $assignEssential = null;
+            }
+
             /* Auth - token validation */
             if (!self::DEBUG_MODE) {
                 AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
@@ -192,6 +198,7 @@ class Rules
                     "assign_account_to_id" => $assignAccountToID,
                     "assign_account_from_id" => $assignAccountFromID,
                     "assign_type" => $assignType,
+                    "assign_is_essential" => $assignEssential,
                 ]
             );
 
@@ -238,7 +245,7 @@ class Rules
             }
 
             if (array_key_exists('matcher_amount_value', $request->getParsedBody()) && $request->getParsedBody()['matcher_amount_value'] !== "") {
-                $matcherAmountValue = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$FLOAT, 6));
+                $matcherAmountValue = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['matcher_amount_value'], Input::$FLOAT, 6));
             } else {
                 $matcherAmountValue = null;
             }
@@ -309,6 +316,12 @@ class Rules
                 $assignType = null;
             }
 
+            if (array_key_exists('assign_essential', $request->getParsedBody()) && $request->getParsedBody()['assign_essential'] !== "") {
+                $assignEssential = (int)Input::validate($request->getParsedBody()['assign_essential'], Input::$BOOLEAN, 18);
+            } else {
+                $assignEssential = null;
+            }
+
             $ruleID = Input::validate($request->getParsedBody()["rule_id"], Input::$INT, 18);
 
             /* Auth - token validation */
@@ -326,7 +339,7 @@ class Rules
             $userID = UserModel::getUserIdByName($authusername, false);
 
             RuleModel::editWhere(
-                ["rule_id" => $ruleID],
+                ["rule_id" => $ruleID, "users_user_id" => $userID],
                 ["users_user_id" => $userID,
                     "matcher_description_operator" => $matcherDescriptionOperator,
                     "matcher_description_value" => $matcherDescriptionValue,
@@ -343,6 +356,7 @@ class Rules
                     "assign_account_to_id" => $assignAccountToID,
                     "assign_account_from_id" => $assignAccountFromID,
                     "assign_type" => $assignType,
+                    "assign_is_essential" => $assignEssential,
                 ]
             );
 
@@ -385,7 +399,7 @@ class Rules
             die(); */
             $userID = UserModel::getUserIdByName($authusername, false);
 
-            RuleModel::delete(["rule_id" => $ruleID]);
+            RuleModel::delete(["rule_id" => $ruleID, "users_user_id" => $userID]);
 
             /* $db->getDB()->commit(); */
 

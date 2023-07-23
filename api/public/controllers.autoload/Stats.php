@@ -1,11 +1,7 @@
 <?php
 
-use App\Application\Actions\User\ListUsersAction;
-use App\Application\Actions\User\ViewUserAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\App;
-use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 require_once 'consts.php';
 
@@ -34,9 +30,9 @@ class Stats
             }
 
             /* Execute Operations */
-            /* $db = new EnsoDB(true);
+            $db = new EnsoDB(true);
 
-            $db->getDB()->beginTransaction(); */
+            $db->getDB()->beginTransaction();
 
             /**
              * Skeleton:
@@ -46,12 +42,15 @@ class Stats
              * ]
              */
 
-            $userID = UserModel::getUserIdByName($authusername, false);
+            $userID = UserModel::getUserIdByName($authusername, true);
 
+            $queryResult = BudgetModel::getWhere(["month" => $month, "year" => $year, "users_user_id" => $userID]);
+            if (count($queryResult) == 0) {
+                return sendResponse($response, EnsoShared::$REST_NOT_FOUND, null);
+            }
+            $budgetID = $queryResult[0]["budget_id"];
 
-            $budgetID = BudgetModel::getWhere(["month" => $month, "year" => $year, "users_user_id" => $userID])[0]["budget_id"];
-
-            $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, false);
+            $list["categories"] = BudgetHasCategoriesModel::getAllCategoriesForBudget($userID, $budgetID, true);
             $list["last_update_timestamp"] = intval(UserModel::getWhere(["user_id" => $userID], ["last_update_timestamp"])[0]["last_update_timestamp"]);
 
             foreach ($list["categories"] as &$category) {
@@ -61,16 +60,16 @@ class Stats
                 // TODO: map 'D' & 'C' in categories to 'I' & 'E'
                 $type = ($category["type"] == 'D') ? DEFAULT_TYPE_EXPENSE_TAG : DEFAULT_TYPE_INCOME_TAG;
 
-                $current_amounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser)[0];
+                $current_amounts = BudgetHasCategoriesModel::getAmountForCategoryInMonth($category["category_id"], $monthToUse, $yearToUser, true)[0];
                 $current_amount_credit = $current_amounts["category_balance_credit"];
                 $current_amount_debit = $current_amounts["category_balance_debit"];
 
-                $category["current_amount_credit"] = Input::convertIntegerToFloat($current_amount_credit);
-                $category["current_amount_debit"] = Input::convertIntegerToFloat($current_amount_debit);
+                $category["current_amount_credit"] = Input::convertIntegerToFloatAmount($current_amount_credit);
+                $category["current_amount_debit"] = Input::convertIntegerToFloatAmount($current_amount_debit);
             }
 
 
-            /* $db->getDB()->commit(); */
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $list);
         } catch (BadInputValidationException $e) {
@@ -128,7 +127,7 @@ class Stats
                 $year = $budget["year"];
                 if (!$lastPlannedFinalBalance) {
                     $budget["planned_initial_balance"] = floatVal(AccountModel::getBalancesSnapshotForMonthForUser($userID,
-                        ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, false));
+                        ($month > 1) ? $month - 1 : 12, ($month > 1) ? $year : $year - 1, true, false));
                 } else {
                     $budget["planned_initial_balance"] = $lastPlannedFinalBalance;
                 }
@@ -146,7 +145,7 @@ class Stats
             $previousMonthsYear = ($currentMonth > 1) ? $currentYear : $currentYear - 1;
 
             foreach ($accountsFromPreviousMonth as &$acc) {
-                $acc["balance"] = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $previousMonth, $previousMonthsYear, false)["balance"];
+                $acc["balance"] = AccountModel::getBalanceSnapshotAtMonth($acc["account_id"], $previousMonth, $previousMonthsYear, false)["balance"] ?? "0.00";
                 if (!$acc["balance"]) $acc["balance"] = "0.00";
             }
 
@@ -280,7 +279,7 @@ class Stats
                     $amount_debit = abs($calculatedAmounts["entity_balance_debit"]);
                 }
 
-                $item["value"] = Input::convertIntegerToFloat($amount_debit);
+                $item["value"] = Input::convertIntegerToFloatAmount($amount_debit);
                 array_push($outputArr, $item);
             }
 
@@ -363,11 +362,65 @@ class Stats
                     $amount_debit = abs($calculatedAmounts["entity_balance_debit"]);
                 }
 
-                $item["value"] = Input::convertIntegerToFloat($amount_credit);
+                $item["value"] = Input::convertIntegerToFloatAmount($amount_credit);
                 array_push($outputArr, $item);
             }
 
             /* $db->getDB()->commit(); */
+
+            return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
+        } catch (BadInputValidationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_ACCEPTABLE, $e->getCode());
+        } catch (AuthenticationException $e) {
+            return sendResponse($response, EnsoShared::$REST_NOT_AUTHORIZED, $e->getCode());
+        } catch (Exception $e) {
+            return sendResponse($response, EnsoShared::$REST_INTERNAL_SERVER_ERROR, $e);
+        }
+    }
+
+    public static function getYearByYearIncomeExpenseDistribution(Request $request, Response $response, $args)
+    {
+        try {
+            $key = Input::validate($request->getHeaderLine('sessionkey'), Input::$STRING, 0);
+            $authusername = Input::validate($request->getHeaderLine('authusername'), Input::$STRING, 1);
+
+            $year = Input::validate($request->getQueryParams()['year'], Input::$INT, 2);
+
+            if ($request->getHeaderLine('mobile') != null) {
+                $mobile = (int)Input::validate($request->getHeaderLine('mobile'), Input::$BOOLEAN, 3);
+            } else {
+                $mobile = false;
+            }
+
+            /* Auth - token validation */
+            if (!self::DEBUG_MODE) {
+                AuthenticationModel::checkIfsessionkeyIsValid($key, $authusername, true, $mobile);
+            }
+
+            /* Execute Operations */
+            $db = new EnsoDB(true);
+
+            $db->getDB()->beginTransaction();
+
+            /**
+             * Skeleton:
+             *  [
+             *    {category_name, category_yearly_income, category_yearly_expense },
+             *    ...
+             * ]
+             */
+
+            $userID = UserModel::getUserIdByName($authusername, true);
+            $outputArr = array();
+            $outputArr["year_of_first_trx"] = TransactionModel::getYearOfFirstTransactionForUser($userID, true);
+            $categories = CategoryModel::getWhere(["users_user_id" => $userID], ["category_id", "name", "type"]);
+            foreach ($categories as &$category) {
+                $calculatedAmounts = CategoryModel::getAmountForCategoryInYear($category["category_id"], $year, true, true)[0];
+                $category["category_yearly_income"] = Input::convertIntegerToFloatAmount($calculatedAmounts["category_balance_credit"]);
+                $category["category_yearly_expense"] = Input::convertIntegerToFloatAmount($calculatedAmounts["category_balance_debit"]);
+            }
+            $outputArr["categories"] = $categories;
+            $db->getDB()->commit();
 
             return sendResponse($response, EnsoShared::$REST_OK, $outputArr);
         } catch (BadInputValidationException $e) {
@@ -385,3 +438,4 @@ $app->get('/stats/stats/monthly-patrimony-projections', 'Stats::getMonthlyPatrim
 $app->get('/stats/userStats', 'Stats::getUserCounterStats');
 $app->get("/stats/category-expenses-evolution", 'Stats:getCategoryExpensesEvolution');
 $app->get("/stats/category-income-evolution", 'Stats:getCategoryIncomeEvolution');
+$app->get("/stats/year-by-year-income-expense-distribution", 'Stats:getYearByYearIncomeExpenseDistribution');

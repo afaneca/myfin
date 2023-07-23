@@ -1,0 +1,101 @@
+:root {
+    /* Solarized green theme */
+    --main-body-background: #0B525B;
+    --main-sidebar-background: #006466;
+    --main-card-background: #006466;
+    --main-modal-background: #0B525B;
+    --main-disabled-color: #1B3A4B;
+    --main-accent-color: #ffffff;
+    --main-light-gray-color: #becbcd;
+}
+
+.main-dark-bg {
+    background: #0b525b !important;
+}
+
+.side-nav-menu-active {
+    background: #0B525B;
+}
+
+table.dataTable tbody tr {
+    background-color: #0b525b;
+}
+
+tr {
+    border-bottom: 1px solid #045d5e !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
+    color: #1B3A4B !important;
+}
+
+.select-dropdown.dropdown-content li:hover {
+    background-color: var(--main-modal-background)
+}
+
+.dropdown-content {
+    background-color: var(--main-disabled-color);
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #144552 !important;
+}
+
+.select2-container--default .select2-selection--single {
+    background-color: #08464e;
+}
+
+.list-item {
+    background-color: var(--main-body-background);
+}
+
+.topics-index-wrapper-card {
+    background: var(--main-body-background);
+}
+
+.datepicker-date-display {
+    background-color: var(--main-disabled-color);
+}
+
+.datepicker-table td.is-selected {
+    background-color: var(--main-disabled-color);
+}
+
+a {
+    color: #17f1f5;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    padding: 10px 18px;
+    border: 0px;
+    background: #144552;
+}
+
+label {
+    color: white;
+}
+
+
+.checkbox-indigo[type="checkbox"] + label:before{
+    border: 2px solid indigo;
+    background: transparent;
+}
+.checkbox-indigo[type="checkbox"]:checked + label:before{
+    border: 2px solid transparent;
+    border-bottom: 2px solid indigo;
+    border-right: 2px solid indigo;
+    background: transparent;
+}
+.checkbox-indigo.filled-in[type="checkbox"] + label:after{
+    border: 2px solid indigo;
+    background: transparent;
+}
+.checkbox-indigo.filled-in[type="checkbox"]:checked + label:after{
+    background: indigo;
+}
+.checkbox-indigo.filled-in[type="checkbox"]:checked + label:before{
+    border-top: 2px solid transparent;
+    border-left: 2px solid transparent;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+}

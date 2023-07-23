@@ -18,9 +18,9 @@
     /* Dark theme */
     --main-dark-background: #15161b;
     --main-dark-on-dark-background: #1f2029;
-    --main-text-color: rgba(255, 255, 255, 0.7);
+    --main-text-color: #ffffff;
     --main-text-headline-color: white;
-    --main-light-gray-color: #515558;
+    --main-light-gray-color: #b2b7bb;
 
     --main-accent-color: var(--main-light-blue);
     --main-body-background: var(--main-dark-background);
@@ -112,7 +112,7 @@ a > .material-icons, td > .material-icons, div.card-quick-actions > span > .mate
 .modal {
     overflow: visible !important;
     background: var(--main-modal-background);
-    max-height: 100% !important;
+    max-height: 85% !important;
 }
 
 .modal .modal-footer {
@@ -183,6 +183,7 @@ nav ul a:hover {
     float: left;
     margin-top: 0px;
     background: var(--main-sidebar-background);
+    overflow-y: auto;
 }
 
 .side-nav-menu li {
@@ -469,6 +470,14 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
 .dusk-gradient-bg {
     background: -webkit-linear-gradient(45deg, #ffd89b, #19547b) !important;
     background: linear-gradient(45deg, #ffd89b, #19547b) !important;
+}
+
+[type="checkbox"] .filled-in :not(:checked) + span:not(.lever):after {
+    margin-top: 3px;
+}
+
+[type="checkbox"] .filled-in:checked + span:not(.lever):after {
+    margin-top: 3px;
 }
 
 /* RESET-CHECKBOX - to remove materializecss styling from checkbox inputs */
@@ -935,3 +944,114 @@ svg:not(:root) {
 }
 
 /* END CUSTOM SCROLLBAR */
+
+.no-margins {
+    margin: 0px !important;
+}
+
+.no-paddings {
+    padding: 0px;
+!important;
+}
+
+/* Collections */
+.collection .collection-item.avatar {
+    background: var(--main-body-background);
+    border: 0px solid #ffffff47;
+}
+
+.collection-item, .collection {
+    border: 0px solid #ffffff47;
+    border: 0px;
+    box-shadow: 0px 0px 1px 0px black;
+}
+
+.collection-item:hover {
+    background: var(--main-card-background) !important;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.collection .collection-item.avatar .title {
+    font-size: larger;
+    font-weight: 500;
+}
+
+.secondary-content {
+    color: #4caf50;
+    font-weight: 500;
+}
+
+.invest-dashboard-top-panel {
+    background: var(--main-body-background);
+    box-shadow: 0px 0px 1px 0px black;
+}
+
+.topics-index-wrapper-card {
+    cursor: pointer;
+    background: var(--main-accent-color);
+    color: white;
+    padding: 5px;
+}
+
+.budget-observations-shortcuts-box {
+    background-color: #0b525b;
+}
+
+.budget-observations-shortcuts-box:nth-of-type(1) {
+    background-color: #3daa57;
+}
+
+.dashboard-pie-chart-canvas {
+    margin: 0 auto;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+    height: 400px;
+}
+
+.side-nav-menu-item-icon {
+    display: block !important;
+}
+
+@media (max-width: 1430px) {
+    .side-nav-menu-item-icon {
+        display: none !important;
+    }
+}
+
+#modal-global {
+    overflow-y: auto !important;
+}
+
+.hoverable {
+    opacity: 0.5;
+    cursor: help;
+    transition: 0.5s ease;
+}
+
+.hoverable:hover {
+    opacity: 1;
+    transition: 0.5s ease;
+}
+
+[type=checkbox]+span:not(.lever) {
+    color: var(--main-text-color);
+}
+
+
+[type=checkbox]:checked+span:not(.lever):before {
+    border-right: 2px solid var(--main-accent-color);
+    border-bottom: 2px solid var(--main-accent-color);
+}
+
+.select-wrapper .caret {
+    fill: var(--main-accent-color);
+}
+
+[type=checkbox]+span:not(.lever):before, [type=checkbox]:not(.filled-in)+span:not(.lever):after {
+    border: 2px solid var(--main-accent-color);
+}
+
+[type=radio]:not(:checked)+span:before, [type=radio]:not(:checked)+span:after {
+    border: 2px solid var(--main-accent-color);
+}

@@ -1,19 +1,37 @@
 <div id="page-wrapper">
 
     <div class="card-panel">
-        <span class="main-accent-color">Gestão de Perfil</span><br>
+        <span class="main-accent-color"><span data-i18n="profile.profileManagement"></span><br>
         <ul class="collapsible">
             <li>
                 <div class="collapsible-header"><i
-                        class="material-icons">color_lens</i>Alterar Tema
+                        class="material-icons">color_lens</i><span data-i18n="profile.changeLanguage"></span>
                 </div>
                 <div class="collapsible-body">
                     <div class="row">
-                        <p>Selecione uma das opções de aparência abaixo:</p>
+                        <p><span data-i18n="profile.selectOneOfOptionsBelow"></span>:</p>
+                        <div id="change-language-radio-group-wrapper"></div>
+                        <button id="change-language-btn"
+                                class="waves-effect waves-light btn right-align green-gradient-bg"
+                                style="float:right;" type="submit" name="action"><span data-i18n="profile.changeLanguageCTA"></span>
+                            <i class="material-icons no-accent-color right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header"><i
+                        class="material-icons">color_lens</i><span data-i18n="profile.changeTheme"></span>
+                </div>
+                <div class="collapsible-body">
+                    <div class="row">
+                        <p><span data-i18n="profile.selectOneOfOptionsBelow"></span>:</p>
                         <div id="change-theme-radio-group-wrapper"></div>
                         <button id="change-theme-btn"
                                 class="waves-effect waves-light btn right-align green-gradient-bg"
-                                style="float:right;" type="submit" name="action">Alterar Tema
+                                style="float:right;" type="submit" name="action"><span data-i18n="profile.changeThemeCTA"></span>
                             <i class="material-icons no-accent-color right">send</i>
                         </button>
                     </div>
@@ -24,7 +42,7 @@
         <ul class="collapsible">
             <li>
                 <div class="collapsible-header"><i
-                        class="material-icons">edit</i>Alterar Password
+                        class="material-icons">edit</i><span data-i18n="profile.changePassword"></span>
                 </div>
                 <div class="collapsible-body">
                     <div class="row">
@@ -32,23 +50,23 @@
                             <div class="row">
                                 <div class="input-field col s12">
                                     <input id="current_pw" type="password" class="validate" required>
-                                    <label for="current_pw">Password atual</label>
+                                    <label for="current_pw"><span data-i18n="profile.currentPassword"></span></label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s6">
                                     <input id="new_pw" type="password" class="validate" required>
-                                    <label for="new_pw">Password atual</label>
+                                    <label for="new_pw"><span data-i18n="profile.newPassword"></span></label>
                                 </div>
                                 <div class="input-field col s6">
                                     <input id="new_pw_repeat" type="password"
                                            class="validate" required>
-                                    <label for="new_pw_repeat">Password atual</label>
+                                    <label for="new_pw_repeat"><span data-i18n="profile.newPasswordConfirmation"></span></label>
                                 </div>
                             </div>
                             <button id="change_pw_btn"
                                     class="waves-effect waves-light btn right-align green-gradient-bg"
-                                    style="float:right;" type="submit" name="action">Alterar Password
+                                    style="float:right;" type="submit" name="action"><span data-i18n="profile.changePasswordCTA"></span>
                                 <i class="material-icons no-accent-color right">send</i>
                             </button>
                         </form>
@@ -61,16 +79,16 @@
             <li>
                 <div class="collapsible-header"><i
                         class="material-icons">info_outline
-                </i>Estatísticas para nerds
+                </i><span data-i18n="profile.statsForNerds"></span>
                 </div>
                 <div class="collapsible-body">
                     <ul>
-                        <li><b>Nr. de transações criadas:</b> <span id="counter_created_trx"></span></li>
-                        <li><b>Nr. de entidades criadas:</b> <span id="counter_created_entities"></span></li>
-                        <li><b>Nr. de categorias criadas:</b> <span id="counter_created_categories"></span></li>
-                        <li><b>Nr. de contas criadas:</b> <span id="counter_created_accounts"></span></li>
-                        <li><b>Nr. de orçamentos criadas:</b> <span id="counter_created_budgets"></span></li>
-                        <li><b>Nr. de regras criadas:</b> <span id="counter_created_rules"></span></li>
+                        <li><b><span data-i18n="profile.nrTrxCreated"></span>:</b> <span id="counter_created_trx"></span></li>
+                        <li><b><span data-i18n="profile.nrEntitiesCreated"></span>:</b> <span id="counter_created_entities"></span></li>
+                        <li><b><span data-i18n="profile.nrCategoriesCreated"></span>:</b> <span id="counter_created_categories"></span></li>
+                        <li><b><span data-i18n="profile.nrAccountsCreated"></span>:</b> <span id="counter_created_accounts"></span></li>
+                        <li><b><span data-i18n="profile.nrBudgetsCreated"></span>:</b> <span id="counter_created_budgets"></span></li>
+                        <li><b><span data-i18n="profile.nrRulesCreated"></span>:</b> <span id="counter_created_rules"></span></li>
                     </ul>
 
                 </div>
@@ -81,27 +99,35 @@
             <li>
                 <div class="collapsible-header"><i
                         class="material-icons">adb
-                </i>Utilitários
+                </i><span data-i18n="profile.tools"></span>
                 </div>
                 <div class="collapsible-body">
                     <ul>
                         <li>
-                            <b><a onClick="Profile.askForRecalculationOfAllAccountsBalances()" style="cursor:pointer;">Recalcular
-                                saldos de
-                                todas as contas</a></b></li>
+                            <b><a data-i18n="profile.recalculateBalancesOfAllAccounts" id="ask-for-balances-recalculation-btn" style="cursor:pointer;"></a></b></li>
+                        <li>
+                            <b><a data-i18n="profile.autoPopulateDemoData" id="auto-populate-demo-data-btn" style="cursor:pointer;"></a></b></li>
                     </ul>
 
                 </div>
             </li>
         </ul>
+        <div style="text-align: center;">
+            <p><b><span data-i18n="profile.version"></span>:</b> <span id="global-web-app-version"></span></p>
+        </div>
 
-    </div>
+        </span></div>
 </div>
 
 
-<script>
-    $(document).ready(function () {
-        $('.collapsible').collapsible();
-        Profile.init()
-    });
+<script type="module">
+  import { Profile } from '../js/profile.js'
+
+  $(document).ready(function () {
+    $('.collapsible').collapsible()
+    Profile.init()
+
+    $('#ask-for-balances-recalculation-btn').click(() => Profile.askForRecalculationOfAllAccountsBalances())
+    $('#auto-populate-demo-data-btn').click(() => Profile.showAutoPopulateWithMockDataConfirmationDialog())
+  })
 </script>

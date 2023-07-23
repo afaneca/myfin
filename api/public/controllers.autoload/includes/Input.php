@@ -17,12 +17,12 @@ class Input
         $ARRAY = 11;
 
 
-    public static function convertFloatToInteger($floatVal)
+    public static function convertFloatToIntegerAmount($floatVal)
     {
         return /*intval(*/$floatVal * 100/*)*/;
     }
 
-    public static function convertIntegerToFloat($intVal)
+    public static function convertIntegerToFloatAmount($intVal)
     {
         return floatval($intVal / 100);
     }

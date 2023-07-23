@@ -1,0 +1,143 @@
+:root {
+    /* Mauve theme */
+    --main-body-background: #474e68;
+    --main-sidebar-background: #50577a;
+    --main-card-background: #50577A;
+    --main-modal-background: #474E68;
+    --main-disabled-color: #282c3d;
+    --main-accent-color: #ffffff;
+    --main-light-gray-color: #e7e7e7;
+}
+
+.main-dark-bg {
+    background: #0b525b !important;
+}
+
+.side-nav-menu-active {
+    background: #474E68;
+}
+
+table.dataTable tbody tr {
+    background-color: var(--main-body-background);
+}
+
+tr {
+    border-bottom: 1px solid var(--main-card-background) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
+    color: #1B3A4B !important;
+}
+
+.select-dropdown.dropdown-content li:hover {
+    background-color: var(--main-modal-background)
+}
+
+.dropdown-content {
+    background-color: var(--main-disabled-color);
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #404258 !important;
+}
+
+.select2-container--default .select2-selection--single {
+    background-color: var(--main-card-background);
+}
+
+.list-item {
+    background-color: var(--main-body-background);
+}
+
+.topics-index-wrapper-card {
+    background: var(--main-body-background);
+}
+
+.datepicker-date-display {
+    background-color: var(--main-disabled-color);
+}
+
+.datepicker-table td.is-selected {
+    background-color: var(--main-disabled-color);
+}
+
+a {
+    color: #17f1f5;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    padding: 10px 18px;
+    border: 0px;
+    background: #404258;
+}
+
+label {
+    color: white;
+}
+
+
+.checkbox-indigo[type="checkbox"] + label:before{
+    border: 2px solid indigo;
+    background: transparent;
+}
+.checkbox-indigo[type="checkbox"]:checked + label:before{
+    border: 2px solid transparent;
+    border-bottom: 2px solid indigo;
+    border-right: 2px solid indigo;
+    background: transparent;
+}
+.checkbox-indigo.filled-in[type="checkbox"] + label:after{
+    border: 2px solid indigo;
+    background: transparent;
+}
+.checkbox-indigo.filled-in[type="checkbox"]:checked + label:after{
+    background: indigo;
+}
+.checkbox-indigo.filled-in[type="checkbox"]:checked + label:before{
+    border-top: 2px solid transparent;
+    border-left: 2px solid transparent;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+}
+
+nav ul a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #d6d8df;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #404258;
+}
+
+button:focus {
+    outline: none;
+    background-color: #404258;
+}
+
+.datepicker-modal {
+    width: auto !important;
+}
+
+input:not([type]):not(.browser-default):focus:not([readonly]), input[type=text]:not(.browser-default):focus:not([readonly]), input[type=password]:not(.browser-default):focus:not([readonly]), input[type=email]:not(.browser-default):focus:not([readonly]), input[type=url]:not(.browser-default):focus:not([readonly]), input[type=time]:not(.browser-default):focus:not([readonly]), input[type=date]:not(.browser-default):focus:not([readonly]), input[type=datetime]:not(.browser-default):focus:not([readonly]), input[type=datetime-local]:not(.browser-default):focus:not([readonly]), input[type=tel]:not(.browser-default):focus:not([readonly]), input[type=number]:not(.browser-default):focus:not([readonly]), input[type=search]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
+    border-bottom: 1px solid #b8c2ed;
+    -webkit-box-shadow: 0 1px 0 0 #b8c2ed;
+    box-shadow: 0 1px 0 0 #b8c2ed;
+}
+
+input:not([type]):not(.browser-default):focus:not([readonly])+label, input[type=text]:not(.browser-default):focus:not([readonly])+label, input[type=password]:not(.browser-default):focus:not([readonly])+label, input[type=email]:not(.browser-default):focus:not([readonly])+label, input[type=url]:not(.browser-default):focus:not([readonly])+label, input[type=time]:not(.browser-default):focus:not([readonly])+label, input[type=date]:not(.browser-default):focus:not([readonly])+label, input[type=datetime]:not(.browser-default):focus:not([readonly])+label, input[type=datetime-local]:not(.browser-default):focus:not([readonly])+label, input[type=tel]:not(.browser-default):focus:not([readonly])+label, input[type=number]:not(.browser-default):focus:not([readonly])+label, input[type=search]:not(.browser-default):focus:not([readonly])+label, textarea.materialize-textarea:focus:not([readonly])+label {
+    color: #b8c2ed;
+}
+
+.select-wrapper input.select-dropdown:focus {
+    border-bottom: 1px solid #b8c2ed;
+}
+
+input:not([type]):disabled, input:not([type])[readonly="readonly"], input[type=text]:not(.browser-default):disabled, input[type=text]:not(.browser-default)[readonly="readonly"], input[type=password]:not(.browser-default):disabled, input[type=password]:not(.browser-default)[readonly="readonly"], input[type=email]:not(.browser-default):disabled, input[type=email]:not(.browser-default)[readonly="readonly"], input[type=url]:not(.browser-default):disabled, input[type=url]:not(.browser-default)[readonly="readonly"], input[type=time]:not(.browser-default):disabled, input[type=time]:not(.browser-default)[readonly="readonly"], input[type=date]:not(.browser-default):disabled, input[type=date]:not(.browser-default)[readonly="readonly"], input[type=datetime]:not(.browser-default):disabled, input[type=datetime]:not(.browser-default)[readonly="readonly"], input[type=datetime-local]:not(.browser-default):disabled, input[type=datetime-local]:not(.browser-default)[readonly="readonly"], input[type=tel]:not(.browser-default):disabled, input[type=tel]:not(.browser-default)[readonly="readonly"], input[type=number]:not(.browser-default):disabled, input[type=number]:not(.browser-default)[readonly="readonly"], input[type=search]:not(.browser-default):disabled, input[type=search]:not(.browser-default)[readonly="readonly"], textarea.materialize-textarea:disabled, textarea.materialize-textarea[readonly="readonly"] {
+    color: rgb(188 197 199);
+    cursor: not-allowed;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color: #0000000f;
+    cursor: not-allowed;
+}

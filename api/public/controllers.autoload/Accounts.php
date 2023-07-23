@@ -64,7 +64,7 @@ class Accounts
             $description = Input::validate($request->getParsedBody()['description'], Input::$STRING, 5);
             $status = Input::validate($request->getParsedBody()['status'], Input::$STRING, 6);
             $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 7);
-            $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8));
+            $currentBalance = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 8));
             $colorGradient = Input::validate($request->getParsedBody()["color_gradient"], Input::$STRICT_STRING, 9);
 
             if (
@@ -155,6 +155,13 @@ class Accounts
 
             $userID = UserModel::getUserIdByName($authusername, true);
 
+            // Make sure account belongs to user
+            if (!AccountModel::exists([
+                "users_user_id" => $userID,
+            ])) {
+                throw new BadValidationTypeException("Account not found!");
+            }
+
             TransactionModel::delete([
                 "accounts_account_from_id" => $accountID
             ]);
@@ -200,7 +207,7 @@ class Accounts
             $newDescription = Input::validate($request->getParsedBody()['new_description'], Input::$STRING, 6);
             $newStatus = Input::validate($request->getParsedBody()['new_status'], Input::$STRING, 7);
             $excludeFromBudgets = (int)Input::validate($request->getParsedBody()['exclude_from_budgets'], Input::$BOOLEAN, 8);
-            $currentBalance = Input::convertFloatToInteger(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9));
+            $currentBalance = Input::convertFloatToIntegerAmount(Input::validate($request->getParsedBody()['current_balance'], Input::$FLOAT, 9));
             $colorGradient = Input::validate($request->getParsedBody()["color_gradient"], Input::$STRICT_STRING, 10);
 
             if (
@@ -301,7 +308,10 @@ class Accounts
             $db->getDB()->beginTransaction();
 
             $userID = UserModel::getUserIdByName($authusername, true);
-
+            $userAccountsCount = count(AccountModel::getWhere(["users_user_id" => $userID]));
+            if ($userAccountsCount == 0) {
+                return sendResponse($response, EnsoShared::$REST_OK, null);
+            }
             $outArr = AccountModel::getBalancesSnapshotForUser($userID, true);
 
             $db->getDB()->commit();
@@ -347,8 +357,8 @@ class Accounts
 
 
             foreach ($userAccounts as $account) {
-                AccountModel::setNewAccountBalance($account["account_id"],
-                    AccountModel::recalculateIterativelyBalanceForAccount($account["account_id"], 0, time() + 1, false),
+                AccountModel::setNewAccountBalance($userID, $account["account_id"],
+                    AccountModel::recalculateBalanceForAccountIncrementally($account["account_id"], 0, time() + 1, false),
                     false);
             }
 

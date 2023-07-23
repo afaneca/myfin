@@ -1,6 +1,4 @@
-"use strict";
-
-var ArrayUtils = {
+export const ArrayUtils = {
     shuffle: (array) => {
         var currentIndex = array.length, temporaryValue, randomIndex;
 
