@@ -1,8 +1,6 @@
 import { Sequelize } from 'sequelize';
 import dbConfig from '../config/db.config.js';
-import userModel from './userModel.js';
-import accountModel from './accountModel.js';
-import transactionModel from './transactionModel.js';
+import initModels from './init-models.js';
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
@@ -20,15 +18,8 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   },
 });
 
-const db = {};
-
+// import models into sequelize instance
+const db = initModels(sequelize);
 db.Sequelize = Sequelize;
-db.sequelize = sequelize;
-
-db.users = userModel(sequelize, Sequelize);
-db.accounts = accountModel(sequelize, Sequelize);
-db.transactions = transactionModel(sequelize, Sequelize);
-
-/*db.users.hasMany(db.accounts);*/
 
 export default db;

@@ -13,7 +13,9 @@ import userService from '../services/userService.js';
 const checkAuthSessionValidity = async (req, renewTrustLimit = true) => {
   const bypassSessionChecking = process.env.BYPASS_SESSION_CHECK === 'true';
   Logger.addLog(`bypass: ${process.env.BYPASS_SESSION_CHECK}`);
-  if (bypassSessionChecking) return true;
+  if (bypassSessionChecking) {
+    return true;
+  }
 
   const sessionkey = req.get('sessionkey');
   const username = req.get('authusername');
@@ -21,7 +23,7 @@ const checkAuthSessionValidity = async (req, renewTrustLimit = true) => {
   const userId = await userService.getUserIdFromUsername(username);
 
   if (!await SessionManager.checkIfSessionKeyIsValid(sessionkey, username,
-    renewTrustLimit, mobile)) {
+      renewTrustLimit, mobile)) {
     throw APIError.notAuthorized();
   }
   return {
@@ -32,4 +34,4 @@ const checkAuthSessionValidity = async (req, renewTrustLimit = true) => {
   };
 };
 
-export default { checkAuthSessionValidity };
+export default {checkAuthSessionValidity};

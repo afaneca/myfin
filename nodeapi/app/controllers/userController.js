@@ -47,7 +47,9 @@ const createUserSchema = joi.object({
 });
 const createOne = async (req, res, next) => {
   try {
-    await CommonsController.checkAuthSessionValidity(req);
+    if(process.env.ENABLE_USER_SIGNUP !== 'true'){
+      throw APIError.notAuthorized('Sign ups are disabled!')
+    }
     const user = await createUserSchema.validateAsync(req.body);
     await UserService.createUser(user)
       .then((data) => {
