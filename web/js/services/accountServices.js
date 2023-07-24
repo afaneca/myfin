@@ -43,7 +43,6 @@ export const AccountServices = {
     },
     addAccount: (name, description, type, exclude_from_budgets, status, current_balance, color_gradient, successCallback, errorCallback) => {
         var pageUrl = REST_SERVER_PATH + "accounts/"
-
         $.ajax({
             async: true,
             type: "POST",
