@@ -5,7 +5,7 @@ import CommonsController from './commonsController.js';
 import TransactionService from '../services/transactionService.js';
 
 const getTransactionsForUser = async (req, res, next) => {
-  try {
+  /* try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
     const trxLimit = req.query.trx_limit;
     const trxList = await TransactionService.getTransactionsForUser(sessionData.userId, trxLimit);
@@ -13,7 +13,7 @@ const getTransactionsForUser = async (req, res, next) => {
   } catch (err) {
     Logger.addLog(err);
     next(err || APIError.internalServerError());
-  }
+  } */
 };
 
 export {

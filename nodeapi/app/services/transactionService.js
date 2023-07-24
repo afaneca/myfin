@@ -1,11 +1,10 @@
-import db from '../models/index.js';
 import ConvertUtils from '../utils/convertUtils.js';
 import { MYFIN } from '../consts.js';
 
-const Transaction = db.transaction;
+/* const Transaction = db.transaction; */
 
 const transactionService = {
-  getTransactionsForUser: async (userId, trxLimit = 99999999999) => db.sequelize.query(
+  /* getTransactionsForUser: async (userId, trxLimit = 99999999999) => db.sequelize.query(
     `SELECT transaction_id,
             transactions.date_timestamp,
             (transactions.amount / 100) as amount,
@@ -38,7 +37,7 @@ const transactionService = {
       },
       type: db.sequelize.QueryTypes.SELECT,
     },
-  ),
+  ), */
 };
 
 export default transactionService;

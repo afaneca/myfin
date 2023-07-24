@@ -4,34 +4,6 @@ import Logger from '../utils/Logger.js';
 import CommonsController from './commonsController.js';
 import UserService from '../services/userService.js';
 
-// GET ALL
-/* const findAll = async (req, res, next) => {
-  /!* const title = req.query.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null; *!/
-  await SessionManager.checkIfSessionKeyIsValid('', 'tony', true, false);
-  User.findAll()
-    .then((data) => {
-      if (data) res.send(data);
-      else next(APIError.notFound('No user found'));
-    })
-    .catch((/!* err *!/) => {
-      next(APIError.internalServerError());
-    });
-}; */
-
-// GET ONE
-/* const findOne = (req, res, next) => {
-  const { id } = req.params;
-
-  User.findByPk(id)
-    .then((data) => {
-      if (data) res.send(data);
-      else next(APIError.notFound('User not found'));
-    }).catch((/!* err *!/) => {
-      next(APIError.internalServerError());
-    });
-}; */
-
 // CREATE
 const createUserSchema = joi.object({
   username: joi.string()
@@ -92,7 +64,7 @@ const attemptLogin = async (req, res, next) => {
 const checkSessionValidity = async (req, res, next) => {
   try {
     await CommonsController.checkAuthSessionValidity(req);
-    res.send('OK');
+    res.send('1');
   } catch (err) {
     Logger.addLog(err);
     next(err || APIError.internalServerError());

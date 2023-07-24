@@ -1,8 +1,8 @@
-import db from '../models/index.js';
+import prisma from '../config/prisma.js';
 import ConvertUtils from '../utils/convertUtils.js';
 import { MYFIN } from '../consts.js';
 
-const Account = db.accounts;
+const Account = prisma.accounts;
 
 const accountService = {
   createAccount: async (account, userId) => {
@@ -10,22 +10,29 @@ const accountService = {
     account.users_user_id = userId;
     // eslint-disable-next-line no-param-reassign
     account.current_balance = ConvertUtils.convertFloatToBigInteger(account.current_balance);
-    return Account.create(account)
-      .then((data) => data);
+    const result = Account.create({
+      data: account
+    })
+
+    return result
+
   },
-  getAccountsForUser: async (userId) => Account.findAll({
+  getAccountsForUser: async (userId) => Account.findMany({
     where: {
-      users_user_id: parseInt(userId, 10),
-    },
+      users_user_id: userId
+    }
   }),
-  getAccountsForUserWithAmounts: async (userId) => Account.findAll({
-    attributes: ['account_id', 'name', 'type', 'description', 'status', 'color_gradient', 'exclude_from_budgets', [db.sequelize.literal('current_balance / 100'), 'balance'], 'users_user_id'],
-    where: { users_user_id: parseInt(userId, 10) },
-    order: [
-      [db.sequelize.fn('abs', db.sequelize.col('balance')), 'DESC'],
-      [db.sequelize.literal(`case when status='${MYFIN.ACCOUNT_STATUS.INACTIVE}' then 1 else 0 end`)],
-    ],
-  }),
+  getAccountsForUserWithAmounts: async (userId, onlyActive = false) => {
+
+    let rawSql =
+      `SELECT a.account_id, a.name, a.type, a.description, a.status, a.color_gradient, a.exclude_from_budgets, (a.current_balance / 100) as 'balance', a.users_user_id
+      FROM accounts a
+      WHERE users_user_id = ${userId} 
+      ${onlyActive ? `AND a.status = ${MYFIN.ACCOUNT_STATUS.ACTIVE} ` : ' '}
+      ORDER BY abs(balance) DESC, case when a.status = '" .
+            ${MYFIN.TRX_TYPES.EXPENSE} . "' then 1 else 0 end
+      `;
+  }
 };
 
 export default accountService;

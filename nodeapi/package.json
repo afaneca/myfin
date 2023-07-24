@@ -14,7 +14,13 @@
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "prisma": "^5.0.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0"
   },
   "repository": {
     "type": "git",
@@ -27,6 +33,7 @@
   },
   "homepage": "https://github.com/aFaneca/myfin#readme",
   "dependencies": {
+    "@prisma/client": "^5.0.0",
     "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
     "dayjs": "^1.10.6",
@@ -34,8 +41,6 @@
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "joi": "^17.3.0",
-    "mysql2": "^2.3.3",
-    "sequelize": "^6.32.1",
-    "sequelize-auto": "^0.8.8"
+    "mysql2": "^2.3.3"
   }
 }

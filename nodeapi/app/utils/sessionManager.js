@@ -1,29 +1,28 @@
-import db from '../models/index.js';
+import prisma from '../config/prisma.js';
 import DateTimeUtils from './DateTimeUtils.js';
 import APIError from '../errorHandling/apiError.js';
 import { generateUuid } from './CryptoUtils.js';
 import Logger from './Logger.js';
 
-const User = db.users;
-const { Op } = db.Sequelize;
+const User = prisma.users;
 
-const updateUserSessionKeyValue = (username, newSessionKey, mobile = false) => {
+const updateUserSessionKeyValue = async (username, newSessionKey, mobile = false) => {
   const sessionKeyAttr = mobile ? 'sessionkey_mobile' : 'sessionkey';
   if (!mobile) {
-    User.update({ [sessionKeyAttr]: newSessionKey },
-      {
-        where: { username },
-      });
+    await User.update({
+      where: { username },
+      data: { [sessionKeyAttr]: newSessionKey }
+    })
   }
 };
 
-const updateUserTrustlimitValue = (username, newTrustLimit, mobile = false) => {
+const updateUserTrustlimitValue = async (username, newTrustLimit, mobile = false) => {
   const trustLimitAttr = mobile ? 'trustlimit_mobile' : 'trustlimit';
   if (!mobile) {
-    User.update({ [trustLimitAttr]: newTrustLimit },
-      {
-        where: { username },
-      });
+    await User.update({
+      where: { username },
+      data: { [trustLimitAttr]: newTrustLimit }
+    })
   }
 };
 
@@ -32,7 +31,7 @@ const updateUserTrustlimitValue = (username, newTrustLimit, mobile = false) => {
  * @param username
  * @param mobile
  */
-const extendUserSession = (username, mobile = false) => {
+const _extendUserSession = (username, mobile = false) => {
   const renewTimeInSeconds = mobile ? (30 * 24 * 60 * 60 /* 30 days */)
     : (30 * 60 /* 30 minutes */);
   const newTrustLimit = DateTimeUtils.getCurrentUnixTimestamp() + renewTimeInSeconds;
@@ -40,26 +39,23 @@ const extendUserSession = (username, mobile = false) => {
   return newTrustLimit;
 };
 
-const checkIfUserExists = (username, key) => new Promise((resolve /* ,reject */) => {
-  const condition = {
-    username: {
-      [Op.like]: `${username}`,
-    },
-    [Op.or]: {
-      sessionkey: key,
-      sessionkey_mobile: key,
-    },
-  };
+const _checkIfUserExists = async (username, key) => {
+  const whereCondition = {
+    username: username,
+    OR: [
+      { sessionkey: key },
+      { sessionkey_mobile: key },
+    ]
+  }
 
-  User.findOne({ where: condition })
-    .then((data) => {
-      resolve(data/* data !== null */);
-    }).catch((/* err */) => {
-      resolve(false);
-    });
-});
+  const result = await User.findUnique({
+    where: whereCondition
+  }).catch(_ => null)
 
-const checkIfTrustLimitHasExpired = (trustlimit) => {
+  return result
+};
+
+const _checkIfTrustLimitHasExpired = (trustlimit) => {
   const currentUnixTime = DateTimeUtils.getCurrentUnixTimestamp();
   return currentUnixTime >= trustlimit;
 };
@@ -67,28 +63,22 @@ const checkIfTrustLimitHasExpired = (trustlimit) => {
 const generateNewSessionKeyForUser = (username, mobile = false) => {
   const newKey = generateUuid();
   updateUserSessionKeyValue(username, newKey, mobile);
-  const newTrustlimit = extendUserSession(username, mobile);
+  const newTrustlimit = _extendUserSession(username, mobile);
   return { sessionkey: newKey, trustlimit: newTrustlimit };
 };
 
 const checkIfSessionKeyIsValid = async (key, username, renewTrustLimit = true, mobile = false) => {
-  const userData = await checkIfUserExists(username, key);
+  const userData = await _checkIfUserExists(username, key);
   if (userData) {
     // User exists, check if trustlimit has expired
-    if (checkIfTrustLimitHasExpired(mobile ? userData.trustlimit_mobile : userData.trustlimit)) {
+    if (_checkIfTrustLimitHasExpired(mobile ? userData.trustlimit_mobile : userData.trustlimit)) {
       throw APIError.notAuthorized('Session is not valid.');
     }
-    if (renewTrustLimit) extendUserSession(username, mobile);
+    if (renewTrustLimit) _extendUserSession(username, mobile);
     return true;
   }
   Logger.addLog('USER AND/OR SESSION NOT FOUND');
   throw APIError.notFound();
-
-  /* _checkIfUserExists(username).then((exists) => {
-        console.log("USER EXISTS?? " + exists);
-    }).catch(err => {
-        console.log("ERROR: " + err);
-    }) */
 };
 
 export default { checkIfSessionKeyIsValid, generateNewSessionKeyForUser };
