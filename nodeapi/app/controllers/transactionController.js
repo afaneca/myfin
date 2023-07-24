@@ -1,21 +1,28 @@
-import joi from 'joi';
-import APIError from '../errorHandling/apiError.js';
-import Logger from '../utils/Logger.js';
-import CommonsController from './commonsController.js';
-import TransactionService from '../services/transactionService.js';
+import joi from 'joi'
+import APIError from '../errorHandling/apiError.js'
+import Logger from '../utils/Logger.js'
+import CommonsController from './commonsController.js'
+import TransactionService from '../services/transactionService.js'
+
+// READ
+const getAllTrxForUserSchema = joi.object({
+    trx_limit: joi.number().default(300).min(1).max(300),
+})
 
 const getTransactionsForUser = async (req, res, next) => {
-  /* try {
-    const sessionData = await CommonsController.checkAuthSessionValidity(req);
-    const trxLimit = req.query.trx_limit;
-    const trxList = await TransactionService.getTransactionsForUser(sessionData.userId, trxLimit);
-    res.send(trxList);
-  } catch (err) {
-    Logger.addLog(err);
-    next(err || APIError.internalServerError());
-  } */
-};
+    try {
+        const sessionData = await CommonsController.checkAuthSessionValidity(req)
+        const trx = await getAllTrxForUserSchema.validateAsync(req.query)
 
-export {
-  getTransactionsForUser,
-};
+        const trxList = await TransactionService.getTransactionsForUser(
+            sessionData.userId,
+            trx.trx_limit
+        )
+        res.send(trxList)
+    } catch (err) {
+        Logger.addLog(err)
+        next(err || APIError.internalServerError())
+    }
+}
+
+export { getTransactionsForUser }
