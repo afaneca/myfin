@@ -3,6 +3,7 @@ import * as UserController from '../controllers/userController.js';
 import * as AccountController from '../controllers/accountController.js';
 import * as TransactionController from '../controllers/transactionController.js';
 import * as EntityController from '../controllers/entityController.js';
+import * as RuleController from '../controllers/ruleController.js';
 
 const router = (app) => {
   // USERS ROUTES
@@ -58,11 +59,11 @@ const router = (app) => {
   entityRoutes.put('/', EntityController.updateEntity);
 
   // RULES ROUTES
-  /* const ruleRoutes = express.Router()
-    ruleRoutes.get('/', RuleController.getAllRulesForUser)
-    ruleRoutes.post('/', RuleController.addRule)
-    ruleRoutes.delete('/', RuleController.removeRule)
-    ruleRoutes.put('/', RuleController.updateRule) */
+  const ruleRoutes = express.Router();
+  ruleRoutes.get('/', RuleController.getAllRulesForUser);
+  ruleRoutes.post('/', RuleController.createRule);
+  ruleRoutes.delete('/', RuleController.deleteRule);
+  ruleRoutes.put('/', RuleController.updateRule);
 
   // STATS ROUTES
   /* const statRoutes = express.Router()
@@ -114,7 +115,7 @@ const router = (app) => {
   /* app.use('/budgets', budgetRoutes) */
   /* app.use('/categories', categoryRoutes) */
   app.use('/entities', entityRoutes);
-  /* app.use('/rules', ruleRoutes) */
+  app.use('/rules', ruleRoutes);
   /* app.use('/stats', statRoutes) */
   /* app.use('/invest/stats', investAssetRoutes) */
   /* app.use('/invest/trx', investTrxRoutes) */
