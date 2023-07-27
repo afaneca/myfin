@@ -27,7 +27,7 @@ const accountService = {
       },
     }),
   getAccountsForUserWithAmounts: async (userId, onlyActive = false) => {
-    let onlyActiveExcerpt = onlyActive ? 'AND a.status = ' + MYFIN.ACCOUNT_STATUS.ACTIVE : '';
+    const onlyActiveExcerpt = onlyActive ? `AND a.status = ${MYFIN.ACCOUNT_STATUS.ACTIVE}` : '';
 
     return await prisma.$queryRaw`SELECT a.account_id, a.name, a.type, a.description, a.status, a.color_gradient, a.exclude_from_budgets, (a.current_balance / 100) as 'balance', a.users_user_id
     FROM accounts a WHERE users_user_id = ${userId} || ${onlyActiveExcerpt} 
@@ -44,7 +44,7 @@ const accountService = {
     return result !== null;
   },
   deleteAccount: async (accountId) => {
-    Logger.addLog('accountID: ' + accountId);
+    Logger.addLog(`accountID: ${accountId}`);
     const deleteTransactions = Transaction.deleteMany({
       where: {
         OR: [{ accounts_account_from_id: accountId }, { accounts_account_to_id: accountId }],
