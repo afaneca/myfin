@@ -98,4 +98,9 @@ const updateRule = async (req, res, next) => {
   }
 };
 
-export { getAllRulesForUser, createRule, deleteRule, updateRule };
+export default {
+  getAllRulesForUser,
+  createRule,
+  deleteRule,
+  updateRule,
+};

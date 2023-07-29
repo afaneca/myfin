@@ -253,7 +253,7 @@ export const Categories = {
                 `
 
     let actionLinks = `<a  class="modal-close waves-effect waves-green btn-flat enso-blue-bg enso-border white-text">${Localization.getString("common.cancel")}</a>
-            <a id="modal-remove-cat-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.remove")}</a>`
+            <a id="modal-remove-cat-btn" class="waves-effect waves-red btn-flat enso-salmon-bg enso-border white-text">${Localization.getString("common.delete")}</a>`
     $('#modal-global .modal-content').html(txt)
     $('#modal-global .modal-footer').html(actionLinks)
     $('#modal-remove-cat-btn').click(() => Categories.removeCategory(catID))

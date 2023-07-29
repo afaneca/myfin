@@ -32,8 +32,7 @@ const getAllRulesForUser = async (userId) => {
   };
 };
 
-const createRule = async (userId, rule) => {
-  return await Rule.create({
+const createRule = async (userId, rule) => Rule.create({
     data: {
       users_user_id: userId,
       matcher_description_operator: rule.matcher_description_operator,
@@ -54,12 +53,16 @@ const createRule = async (userId, rule) => {
       assign_is_essential: rule.assign_essential,
     },
   });
-};
 
 const updatedRule = async (userId, rule) => {
   Logger.addStringifiedLog(rule);
-  return await Rule.update({
-    where: { rule_id_users_user_id: { rule_id: rule.rule_id, users_user_id: userId } },
+  return Rule.update({
+    where: {
+      rule_id_users_user_id: {
+        rule_id: rule.rule_id,
+        users_user_id: userId,
+      },
+    },
     data: {
       matcher_description_operator: rule.matcher_description_operator,
       matcher_description_value: rule.matcher_description_value,
@@ -81,10 +84,19 @@ const updatedRule = async (userId, rule) => {
   });
 };
 
-const deleteRule = async (userId, ruleId) => {
-  return await Rule.delete({
-    where: { rule_id_users_user_id: { rule_id: ruleId, users_user_id: userId } },
+const deleteRule = async (userId, ruleId) =>
+  Rule.delete({
+    where: {
+      rule_id_users_user_id: {
+        rule_id: ruleId,
+        users_user_id: userId,
+      },
+    },
   });
-};
 
-export default { getAllRulesForUser, createRule, deleteRule, updatedRule };
+export default {
+  getAllRulesForUser,
+  createRule,
+  deleteRule,
+  updatedRule,
+};

@@ -25,4 +25,4 @@ const getTransactionsForUser = async (req, res, next) => {
   }
 };
 
-export { getTransactionsForUser };
+export default { getTransactionsForUser };

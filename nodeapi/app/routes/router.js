@@ -1,9 +1,10 @@
 import express from 'express';
-import * as UserController from '../controllers/userController.js';
-import * as AccountController from '../controllers/accountController.js';
-import * as TransactionController from '../controllers/transactionController.js';
-import * as EntityController from '../controllers/entityController.js';
-import * as RuleController from '../controllers/ruleController.js';
+import UserController from '../controllers/userController.js';
+import AccountController from '../controllers/accountController.js';
+import TransactionController from '../controllers/transactionController.js';
+import EntityController from '../controllers/entityController.js';
+import RuleController from '../controllers/ruleController.js';
+import CategoryController from '../controllers/categoryController.js';
 
 const router = (app) => {
   // USERS ROUTES
@@ -45,11 +46,11 @@ const router = (app) => {
     budgetRoutes.get('/filteredByPage/{page}', BudgetController.getFilteredBudgetsForUserByPage) */
 
   // CATEGORIES ROUTES
-  /* const catRoutes = express.Router()
-    catRoutes.get('/', CategoryController.getAllCategoriesForUser)
-    catRoutes.post('/', CategoryController.addCategory)
-    catRoutes.delete('/', CategoryController.removeCategory)
-    catRoutes.put('/', CategoryController.updateCategory) */
+  const catRoutes = express.Router();
+  catRoutes.get('/', CategoryController.getAllCategoriesForUser);
+  catRoutes.post('/', CategoryController.createCategory);
+  catRoutes.delete('/', CategoryController.deleteCategory);
+  catRoutes.put('/', CategoryController.updateCategory);
 
   // ENTITIES ROUTES
   const entityRoutes = express.Router();
@@ -113,7 +114,7 @@ const router = (app) => {
   app.use('/accounts', accountsRoutes);
   app.use('/trxs', trxRoutes);
   /* app.use('/budgets', budgetRoutes) */
-  /* app.use('/categories', categoryRoutes) */
+  app.use('/cats', catRoutes)
   app.use('/entities', entityRoutes);
   app.use('/rules', ruleRoutes);
   /* app.use('/stats', statRoutes) */

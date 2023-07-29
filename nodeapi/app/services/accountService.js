@@ -29,9 +29,18 @@ const accountService = {
   getAccountsForUserWithAmounts: async (userId, onlyActive = false) => {
     const onlyActiveExcerpt = onlyActive ? `AND a.status = ${MYFIN.ACCOUNT_STATUS.ACTIVE}` : '';
 
-    return await prisma.$queryRaw`SELECT a.account_id, a.name, a.type, a.description, a.status, a.color_gradient, a.exclude_from_budgets, (a.current_balance / 100) as 'balance', a.users_user_id
-    FROM accounts a WHERE users_user_id = ${userId} || ${onlyActiveExcerpt} 
-    ORDER BY abs(balance) DESC, case when a.status = ${MYFIN.TRX_TYPES.EXPENSE} then 1 else 0 end`;
+    return prisma.$queryRaw`SELECT a.account_id,
+                                   a.name,
+                                   a.type,
+                                   a.description,
+                                   a.status,
+                                   a.color_gradient,
+                                   a.exclude_from_budgets,
+                                   (a.current_balance / 100) as 'balance',
+                                   a.users_user_id
+                            FROM accounts a
+                            WHERE users_user_id = ${userId} || ${onlyActiveExcerpt}
+                            ORDER BY abs(balance) DESC, case when a.status = ${MYFIN.TRX_TYPES.EXPENSE} then 1 else 0 end`;
   },
   doesAccountBelongToUser: async (userId, accountId) => {
     const result = await Account.findUnique({
