@@ -1,6 +1,7 @@
-import dbConfig from './db.config.js';
 import * as dotenv from 'dotenv';
-dotenv.config({path: 'config.env'});
+import dbConfig from './db.config.js';
+
+dotenv.config({ path: 'config.env' });
 
 export default {
   development: {
@@ -10,7 +11,7 @@ export default {
     host: dbConfig.PORT,
     dialect: dbConfig.dialect,
     pool: dbConfig.pool,
-    logging: true
+    logging: true,
   },
   test: {
     username: dbConfig.USER,
@@ -19,7 +20,7 @@ export default {
     host: dbConfig.PORT,
     dialect: dbConfig.dialect,
     pool: dbConfig.pool,
-    logging: true
+    logging: true,
   },
   production: {
     username: dbConfig.USER,
@@ -28,5 +29,5 @@ export default {
     host: dbConfig.PORT,
     dialect: dbConfig.dialect,
     pool: dbConfig.pool,
-  }
+  },
 };

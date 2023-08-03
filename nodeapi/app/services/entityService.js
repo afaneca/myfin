@@ -1,4 +1,4 @@
-import prisma from '../config/prisma.js';
+import { prisma } from '../config/prisma.js';
 
 const Entity = prisma.entities;
 

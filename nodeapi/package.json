@@ -4,7 +4,10 @@
     "start": "node server.js",
     "start:dev": "nodemon server.js",
     "eslint": "eslint ./",
-    "eslint-fix": "eslint ./ --fix"
+    "eslint-fix": "eslint ./ --fix",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed"
   },
   "name": "nodeapi",
   "version": "0.0.1",

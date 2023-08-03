@@ -1,8 +1,9 @@
-import prisma from '../config/prisma.js';
+import { prisma } from '../config/prisma.js';
 import Logger from '../utils/Logger.js';
 import ConvertUtils from '../utils/convertUtils.js';
 import AccountService from './accountService.js';
 import EntityService from './entityService.js';
+import CategoryService from './categoryService.js';
 
 const Rule = prisma.rules;
 
@@ -19,8 +20,7 @@ const getAllRulesForUser = async (userId) => {
     rule.assign_is_essential = rule.assign_is_essential ? 1 : 0;
   });
 
-  // TODO
-  const categories = [];
+  const categories = await CategoryService.getAllCategoriesForUser(userId);
   const accounts = await AccountService.getAccountsForUser(userId);
   const entities = await EntityService.getAllEntitiesForUser(userId);
 
@@ -32,13 +32,15 @@ const getAllRulesForUser = async (userId) => {
   };
 };
 
-const createRule = async (userId, rule) => Rule.create({
+const createRule = async (userId, rule) =>
+  Rule.create({
     data: {
       users_user_id: userId,
       matcher_description_operator: rule.matcher_description_operator,
       matcher_description_value: rule.matcher_description_value,
       matcher_amount_operator: rule.matcher_amount_operator,
-      matcher_amount_value: ConvertUtils.convertFloatToBigInteger(rule.matcher_amount_value),
+      matcher_amount_value: ConvertUtils.convertFloatToBigInteger(
+        rule.matcher_amount_value),
       matcher_type_operator: rule.matcher_type_operator,
       matcher_type_value: rule.matcher_type_value,
       matcher_account_to_id_operator: rule.matcher_account_to_id_operator,
@@ -67,7 +69,8 @@ const updatedRule = async (userId, rule) => {
       matcher_description_operator: rule.matcher_description_operator,
       matcher_description_value: rule.matcher_description_value,
       matcher_amount_operator: rule.matcher_amount_operator,
-      matcher_amount_value: ConvertUtils.convertFloatToBigInteger(rule.matcher_amount_value),
+      matcher_amount_value: ConvertUtils.convertFloatToBigInteger(
+        rule.matcher_amount_value),
       matcher_type_operator: rule.matcher_type_operator,
       matcher_type_value: rule.matcher_type_value,
       matcher_account_to_id_operator: rule.matcher_account_to_id_operator,

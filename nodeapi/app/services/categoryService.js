@@ -1,4 +1,4 @@
-import prisma from '../config/prisma.js';
+import { prisma } from '../config/prisma.js';
 
 const Category = prisma.categories;
 const BudgetHasCategories = prisma.budgets_has_categories;

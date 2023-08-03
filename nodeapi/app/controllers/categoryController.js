@@ -20,7 +20,7 @@ const getAllCategoriesForUser = async (req, res, next) => {
 
 const createCategorySchema = joi.object({
   name: joi.string().trim().required(),
-  description: joi.string().trim().required(),
+  description: joi.string().trim().empty('').default(''),
   color_gradient: joi.string().trim().required(),
   status: joi.string().valid(MYFIN.CATEGORY_STATUS.ACTIVE, MYFIN.CATEGORY_STATUS.INACTIVE),
   exclude_from_budgets: joi.boolean().truthy(1, '1').falsy(0, '0').required(),
@@ -44,7 +44,7 @@ const createCategory = async (req, res, next) => {
 const updateCategorySchema = joi.object({
   category_id: joi.number().required(),
   new_name: joi.string().trim().required(),
-  new_description: joi.string().trim().required(),
+  new_description: joi.string().trim().empty('').default(''),
   new_color_gradient: joi.string().trim().required(),
   new_status: joi.string().valid(MYFIN.CATEGORY_STATUS.ACTIVE, MYFIN.CATEGORY_STATUS.INACTIVE),
   new_exclude_from_budgets: joi.boolean().truthy(1, '1').falsy(0, '0').required(),

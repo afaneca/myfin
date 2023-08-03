@@ -78,15 +78,15 @@ const router = (app) => {
   // TRANSACTIONS ROUTES
   const trxRoutes = express.Router();
   trxRoutes.get('/', TransactionController.getTransactionsForUser);
+  trxRoutes.get('/filteredByPage/:page', TransactionController.getFilteredTrxByPage);
+  trxRoutes.post('/step0', TransactionController.createTransactionStep0);
+  trxRoutes.post('/step1', TransactionController.createTransaction);
+  trxRoutes.delete('/', TransactionController.deleteTransaction);
+  trxRoutes.put('/', TransactionController.updateTransaction);
   /* trxRoutes.get('/inMonthAndCategory', TransactionController.getAllTransactionsForUserInCategoryAndInMonth)
-    trxRoutes.post('/step0', TransactionController.addTransactionStep0)
-    trxRoutes.post('/step1', TransactionController.addTransactionStep1)
-    trxRoutes.delete('/', TransactionController.removeTransaction)
-    trxRoutes.put('/', TransactionController.updateTransaction)
     trxRoutes.post('/import/step0', TransactionController.importTransactionsStep0)
     trxRoutes.post('/import/step1', TransactionController.importTransactionsStep1)
     trxRoutes.post('/import/step2', TransactionController.importTransactionsStep2)
-    trxRoutes.post('/filteredByPage/:page', TransactionController.getFilteredTransactionsForUserByPage)
     trxRoutes.post('/auto-cat-trx', TransactionController.autoCategorizeTransaction) */
 
   // INVEST ASSET ROUTES
@@ -114,7 +114,7 @@ const router = (app) => {
   app.use('/accounts', accountsRoutes);
   app.use('/trxs', trxRoutes);
   /* app.use('/budgets', budgetRoutes) */
-  app.use('/cats', catRoutes)
+  app.use('/cats', catRoutes);
   app.use('/entities', entityRoutes);
   app.use('/rules', ruleRoutes);
   /* app.use('/stats', statRoutes) */

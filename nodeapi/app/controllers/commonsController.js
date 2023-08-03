@@ -22,8 +22,9 @@ const checkAuthSessionValidity = async (req, renewTrustLimit = true) => {
   const mobile = req.get('mobile') === 'true';
   const userId = await userService.getUserIdFromUsername(username);
 
-  if (!await SessionManager.checkIfSessionKeyIsValid(sessionkey, username,
-      renewTrustLimit, mobile)) {
+  if (
+    !(await SessionManager.checkIfSessionKeyIsValid(sessionkey, username, renewTrustLimit, mobile))
+  ) {
     throw APIError.notAuthorized();
   }
   return {
@@ -34,4 +35,4 @@ const checkAuthSessionValidity = async (req, renewTrustLimit = true) => {
   };
 };
 
-export default {checkAuthSessionValidity};
+export default { checkAuthSessionValidity };
