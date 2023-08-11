@@ -9,8 +9,6 @@ import ConvertUtils from '../utils/convertUtils.js';
 import APIError from '../errorHandling/apiError.js';
 import Logger from '../utils/Logger.js';
 
-const Transaction = prisma.transactions;
-
 const getTransactionsForUser = async (userId, trxLimit) => prisma.$queryRaw`SELECT transaction_id,
                                                transactions.date_timestamp,
                                                (transactions.amount / 100) as amount,

@@ -5,6 +5,7 @@ import TransactionController from '../controllers/transactionController.js';
 import EntityController from '../controllers/entityController.js';
 import RuleController from '../controllers/ruleController.js';
 import CategoryController from '../controllers/categoryController.js';
+import BudgetController from '../controllers/budgetController.js';
 
 const router = (app) => {
   // USERS ROUTES
@@ -33,17 +34,18 @@ const router = (app) => {
     accountsRoutes.put('/recalculate-balance/all', AccountController.recalculateAllUserAccountsBalances) */
 
   // BUDGETS ROUTES
-  /* const budgetRoutes = express.Router()
-    budgetRoutes.get('/', BudgetController.getAllBudgetsForUser)
-    budgetRoutes.get('/list', BudgetController.getBudgetsListForUser)
-    budgetRoutes.get('/:id', BudgetController.getBudget)
-    budgetRoutes.post('/step0', BudgetController.addBudgetStep0)
-    budgetRoutes.post('/step1', BudgetController.addBudget)
-    budgetRoutes.put('/', BudgetController.editBudget)
-    budgetRoutes.put('/status', BudgetController.changeBudgetStatus)
-    budgetRoutes.put('/:id', BudgetController.updateBudgetCategoryPlannedValues)
-    budgetRoutes.delete('/', BudgetController.removeBudget)
-    budgetRoutes.get('/filteredByPage/{page}', BudgetController.getFilteredBudgetsForUserByPage) */
+  const budgetRoutes = express.Router();
+  budgetRoutes.get('/', BudgetController.getAllBudgetsForUser);
+  budgetRoutes.get('/filteredByPage/:page', BudgetController.getFilteredBudgetsForUserByPage);
+  budgetRoutes.post('/step0', BudgetController.addBudgetStep0);
+  budgetRoutes.post('/step1', BudgetController.createBudget);
+  budgetRoutes.get('/:id', BudgetController.getBudget);
+  budgetRoutes.put('/', BudgetController.updateBudget);
+  budgetRoutes.put('/status', BudgetController.changeBudgetStatus);
+  budgetRoutes.delete('/', BudgetController.removeBudget);
+  /* budgetRoutes.get('/list', BudgetController.getBudgetsListForUser)
+  budgetRoutes.put('/:id', BudgetController.updateBudgetCategoryPlannedValues)
+  */
 
   // CATEGORIES ROUTES
   const catRoutes = express.Router();
@@ -113,7 +115,7 @@ const router = (app) => {
   app.use('/validity', validityRoutes);
   app.use('/accounts', accountsRoutes);
   app.use('/trxs', trxRoutes);
-  /* app.use('/budgets', budgetRoutes) */
+  app.use('/budgets', budgetRoutes);
   app.use('/cats', catRoutes);
   app.use('/entities', entityRoutes);
   app.use('/rules', ruleRoutes);

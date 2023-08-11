@@ -406,6 +406,11 @@ export const BudgetDetails = {
       $('span#estimated_expenses_label').text(Localization.getString('budgetDetails.actualExpenses'))
       $('span#estimated_balance_label').text(Localization.getString('budgetDetails.actualBalance'))
       $('span#estimated_income_label').text(Localization.getString('budgetDetails.actualIncome'))
+    } else {
+      // update labels
+      $('span#estimated_expenses_label').text(Localization.getString('budgetDetails.estimatedExpenses'))
+      $('span#estimated_balance_label').text(Localization.getString('budgetDetails.estimatedBalance'))
+      $('span#estimated_income_label').text(Localization.getString('budgetDetails.estimatedIncome'))
     }
 
     $(plannedCreditAmountsClassSelector).each((i, input) => {

@@ -5,6 +5,9 @@ import dotenv from 'dotenv/config.js';
 import apiErrorHandler from './app/errorHandling/apiErrorHandler.js';
 import router from './app/routes/router.js';
 
+// Set UTC as default timezone
+process.env.TZ = 'Etc/UTC';
+
 const app = express();
 
 // TODO - cors settings

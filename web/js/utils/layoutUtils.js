@@ -99,6 +99,8 @@ export var LayoutUtils = {
     }
   },
   scrollToWithAnimation: (elementLocator, scrollInterval = 500) => {
+    const element = $(elementLocator);
+    if(!element || !element.offset()) return;
     $('html, body').animate({
       scrollTop: $(elementLocator).offset().top,
     }, scrollInterval)

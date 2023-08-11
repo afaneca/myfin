@@ -7,7 +7,9 @@ BigInt.prototype.toJSON = function() {
   return int || this.toString();
 };
 
-export const prisma = new PrismaClient();
+export const prisma = new PrismaClient({
+  /* log: ["query"] */
+});
 
 export const setupPrismaTransaction = async (transacionBody, transactionConfig = {}) =>
   prisma.$transaction(transacionBody, transactionConfig);

@@ -24,6 +24,15 @@ const MYFIN = {
     ACTIVE: 'Ativa',
     INACTIVE: 'Inativa',
   },
+  ACCOUNT_TYPES: {
+    CHECKING: 'CHEAC',
+    SAVINGS: 'SAVAC',
+    INVESTING: 'INVAC',
+    CREDIT: 'CREAC',
+    MEAL: 'MEALAC',
+    WALLET: 'WALLET',
+    OTHER: 'OTHAC',
+  },
   CATEGORY_STATUS: {
     ACTIVE: 'Ativa',
     INACTIVE: 'Inativa',
