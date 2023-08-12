@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "start:dev": "nodemon server.js",
+    "start:dev": "nodemon src/server.js",
     "eslint": "eslint ./",
     "eslint-fix": "eslint ./ --fix",
     "db:generate": "prisma generate",

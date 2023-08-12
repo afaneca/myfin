@@ -6,6 +6,7 @@ import EntityController from '../controllers/entityController.js';
 import RuleController from '../controllers/ruleController.js';
 import CategoryController from '../controllers/categoryController.js';
 import BudgetController from '../controllers/budgetController.js';
+import Logger from "../utils/Logger.js";
 
 const router = (app) => {
   // USERS ROUTES
@@ -109,6 +110,12 @@ const router = (app) => {
   investTrxRoutes.delete('/:id', InvestTransactionsRouter.removeTransaction);
   investTrxRoutes.delete('/:id', InvestTransactionsRouter.updateTransaction); */
 
+  const testRouter = express.Router();
+  testRouter.get('/', async (req, res, next) => {
+    console.log(process.env.LOGGING)
+    res.json(`OK`);
+  });
+
   /* app.use('/user', userRouter) */
   app.use('/users', usersRouter);
   app.use('/auth', authRoutes);
@@ -122,6 +129,7 @@ const router = (app) => {
   /* app.use('/stats', statRoutes) */
   /* app.use('/invest/stats', investAssetRoutes) */
   /* app.use('/invest/trx', investTrxRoutes) */
+  app.use('/test', testRouter);
 };
 
 export default router;
