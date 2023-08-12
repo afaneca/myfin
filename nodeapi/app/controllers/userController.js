@@ -44,6 +44,7 @@ const attemptLogin = async (req, res, next) => {
         throw err;
       });
   } catch (err) {
+    Logger.addLog(err);
     next(err || APIError.internalServerError());
   }
 };
