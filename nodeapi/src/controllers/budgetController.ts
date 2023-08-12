@@ -13,7 +13,7 @@ const getAllBudgetsForUserSchema = joi.object({
 const getAllBudgetsForUser = async (req, res, next) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
-    const input = getAllBudgetsForUserSchema.validateAsync(req.query);
+    const input = await getAllBudgetsForUserSchema.validateAsync(req.query);
     const data = await BudgetService.getAllBudgetsForUser(sessionData.userId, input.status);
     res.json(data);
   } catch (err) {

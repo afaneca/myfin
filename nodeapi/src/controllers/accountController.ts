@@ -23,8 +23,8 @@ const createAccount = async (req, res, next) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
     const account = await createAccountSchema.validateAsync(req.body);
-    await AccountService.createAccount(account, sessionData.userId).then((data) => {
-      res.json(`Account ${data.account_id} successfully created`);
+    await AccountService.createAccount(account, sessionData.userId).then(() => {
+      res.json(`Account successfully created`);
     });
   } catch (err) {
     Logger.addLog(err);
@@ -94,8 +94,8 @@ const updateAccount = async (req, res, next) => {
       throw APIError.notAuthorized();
     }
 
-    await AccountService.updateAccount(account, sessionData.userId).then((data) => {
-      res.json(`Account ${data.account_id} successfully updated`);
+    await AccountService.updateAccount(account, sessionData.userId).then(() => {
+      res.json(`Account successfully updated`);
     });
   } catch (err) {
     Logger.addLog(err);

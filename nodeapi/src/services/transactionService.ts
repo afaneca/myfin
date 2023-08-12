@@ -1,46 +1,46 @@
-import { prisma, setupPrismaTransaction } from '../config/prisma.js';
-import EntityService from './entityService.js';
-import CategoryService from './categoryService.js';
-import AccountService from './accountService.js';
-import UserService from './userService.js';
-import DateTimeUtils from '../utils/DateTimeUtils.js';
-import { MYFIN } from '../consts.js';
-import ConvertUtils from '../utils/convertUtils.js';
-import APIError from '../errorHandling/apiError.js';
-import Logger from '../utils/Logger.js';
+import { prisma, setupPrismaTransaction } from "../config/prisma.js";
+import EntityService from "./entityService.js";
+import CategoryService from "./categoryService.js";
+import AccountService from "./accountService.js";
+import UserService from "./userService.js";
+import DateTimeUtils from "../utils/DateTimeUtils.js";
+import { MYFIN } from "../consts.js";
+import ConvertUtils from "../utils/convertUtils.js";
+import APIError from "../errorHandling/apiError.js";
+import Logger from "../utils/Logger.js";
 
-const getTransactionsForUser = async (userId, trxLimit) => prisma.$queryRaw`SELECT transaction_id,
-                                               transactions.date_timestamp,
-                                               (transactions.amount / 100) as amount,
-                                               transactions.type,
-                                               transactions.is_essential,
-                                               transactions.description,
-                                               entities.entity_id,
-                                               entities.name               as entity_name,
-                                               categories_category_id,
-                                               categories.name             as category_name,
-                                               accounts_account_from_id,
-                                               acc_to.name                 as account_to_name,
-                                               accounts_account_to_id,
-                                               acc_from.name               as account_from_name
-                                        FROM transactions
-                                                 LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
-                                                 LEFT JOIN categories
-                                                           ON categories.category_id = transactions.categories_category_id
-                                                 LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
-                                                 LEFT JOIN accounts acc_to
-                                                           ON acc_to.account_id = transactions.accounts_account_to_id
-                                                 LEFT JOIN accounts acc_from
-                                                           ON acc_from.account_id = transactions.accounts_account_from_id
-                                        WHERE acc_to.users_user_id = ${userId}
-                                           OR acc_from.users_user_id = ${userId}
-                                        GROUP BY transaction_id
-                                        ORDER BY transactions.date_timestamp DESC
-                                        LIMIT ${trxLimit}`;
+const getTransactionsForUser = async (userId: number, trxLimit: number) => prisma.$queryRaw`SELECT transaction_id,
+                                                                                                   transactions.date_timestamp,
+                                                                                                   (transactions.amount / 100) as amount,
+                                                                                                   transactions.type,
+                                                                                                   transactions.is_essential,
+                                                                                                   transactions.description,
+                                                                                                   entities.entity_id,
+                                                                                                   entities.name               as entity_name,
+                                                                                                   categories_category_id,
+                                                                                                   categories.name             as category_name,
+                                                                                                   accounts_account_from_id,
+                                                                                                   acc_to.name                 as account_to_name,
+                                                                                                   accounts_account_to_id,
+                                                                                                   acc_from.name               as account_from_name
+                                                                                            FROM transactions
+                                                                                                     LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
+                                                                                                     LEFT JOIN categories
+                                                                                                               ON categories.category_id = transactions.categories_category_id
+                                                                                                     LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
+                                                                                                     LEFT JOIN accounts acc_to
+                                                                                                               ON acc_to.account_id = transactions.accounts_account_to_id
+                                                                                                     LEFT JOIN accounts acc_from
+                                                                                                               ON acc_from.account_id = transactions.accounts_account_from_id
+                                                                                            WHERE acc_to.users_user_id = ${userId}
+                                                                                               OR acc_from.users_user_id = ${userId}
+                                                                                            GROUP BY transaction_id
+                                                                                            ORDER BY transactions.date_timestamp DESC
+                                                                                            LIMIT ${trxLimit}`;
 
-const getFilteredTransactionsByForUser = async (userId, page, pageSize, searchQuery) => {
+const getFilteredTransactionsByForUser = async (userId: number, page: number, pageSize: number, searchQuery: string) => {
   const query = `%${searchQuery}%`;
-  const offsetValue = parseInt(page, 10) * parseInt(pageSize, 10);
+  const offsetValue = page * pageSize;
 
   // main query for list of results (limited by pageSize and offsetValue)
   const mainQuery = prisma.$queryRaw`SELECT transaction_id,
@@ -119,15 +119,15 @@ const getFilteredTransactionsByForUser = async (userId, page, pageSize, searchQu
   const [mainQueryResult, countQueryResult, totalCountQueryResult] = await prisma.$transaction([
     mainQuery,
     countQuery,
-    totalCountQuery,
+    totalCountQuery
   ]);
   return {
     results: mainQueryResult,
     filtered_count: countQueryResult[0].count,
-    total_count: totalCountQueryResult[0].count,
+    total_count: totalCountQueryResult[0].count
   };
 };
-const createTransactionStep0 = async (userId) => {
+const createTransactionStep0 = async (userId: number) => {
   const [entities, categories, accounts] = await setupPrismaTransaction(async (_) => {
     const ents = await EntityService.getAllEntitiesForUser(userId);
     const cats = await CategoryService.getAllCategoriesForUser(userId);
@@ -139,11 +139,12 @@ const createTransactionStep0 = async (userId) => {
   return {
     entities: entities,
     categories: categories,
-    accounts: accounts,
+    accounts: accounts
   };
 };
 
-const createTransaction = async (userId, trx, prismaClient = undefined) => {
+export type CreateTransactionType = { amount: number, type: string, description: string, entity_id?: number, account_from_id?: number, account_to_id?: number, category_id?: number, date_timestamp: number, is_essential: boolean };
+const createTransaction = async (userId: number, trx: CreateTransactionType, prismaClient = undefined) => {
   Logger.addStringifiedLog(trx);
   trx.amount = ConvertUtils.convertFloatToBigInteger(trx.amount);
   await setupPrismaTransaction(async (prismaTx) => {
@@ -154,12 +155,12 @@ const createTransaction = async (userId, trx, prismaClient = undefined) => {
         amount: trx.amount,
         type: trx.type,
         description: trx.description,
-        entities_entity_id: trx.entities_entity_id,
+        entities_entity_id: trx.entity_id,
         accounts_account_from_id: trx.account_from_id,
         accounts_account_to_id: trx.account_to_id,
-        categories_category_id: trx.categories_category_id,
-        is_essential: trx.is_essential,
-      },
+        categories_category_id: trx.category_id,
+        is_essential: trx.is_essential
+      }
     });
 
     await UserService.setupLastUpdateTimestamp(
@@ -219,13 +220,13 @@ const createTransaction = async (userId, trx, prismaClient = undefined) => {
   });
 };
 
-const deleteTransaction = async (userId, transactionId) => {
+const deleteTransaction = async (userId: number, transactionId: number) => {
   await setupPrismaTransaction(async (prismaTx) => {
     const trx = await prismaTx.transactions
       .findUniqueOrThrow({
         where: {
-          transaction_id: transactionId,
-        },
+          transaction_id: transactionId
+        }
       })
       .catch((err) => {
         throw APIError.notFound(`Transaction could not be found.`);
@@ -240,8 +241,8 @@ const deleteTransaction = async (userId, transactionId) => {
     const accountsCount = await prismaTx.accounts.count({
       where: {
         account_id: { in: [oldAccountTo || -1, oldAccountFrom || -1] },
-        users_user_id: userId,
-      },
+        users_user_id: userId
+      }
     });
     if (accountsCount === 0) {
       throw APIError.notFound(`Account could not be found.`);
@@ -250,8 +251,8 @@ const deleteTransaction = async (userId, transactionId) => {
     // Delete transaction
     await prismaTx.transactions.delete({
       where: {
-        transaction_id: transactionId,
-      },
+        transaction_id: transactionId
+      }
     });
 
     await UserService.setupLastUpdateTimestamp(
@@ -302,17 +303,39 @@ const deleteTransaction = async (userId, transactionId) => {
   });
 };
 
-const updateTransaction = async (userId, updatedTrx) => {
+export type UpdatedTrxType = {
+  new_amount: number,
+  new_type: string
+  new_description: string,
+  new_entity_id: number,
+  new_account_from_id: number,
+  new_account_to_id: number,
+  new_category_id: number,
+  new_date_timestamp: number,
+  new_is_essential: boolean,
+  transaction_id: number,
+  /* SPLIT TRX */
+  is_split: boolean,
+  split_amount?: number,
+  split_category?: number,
+  split_entity?: number,
+  split_type?: string,
+  split_account_from?: number,
+  split_account_to?: number,
+  split_description?: string,
+  split_is_essential?: boolean
+};
+const updateTransaction = async (userId: number, updatedTrx: UpdatedTrxType) => {
   const trx = {
     ...updatedTrx,
     ...{
-      new_amount: ConvertUtils.convertFloatToBigInteger(updatedTrx.new_amount),
-    },
+      new_amount: ConvertUtils.convertFloatToBigInteger(updatedTrx.new_amount)
+    }
   };
   /* trx.amount = ConvertUtils.convertFloatToBigInteger(trx.amount); */
   await setupPrismaTransaction(async (prismaTx) => {
     const outdatedTrx = await prismaTx.transactions.findUniqueOrThrow({
-      where: { transaction_id: trx.transaction_id },
+      where: { transaction_id: trx.transaction_id }
     });
 
     const oldAmount = outdatedTrx.amount;
@@ -356,8 +379,8 @@ const updateTransaction = async (userId, updatedTrx) => {
         accounts_account_from_id: trx.new_account_from_id,
         accounts_account_to_id: trx.new_account_to_id,
         categories_category_id: trx.new_category_id,
-        is_essential: trx.new_is_essential,
-      },
+        is_essential: trx.new_is_essential
+      }
     });
 
     await UserService.setupLastUpdateTimestamp(
@@ -475,11 +498,11 @@ const updateTransaction = async (userId, updatedTrx) => {
           amount: trx.split_amount,
           type: trx.split_type,
           description: trx.split_description,
-          entities_entity_id: trx.split_entity,
-          categories_category_id: trx.split_category,
+          entity_id: trx.split_entity,
+          category_id: trx.split_category,
           account_from_id: trx.split_account_from,
           account_to_id: trx.split_account_to,
-          is_essential: trx.split_is_essential,
+          is_essential: trx.split_is_essential
         },
         prismaTx
       );
@@ -492,5 +515,5 @@ export default {
   createTransactionStep0,
   createTransaction,
   deleteTransaction,
-  updateTransaction,
+  updateTransaction
 };

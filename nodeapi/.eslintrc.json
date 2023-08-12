@@ -1,27 +1,46 @@
 {
+  "root": true,
+  "env": {
+    "jest": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": [
+      "./tsconfig.eslint.json"
+    ]
+  },
   "extends": [
-    "airbnb",
+    "airbnb-typescript/base",
     "prettier",
-    "plugin:node/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript"
   ],
   "plugins": [
+    "import",
+    "@typescript-eslint",
     "prettier"
   ],
-  "parserOptions": {
-    "ecmaVersion": 2020
-  },
   "rules": {
-    "prettier/prettier": "warn",
-    "no-unused-vars": "warn",
-    "no-console": "off",
-    "func-names": "off",
-    "no-process-exit": "off",
-    "object-shorthand": "off",
-    "class-methods-use-this": "off",
-    "import/extensions": [
-      "error",
-      "ignorePackages"
-    ],
-    "import/no-unresolved": "off"
+    "comma-dangle": 0,
+    "no-underscore-dangle": 0,
+    "no-param-reassign": 0,
+    "no-return-assign": 0,
+    "camelcase": 0,
+    "import/extensions": 0,
+    "@typescript-eslint/no-redeclare": 0,
+    "@typescript-eslint/comma-dangle": 0
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [
+        ".ts",
+        ".tsx"
+      ]
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   }
 }
