@@ -1,5 +1,4 @@
 {
-  "root": true,
   "env": {
     "jest": true
   },
