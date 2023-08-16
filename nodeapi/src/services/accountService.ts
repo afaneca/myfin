@@ -367,7 +367,7 @@ const accountService = {
                               SET current_balance   = current_balance + ${offsetAmount},
                                   updated_timestamp = ${DateTimeUtils.getCurrentUnixTimestamp()}
                               WHERE account_id = ${accountId}`,
-  getAmountForInvestmentAccountsInMonth: async (categoryId: number, month: number, year: number, dbClient = prisma) => {
+  getAmountForInvestmentAccountsInMonth: async (categoryId: number, month: number, year: number, dbClient = prisma) : Promise<Array<{account_balance_credit: number, account_balance_debit: number}>> => {
     const fromDate = new Date(year, month, 1).getTime() / 1000;
     const toDate = new Date(year, month, 0, 23, 59, 59).getTime() / 1000;
 
@@ -384,7 +384,7 @@ const accountService = {
                                 AND (accounts.type = 'INVAC' AND transactions.type != 'T') `;
   },
   getBalancesSnapshotForMonthForUser: async (
-    userId: number,
+    userId: number | bigint,
     month: number,
     year: number,
     includeInvestmentAccounts = true,

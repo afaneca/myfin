@@ -1,16 +1,17 @@
-import { prisma, setupPrismaTransaction } from '../config/prisma.js';
-import { MYFIN } from '../consts.js';
-import ConvertUtils from '../utils/convertUtils.js';
-import CategoryService from './categoryService.js';
-import AccountService from './accountService.js';
-import DateTimeUtils from '../utils/DateTimeUtils.js';
-import Logger from '../utils/Logger.js';
+import { prisma, setupPrismaTransaction } from "../config/prisma.js";
+import { MYFIN } from "../consts.js";
+import ConvertUtils from "../utils/convertUtils.js";
+import CategoryService from "./categoryService.js";
+import AccountService from "./accountService.js";
+import DateTimeUtils from "../utils/DateTimeUtils.js";
+import Logger from "../utils/Logger.js";
+import { Prisma } from "@prisma/client";
 
 /**
  * Gets all (active) categories for the user, with planned & current amounts
  * related to a specific budget
  */
-const getAllCategoriesForUser = async (userId, budgetId, dbClient = prisma) =>
+const getAllCategoriesForUser = async (userId: number | bigint, budgetId: number | bigint, dbClient = prisma) : Promise<Array<any>> =>
   dbClient.$queryRaw`SELECT users_user_id,
                             category_id,
                             name,
@@ -31,10 +32,10 @@ const getAllCategoriesForUser = async (userId, budgetId, dbClient = prisma) =>
                      WHERE users_user_id = ${userId}
                        AND status = ${MYFIN.CATEGORY_STATUS.ACTIVE} `;
 
-const calculateBudgetBalance = async (userId, budget, dbClient = prisma) => {
+const calculateBudgetBalance = async (userId: number | bigint, budget: Prisma.budgetsCreateInput, dbClient = prisma) => {
   const budgetId = budget.budget_id;
-  const month = parseInt(budget.month);
-  const year = parseInt(budget.year);
+  const month = budget.month;
+  const year = budget.year;
   const isOpen = budget.is_open;
 
   const categories = await getAllCategoriesForUser(userId, budgetId, dbClient);
@@ -52,6 +53,7 @@ const calculateBudgetBalance = async (userId, budget, dbClient = prisma) => {
         category.category_id,
         month,
         year,
+        true,
         dbClient
       );
       const calculatedAmountsFromInvestmentAccounts =
@@ -81,7 +83,7 @@ const getSumAmountsForBudget = async (userId, budget, dbClient = prisma) => {
   const year = parseInt(budget.year, 10);
   const isOpen = budget.is_open;
 
-  const categories = await getAllCategoriesForUser(userId, budgetId, dbClient);
+  const categories: any = await getAllCategoriesForUser(userId, budgetId, dbClient);
   let balanceCredit = 0;
   let balanceDebit = 0;
 
@@ -145,7 +147,7 @@ const getSumAmountsForBudget = async (userId, budget, dbClient = prisma) => {
 
   return {
     balance_credit: ConvertUtils.convertBigIntegerToFloat(balanceCredit),
-    balance_debit: ConvertUtils.convertBigIntegerToFloat(balanceDebit),
+    balance_debit: ConvertUtils.convertBigIntegerToFloat(balanceDebit)
   };
 };
 
@@ -167,18 +169,18 @@ const calculateBudgetBalanceChangePercentage = async (
   );
   const finalBalance = initialBalance + budgetBalance;
   if (initialBalance === 0) {
-    return 'NaN';
+    return "NaN";
   }
 
   return ((finalBalance - initialBalance) / Math.abs(initialBalance)) * 100;
 };
-const getAllBudgetsForUser = async (userId, status) => {
-  const data = await setupPrismaTransaction(async (prismaTx) => {
-    let whereCondition = [];
+const getAllBudgetsForUser = async (userId: number, status: string) => {
+  return setupPrismaTransaction(async (prismaTx) => {
+    let whereCondition = {};
     if (status) {
       whereCondition = {
         users_user_id: userId,
-        status: status,
+        status: status
       };
     } else {
       whereCondition = { users_user_id: userId };
@@ -186,7 +188,7 @@ const getAllBudgetsForUser = async (userId, status) => {
 
     const budgetsList = await prismaTx.budgets.findMany({
       where: whereCondition,
-      orderBy: [{ year: 'desc' }, { month: 'desc' }],
+      orderBy: [{ year: "desc" }, { month: "desc" }]
     });
 
     for await (const budget of budgetsList) {
@@ -208,33 +210,31 @@ const getAllBudgetsForUser = async (userId, status) => {
       }
     }
   });
-
-  return data;
 };
 
 const getBudgetsForUserByPage = async (
-  userId,
-  page,
-  pageSize,
-  searchQuery,
-  status,
+  userId: number,
+  page: number,
+  pageSize: number,
+  searchQuery: string,
+  status: string,
   dbClient = prisma
-) => {
+): Promise<{ total_count: number; filtered_count: number; results: Array<any> }> => {
   const query = `%${searchQuery}%`;
-  const offsetValue = parseInt(page, 10) * parseInt(pageSize, 10);
+  const offsetValue = page * pageSize;
 
-  let isOpenValue = '%';
+  let isOpenValue = "%";
   if (status) {
     // eslint-disable-next-line default-case
     switch (status) {
-      case 'O':
-        isOpenValue = '1';
+      case "O":
+        isOpenValue = "1";
         break;
-      case '1':
-        isOpenValue = '0';
+      case "1":
+        isOpenValue = "0";
         break;
       default:
-        isOpenValue = '%';
+        isOpenValue = "%";
         break;
     }
   }
@@ -243,7 +243,7 @@ const getBudgetsForUserByPage = async (
   );
 
   // main query for list of results (limited by $pageSize and $offsetValue)
-  const results =
+  const results: any =
     await dbClient.$queryRaw`SELECT budget_id, month, year, observations, is_open, users_user_id
                              FROM budgets
                              WHERE (users_user_id = ${userId})
@@ -270,11 +270,11 @@ const getBudgetsForUserByPage = async (
   return {
     results: results,
     filtered_count: parseInt(filteredCount[0].count, 10),
-    total_count: parseInt(totalCount[0].count, 10),
+    total_count: parseInt(totalCount[0].count, 10)
   };
 };
 
-const getFilteredBudgetsForUserByPage = async (userId, page, pageSize, query, status) =>
+const getFilteredBudgetsForUserByPage = async (userId: number, page: number, pageSize: number, query: string, status: string) =>
   setupPrismaTransaction(async (prismaTx) => {
     const budgetsArr = await getBudgetsForUserByPage(
       userId,
@@ -306,7 +306,7 @@ const getFilteredBudgetsForUserByPage = async (userId, page, pageSize, query, st
     return budgetsArr;
   });
 
-const getCategoryDataForNewBudget = async (userId) => {
+const getCategoryDataForNewBudget = async (userId: number) => {
   const categories = await CategoryService.getAllCategoriesForUser(userId);
 
   for await (const category of categories) {
@@ -323,12 +323,12 @@ const getCategoryDataForNewBudget = async (userId) => {
     )[0];
 
     if (previousMonthAmounts) {
-      category.avg_previous_month_credit = Math.abs(
-        ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts.category_balance_credit)
+      (category as any).avg_previous_month_credit = Math.abs(
+        Number(ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts.category_balance_credit))
       );
 
-      category.avg_previous_month_debit = Math.abs(
-        ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts.category_balance_debit)
+      (category as any).avg_previous_month_debit = Math.abs(
+        Number(ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts.category_balance_debit))
       );
     }
 
@@ -340,11 +340,11 @@ const getCategoryDataForNewBudget = async (userId) => {
     )[0];
 
     if (sameMonthPreviousYearAmounts) {
-      category.avg_same_month_previous_year_credit = Math.abs(
-        ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts.category_balance_credit)
+      (category as any).avg_same_month_previous_year_credit = Math.abs(
+        Number(ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts.category_balance_credit))
       );
-      category.avg_same_month_previous_year_debit = Math.abs(
-        ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts.category_balance_debit)
+      (category as any).avg_same_month_previous_year_debit = Math.abs(
+        Number(ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts.category_balance_debit))
       );
     }
 
@@ -352,11 +352,11 @@ const getCategoryDataForNewBudget = async (userId) => {
       await CategoryService.getAverageAmountForCategoryInLast12Months(category.category_id)[0];
 
     if (last12MonthsAverageAmounts) {
-      category.avg_12_months_credit = Math.abs(
-        ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts.category_balance_credit)
+      (category as any).avg_12_months_credit = Math.abs(
+        Number(ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts.category_balance_credit))
       );
-      category.avg_12_months_debit = Math.abs(
-        ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts.category_balance_debit)
+      (category as any).avg_12_months_debit = Math.abs(
+        Number(ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts.category_balance_debit))
       );
     }
 
@@ -364,17 +364,17 @@ const getCategoryDataForNewBudget = async (userId) => {
       category.category_id
     )[0];
     if (lifetimeAverageAmounts) {
-      category.avg_lifetime_credit = Math.abs(
-        ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts.category_balance_credit)
+      (category as any).avg_lifetime_credit = Math.abs(
+        Number(ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts.category_balance_credit))
       );
-      category.avg_lifetime_debit = Math.abs(
-        ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts.category_balance_debit)
+      (category as any).avg_lifetime_debit = Math.abs(
+        Number(ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts.category_balance_debit))
       );
     }
   }
   return {
     categories: categories,
-    initial_balance: '-',
+    initial_balance: "-"
   };
 };
 
@@ -440,13 +440,13 @@ const createBudget = async (userId, month, year, catValuesArr, observations) =>
         year: year,
         observations: observations,
         is_open: true,
-        users_user_id: userId,
-      },
+        users_user_id: userId
+      }
     });
 
     // ADD CAT VALUES TO BUDGET CATEGORIES
     await parseCatValuesIntoBudgetCategories(userId, budget.budget_id, catValuesArr, prismaTx);
-    return budget.budget_id
+    return budget.budget_id;
   });
 
 const getTotalEssentialDebitTransactionsAmountForBudget = async (
@@ -457,52 +457,52 @@ const getTotalEssentialDebitTransactionsAmountForBudget = async (
   const month = parseInt(budget.month, 10);
   const year = parseInt(budget.year, 10);
 
-  const result = await dbClient.$queryRaw`SELECT sum(amount) as 'amount'
-                                          FROM transactions
-                                                   inner join accounts on transactions.accounts_account_from_id = accounts.account_id
-                                          where users_user_id = ${userId}
-                                            and date_timestamp between ${
-                                              new Date(year, month, 1).getTime() / 1000
-                                            } AND ${new Date(year, month, 0).getTime() / 1000}
-                                            and transactions.is_essential IS TRUE
-                                            and transactions.type = ${MYFIN.TRX_TYPES.EXPENSE}`;
+  const result: any = await dbClient.$queryRaw`SELECT sum(amount) as 'amount'
+                                                              FROM transactions
+                                                                       inner join accounts on transactions.accounts_account_from_id = accounts.account_id
+                                                              where users_user_id = ${userId}
+                                                                and date_timestamp between ${
+                                                                      new Date(year, month, 1).getTime() / 1000
+                                                              } AND ${new Date(year, month, 0).getTime() / 1000}
+                                                                and transactions.is_essential IS TRUE
+                                                                and transactions.type = ${MYFIN.TRX_TYPES.EXPENSE}`;
 
   return result.amount ? ConvertUtils.convertBigIntegerToFloat(result.amount) : 0;
 };
 
-const getBudget = async (userId, budgetId, dbclient = prisma) => {
-  const budget = await dbclient.budgets.findUnique({
+const getBudget = async (userId: number | bigint, budgetId: number | bigint, dbclient = prisma) => {
+  const budget = await prisma.budgets.findUnique({
     where: {
       users_user_id: userId,
-      budget_id: budgetId,
+      budget_id: budgetId
     },
     select: {
       observations: true,
       month: true,
-      year: true,
-    },
+      year: true
+    }
   });
 
-  const month = parseInt(budget.month, 10);
-  const year = parseInt(budget.year, 10);
+  const month = (budget as any).month;
+  const year = (budget as any).year;
 
-  budget.initial_balance = await AccountService.getBalancesSnapshotForMonthForUser(
+  (budget as any).initial_balance = await AccountService.getBalancesSnapshotForMonthForUser(
     userId,
     month > 1 ? month - 1 : 12,
     month > 1 ? year : year - 1,
     true,
     dbclient
   );
-  budget.categories = await CategoryService.getAllCategoriesForBudget(userId, budgetId, dbclient);
-  budget.debit_essential_trx_total = await getTotalEssentialDebitTransactionsAmountForBudget(
+  (budget as any).categories = await CategoryService.getAllCategoriesForBudget(userId, budgetId, dbclient);
+  (budget as any).debit_essential_trx_total = await getTotalEssentialDebitTransactionsAmountForBudget(
     userId,
     budget,
     dbclient
   );
 
-  for (const category of budget.categories) {
-    const monthToUse = parseInt(budget.month, 10);
-    const yearToUse = parseInt(budget.year, 10);
+  for (const category of (budget as any).categories) {
+    const monthToUse = (budget as any).month;
+    const yearToUse = (budget as any).year;
     const calculatedAmounts = await CategoryService.getAmountForCategoryInMonth(
       category.category_id,
       monthToUse,
@@ -541,10 +541,10 @@ const getBudget = async (userId, budgetId, dbclient = prisma) => {
       expensesFromInvestmentAccounts;
 
     category.current_amount_credit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(currentAmountCredit)
+      Number(ConvertUtils.convertBigIntegerToFloat(currentAmountCredit))
     );
     category.current_amount_debit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(currentAmountDebit)
+      Number(ConvertUtils.convertBigIntegerToFloat(currentAmountDebit))
     );
 
     const previousMonth = monthToUse > 1 ? monthToUse - 1 : 12;
@@ -557,10 +557,10 @@ const getBudget = async (userId, budgetId, dbclient = prisma) => {
       dbclient
     )[0];
     category.avg_previous_month_credit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts?.category_balance_credit)
+      Number(ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts?.category_balance_credit))
     );
     category.avg_previous_month_debit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts?.category_balance_debit)
+      Number(ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts?.category_balance_debit))
     );
 
     const sameMonthPreviousYearAmounts = await CategoryService.getAmountForCategoryInMonth(
@@ -571,10 +571,10 @@ const getBudget = async (userId, budgetId, dbclient = prisma) => {
       dbclient
     )[0];
     category.avg_same_month_previous_year_credit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts?.category_balance_credit)
+      Number(ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts?.category_balance_credit))
     );
     category.avg_same_month_previous_year_debit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts?.category_balance_debit)
+      Number(ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts?.category_balance_debit))
     );
 
     const last12MonthsAverageAmounts =
@@ -583,10 +583,10 @@ const getBudget = async (userId, budgetId, dbclient = prisma) => {
         dbclient
       )[0];
     category.avg_12_months_credit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts?.category_balance_credit)
+      Number(ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts?.category_balance_credit))
     );
     category.avg_12_months_debit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts?.category_balance_debit)
+      Number(ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts?.category_balance_debit))
     );
 
     const lifetimeAverageAmounts = await CategoryService.getAverageAmountForCategoryInLifetime(
@@ -594,10 +594,10 @@ const getBudget = async (userId, budgetId, dbclient = prisma) => {
       dbclient
     )[0];
     category.avg_lifetime_credit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts?.category_balance_credit)
+      Number(ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts?.category_balance_credit))
     );
     category.avg_lifetime_debit = Math.abs(
-      ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts?.category_balance_debit)
+      Number(ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts?.category_balance_debit))
     );
   }
   return budget;
@@ -608,13 +608,13 @@ const updateBudget = async (userId, budgetId, month, year, catValuesArr, observa
     await prismaTx.budgets.update({
       where: {
         users_user_id: userId,
-        budget_id: budgetId,
+        budget_id: budgetId
       },
       data: {
         month,
         year,
-        observations,
-      },
+        observations
+      }
     });
     // ADD CAT VALUES TO BUDGET CATEGORIES
     await parseCatValuesIntoBudgetCategories(userId, budgetId, catValuesArr, prismaTx);
@@ -624,11 +624,11 @@ const changeBudgetStatus = async (userId, budgetId, isOpen, dbClient = prisma) =
   dbClient.budgets.update({
     where: {
       users_user_id: userId,
-      budget_id: budgetId,
+      budget_id: budgetId
     },
     data: {
-      is_open: isOpen,
-    },
+      is_open: isOpen
+    }
   });
 
 const removeBudget = async (userId, budgetId, dbClient = undefined) =>
@@ -639,15 +639,15 @@ const removeBudget = async (userId, budgetId, dbClient = undefined) =>
     await dbClient.budgets_has_categories.deleteMany({
       where: {
         budgets_budget_id: budgetId,
-        budgets_users_user_id: userId,
-      },
+        budgets_users_user_id: userId
+      }
     });
 
     await dbClient.budgets.delete({
       where: {
         budget_id: budgetId,
-        users_user_id: userId,
-      },
+        users_user_id: userId
+      }
     });
   });
 
@@ -659,5 +659,5 @@ export default {
   getBudget,
   updateBudget,
   changeBudgetStatus,
-  removeBudget,
+  removeBudget
 };

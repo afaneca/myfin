@@ -1,5 +1,5 @@
-import { prisma } from '../config/prisma.js';
-import { MYFIN } from '../consts.js';
+import { prisma } from "../config/prisma.js";
+import { MYFIN } from "../consts.js";
 import { Prisma } from "@prisma/client";
 
 const Category = prisma.categories;
@@ -7,7 +7,7 @@ const BudgetHasCategories = prisma.budgets_has_categories;
 
 const getAllCategoriesForUser = async (userId: number, dbClient = prisma) =>
   dbClient.categories.findMany({
-    where: { users_user_id: userId },
+    where: { users_user_id: userId }
   });
 const createCategory = async (category: Prisma.categoriesCreateInput) => {
   return Category.create({ data: category });
@@ -17,14 +17,14 @@ const deleteCategory = async (userId: number, categoryId: number) => {
   const deleteBudgetHasCategoriesRefs = BudgetHasCategories.deleteMany({
     where: {
       categories_category_id: categoryId,
-      budgets_users_user_id: userId,
-    },
+      budgets_users_user_id: userId
+    }
   });
   const deleteCat = Category.delete({
     where: {
       users_user_id: userId,
-      category_id: categoryId,
-    },
+      category_id: categoryId
+    }
   });
 
   return prisma.$transaction([deleteBudgetHasCategoriesRefs, deleteCat]);
@@ -34,39 +34,39 @@ const updateCategory = async (userId: number, categoryId, category: Prisma.categ
   Category.update({
     where: {
       users_user_id: userId,
-      category_id: categoryId,
+      category_id: categoryId
     },
-    data: category,
+    data: category
   });
 
 const buildSqlForExcludedAccountsList = (excludedAccs) => {
   if (!excludedAccs || excludedAccs.length === 0) {
-    return ' 1 == 1';
+    return " 1 == 1";
   }
-  let sql = ' (';
+  let sql = " (";
   for (let cnt = 0; cnt < excludedAccs.length; cnt++) {
     const acc = excludedAccs[cnt].account_id;
     sql += ` '${acc}' `;
 
     if (cnt !== excludedAccs.length - 1) {
-      sql += ', ';
+      sql += ", ";
     }
   }
-  sql += ') ';
+  sql += ") ";
   return sql;
 };
 
-const getAverageAmountForCategoryInLast12Months = async (categoryId: number, dbClient = prisma) => {
-  let accsExclusionSqlExcerptAccountsTo = '';
-  let accsExclusionSqlExcerptAccountsFrom = '';
-  let accountsToExcludeListInSQL = '';
+const getAverageAmountForCategoryInLast12Months = async (categoryId: number | bigint, dbClient = prisma) => {
+  let accsExclusionSqlExcerptAccountsTo = "";
+  let accsExclusionSqlExcerptAccountsFrom = "";
+  let accountsToExcludeListInSQL = "";
 
   const listOfAccountsToExclude = await dbClient.accounts.findMany({
-    where: { exclude_from_budgets: true },
+    where: { exclude_from_budgets: true }
   });
   if (!listOfAccountsToExclude || listOfAccountsToExclude.length < 1) {
-    accsExclusionSqlExcerptAccountsTo = ' 1 == 1 ';
-    accsExclusionSqlExcerptAccountsFrom = ' 1 == 1 ';
+    accsExclusionSqlExcerptAccountsTo = " 1 == 1 ";
+    accsExclusionSqlExcerptAccountsFrom = " 1 == 1 ";
   } else {
     accountsToExcludeListInSQL = buildSqlForExcludedAccountsList(listOfAccountsToExclude);
     accsExclusionSqlExcerptAccountsTo = `accounts_account_to_id NOT IN ${accountsToExcludeListInSQL} `;
@@ -93,24 +93,24 @@ const getAverageAmountForCategoryInLast12Months = async (categoryId: number, dbC
 };
 
 const getAmountForCategoryInPeriod = async (
-  categoryId: number,
+  categoryId: number | bigint,
   fromDate: number,
   toDate: number,
   includeTransfers = true,
   dbClient = prisma
-) => {
+): Promise<{ category_balance_credit: number, category_balance_debit: number }> => {
   /* Logger.addLog(
     `Category: ${categoryId} | fromDate: ${fromDate} | toDate: ${toDate} | includeTransfers: ${includeTransfers}`); */
-  let accsExclusionSqlExcerptAccountsTo = '';
-  let accsExclusionSqlExcerptAccountsFrom = '';
-  let accountsToExcludeListInSQL = '';
+  let accsExclusionSqlExcerptAccountsTo = "";
+  let accsExclusionSqlExcerptAccountsFrom = "";
+  let accountsToExcludeListInSQL = "";
 
   const listOfAccountsToExclude = await dbClient.accounts.findMany({
-    where: { exclude_from_budgets: true },
+    where: { exclude_from_budgets: true }
   });
   if (!listOfAccountsToExclude || listOfAccountsToExclude.length < 1) {
-    accsExclusionSqlExcerptAccountsTo = ' 1 == 1 ';
-    accsExclusionSqlExcerptAccountsFrom = ' 1 == 1 ';
+    accsExclusionSqlExcerptAccountsTo = " 1 == 1 ";
+    accsExclusionSqlExcerptAccountsFrom = " 1 == 1 ";
   } else {
     accountsToExcludeListInSQL = buildSqlForExcludedAccountsList(listOfAccountsToExclude);
     accsExclusionSqlExcerptAccountsTo = `accounts_account_to_id NOT IN ${accountsToExcludeListInSQL} `;
@@ -138,28 +138,28 @@ const getAmountForCategoryInPeriod = async (
                               AND categories_category_id = ${categoryId} `;
 };
 const getAmountForCategoryInMonth = async (
-  categoryId: number,
+  categoryId: number | bigint,
   month: number,
   year: number,
   includeTransfers = true,
   dbClient = prisma
-) => {
+): Promise<{ category_balance_credit: number, category_balance_debit: number }> => {
   const fromDate = new Date(year, month - 1, 0, 23, 59, 59).getTime() / 1000;
   const toDate = new Date(year, month, 0, 23, 59, 59).getTime() / 1000;
   return getAmountForCategoryInPeriod(categoryId, fromDate, toDate, includeTransfers, dbClient);
 };
 
-const getAverageAmountForCategoryInLifetime = async (categoryId: number, dbClient = prisma) => {
-  let accsExclusionSqlExcerptAccountsTo = '';
-  let accsExclusionSqlExcerptAccountsFrom = '';
-  let accountsToExcludeListInSQL = '';
+const getAverageAmountForCategoryInLifetime = async (categoryId: number | bigint, dbClient = prisma) => {
+  let accsExclusionSqlExcerptAccountsTo = "";
+  let accsExclusionSqlExcerptAccountsFrom = "";
+  let accountsToExcludeListInSQL = "";
 
   const listOfAccountsToExclude = await dbClient.accounts.findMany({
-    where: { exclude_from_budgets: true },
+    where: { exclude_from_budgets: true }
   });
   if (!listOfAccountsToExclude || listOfAccountsToExclude.length < 1) {
-    accsExclusionSqlExcerptAccountsTo = ' 1 == 1 ';
-    accsExclusionSqlExcerptAccountsFrom = ' 1 == 1 ';
+    accsExclusionSqlExcerptAccountsTo = " 1 == 1 ";
+    accsExclusionSqlExcerptAccountsFrom = " 1 == 1 ";
   } else {
     accountsToExcludeListInSQL = buildSqlForExcludedAccountsList(listOfAccountsToExclude);
     accsExclusionSqlExcerptAccountsTo = `accounts_account_to_id NOT IN ${accountsToExcludeListInSQL} `;
@@ -188,8 +188,8 @@ const getAverageAmountForCategoryInLifetime = async (categoryId: number, dbClien
  * related to a specific budget
  */
 const getAllCategoriesForBudget = async (
-  userId: number,
-  budgetId: number,
+  userId: number | bigint,
+  budgetId: number | bigint,
   dbClient = prisma
 ) => dbClient.$queryRaw`SELECT users_user_id,
                                category_id,
@@ -219,5 +219,5 @@ export default {
   getAmountForCategoryInMonth,
   getAverageAmountForCategoryInLast12Months,
   getAverageAmountForCategoryInLifetime,
-  getAllCategoriesForBudget,
+  getAllCategoriesForBudget
 };
