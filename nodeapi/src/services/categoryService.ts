@@ -1,26 +1,19 @@
 import { prisma } from '../config/prisma.js';
 import { MYFIN } from '../consts.js';
+import { Prisma } from "@prisma/client";
 
 const Category = prisma.categories;
 const BudgetHasCategories = prisma.budgets_has_categories;
 
-const getAllCategoriesForUser = async (userId, dbClient = prisma) =>
+const getAllCategoriesForUser = async (userId: number, dbClient = prisma) =>
   dbClient.categories.findMany({
     where: { users_user_id: userId },
   });
-const createCategory = async (userId, category) => {
-  const catDbObject = {
-    ...category,
-    ...{
-      users_user_id: 1,
-      type: 'M',
-      exclude_from_budgets: +category.exclude_from_budgets,
-    },
-  };
-  return Category.create({ data: catDbObject });
+const createCategory = async (category: Prisma.categoriesCreateInput) => {
+  return Category.create({ data: category });
 };
 
-const deleteCategory = async (userId, categoryId) => {
+const deleteCategory = async (userId: number, categoryId: number) => {
   const deleteBudgetHasCategoriesRefs = BudgetHasCategories.deleteMany({
     where: {
       categories_category_id: categoryId,
@@ -37,19 +30,13 @@ const deleteCategory = async (userId, categoryId) => {
   return prisma.$transaction([deleteBudgetHasCategoriesRefs, deleteCat]);
 };
 
-const updateCategory = async (userId, category) =>
+const updateCategory = async (userId: number, categoryId, category: Prisma.categoriesUpdateInput) =>
   Category.update({
     where: {
       users_user_id: userId,
-      category_id: category.category_id,
+      category_id: categoryId,
     },
-    data: {
-      name: category.new_name,
-      description: category.new_description,
-      color_gradient: category.new_color_gradient,
-      status: category.new_status,
-      exclude_from_budgets: +category.new_exclude_from_budgets,
-    },
+    data: category,
   });
 
 const buildSqlForExcludedAccountsList = (excludedAccs) => {
@@ -69,12 +56,12 @@ const buildSqlForExcludedAccountsList = (excludedAccs) => {
   return sql;
 };
 
-const getAverageAmountForCategoryInLast12Months = async (categoryId, dbClient = prisma) => {
+const getAverageAmountForCategoryInLast12Months = async (categoryId: number, dbClient = prisma) => {
   let accsExclusionSqlExcerptAccountsTo = '';
   let accsExclusionSqlExcerptAccountsFrom = '';
   let accountsToExcludeListInSQL = '';
 
-  const listOfAccountsToExclude = dbClient.accounts.findMany({
+  const listOfAccountsToExclude = await dbClient.accounts.findMany({
     where: { exclude_from_budgets: true },
   });
   if (!listOfAccountsToExclude || listOfAccountsToExclude.length < 1) {
@@ -106,9 +93,9 @@ const getAverageAmountForCategoryInLast12Months = async (categoryId, dbClient = 
 };
 
 const getAmountForCategoryInPeriod = async (
-  categoryId,
-  fromDate,
-  toDate,
+  categoryId: number,
+  fromDate: number,
+  toDate: number,
   includeTransfers = true,
   dbClient = prisma
 ) => {
@@ -118,7 +105,7 @@ const getAmountForCategoryInPeriod = async (
   let accsExclusionSqlExcerptAccountsFrom = '';
   let accountsToExcludeListInSQL = '';
 
-  const listOfAccountsToExclude = dbClient.accounts.findMany({
+  const listOfAccountsToExclude = await dbClient.accounts.findMany({
     where: { exclude_from_budgets: true },
   });
   if (!listOfAccountsToExclude || listOfAccountsToExclude.length < 1) {
@@ -151,9 +138,9 @@ const getAmountForCategoryInPeriod = async (
                               AND categories_category_id = ${categoryId} `;
 };
 const getAmountForCategoryInMonth = async (
-  categoryId,
-  month,
-  year,
+  categoryId: number,
+  month: number,
+  year: number,
   includeTransfers = true,
   dbClient = prisma
 ) => {
@@ -162,12 +149,12 @@ const getAmountForCategoryInMonth = async (
   return getAmountForCategoryInPeriod(categoryId, fromDate, toDate, includeTransfers, dbClient);
 };
 
-const getAverageAmountForCategoryInLifetime = async (categoryId, dbClient = prisma) => {
+const getAverageAmountForCategoryInLifetime = async (categoryId: number, dbClient = prisma) => {
   let accsExclusionSqlExcerptAccountsTo = '';
   let accsExclusionSqlExcerptAccountsFrom = '';
   let accountsToExcludeListInSQL = '';
 
-  const listOfAccountsToExclude = dbClient.accounts.findMany({
+  const listOfAccountsToExclude = await dbClient.accounts.findMany({
     where: { exclude_from_budgets: true },
   });
   if (!listOfAccountsToExclude || listOfAccountsToExclude.length < 1) {
@@ -201,8 +188,8 @@ const getAverageAmountForCategoryInLifetime = async (categoryId, dbClient = pris
  * related to a specific budget
  */
 const getAllCategoriesForBudget = async (
-  userId,
-  budgetId,
+  userId: number,
+  budgetId: number,
   dbClient = prisma
 ) => dbClient.$queryRaw`SELECT users_user_id,
                                category_id,

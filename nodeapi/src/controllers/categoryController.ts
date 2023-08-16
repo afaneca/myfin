@@ -5,9 +5,10 @@ import CommonsController from './commonsController.js';
 import Logger from '../utils/Logger.js';
 import APIError from '../errorHandling/apiError.js';
 import CategoryService from '../services/categoryService.js';
+import { NextFunction, Request, Response } from "express";
 
 // READ
-const getAllCategoriesForUser = async (req, res, next) => {
+const getAllCategoriesForUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
     const list = await CategoryService.getAllCategoriesForUser(sessionData.userId);
@@ -27,11 +28,16 @@ const createCategorySchema = joi.object({
 });
 
 // eslint-disable-next-line consistent-return
-const createCategory = async (req, res, next) => {
+const createCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
-    const category = await createCategorySchema.validateAsync(req.body);
-    await CategoryService.createCategory(sessionData.userId, category);
+    const input = await createCategorySchema.validateAsync(req.body);
+    await CategoryService.createCategory({
+      users_user_id: sessionData.userId,
+      ...input,
+      exclude_from_budgets: +input.exclude_from_budgets,
+      type: 'M',
+    });
 
     return res.json('Category successfully created!');
   } catch (err) {
@@ -51,11 +57,17 @@ const updateCategorySchema = joi.object({
 });
 
 // eslint-disable-next-line consistent-return
-const updateCategory = async (req, res, next) => {
+const updateCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
-    const category = await updateCategorySchema.validateAsync(req.body);
-    await CategoryService.updateCategory(sessionData.userId, category);
+    const input = await updateCategorySchema.validateAsync(req.body);
+    await CategoryService.updateCategory(sessionData.userId, input.category_id, {
+      name: input.new_name,
+      description: input.new_description,
+      color_gradient: input.new_color_gradient,
+      status: input.new_status,
+      exclude_from_budgets: +input.new_exclude_from_budgets,
+    });
 
     return res.json('Category successfully updated!');
   } catch (err) {
@@ -70,7 +82,7 @@ const deleteCategorySchema = joi.object({
 });
 
 // eslint-disable-next-line consistent-return
-const deleteCategory = async (req, res, next) => {
+const deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
     const category = await deleteCategorySchema.validateAsync(req.body);
