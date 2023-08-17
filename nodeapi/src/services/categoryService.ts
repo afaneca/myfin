@@ -5,7 +5,7 @@ import { Prisma } from "@prisma/client";
 const Category = prisma.categories;
 const BudgetHasCategories = prisma.budgets_has_categories;
 
-const getAllCategoriesForUser = async (userId: number, dbClient = prisma) =>
+const getAllCategoriesForUser = async (userId: bigint, dbClient = prisma) =>
   dbClient.categories.findMany({
     where: { users_user_id: userId }
   });
@@ -13,7 +13,7 @@ const createCategory = async (category: Prisma.categoriesCreateInput) => {
   return Category.create({ data: category });
 };
 
-const deleteCategory = async (userId: number, categoryId: number) => {
+const deleteCategory = async (userId: bigint, categoryId: number) => {
   const deleteBudgetHasCategoriesRefs = BudgetHasCategories.deleteMany({
     where: {
       categories_category_id: categoryId,
@@ -30,7 +30,7 @@ const deleteCategory = async (userId: number, categoryId: number) => {
   return prisma.$transaction([deleteBudgetHasCategoriesRefs, deleteCat]);
 };
 
-const updateCategory = async (userId: number, categoryId, category: Prisma.categoriesUpdateInput) =>
+const updateCategory = async (userId: bigint, categoryId, category: Prisma.categoriesUpdateInput) =>
   Category.update({
     where: {
       users_user_id: userId,

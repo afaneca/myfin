@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 
 const Entity = prisma.entities;
 
-const getAllEntitiesForUser = async (userId: number) =>
+const getAllEntitiesForUser = async (userId: bigint) =>
   Entity.findMany({
     where: { users_user_id: userId }
   });
@@ -12,7 +12,7 @@ const createEntity = async (entity: Prisma.entitiesCreateInput) => {
   return Entity.create({ data: entity });
 };
 
-const deleteEntity = async (userId: number, entityId: number) =>
+const deleteEntity = async (userId: bigint, entityId: number) =>
   Entity.delete({
     where: {
       users_user_id: userId,
@@ -20,7 +20,7 @@ const deleteEntity = async (userId: number, entityId: number) =>
     }
   });
 
-const updateEntity = async (userId: number, entityId: number, entity: Prisma.entitiesUpdateInput) =>
+const updateEntity = async (userId: bigint, entityId: number, entity: Prisma.entitiesUpdateInput) =>
   Entity.update({
     where: {
       users_user_id: userId,

@@ -174,7 +174,7 @@ const calculateBudgetBalanceChangePercentage = async (
 
   return ((finalBalance - initialBalance) / Math.abs(initialBalance)) * 100;
 };
-const getAllBudgetsForUser = async (userId: number, status: string) => {
+const getAllBudgetsForUser = async (userId: bigint, status: string) => {
   return setupPrismaTransaction(async (prismaTx) => {
     let whereCondition = {};
     if (status) {
@@ -213,7 +213,7 @@ const getAllBudgetsForUser = async (userId: number, status: string) => {
 };
 
 const getBudgetsForUserByPage = async (
-  userId: number,
+  userId: bigint,
   page: number,
   pageSize: number,
   searchQuery: string,
@@ -274,7 +274,7 @@ const getBudgetsForUserByPage = async (
   };
 };
 
-const getFilteredBudgetsForUserByPage = async (userId: number, page: number, pageSize: number, query: string, status: string) =>
+const getFilteredBudgetsForUserByPage = async (userId: bigint, page: number, pageSize: number, query: string, status: string) =>
   setupPrismaTransaction(async (prismaTx) => {
     const budgetsArr = await getBudgetsForUserByPage(
       userId,
@@ -306,7 +306,7 @@ const getFilteredBudgetsForUserByPage = async (userId: number, page: number, pag
     return budgetsArr;
   });
 
-const getCategoryDataForNewBudget = async (userId: number) => {
+const getCategoryDataForNewBudget = async (userId: bigint) => {
   const categories = await CategoryService.getAllCategoriesForUser(userId);
 
   for await (const category of categories) {
@@ -470,7 +470,7 @@ const getTotalEssentialDebitTransactionsAmountForBudget = async (
   return result.amount ? ConvertUtils.convertBigIntegerToFloat(result.amount) : 0;
 };
 
-const getBudget = async (userId: number | bigint, budgetId: number | bigint, dbclient = prisma) => {
+const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = prisma) => {
   const budget = await prisma.budgets.findUnique({
     where: {
       users_user_id: userId,

@@ -29,11 +29,11 @@ export type CreateAccountType = {
   exclude_from_budgets: boolean,
   current_balance: number,
   color_gradient?: string,
-  users_user_id: number,
+  users_user_id: bigint,
 }
 
 export type UpdateAccountType = {
-  account_id: number,
+  account_id: bigint,
   new_name: string,
   new_type: string,
   new_description: string,
@@ -41,10 +41,10 @@ export type UpdateAccountType = {
   exclude_from_budgets: boolean,
   current_balance: number,
   color_gradient?: string,
-  users_user_id: number,
+  users_user_id: bigint,
 }
 const accountService = {
-  createAccount: async (account: CreateAccountType, userId: number) => {
+  createAccount: async (account: CreateAccountType, userId: bigint) => {
     const accountObj = {
       ...account
     };
@@ -62,14 +62,14 @@ const accountService = {
         users_user_id: userId
       }
     }),
-  getActiveAccountsForUser: async (userId: number) =>
+  getActiveAccountsForUser: async (userId: bigint) =>
     Account.findMany({
       where: {
         users_user_id: userId,
         status: MYFIN.ACCOUNT_STATUS.ACTIVE
       }
     }),
-  getAccountsForUserWithAmounts: async (userId: number, onlyActive = false) => {
+  getAccountsForUserWithAmounts: async (userId: bigint, onlyActive = false) => {
     const onlyActiveExcerpt = onlyActive ? `AND a.status = ${MYFIN.ACCOUNT_STATUS.ACTIVE}` : "";
 
     return prisma.$queryRaw`SELECT a.account_id,
@@ -85,7 +85,7 @@ const accountService = {
                             WHERE users_user_id = ${userId} || ${onlyActiveExcerpt}
                             ORDER BY abs(balance) DESC, case when a.status = ${MYFIN.TRX_TYPES.EXPENSE} then 1 else 0 end`;
   },
-  doesAccountBelongToUser: async (userId: number, accountId: number) => {
+  doesAccountBelongToUser: async (userId: bigint, accountId: bigint) => {
     const result = await Account.findUnique({
       where: {
         users_user_id: userId,
@@ -95,7 +95,7 @@ const accountService = {
 
     return result !== null;
   },
-  deleteAccount: async (accountId: number) => {
+  deleteAccount: async (accountId: bigint) => {
     const deleteTransactions = Transaction.deleteMany({
       where: {
         OR: [{ accounts_account_from_id: accountId }, { accounts_account_to_id: accountId }]
@@ -112,7 +112,7 @@ const accountService = {
 
     await prisma.$transaction([deleteTransactions, deleteBalanceSnapshots, deleteAccount]);
   },
-  updateAccount: async (account: UpdateAccountType, userId: number) => {
+  updateAccount: async (account: UpdateAccountType, userId: bigint) => {
     const accountObj = {
       ...account,
       users_user_id: userId,
@@ -134,7 +134,7 @@ const accountService = {
       }
     });
   },
-  setNewAccountBalance: async (userId: number, accountId: number, newBalance: number, prismaClient = prisma) =>
+  setNewAccountBalance: async (userId: bigint, accountId: bigint, newBalance: number, prismaClient = prisma) =>
     prismaClient.accounts.update({
       where: {
         users_user_id: userId,
@@ -143,7 +143,7 @@ const accountService = {
       data: { current_balance: newBalance }
     }),
   removeBalanceSnapshotsForAccountBetweenMonths: async (
-    accountId: number,
+    accountId: bigint,
     month1: number,
     year1: number,
     month2: number,
@@ -166,7 +166,7 @@ const accountService = {
                                     AND month <= ${month2} `;
   },
   getBalanceSnapshotAtMonth: async (
-    accId: number,
+    accId: bigint,
     month: number,
     year: number,
     prismaClient = prisma
@@ -177,7 +177,7 @@ const accountService = {
                                   OR (year < ${year}))
                               ORDER BY year DESC, month DESC
                               LIMIT 1`,
-  addCustomBalanceSnapshot: async (accountId: number, month: number, year: number, newBalance: number, prismaClient = prisma) => {
+  addCustomBalanceSnapshot: async (accountId: bigint, month: number, year: number, newBalance: number, prismaClient = prisma) => {
     const currentTimestamp = DateTimeUtils.getCurrentUnixTimestamp();
     return prismaClient.$queryRaw`INSERT INTO balances_snapshot (accounts_account_id, month, year, balance, created_timestamp)
                                   VALUES (${accountId}, ${month}, ${year},
@@ -187,7 +187,7 @@ const accountService = {
                                                           updated_timestamp = ${currentTimestamp};`;
   },
   getAllTransactionsForAccountBetweenDates: async (
-    accountId: number,
+    accountId: bigint,
     fromDate: number,
     toDate: number,
     prismaClient = prisma
@@ -204,7 +204,7 @@ const accountService = {
                                      accounts_account_to_id = ${accountId})
                               ORDER BY date_timestamp ASC`,
   recalculateBalanceForAccountIncrementally: async (
-    accountId: number,
+    accountId: bigint,
     fromDate: number,
     toDate: number,
     prismaClient = prisma
@@ -359,7 +359,7 @@ const accountService = {
     return initialBalance;
   },
   changeBalance: async (
-    userId: number,
+    userId: bigint,
     accountId: number,
     offsetAmount: number,
     prismaClient = prisma
@@ -367,7 +367,7 @@ const accountService = {
                               SET current_balance   = current_balance + ${offsetAmount},
                                   updated_timestamp = ${DateTimeUtils.getCurrentUnixTimestamp()}
                               WHERE account_id = ${accountId}`,
-  getAmountForInvestmentAccountsInMonth: async (categoryId: number, month: number, year: number, dbClient = prisma) : Promise<Array<{account_balance_credit: number, account_balance_debit: number}>> => {
+  getAmountForInvestmentAccountsInMonth: async (categoryId: bigint, month: number, year: number, dbClient = prisma) : Promise<Array<{account_balance_credit: number, account_balance_debit: number}>> => {
     const fromDate = new Date(year, month, 1).getTime() / 1000;
     const toDate = new Date(year, month, 0, 23, 59, 59).getTime() / 1000;
 
@@ -384,7 +384,7 @@ const accountService = {
                                 AND (accounts.type = 'INVAC' AND transactions.type != 'T') `;
   },
   getBalancesSnapshotForMonthForUser: async (
-    userId: number | bigint,
+    userId: bigint,
     month: number,
     year: number,
     includeInvestmentAccounts = true,

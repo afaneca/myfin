@@ -17,7 +17,7 @@ const createOne = async (req, res, next) => {
     }
     const user = await createUserSchema.validateAsync(req.body);
     await UserService.createUser(user).then((data) => {
-      res.json(`User ${data.username} successfully created`);
+      res.json(`User successfully created`);
     });
   } catch (err) {
     Logger.addLog(err);

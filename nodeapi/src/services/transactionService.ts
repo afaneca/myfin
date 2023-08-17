@@ -9,7 +9,7 @@ import ConvertUtils from "../utils/convertUtils.js";
 import APIError from "../errorHandling/apiError.js";
 import Logger from "../utils/Logger.js";
 
-const getTransactionsForUser = async (userId: number, trxLimit: number) => prisma.$queryRaw`SELECT transaction_id,
+const getTransactionsForUser = async (userId: bigint, trxLimit: number) => prisma.$queryRaw`SELECT transaction_id,
                                                                                                    transactions.date_timestamp,
                                                                                                    (transactions.amount / 100) as amount,
                                                                                                    transactions.type,
@@ -38,7 +38,7 @@ const getTransactionsForUser = async (userId: number, trxLimit: number) => prism
                                                                                             ORDER BY transactions.date_timestamp DESC
                                                                                             LIMIT ${trxLimit}`;
 
-const getFilteredTransactionsByForUser = async (userId: number, page: number, pageSize: number, searchQuery: string) => {
+const getFilteredTransactionsByForUser = async (userId: bigint, page: number, pageSize: number, searchQuery: string) => {
   const query = `%${searchQuery}%`;
   const offsetValue = page * pageSize;
 
@@ -127,7 +127,7 @@ const getFilteredTransactionsByForUser = async (userId: number, page: number, pa
     total_count: totalCountQueryResult[0].count
   };
 };
-const createTransactionStep0 = async (userId: number) => {
+const createTransactionStep0 = async (userId: bigint) => {
   const [entities, categories, accounts] = await setupPrismaTransaction(async (_) => {
     const ents = await EntityService.getAllEntitiesForUser(userId);
     const cats = await CategoryService.getAllCategoriesForUser(userId);
@@ -143,8 +143,8 @@ const createTransactionStep0 = async (userId: number) => {
   };
 };
 
-export type CreateTransactionType = { amount: number, type: string, description: string, entity_id?: number, account_from_id?: number, account_to_id?: number, category_id?: number, date_timestamp: number, is_essential: boolean };
-const createTransaction = async (userId: number, trx: CreateTransactionType, prismaClient = undefined) => {
+export type CreateTransactionType = { amount: number, type: string, description: string, entity_id?: bigint, account_from_id?: bigint, account_to_id?: bigint, category_id?: bigint, date_timestamp: number, is_essential: boolean };
+const createTransaction = async (userId: bigint, trx: CreateTransactionType, prismaClient = undefined) => {
   Logger.addStringifiedLog(trx);
   trx.amount = ConvertUtils.convertFloatToBigInteger(trx.amount);
   await setupPrismaTransaction(async (prismaTx) => {
@@ -220,7 +220,7 @@ const createTransaction = async (userId: number, trx: CreateTransactionType, pri
   });
 };
 
-const deleteTransaction = async (userId: number, transactionId: number) => {
+const deleteTransaction = async (userId: bigint, transactionId: number) => {
   await setupPrismaTransaction(async (prismaTx) => {
     const trx = await prismaTx.transactions
       .findUniqueOrThrow({
@@ -307,25 +307,25 @@ export type UpdatedTrxType = {
   new_amount: number,
   new_type: string
   new_description: string,
-  new_entity_id: number,
-  new_account_from_id: number,
-  new_account_to_id: number,
-  new_category_id: number,
+  new_entity_id: bigint,
+  new_account_from_id: bigint,
+  new_account_to_id: bigint,
+  new_category_id: bigint,
   new_date_timestamp: number,
   new_is_essential: boolean,
-  transaction_id: number,
+  transaction_id: bigint,
   /* SPLIT TRX */
   is_split: boolean,
   split_amount?: number,
-  split_category?: number,
-  split_entity?: number,
+  split_category?: bigint,
+  split_entity?: bigint,
   split_type?: string,
-  split_account_from?: number,
-  split_account_to?: number,
+  split_account_from?: bigint,
+  split_account_to?: bigint,
   split_description?: string,
   split_is_essential?: boolean
 };
-const updateTransaction = async (userId: number, updatedTrx: UpdatedTrxType) => {
+const updateTransaction = async (userId: bigint, updatedTrx: UpdatedTrxType) => {
   const trx = {
     ...updatedTrx,
     ...{
@@ -502,7 +502,7 @@ const updateTransaction = async (userId: number, updatedTrx: UpdatedTrxType) => 
           category_id: trx.split_category,
           account_from_id: trx.split_account_from,
           account_to_id: trx.split_account_to,
-          is_essential: trx.split_is_essential
+          is_essential: trx.split_is_essential,
         },
         prismaTx
       );
