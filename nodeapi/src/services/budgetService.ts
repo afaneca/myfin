@@ -74,7 +74,8 @@ const calculateBudgetBalance = async (userId: number | bigint, budget: Prisma.bu
     }
     return acc + amountCredit - amountDebit;
   }, 0);
-  return ConvertUtils.convertBigIntegerToFloat(balance);
+
+  return ConvertUtils.convertBigIntegerToFloat(BigInt(isNaN(balance) ? 0 : balance));
 };
 
 const getSumAmountsForBudget = async (userId, budget, dbClient = prisma) => {
@@ -501,6 +502,7 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
   );
 
   for (const category of (budget as any).categories) {
+    Logger.addLog(`_------_\nCategory: ${category.category_id}`);
     const monthToUse = (budget as any).month;
     const yearToUse = (budget as any).year;
     const calculatedAmounts = await CategoryService.getAmountForCategoryInMonth(
@@ -510,6 +512,8 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
       true,
       dbclient
     );
+    Logger.addLog(`------\nCATEGORY ${category.category_id}`);
+    Logger.addStringifiedLog(calculatedAmounts);
     const calculatedAmountsFromInvestmentAccounts =
       await AccountService.getAmountForInvestmentAccountsInMonth(
         category.category_id,
@@ -535,6 +539,7 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
     const currentAmountCredit =
       (calculatedAmounts ? calculatedAmounts[0].category_balance_credit : 0) -
       creditFromInvestmentAccounts;
+    Logger.addLog(`Current amount credit: ${currentAmountCredit}`);
     // remove unrealized losses from budget calcs
     const currentAmountDebit =
       (calculatedAmounts ? calculatedAmounts[0].category_balance_debit : 0) -
@@ -557,10 +562,10 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
       dbclient
     )[0];
     category.avg_previous_month_credit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts?.category_balance_credit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(previousMonthAmounts?.category_balance_credit ?? 0)))
     );
     category.avg_previous_month_debit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts?.category_balance_debit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(previousMonthAmounts?.category_balance_debit ?? 0)))
     );
 
     const sameMonthPreviousYearAmounts = await CategoryService.getAmountForCategoryInMonth(
@@ -571,10 +576,10 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
       dbclient
     )[0];
     category.avg_same_month_previous_year_credit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts?.category_balance_credit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(sameMonthPreviousYearAmounts?.category_balance_credit ?? 0)))
     );
     category.avg_same_month_previous_year_debit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts?.category_balance_debit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(sameMonthPreviousYearAmounts?.category_balance_debit ?? 0)))
     );
 
     const last12MonthsAverageAmounts =
@@ -583,10 +588,10 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
         dbclient
       )[0];
     category.avg_12_months_credit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts?.category_balance_credit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(last12MonthsAverageAmounts?.category_balance_credit ?? 0)))
     );
     category.avg_12_months_debit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts?.category_balance_debit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(last12MonthsAverageAmounts?.category_balance_debit ?? 0)))
     );
 
     const lifetimeAverageAmounts = await CategoryService.getAverageAmountForCategoryInLifetime(
@@ -594,10 +599,10 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
       dbclient
     )[0];
     category.avg_lifetime_credit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts?.category_balance_credit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(lifetimeAverageAmounts?.category_balance_credit ?? 0)))
     );
     category.avg_lifetime_debit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(lifetimeAverageAmounts?.category_balance_debit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(lifetimeAverageAmounts?.category_balance_debit ?? 0)))
     );
   }
   return budget;

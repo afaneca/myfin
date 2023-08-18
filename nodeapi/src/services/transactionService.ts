@@ -502,12 +502,54 @@ const updateTransaction = async (userId: bigint, updatedTrx: UpdatedTrxType) => 
           category_id: trx.split_category,
           account_from_id: trx.split_account_from,
           account_to_id: trx.split_account_to,
-          is_essential: trx.split_is_essential,
+          is_essential: trx.split_is_essential
         },
         prismaTx
       );
     }
   });
+};
+
+const getAllTransactionsForUserInCategoryAndInMonth = async (userId: bigint, month: number, year: number, catId: bigint, type: string, dbClient = prisma) => {
+  const nextMonth = month < 12 ? month + 1 : 1;
+  const nextMonthsYear = month < 12 ? year : year + 1;
+  const maxDate = new Date(nextMonthsYear, nextMonth - 1, 1);
+  const minDate = new Date(year, month - 1, 1);
+  Logger.addLog(`min date: ${DateTimeUtils.getUnixTimestampFromDate(minDate)}`);
+  Logger.addLog(`max date: ${DateTimeUtils.getUnixTimestampFromDate(maxDate)}`);
+  return dbClient.$queryRaw`SELECT transaction_id,
+                                   transactions.date_timestamp,
+                                   transactions.is_essential,
+                                   (transactions.amount / 100) as amount,
+                                   transactions.type,
+                                   transactions.description,
+                                   entities.entity_id,
+                                   entities.name               as entity_name,
+                                   categories_category_id,
+                                   categories.name             as category_name,
+                                   accounts_account_from_id,
+                                   acc_to.name                 as account_to_name,
+                                   accounts_account_to_id,
+                                   acc_from.name               as account_from_name
+                            FROM transactions
+                                     LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
+                                     LEFT JOIN categories
+                                               ON categories.category_id = transactions.categories_category_id
+                                     LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
+                                     LEFT JOIN accounts acc_to
+                                               ON acc_to.account_id = transactions.accounts_account_to_id
+                                     LEFT JOIN accounts acc_from
+                                               ON acc_from.account_id = transactions.accounts_account_from_id
+                            WHERE (acc_to.users_user_id = ${userId}
+                                OR acc_from.users_user_id = ${userId})
+                              AND categories.category_id = ${catId == -1n ? " NULL " : ` ${catId} `}
+                              AND (transactions.type = ${type}
+                                OR transactions.type = 'T')
+                              AND transactions.date_timestamp >= ${DateTimeUtils.getUnixTimestampFromDate(minDate)}
+                              AND transactions.date_timestamp <= ${DateTimeUtils.getUnixTimestampFromDate(maxDate)}
+                            GROUP BY transaction_id
+                            ORDER BY transactions.date_timestamp
+                                    DESC`;
 };
 export default {
   getTransactionsForUser,
@@ -515,5 +557,6 @@ export default {
   createTransactionStep0,
   createTransaction,
   deleteTransaction,
-  updateTransaction
+  updateTransaction,
+  getAllTransactionsForUserInCategoryAndInMonth
 };

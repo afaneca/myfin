@@ -1,6 +1,8 @@
 import { prisma } from "../config/prisma.js";
 import { MYFIN } from "../consts.js";
 import { Prisma } from "@prisma/client";
+import DateTimeUtils from "../utils/DateTimeUtils.js";
+import Logger from "../utils/Logger.js";
 
 const Category = prisma.categories;
 const BudgetHasCategories = prisma.budgets_has_categories;
@@ -99,7 +101,7 @@ const getAmountForCategoryInPeriod = async (
   includeTransfers = true,
   dbClient = prisma
 ): Promise<{ category_balance_credit: number, category_balance_debit: number }> => {
-  /* Logger.addLog(
+ /*  Logger.addLog(
     `Category: ${categoryId} | fromDate: ${fromDate} | toDate: ${toDate} | includeTransfers: ${includeTransfers}`); */
   let accsExclusionSqlExcerptAccountsTo = "";
   let accsExclusionSqlExcerptAccountsFrom = "";
@@ -109,8 +111,8 @@ const getAmountForCategoryInPeriod = async (
     where: { exclude_from_budgets: true }
   });
   if (!listOfAccountsToExclude || listOfAccountsToExclude.length < 1) {
-    accsExclusionSqlExcerptAccountsTo = " 1 == 1 ";
-    accsExclusionSqlExcerptAccountsFrom = " 1 == 1 ";
+    accsExclusionSqlExcerptAccountsTo = " 1 = 1 ";
+    accsExclusionSqlExcerptAccountsFrom = " 1 = 1 ";
   } else {
     accountsToExcludeListInSQL = buildSqlForExcludedAccountsList(listOfAccountsToExclude);
     accsExclusionSqlExcerptAccountsTo = `accounts_account_to_id NOT IN ${accountsToExcludeListInSQL} `;
@@ -144,9 +146,12 @@ const getAmountForCategoryInMonth = async (
   includeTransfers = true,
   dbClient = prisma
 ): Promise<{ category_balance_credit: number, category_balance_debit: number }> => {
-  const fromDate = new Date(year, month - 1, 0, 23, 59, 59).getTime() / 1000;
-  const toDate = new Date(year, month, 0, 23, 59, 59).getTime() / 1000;
-  return getAmountForCategoryInPeriod(categoryId, fromDate, toDate, includeTransfers, dbClient);
+  const nextMonth = month < 12 ? month + 1 : 1;
+  const nextMonthsYear = month < 12 ? year : year + 1;
+  const maxDate = DateTimeUtils.getUnixTimestampFromDate(new Date(nextMonthsYear, nextMonth - 1, 1));
+  const minDate = DateTimeUtils.getUnixTimestampFromDate(new Date(year, month - 1, 1));
+  /* Logger.addLog(`cat id: ${categoryId} | month: ${month} | year: ${year} | minDate: ${minDate} | maxDate: ${maxDate}`); */
+  return getAmountForCategoryInPeriod(categoryId, minDate, maxDate, includeTransfers, dbClient);
 };
 
 const getAverageAmountForCategoryInLifetime = async (categoryId: number | bigint, dbClient = prisma) => {

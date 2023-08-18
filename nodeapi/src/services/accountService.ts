@@ -368,8 +368,11 @@ const accountService = {
                                   updated_timestamp = ${DateTimeUtils.getCurrentUnixTimestamp()}
                               WHERE account_id = ${accountId}`,
   getAmountForInvestmentAccountsInMonth: async (categoryId: bigint, month: number, year: number, dbClient = prisma) : Promise<Array<{account_balance_credit: number, account_balance_debit: number}>> => {
-    const fromDate = new Date(year, month, 1).getTime() / 1000;
-    const toDate = new Date(year, month, 0, 23, 59, 59).getTime() / 1000;
+    const nextMonth = month < 12 ? month + 1 : 1;
+    const nextMonthsYear = month < 12 ? year : year + 1;
+    const toDate = DateTimeUtils.getUnixTimestampFromDate(new Date(nextMonthsYear, nextMonth - 1, 1));
+    const fromDate = DateTimeUtils.getUnixTimestampFromDate(new Date(year, month - 1, 1));
+
 
     return dbClient.$queryRaw`SELECT sum(if(transactions.type = 'I', amount, 0))                              as 'account_balance_credit',
                                      sum(if(transactions.type = 'E' OR (transactions.type = 'T'), amount, 0)) as 'account_balance_debit'

@@ -141,11 +141,30 @@ const deleteTransaction = async (req, res, next) => {
     next(err || APIError.internalServerError());
   }
 };
+
+const transactionsForUserInCategoryAndInMonthSchema = joi.object({
+  month: joi.number().required(),
+  year: joi.number().required(),
+  cat_id: joi.number().required(),
+  type: joi.string().allow(MYFIN.TRX_TYPES.EXPENSE, MYFIN.TRX_TYPES.INCOME, MYFIN.TRX_TYPES.TRANSFER),
+}).unknown(true);
+const getAllTransactionsForUserInCategoryAndInMonth = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const input = await transactionsForUserInCategoryAndInMonthSchema.validateAsync(req.query);
+    const data = await TransactionService.getAllTransactionsForUserInCategoryAndInMonth(sessionData.userId, input.month, input.year, input.cat_id, input.type);
+    res.json(data);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
 export default {
   getTransactionsForUser,
   getFilteredTrxByPage,
   createTransactionStep0,
   createTransaction,
   deleteTransaction,
-  updateTransaction
+  updateTransaction,
+  getAllTransactionsForUserInCategoryAndInMonth
 };
