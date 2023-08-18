@@ -146,8 +146,8 @@ const getSumAmountsForBudget = async (userId, budget, dbClient = prisma) => {
   /* Logger.addLog(`balanceCredit: ${balanceCredit} | balanceDebit: ${balanceDebit}`); */
 
   return {
-    balance_credit: ConvertUtils.convertBigIntegerToFloat(balanceCredit),
-    balance_debit: ConvertUtils.convertBigIntegerToFloat(balanceDebit)
+    balance_credit: ConvertUtils.convertBigIntegerToFloat(BigInt(balanceCredit)),
+    balance_debit: ConvertUtils.convertBigIntegerToFloat(BigInt(balanceDebit))
   };
 };
 
@@ -541,10 +541,10 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
       expensesFromInvestmentAccounts;
 
     category.current_amount_credit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(currentAmountCredit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(currentAmountCredit)))
     );
     category.current_amount_debit = Math.abs(
-      Number(ConvertUtils.convertBigIntegerToFloat(currentAmountDebit))
+      Number(ConvertUtils.convertBigIntegerToFloat(BigInt(currentAmountDebit)))
     );
 
     const previousMonth = monthToUse > 1 ? monthToUse - 1 : 12;

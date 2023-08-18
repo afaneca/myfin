@@ -56,7 +56,7 @@ const accountService = {
       data: accountObj
     });
   },
-  getAccountsForUser: async (userId: number) =>
+  getAccountsForUser: async (userId: bigint) =>
     Account.findMany({
       where: {
         users_user_id: userId
