@@ -421,7 +421,10 @@ const accountService = {
 
       return acc;
     }, Promise.resolve(0));
-  }
+  },
+  getCountOfUserAccounts: async (userId, dbClient = prisma) => dbClient.accounts.count({
+    where: { users_user_id: userId }
+  }),
 };
 
 export default accountService;

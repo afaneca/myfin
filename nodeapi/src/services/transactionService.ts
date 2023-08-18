@@ -551,12 +551,24 @@ const getAllTransactionsForUserInCategoryAndInMonth = async (userId: bigint, mon
                             ORDER BY transactions.date_timestamp
                                     DESC`;
 };
-export default {
-  getTransactionsForUser,
-  getFilteredTransactionsByForUser,
-  createTransactionStep0,
-  createTransaction,
-  deleteTransaction,
-  updateTransaction,
-  getAllTransactionsForUserInCategoryAndInMonth
-};
+
+const getCountOfUserTransactions = async (userId: bigint, dbClient = prisma) => {
+  const rawData = await dbClient.$queryRaw`SELECT count(DISTINCT (transaction_id)) as 'count'
+                                     FROM transactions
+                                              LEFT JOIN accounts ON transactions.accounts_account_from_id =
+                                                                    accounts.account_id or
+                                                                    transactions.accounts_account_to_id =
+                                                                    accounts.account_id
+                                     WHERE accounts.users_user_id = ${userId}`;
+  return rawData[0].count;
+}
+  export default {
+    getTransactionsForUser,
+    getFilteredTransactionsByForUser,
+    createTransactionStep0,
+    createTransaction,
+    deleteTransaction,
+    updateTransaction,
+    getAllTransactionsForUserInCategoryAndInMonth,
+    getCountOfUserTransactions
+  };

@@ -217,6 +217,10 @@ const getAllCategoriesForBudget = async (
                                                                      WHERE users_user_id = ${userId}
                           AND status = ${MYFIN.CATEGORY_STATUS.ACTIVE}`;
 
+const getCountOfUserCategories = async (userId, dbClient = prisma) => dbClient.categories.count({
+  where: { users_user_id: userId }
+});
+
 export default {
   getAllCategoriesForUser,
   createCategory,
@@ -225,5 +229,6 @@ export default {
   getAmountForCategoryInMonth,
   getAverageAmountForCategoryInLast12Months,
   getAverageAmountForCategoryInLifetime,
-  getAllCategoriesForBudget
+  getAllCategoriesForBudget,
+  getCountOfUserCategories
 };

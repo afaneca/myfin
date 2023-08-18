@@ -72,7 +72,7 @@ const router = (app) => {
   const statRoutes = express.Router()
     statRoutes.get('/dashboard/month-expenses-income-distribution', StatsController.getExpensesIncomeDistributionForMonth)
     //statRoutes.get('/stats/monthly-patrimony-projections', StatsController.getMonthlyPatrimonyProjections)
-    //statRoutes.get('/userStats', StatsController.getUserCounterStats)
+    statRoutes.get('/userStats', StatsController.getUserCounterStats)
     //statRoutes.get('/category-expenses-evolution', StatsController.getCategoryExpensesEvolution)
     //statRoutes.get('/category-income-evolution', StatsController.getCategoryIncomeEvolution)
     //statRoutes.get('/year-by-year-income-expense-distribution', StatsController.getYearByYearIncomeExpenseDistribution)

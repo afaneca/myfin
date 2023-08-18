@@ -22,6 +22,18 @@ const getExpensesIncomeDistributionForMonth = async (req: Request, res: Response
   }
 };
 
+const getUserCounterStats = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const data = await StatsService.getUserCounterStats(sessionData.userId);
+    res.json(data);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
-  getExpensesIncomeDistributionForMonth
+  getExpensesIncomeDistributionForMonth,
+  getUserCounterStats
 };

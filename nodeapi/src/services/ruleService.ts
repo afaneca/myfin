@@ -98,9 +98,14 @@ const deleteRule = async (userId: bigint, ruleId: bigint) =>
     }
   });
 
+const getCountOfUserRules = async (userId, dbClient = prisma) => dbClient.rules.count({
+  where: { users_user_id: userId }
+});
+
 export default {
   getAllRulesForUser,
   createRule,
   deleteRule,
-  updatedRule
+  updatedRule,
+  getCountOfUserRules
 };

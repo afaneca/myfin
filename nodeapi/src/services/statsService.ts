@@ -4,6 +4,11 @@ import { Prisma } from "@prisma/client";
 import CategoryService from "./categoryService.js";
 import ConvertUtils from "../utils/convertUtils.js";
 import Logger from "../utils/Logger.js";
+import TransactionService from "./transactionService.js";
+import EntityService from "./entityService.js";
+import AccountService from "./accountService.js";
+import BudgetService from "./budgetService.js";
+import RuleService from "./ruleService.js";
 
 const getExpensesIncomeDistributionForMonth = async (userId: bigint, month: number, year: number, dbClient = prisma) => {
   interface CategoryDataForStats extends Prisma.categoriesUpdateInput {
@@ -41,8 +46,8 @@ const getExpensesIncomeDistributionForMonth = async (userId: bigint, month: numb
   data.categories = [];
   for (const category of budgetCategories) {
     const currentAmounts = await CategoryService.getAmountForCategoryInMonth(category.category_id as bigint, month, year, true, dbClient);
-    Logger.addStringifiedLog(currentAmounts)
-    Logger.addLog(`credit: ${currentAmounts.category_balance_credit} | converted: ${ConvertUtils.convertBigIntegerToFloat(BigInt(currentAmounts.category_balance_credit ?? 0))}`)
+    Logger.addStringifiedLog(currentAmounts);
+    Logger.addLog(`credit: ${currentAmounts.category_balance_credit} | converted: ${ConvertUtils.convertBigIntegerToFloat(BigInt(currentAmounts.category_balance_credit ?? 0))}`);
     data.categories.push({
       ...category,
       current_amount_credit: ConvertUtils.convertBigIntegerToFloat(BigInt(currentAmounts.category_balance_credit ?? 0)),
@@ -53,4 +58,34 @@ const getExpensesIncomeDistributionForMonth = async (userId: bigint, month: numb
   return data;
 };
 
-export default { getExpensesIncomeDistributionForMonth };
+export interface UserCounterStats {
+  nr_of_trx: number;
+  nr_of_entities: number;
+  nr_of_categories: number;
+  nr_of_accounts: number;
+  nr_of_budgets: number;
+  nr_of_rules: number;
+}
+
+const getUserCounterStats = async (userId: bigint, dbClient = prisma): Promise<UserCounterStats> => {
+
+  const [trxCount, entityCount, categoryCount, accountCount, budgetCount, ruleCount] = await Promise.all([
+    TransactionService.getCountOfUserTransactions(userId),
+    CategoryService.getCountOfUserCategories(userId, dbClient),
+    EntityService.getCountOfUserEntities(userId, dbClient),
+    AccountService.getCountOfUserAccounts(userId, dbClient),
+    BudgetService.getCountOfUserBudgets(userId, dbClient),
+    RuleService.getCountOfUserRules(userId, dbClient)
+  ]);
+
+  return {
+    nr_of_trx: trxCount as number,
+    nr_of_entities: entityCount as number,
+    nr_of_categories: categoryCount as number,
+    nr_of_accounts: accountCount as number,
+    nr_of_budgets: budgetCount as number,
+    nr_of_rules: ruleCount as number
+  };
+};
+
+export default { getExpensesIncomeDistributionForMonth, getUserCounterStats };
