@@ -217,7 +217,6 @@ async function performLogin (username, password) {
       },
       url: pageUrl,
       success: function (response) {
-        debugger
         //console.log(response);
         enableLoginBtn()
         hideLoading().then(r => {

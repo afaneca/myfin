@@ -29,9 +29,14 @@ const updateEntity = async (userId: bigint, entityId: number, entity: Prisma.ent
     data: { name: entity.name }
   });
 
+const getCountOfUserEntities = async (userId, dbClient = prisma) => dbClient.entities.count({
+  where: { users_user_id: userId }
+});
+
 export default {
   getAllEntitiesForUser,
   createEntity,
   deleteEntity,
-  updateEntity
+  updateEntity,
+  getCountOfUserEntities
 };

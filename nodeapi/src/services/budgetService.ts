@@ -671,6 +671,10 @@ const removeBudget = async (userId, budgetId, dbClient = undefined) =>
     });
   });
 
+const getCountOfUserBudgets = async (userId, dbClient = prisma) => dbClient.budgets.count({
+  where: { users_user_id: userId }
+});
+
 export default {
   getAllBudgetsForUser,
   getFilteredBudgetsForUserByPage,
@@ -681,4 +685,5 @@ export default {
   changeBudgetStatus,
   removeBudget,
   getBudgetsListForUser,
+  getCountOfUserBudgets,
 };
