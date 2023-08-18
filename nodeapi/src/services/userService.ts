@@ -12,14 +12,14 @@ const userService = {
     user.password = cryptoUtils.hashPassword(user.password);
     return User.create({ data: user });
   },
-  attemptLogin: async (username: string, password: string, mobile: boolean) => {
+  attemptLogin: async (username: string, password: string, mobile: boolean, dbClient = prisma) => {
     const whereCondition = { username };
     const data = await User.findUniqueOrThrow({
       where: whereCondition
     }).catch(() => {
       throw APIError.notAuthorized("User Not Found");
     });
-
+    let userAccounts = [];
     if (data) {
       const isValid = cryptoUtils.verifyPassword(password, data.password);
       if (isValid) {
@@ -35,6 +35,12 @@ const userService = {
           // eslint-disable-next-line no-param-reassign
           data.trustlimit = newSessionData.trustlimit;
         }
+
+        userAccounts = await dbClient.accounts.findMany({
+          where: {
+            users_user_id: data.user_id,
+          }
+        });
       } else {
         throw APIError.notAuthorized("Wrong Credentials");
       }
@@ -48,7 +54,8 @@ const userService = {
       email: data.email,
       sessionkey: data.sessionkey,
       sessionkey_mobile: data.sessionkey_mobile,
-      last_update_timestamp: data.last_update_timestamp
+      last_update_timestamp: data.last_update_timestamp,
+      accounts: userAccounts,
     };
   },
   getUserIdFromUsername: async (username: string): Promise<bigint> => {

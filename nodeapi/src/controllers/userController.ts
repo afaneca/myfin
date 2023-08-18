@@ -31,7 +31,7 @@ const attemptLoginSchema = joi.object({
   username: joi.string().trim().required(),
   password: joi.string().trim().required()
 });
-const attemptLogin = async (req, res, next) => {
+const attemptLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const mobile = req.get("mobile") === "true";
     const userData = await attemptLoginSchema.validateAsync(req.body);
@@ -39,7 +39,7 @@ const attemptLogin = async (req, res, next) => {
       .then((sessionData) => {
         Logger.addLog("-----------------");
         Logger.addStringifiedLog(sessionData);
-        res.send(sessionData);
+        res.json(sessionData);
       })
       .catch((err) => {
         throw err;

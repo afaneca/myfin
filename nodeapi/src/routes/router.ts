@@ -6,6 +6,7 @@ import EntityController from "../controllers/entityController.js";
 import RuleController from "../controllers/ruleController.js";
 import CategoryController from "../controllers/categoryController.js";
 import BudgetController from "../controllers/budgetController.js";
+import StatsController from "../controllers/statsController.js";
 
 const router = (app) => {
   // USERS ROUTES
@@ -68,13 +69,13 @@ const router = (app) => {
   ruleRoutes.put("/", RuleController.updateRule);
 
   // STATS ROUTES
-  /* const statRoutes = express.Router()
-    statRoutes.get('/dashboard/month-expenses-income-distribution', StatController.getExpensesIncomeDistributionForMonth)
-    statRoutes.get('/stats/monthly-patrimony-projections', StatController.getMonthlyPatrimonyProjections)
-    statRoutes.get('/userStats', StatController.getUserCounterStats)
-    statRoutes.get('/category-expenses-evolution', StatController.getCategoryExpensesEvolution)
-    statRoutes.get('/category-income-evolution', StatController.getCategoryIncomeEvolution)
-    statRoutes.get('/year-by-year-income-expense-distribution', StatController.getYearByYearIncomeExpenseDistribution) */
+  const statRoutes = express.Router()
+    statRoutes.get('/dashboard/month-expenses-income-distribution', StatsController.getExpensesIncomeDistributionForMonth)
+    //statRoutes.get('/stats/monthly-patrimony-projections', StatsController.getMonthlyPatrimonyProjections)
+    //statRoutes.get('/userStats', StatsController.getUserCounterStats)
+    //statRoutes.get('/category-expenses-evolution', StatsController.getCategoryExpensesEvolution)
+    //statRoutes.get('/category-income-evolution', StatsController.getCategoryIncomeEvolution)
+    //statRoutes.get('/year-by-year-income-expense-distribution', StatsController.getYearByYearIncomeExpenseDistribution)
 
   // TRANSACTIONS ROUTES
   const trxRoutes = express.Router();
@@ -117,7 +118,7 @@ const router = (app) => {
   app.use("/cats", catRoutes);
   app.use("/entities", entityRoutes);
   app.use("/rules", ruleRoutes);
-  /* app.use('/stats', statRoutes) */
+  app.use('/stats', statRoutes)
   /* app.use('/invest/stats', investAssetRoutes) */
   /* app.use('/invest/trx', investTrxRoutes) */
 };

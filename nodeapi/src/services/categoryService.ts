@@ -151,7 +151,8 @@ const getAmountForCategoryInMonth = async (
   const maxDate = DateTimeUtils.getUnixTimestampFromDate(new Date(nextMonthsYear, nextMonth - 1, 1));
   const minDate = DateTimeUtils.getUnixTimestampFromDate(new Date(year, month - 1, 1));
   /* Logger.addLog(`cat id: ${categoryId} | month: ${month} | year: ${year} | minDate: ${minDate} | maxDate: ${maxDate}`); */
-  return getAmountForCategoryInPeriod(categoryId, minDate, maxDate, includeTransfers, dbClient);
+  const amounts = await getAmountForCategoryInPeriod(categoryId, minDate, maxDate, includeTransfers, dbClient);
+  return amounts[0];
 };
 
 const getAverageAmountForCategoryInLifetime = async (categoryId: number | bigint, dbClient = prisma) => {
@@ -196,24 +197,24 @@ const getAllCategoriesForBudget = async (
   userId: number | bigint,
   budgetId: number | bigint,
   dbClient = prisma
-) => dbClient.$queryRaw`SELECT users_user_id,
-                               category_id,
-                               name,
-                               status,
-                               type,
-                               description,
-                               color_gradient,
-                               budgets_budget_id,
-                               exclude_from_budgets,
-                               truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit,
-                               truncate((coalesce(planned_amount_debit, 0) / 100), 2)  as planned_amount_debit,
-                               truncate((coalesce(current_amount, 0) / 100), 2)        as current_amount
-                        FROM (SELECT *
+): Promise<Array<Prisma.categoriesUpdateInput>> => dbClient.$queryRaw`SELECT users_user_id,
+                                                                            category_id,
+                                                                            name,
+                                                                            status,
+                                                                            type,
+                                                                            description,
+                                                                            color_gradient,
+                                                                            budgets_budget_id,
+                                                                            exclude_from_budgets,
+                                                                            truncate((coalesce(planned_amount_credit, 0) / 100), 2) as planned_amount_credit,
+                                                                            truncate((coalesce(planned_amount_debit, 0) / 100), 2)  as planned_amount_debit,
+                                                                            truncate((coalesce(current_amount, 0) / 100), 2)        as current_amount
+                                                                     FROM (SELECT *
                               FROM budgets_has_categories
                               WHERE budgets_users_user_id = ${userId}
                                 AND (budgets_budget_id = ${budgetId})) b
                                  RIGHT JOIN categories ON categories.category_id = b.categories_category_id
-                        WHERE users_user_id = ${userId}
+                                                                     WHERE users_user_id = ${userId}
                           AND status = ${MYFIN.CATEGORY_STATUS.ACTIVE}`;
 
 export default {

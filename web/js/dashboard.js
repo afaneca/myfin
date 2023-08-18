@@ -18,7 +18,6 @@ let CHART_INVESTMENT_DISTRIBUTION
 
 export var Dashboard = {
   init: () => {
-
     PickerUtils.setupMonthPickerWithDefaultDate('#dashboard-monthpicker',
       moment().month() + 1, moment().year(), () => {
         const selectedMonth = $('#dashboard-monthpicker').val()
@@ -117,7 +116,6 @@ export var Dashboard = {
     }
   },
   setupDebtDistributionChart: () => {
-
     const accsArr = LocalDataManager.getUserAccounts().
       filter((acc) => acc.status === MYFIN.TRX_STATUS.ACTIVE
         && parseFloat(acc.balance) !== 0)

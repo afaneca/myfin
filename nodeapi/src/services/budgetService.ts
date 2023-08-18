@@ -336,15 +336,15 @@ const getCategoryDataForNewBudget = async (userId: bigint) => {
       previousMonth,
       previousMonthsYear,
       true
-    )[0];
+    );
 
     if (previousMonthAmounts) {
       (category as any).avg_previous_month_credit = Math.abs(
-        Number(ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts.category_balance_credit))
+        Number(ConvertUtils.convertBigIntegerToFloat(BigInt(previousMonthAmounts.category_balance_credit)))
       );
 
       (category as any).avg_previous_month_debit = Math.abs(
-        Number(ConvertUtils.convertBigIntegerToFloat(previousMonthAmounts.category_balance_debit))
+        Number(ConvertUtils.convertBigIntegerToFloat(BigInt(previousMonthAmounts.category_balance_debit)))
       );
     }
 
@@ -353,14 +353,14 @@ const getCategoryDataForNewBudget = async (userId: bigint) => {
       monthToUse,
       yearToUse - 1,
       true
-    )[0];
+    );
 
     if (sameMonthPreviousYearAmounts) {
       (category as any).avg_same_month_previous_year_credit = Math.abs(
-        Number(ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts.category_balance_credit))
+        Number(ConvertUtils.convertBigIntegerToFloat(BigInt(sameMonthPreviousYearAmounts.category_balance_credit)))
       );
       (category as any).avg_same_month_previous_year_debit = Math.abs(
-        Number(ConvertUtils.convertBigIntegerToFloat(sameMonthPreviousYearAmounts.category_balance_debit))
+        Number(ConvertUtils.convertBigIntegerToFloat(BigInt(sameMonthPreviousYearAmounts.category_balance_debit)))
       );
     }
 
@@ -544,20 +544,20 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
 
     // Unrealized gains
     const creditFromInvestmentAccounts = calculatedAmountsFromInvestmentAccounts
-      ? calculatedAmountsFromInvestmentAccounts[0].account_balance_credit
+      ? calculatedAmountsFromInvestmentAccounts.account_balance_credit
       : 0;
     // Unrealized losses
     const expensesFromInvestmentAccounts = calculatedAmountsFromInvestmentAccounts
-      ? calculatedAmountsFromInvestmentAccounts[0].account_balance_debit
+      ? calculatedAmountsFromInvestmentAccounts.account_balance_debit
       : 0;
     // remove unrealized gains from budget calcs
     const currentAmountCredit =
-      (calculatedAmounts ? calculatedAmounts[0].category_balance_credit : 0) -
+      (calculatedAmounts ? calculatedAmounts.category_balance_credit : 0) -
       creditFromInvestmentAccounts;
     Logger.addLog(`Current amount credit: ${currentAmountCredit}`);
     // remove unrealized losses from budget calcs
     const currentAmountDebit =
-      (calculatedAmounts ? calculatedAmounts[0].category_balance_debit : 0) -
+      (calculatedAmounts ? calculatedAmounts.category_balance_debit : 0) -
       expensesFromInvestmentAccounts;
 
     category.current_amount_credit = Math.abs(
@@ -575,7 +575,7 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
       previousMonthsYear,
       true,
       dbclient
-    )[0];
+    );
     category.avg_previous_month_credit = Math.abs(
       Number(ConvertUtils.convertBigIntegerToFloat(BigInt(previousMonthAmounts?.category_balance_credit ?? 0)))
     );
@@ -589,7 +589,7 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
       yearToUse - 1,
       true,
       dbclient
-    )[0];
+    );
     category.avg_same_month_previous_year_credit = Math.abs(
       Number(ConvertUtils.convertBigIntegerToFloat(BigInt(sameMonthPreviousYearAmounts?.category_balance_credit ?? 0)))
     );

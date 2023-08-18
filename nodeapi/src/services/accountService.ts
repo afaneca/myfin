@@ -170,13 +170,13 @@ const accountService = {
     month: number,
     year: number,
     prismaClient = prisma
-  ) : Promise<any> => prismaClient.$queryRaw`SELECT truncate((coalesce(balance, 0) / 100), 2) as 'balance'
-                              FROM balances_snapshot
-                              WHERE accounts_account_id = ${accId}
-                                AND ((year = ${year} AND month <= ${month})
-                                  OR (year < ${year}))
-                              ORDER BY year DESC, month DESC
-                              LIMIT 1`,
+  ): Promise<any> => prismaClient.$queryRaw`SELECT truncate((coalesce(balance, 0) / 100), 2) as 'balance'
+                                            FROM balances_snapshot
+                                            WHERE accounts_account_id = ${accId}
+                                              AND ((year = ${year} AND month <= ${month})
+                                                OR (year < ${year}))
+                                            ORDER BY year DESC, month DESC
+                                            LIMIT 1`,
   addCustomBalanceSnapshot: async (accountId: bigint, month: number, year: number, newBalance: number, prismaClient = prisma) => {
     const currentTimestamp = DateTimeUtils.getCurrentUnixTimestamp();
     return prismaClient.$queryRaw`INSERT INTO balances_snapshot (accounts_account_id, month, year, balance, created_timestamp)
@@ -192,17 +192,17 @@ const accountService = {
     toDate: number,
     prismaClient = prisma
   ): Promise<any[]> => prismaClient.$queryRaw`SELECT transaction_id,
-                                     transactions.date_timestamp,
-                                     transactions.amount as amount,
-                                     transactions.type,
-                                     transactions.description,
-                                     accounts_account_from_id,
-                                     accounts_account_to_id
-                              FROM transactions
-                              WHERE date_timestamp BETWEEN ${fromDate} AND ${toDate}
-                                AND (accounts_account_from_id = ${accountId} OR
-                                     accounts_account_to_id = ${accountId})
-                              ORDER BY date_timestamp ASC`,
+                                                     transactions.date_timestamp,
+                                                     transactions.amount as amount,
+                                                     transactions.type,
+                                                     transactions.description,
+                                                     accounts_account_from_id,
+                                                     accounts_account_to_id
+                                              FROM transactions
+                                              WHERE date_timestamp BETWEEN ${fromDate} AND ${toDate}
+                                                AND (accounts_account_from_id = ${accountId} OR
+                                                     accounts_account_to_id = ${accountId})
+                                              ORDER BY date_timestamp ASC`,
   recalculateBalanceForAccountIncrementally: async (
     accountId: bigint,
     fromDate: number,
@@ -367,24 +367,25 @@ const accountService = {
                               SET current_balance   = current_balance + ${offsetAmount},
                                   updated_timestamp = ${DateTimeUtils.getCurrentUnixTimestamp()}
                               WHERE account_id = ${accountId}`,
-  getAmountForInvestmentAccountsInMonth: async (categoryId: bigint, month: number, year: number, dbClient = prisma) : Promise<Array<{account_balance_credit: number, account_balance_debit: number}>> => {
+  getAmountForInvestmentAccountsInMonth: async (categoryId: bigint, month: number, year: number, dbClient = prisma): Promise<{ account_balance_credit: number, account_balance_debit: number }> => {
     const nextMonth = month < 12 ? month + 1 : 1;
     const nextMonthsYear = month < 12 ? year : year + 1;
     const toDate = DateTimeUtils.getUnixTimestampFromDate(new Date(nextMonthsYear, nextMonth - 1, 1));
     const fromDate = DateTimeUtils.getUnixTimestampFromDate(new Date(year, month - 1, 1));
 
 
-    return dbClient.$queryRaw`SELECT sum(if(transactions.type = 'I', amount, 0))                              as 'account_balance_credit',
-                                     sum(if(transactions.type = 'E' OR (transactions.type = 'T'), amount, 0)) as 'account_balance_debit'
-                              FROM transactions
-                                       INNER JOIN accounts
-                                                  on accounts.account_id =
-                                                     transactions.accounts_account_from_id OR
-                                                     accounts.account_id =
-                                                     transactions.accounts_account_to_id
-                              WHERE date_timestamp between ${fromDate} AND ${toDate}
-                                AND categories_category_id = ${categoryId}
-                                AND (accounts.type = 'INVAC' AND transactions.type != 'T') `;
+    const amounts = await dbClient.$queryRaw`SELECT sum(if(transactions.type = 'I', amount, 0))                              as 'account_balance_credit',
+                                                    sum(if(transactions.type = 'E' OR (transactions.type = 'T'), amount, 0)) as 'account_balance_debit'
+                                             FROM transactions
+                                                      INNER JOIN accounts
+                                                                 on accounts.account_id =
+                                                                    transactions.accounts_account_from_id OR
+                                                                    accounts.account_id =
+                                                                    transactions.accounts_account_to_id
+                                             WHERE date_timestamp between ${fromDate} AND ${toDate}
+                                               AND categories_category_id = ${categoryId}
+                                               AND (accounts.type = 'INVAC' AND transactions.type != 'T') `;
+    return (amounts[0] as { account_balance_credit: number, account_balance_debit: number });
   },
   getBalancesSnapshotForMonthForUser: async (
     userId: bigint,
