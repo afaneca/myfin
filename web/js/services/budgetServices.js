@@ -83,7 +83,7 @@ export const BudgetServices = {
     });
   },
   getBudgetsListForUser: (successCallback, errorCallback) => {
-    var pageUrl = REST_SERVER_PATH + 'budgets/';
+    var pageUrl = REST_SERVER_PATH + 'budgets/list/summary';
 
     $.ajax({
       async: true,
@@ -94,7 +94,6 @@ export const BudgetServices = {
         authusername: Cookies.get('username'),
         sessionkey: Cookies.get('sessionkey'),
       },
-      data: {},
       url: pageUrl,
       success: function(response) {
         if (successCallback) {

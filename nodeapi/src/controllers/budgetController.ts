@@ -4,17 +4,19 @@ import APIError from '../errorHandling/apiError.js';
 import CommonsController from './commonsController.js';
 import BudgetService from '../services/budgetService.js';
 import { MYFIN } from '../consts.js';
+import { NextFunction, Request, Response } from "express";
 
 // READ
 const getAllBudgetsForUserSchema = joi.object({
   status: joi.string().allow('C', 'O').empty('').optional(),
-});
+}).unknown(true);
 
 const getAllBudgetsForUser = async (req, res, next) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
     const input = await getAllBudgetsForUserSchema.validateAsync(req.query);
     const data = await BudgetService.getAllBudgetsForUser(sessionData.userId, input.status);
+    Logger.addStringifiedLog(data);
     res.json(data);
   } catch (err) {
     Logger.addLog(err);
@@ -89,7 +91,7 @@ const createBudgetSchema = joi
   .object({
     month: joi.number().min(1).max(12).required(),
     year: joi.number().min(1970).required(),
-    observations: joi.string().required(),
+    observations: joi.string().empty(''),
     cat_values_arr: joi.any().required(),
   })
   .unknown(true);
@@ -120,7 +122,7 @@ const updateBudgetSchema = joi
     budget_id: joi.number().min(1).required(),
     month: joi.number().min(1).max(12).required(),
     year: joi.number().min(1970).required(),
-    observations: joi.string().required(),
+    observations: joi.string().empty(''),
     cat_values_arr: joi.any().required(),
   })
   .unknown(true);
@@ -176,6 +178,17 @@ const removeBudget = async (req, res, next) => {
   }
 };
 
+const getBudgetsListForUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const data = await BudgetService.getBudgetsListForUser(sessionData.userId);
+    res.json(data);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getAllBudgetsForUser,
   getFilteredBudgetsForUserByPage,
@@ -185,4 +198,5 @@ export default {
   updateBudget,
   changeBudgetStatus,
   removeBudget,
+  getBudgetsListForUser,
 };

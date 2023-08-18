@@ -11,7 +11,7 @@ import { Prisma } from "@prisma/client";
  * Gets all (active) categories for the user, with planned & current amounts
  * related to a specific budget
  */
-const getAllCategoriesForUser = async (userId: number | bigint, budgetId: number | bigint, dbClient = prisma) : Promise<Array<any>> =>
+const getAllCategoriesForUser = async (userId: number | bigint, budgetId: number | bigint, dbClient = prisma): Promise<Array<any>> =>
   dbClient.$queryRaw`SELECT users_user_id,
                             category_id,
                             name,
@@ -174,6 +174,21 @@ const calculateBudgetBalanceChangePercentage = async (
   }
 
   return ((finalBalance - initialBalance) / Math.abs(initialBalance)) * 100;
+};
+
+const getBudgetsListForUser = async (userId: bigint, dbclient = prisma) => {
+  const whereCondition = { users_user_id: userId };
+
+
+  return dbclient.budgets.findMany({
+    where: whereCondition,
+    select: {
+      month: true,
+      year: true,
+      budget_id: true
+    },
+    orderBy: [{ year: "desc" }, { month: "desc" }]
+  });
 };
 const getAllBudgetsForUser = async (userId: bigint, status: string) => {
   return setupPrismaTransaction(async (prismaTx) => {
@@ -459,14 +474,14 @@ const getTotalEssentialDebitTransactionsAmountForBudget = async (
   const year = parseInt(budget.year, 10);
 
   const result: any = await dbClient.$queryRaw`SELECT sum(amount) as 'amount'
-                                                              FROM transactions
-                                                                       inner join accounts on transactions.accounts_account_from_id = accounts.account_id
-                                                              where users_user_id = ${userId}
-                                                                and date_timestamp between ${
-                                                                      new Date(year, month, 1).getTime() / 1000
-                                                              } AND ${new Date(year, month, 0).getTime() / 1000}
-                                                                and transactions.is_essential IS TRUE
-                                                                and transactions.type = ${MYFIN.TRX_TYPES.EXPENSE}`;
+                                               FROM transactions
+                                                        inner join accounts on transactions.accounts_account_from_id = accounts.account_id
+                                               where users_user_id = ${userId}
+                                                 and date_timestamp between ${
+                                                       new Date(year, month, 1).getTime() / 1000
+                                               } AND ${new Date(year, month, 0).getTime() / 1000}
+                                                 and transactions.is_essential IS TRUE
+                                                 and transactions.type = ${MYFIN.TRX_TYPES.EXPENSE}`;
 
   return result.amount ? ConvertUtils.convertBigIntegerToFloat(result.amount) : 0;
 };
@@ -664,5 +679,6 @@ export default {
   getBudget,
   updateBudget,
   changeBudgetStatus,
-  removeBudget
+  removeBudget,
+  getBudgetsListForUser,
 };
