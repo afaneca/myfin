@@ -31,8 +31,8 @@ const router = (app) => {
   accountsRoutes.get("/", AccountController.getAllAccountsForUser);
   accountsRoutes.delete("/", AccountController.deleteAccount);
   accountsRoutes.put("/", AccountController.updateAccount);
-  /* accountsRoutes.get('/stats/balance-snapshots/', AccountController.getUserAccountsBalanceSnapshot)
-    accountsRoutes.put('/recalculate-balance/all', AccountController.recalculateAllUserAccountsBalances) */
+  accountsRoutes.get("/stats/balance-snapshots/", AccountController.getUserAccountsBalanceSnapshot);
+  /* accountsRoutes.put('/recalculate-balance/all', AccountController.recalculateAllUserAccountsBalances) */
 
   // BUDGETS ROUTES
   const budgetRoutes = express.Router();

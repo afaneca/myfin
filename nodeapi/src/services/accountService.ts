@@ -1,13 +1,25 @@
-import { prisma } from "../config/prisma.js";
+import { prisma, setupPrismaTransaction } from "../config/prisma.js";
 import ConvertUtils from "../utils/convertUtils.js";
 import convertUtils from "../utils/convertUtils.js";
 import { MYFIN } from "../consts.js";
 import Logger from "../utils/Logger.js";
 import DateTimeUtils from "../utils/DateTimeUtils.js";
+import UserService from "./userService.js";
 
 const Account = prisma.accounts;
 const Transaction = prisma.transactions;
 const BalanceSnapshot = prisma.balances_snapshot;
+
+interface BalanceSnapshot {
+  month: number;
+  year: number;
+  account_snapshots: Array<any>;
+}
+
+interface AccountBalance {
+  account_id: bigint;
+  balance: number;
+}
 
 export type AccountType = {
   account_id: number,
@@ -170,13 +182,18 @@ const accountService = {
     month: number,
     year: number,
     prismaClient = prisma
-  ): Promise<any> => prismaClient.$queryRaw`SELECT truncate((coalesce(balance, 0) / 100), 2) as 'balance'
-                                            FROM balances_snapshot
-                                            WHERE accounts_account_id = ${accId}
-                                              AND ((year = ${year} AND month <= ${month})
-                                                OR (year < ${year}))
-                                            ORDER BY year DESC, month DESC
-                                            LIMIT 1`,
+  ): Promise<{ balance?: number } | undefined> => {
+    const data = await prismaClient.$queryRaw`SELECT truncate((coalesce(balance, 0) / 100), 2) as 'balance'
+                                              FROM balances_snapshot
+                                              WHERE accounts_account_id = ${accId}
+                                                AND ((year = ${year} AND month <= ${month})
+                                                  OR (year < ${year}))
+                                              ORDER BY year DESC, month DESC
+                                              LIMIT 1`;
+    if (Array.isArray(data)) {
+      return data[0];
+    } else return undefined;
+  },
   addCustomBalanceSnapshot: async (accountId: bigint, month: number, year: number, newBalance: number, prismaClient = prisma) => {
     const currentTimestamp = DateTimeUtils.getCurrentUnixTimestamp();
     return prismaClient.$queryRaw`INSERT INTO balances_snapshot (accounts_account_id, month, year, balance, created_timestamp)
@@ -237,7 +254,7 @@ const accountService = {
     let beginMonth = month1;
     let beginYear = year1;
 
-    let priorMonthsBalance =
+    let priorMonthsBalance: any =
       await accountService.getBalanceSnapshotAtMonth(
         accountId,
         beginMonth > 2 ? beginMonth - 2 : 12 - 2 + beginMonth,
@@ -413,7 +430,7 @@ const accountService = {
           year,
           dbClient
         );
-        balanceSnapshotAtMonth = parseFloat(snapshotAtMonth.balance || "0");
+        balanceSnapshotAtMonth = parseFloat(String(snapshotAtMonth.balance || 0));
       }
       if (balanceSnapshotAtMonth) {
         return acc + balanceSnapshotAtMonth;
@@ -425,6 +442,69 @@ const accountService = {
   getCountOfUserAccounts: async (userId, dbClient = prisma) => dbClient.accounts.count({
     where: { users_user_id: userId }
   }),
+  getAllBalancesSnapshotsForMonthForUser: async (userId: bigint, month: number, year: number, accsArr: Array<{ account_id: bigint }>, dbClient = prisma): Promise<Array<AccountBalance>> => {
+    const accSnapshot: Array<AccountBalance> = [];
+    for (const account of accsArr) {
+      const balance = (await accountService.getBalanceSnapshotAtMonth(account.account_id, month, year, dbClient)) ?? { balance: 0 };
+      Logger.addLog("---------");
+      Logger.addStringifiedLog(balance);
+      Logger.addLog("---------");
+      /* Logger.addStringifiedLog({
+        account_id: account.account_id,
+        balance: balance.balance
+      }); */
+      accSnapshot.push({
+        account_id: account.account_id,
+        balance: balance.balance ?? 0
+      });
+    }
+    return accSnapshot;
+  },
+  getUserAccountsBalanceSnapshot: async (userId, dbClient = undefined): Promise<Array<BalanceSnapshot>> => {
+    return setupPrismaTransaction(async (prismaTx) => {
+      if (!dbClient) dbClient = prismaTx;
+      const snapArr: Array<BalanceSnapshot> = [];
+
+      // If user has no accounts, return immediately an empty array
+      if (!(await accountService.getCountOfUserAccounts(userId, dbClient) != 0)) {
+        return snapArr;
+      }
+      const firstUserTransactionDate = await UserService.getFirstUserTransactionDate(userId, dbClient);
+      if (!firstUserTransactionDate) return snapArr;
+
+      let firstMonth = firstUserTransactionDate.month;
+      let firstYear = firstUserTransactionDate.year;
+
+      const currentMonth = DateTimeUtils.getMonthNumberFromTimestamp(DateTimeUtils.getCurrentUnixTimestamp());
+      const currentYear = DateTimeUtils.getYearFromTimestamp(DateTimeUtils.getCurrentUnixTimestamp());
+      const userAccounts = await dbClient.accounts.findMany({
+        where: {
+          users_user_id: userId
+        },
+        select: {
+          account_id: true
+        }
+      });
+      /* Logger.addStringifiedLog(accsArr); */
+      // Get balance snapshots for all accounts every month in between the first transaction and right now
+      while (DateTimeUtils.monthIsEqualOrPriorTo(firstMonth, firstYear, currentMonth, currentYear)) {
+        Logger.addLog(`First Month: ${firstMonth} | First Year: ${firstYear} | Current Month: ${currentMonth} | Current Year: ${currentYear}`);
+        snapArr.push({
+          month: firstMonth,
+          year: firstYear,
+          account_snapshots: await accountService.getAllBalancesSnapshotsForMonthForUser(userId, firstMonth, firstYear, userAccounts, dbClient)
+        });
+
+        if (firstMonth < 12) firstMonth++;
+        else {
+          firstMonth = 1;
+          firstYear++;
+        }
+      }
+      /* Logger.addStringifiedLog(snapArr); */
+      return snapArr;
+    });
+  }
 };
 
 export default accountService;

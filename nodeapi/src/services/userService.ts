@@ -38,7 +38,7 @@ const userService = {
 
         userAccounts = await dbClient.accounts.findMany({
           where: {
-            users_user_id: data.user_id,
+            users_user_id: data.user_id
           }
         });
       } else {
@@ -55,7 +55,7 @@ const userService = {
       sessionkey: data.sessionkey,
       sessionkey_mobile: data.sessionkey_mobile,
       last_update_timestamp: data.last_update_timestamp,
-      accounts: userAccounts,
+      accounts: userAccounts
     };
   },
   getUserIdFromUsername: async (username: string): Promise<bigint> => {
@@ -99,7 +99,22 @@ const userService = {
     });
 
     await SessionManager.generateNewSessionKeyForUser(data.username as string, mobile);
+  },
+  getFirstUserTransactionDate: async (userId: bigint, dbClient = prisma): Promise<{ date_timestamp: number, month: number, year: number } | undefined> => {
+    const data = await dbClient.$queryRaw`SELECT date_timestamp,
+                                                 MONTH(FROM_UNIXTIME(date_timestamp)) as 'month',
+                                                 YEAR(FROM_UNIXTIME(date_timestamp))  as 'year',
+                                                 entities.users_user_id
+                                          FROM transactions
+                                                   left join entities ON entities_entity_id = entities.entity_id
+                                          WHERE users_user_id = ${userId}
+                                          ORDER BY date_timestamp ASC
+                                          LIMIT 1`;
+    if (Array.isArray(data)) {
+      return data[0];
+    } else return undefined;
   }
 };
+
 
 export default userService;
