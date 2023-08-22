@@ -85,11 +85,12 @@ const router = (app) => {
   trxRoutes.post("/step1", TransactionController.createTransaction);
   trxRoutes.delete("/", TransactionController.deleteTransaction);
   trxRoutes.put("/", TransactionController.updateTransaction);
-  trxRoutes.get('/inMonthAndCategory', TransactionController.getAllTransactionsForUserInCategoryAndInMonth);
+  trxRoutes.get("/inMonthAndCategory", TransactionController.getAllTransactionsForUserInCategoryAndInMonth);
+  trxRoutes.post("/auto-cat-trx", TransactionController.autoCategorizeTransaction);
   /*trxRoutes.post('/import/step0', TransactionController.importTransactionsStep0)
     trxRoutes.post('/import/step1', TransactionController.importTransactionsStep1)
     trxRoutes.post('/import/step2', TransactionController.importTransactionsStep2)
-    trxRoutes.post('/auto-cat-trx', TransactionController.autoCategorizeTransaction) */
+  */
 
   // INVEST ASSET ROUTES
   /* const investAssetRoutes = express.Router();

@@ -8,6 +8,7 @@ import { MYFIN } from "../consts.js";
 import ConvertUtils from "../utils/convertUtils.js";
 import APIError from "../errorHandling/apiError.js";
 import Logger from "../utils/Logger.js";
+import RuleService from "./ruleService.js";
 
 const getTransactionsForUser = async (userId: bigint, trxLimit: number) => prisma.$queryRaw`SELECT transaction_id,
                                                                                                    transactions.date_timestamp,
@@ -554,21 +555,57 @@ const getAllTransactionsForUserInCategoryAndInMonth = async (userId: bigint, mon
 
 const getCountOfUserTransactions = async (userId: bigint, dbClient = prisma) => {
   const rawData = await dbClient.$queryRaw`SELECT count(DISTINCT (transaction_id)) as 'count'
-                                     FROM transactions
-                                              LEFT JOIN accounts ON transactions.accounts_account_from_id =
-                                                                    accounts.account_id or
-                                                                    transactions.accounts_account_to_id =
-                                                                    accounts.account_id
-                                     WHERE accounts.users_user_id = ${userId}`;
+                                           FROM transactions
+                                                    LEFT JOIN accounts ON transactions.accounts_account_from_id =
+                                                                          accounts.account_id or
+                                                                          transactions.accounts_account_to_id =
+                                                                          accounts.account_id
+                                           WHERE accounts.users_user_id = ${userId}`;
   return rawData[0].count;
+};
+
+interface RuleInstructions {
+  matching_rule?: bigint;
+  date?: number;
+  description?: string;
+  amount?: number;
+  type?: string;
+  selectedCategoryID?: bigint;
+  selectedEntityID?: bigint;
+  selectedAccountFromID?: bigint;
+  selectedAccountToID?: bigint;
+  isEssential?: boolean;
 }
-  export default {
-    getTransactionsForUser,
-    getFilteredTransactionsByForUser,
-    createTransactionStep0,
-    createTransaction,
-    deleteTransaction,
-    updateTransaction,
-    getAllTransactionsForUserInCategoryAndInMonth,
-    getCountOfUserTransactions
-  };
+
+const autoCategorizeTransaction = async (userId: bigint, description: string, amount: number, type: string, accountsFromId: bigint, accountsToId: bigint, dbClient = undefined): Promise<RuleInstructions> =>
+  setupPrismaTransaction(async (prismaTx) => {
+    if (!dbClient) dbClient = prismaTx;
+    const matchedRule = await RuleService.getRuleForTransaction(userId, description, amount, type, accountsFromId, accountsToId, MYFIN.RULES.MATCHING.IGNORE, MYFIN.RULES.MATCHING.IGNORE, dbClient);
+    Logger.addLog("Rule found:");
+    Logger.addStringifiedLog(matchedRule);
+    if (!matchedRule) return {};
+    return {
+      matching_rule: matchedRule.rule_id,
+      date: undefined,
+      description: description,
+      amount: amount,
+      type: type,
+      selectedCategoryID: matchedRule.assign_category_id,
+      selectedEntityID: matchedRule.assign_entity_id,
+      selectedAccountFromID: matchedRule.assign_account_from_id,
+      selectedAccountToID: matchedRule.assign_account_to_id,
+      isEssential: matchedRule.assign_is_essential
+    };
+  }) as Promise<RuleInstructions>;
+
+export default {
+  getTransactionsForUser,
+  getFilteredTransactionsByForUser,
+  createTransactionStep0,
+  createTransaction,
+  deleteTransaction,
+  updateTransaction,
+  getAllTransactionsForUserInCategoryAndInMonth,
+  getCountOfUserTransactions,
+  autoCategorizeTransaction
+};

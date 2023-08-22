@@ -146,13 +146,32 @@ const transactionsForUserInCategoryAndInMonthSchema = joi.object({
   month: joi.number().required(),
   year: joi.number().required(),
   cat_id: joi.number().required(),
-  type: joi.string().allow(MYFIN.TRX_TYPES.EXPENSE, MYFIN.TRX_TYPES.INCOME, MYFIN.TRX_TYPES.TRANSFER),
+  type: joi.string().allow(MYFIN.TRX_TYPES.EXPENSE, MYFIN.TRX_TYPES.INCOME, MYFIN.TRX_TYPES.TRANSFER)
 }).unknown(true);
 const getAllTransactionsForUserInCategoryAndInMonth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
     const input = await transactionsForUserInCategoryAndInMonthSchema.validateAsync(req.query);
     const data = await TransactionService.getAllTransactionsForUserInCategoryAndInMonth(sessionData.userId, input.month, input.year, input.cat_id, input.type);
+    res.json(data);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
+const autoCategorizeTransactionSchema = joi.object({
+  description: joi.string().required(),
+  amount: joi.number().required(),
+  type: joi.string().allow(MYFIN.TRX_TYPES.EXPENSE, MYFIN.TRX_TYPES.INCOME, MYFIN.TRX_TYPES.TRANSFER),
+  account_from_id: joi.number().required(),
+  account_to_id: joi.number().required()
+});
+const autoCategorizeTransaction = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const input = await autoCategorizeTransactionSchema.validateAsync(req.body);
+    const data = await TransactionService.autoCategorizeTransaction(sessionData.userId, input.description, input.amount, input.type, input.accounts_account_from_id, input.accounts_account_to_id);
     res.json(data);
   } catch (err) {
     Logger.addLog(err);
@@ -166,5 +185,6 @@ export default {
   createTransaction,
   deleteTransaction,
   updateTransaction,
-  getAllTransactionsForUserInCategoryAndInMonth
+  getAllTransactionsForUserInCategoryAndInMonth,
+  autoCategorizeTransaction
 };
