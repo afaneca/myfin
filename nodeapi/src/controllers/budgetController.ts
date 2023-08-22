@@ -3,8 +3,8 @@ import Logger from '../utils/Logger.js';
 import APIError from '../errorHandling/apiError.js';
 import CommonsController from './commonsController.js';
 import BudgetService from '../services/budgetService.js';
-import { MYFIN } from '../consts.js';
-import { NextFunction, Request, Response } from "express";
+import {MYFIN} from '../consts.js';
+import {NextFunction, Request, Response} from "express";
 
 // READ
 const getAllBudgetsForUserSchema = joi.object({
@@ -105,7 +105,7 @@ const createBudget = async (req, res, next) => {
       input.month,
       input.year,
       JSON.parse(req.body.cat_values_arr),
-      input.observations
+      input.observations ?? ''
     );
     res.json({
       budget_id: budgetId,
@@ -137,7 +137,7 @@ const updateBudget = async (req, res, next) => {
       input.month,
       input.year,
       JSON.parse(req.body.cat_values_arr),
-      input.observations
+      input.observations ?? ''
     );
     res.json(`Budget was successfully updated.`);
   } catch (err) {

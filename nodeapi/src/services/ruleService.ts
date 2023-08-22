@@ -1,11 +1,11 @@
-import { prisma } from "../config/prisma.js";
-import Logger from "../utils/Logger.js";
-import ConvertUtils from "../utils/convertUtils.js";
-import AccountService from "./accountService.js";
-import EntityService from "./entityService.js";
-import CategoryService from "./categoryService.js";
-import { Prisma } from "@prisma/client";
-import { MYFIN } from "../consts.js";
+import { prisma } from '../config/prisma.js';
+import Logger from '../utils/Logger.js';
+import ConvertUtils from '../utils/convertUtils.js';
+import AccountService from './accountService.js';
+import EntityService from './entityService.js';
+import CategoryService from './categoryService.js';
+import { Prisma } from '@prisma/client';
+import { MYFIN } from '../consts.js';
 
 const Rule = prisma.rules;
 
@@ -177,14 +177,19 @@ const getRuleForTransaction = async (userId: bigint, description: string, amount
 
   for (const rule of userRules) {
     let hasMatched = false;
-    Logger.addLog("--------- RULE ---------");
+    /* Logger.addLog("--------- RULE ---------");
     Logger.addStringifiedLog(rule);
     Logger.addLog("--");
     Logger.addLog(`description: ${description} | amount: ${amount} | type: ${type} | accountFromId: ${accountsFromId} | accountToId: ${accountsToId} | selectedCategoryId: ${selectedCategoryId} | selectedEntityId: ${selectedEntityId}`);
-    Logger.addLog("------------------------");
+    Logger.addLog("------------------------"); */
     /* description matcher */
-    const descriptionMatcher = checkStringMatcher(rule, description, rule.matcher_description_operator, rule.matcher_description_value);
-    Logger.addLog(`Description Matcher: ${descriptionMatcher}`);
+    const descriptionMatcher = checkStringMatcher(
+      rule,
+      description,
+      rule.matcher_description_operator,
+      rule.matcher_description_value
+    );
+    /* Logger.addLog(`Description Matcher: ${descriptionMatcher}`); */
     switch (descriptionMatcher) {
       case RuleMatcherResult.MATCHED:
         hasMatched = true;
@@ -197,8 +202,13 @@ const getRuleForTransaction = async (userId: bigint, description: string, amount
     }
 
     /* amount matcher */
-    const amountMatcher = checkNumberMatcher(rule, amount, rule.matcher_amount_operator, rule.matcher_amount_value);
-    Logger.addLog(`Amount Matcher: ${amountMatcher}`);
+    const amountMatcher = checkNumberMatcher(
+      rule,
+      amount,
+      rule.matcher_amount_operator,
+      rule.matcher_amount_value
+    );
+    /* Logger.addLog(`Amount Matcher: ${amountMatcher}`); */
     switch (amountMatcher) {
       case RuleMatcherResult.MATCHED:
         hasMatched = true;
@@ -211,8 +221,13 @@ const getRuleForTransaction = async (userId: bigint, description: string, amount
     }
 
     /* type matcher */
-    const typeMatcher = checkStringMatcher(rule, type, rule.matcher_type_operator, rule.matcher_type_value);
-    Logger.addLog(`Type Matcher: ${typeMatcher}`);
+    const typeMatcher = checkStringMatcher(
+      rule,
+      type,
+      rule.matcher_type_operator,
+      rule.matcher_type_value
+    );
+    /* Logger.addLog(`Type Matcher: ${typeMatcher}`); */
     switch (typeMatcher) {
       case RuleMatcherResult.MATCHED:
         hasMatched = true;
@@ -225,8 +240,13 @@ const getRuleForTransaction = async (userId: bigint, description: string, amount
     }
 
     /* account_to_id matcher */
-    const accountToMatcher = checkNumberMatcher(rule, accountsToId, rule.matcher_account_to_id_operator, rule.matcher_account_to_id_value);
-    Logger.addLog(`Account To Matcher: ${accountToMatcher}`);
+    const accountToMatcher = checkNumberMatcher(
+      rule,
+      accountsToId,
+      rule.matcher_account_to_id_operator,
+      rule.matcher_account_to_id_value
+    );
+    /* Logger.addLog(`Account To Matcher: ${accountToMatcher}`); */
     switch (accountToMatcher) {
       case RuleMatcherResult.MATCHED:
         hasMatched = true;
@@ -239,8 +259,13 @@ const getRuleForTransaction = async (userId: bigint, description: string, amount
     }
 
     /* account_from_id matcher */
-    const accountFromMatcher = checkNumberMatcher(rule, accountsFromId, rule.matcher_account_from_id_operator, rule.matcher_account_from_id_value);
-    Logger.addLog(`Account From Matcher: ${accountFromMatcher}`);
+    const accountFromMatcher = checkNumberMatcher(
+      rule,
+      accountsFromId,
+      rule.matcher_account_from_id_operator,
+      rule.matcher_account_from_id_value
+    );
+    /* Logger.addLog(`Account From Matcher: ${accountFromMatcher}`); */
     switch (accountFromMatcher) {
       case RuleMatcherResult.MATCHED:
         hasMatched = true;
