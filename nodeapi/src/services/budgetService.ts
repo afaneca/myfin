@@ -73,9 +73,9 @@ const calculateBudgetBalance = async (
           dbClient
         );
       const creditFromInvestmentAccounts =
-        calculatedAmountsFromInvestmentAccounts[0].account_balance_credit;
+        calculatedAmountsFromInvestmentAccounts.account_balance_credit;
       const expensesFromInvestmentAccounts =
-        calculatedAmountsFromInvestmentAccounts[0].account_balance_debit;
+        calculatedAmountsFromInvestmentAccounts.account_balance_debit;
       amountCredit =
         Math.abs(calculatedAmounts.category_balance_credit) - creditFromInvestmentAccounts;
       amountDebit =
@@ -131,17 +131,17 @@ const getSumAmountsForBudget = async (userId, budget, dbClient = prisma) => {
             ); */
       // Unrealized gains
       const creditFromInvestmentAccounts =
-        calculatedAmountsFromInvestmentAccounts[0]?.account_balance_credit;
+        calculatedAmountsFromInvestmentAccounts?.account_balance_credit;
       // Unrealized losses
       const expensesFromInvestmentAccounts =
-        calculatedAmountsFromInvestmentAccounts[0]?.account_balance_debit;
+        calculatedAmountsFromInvestmentAccounts?.account_balance_debit;
 
       // remove unrealized gains from budget calcs
       amountCredit =
-        Math.abs(calculatedAmounts[0]?.category_balance_credit) - creditFromInvestmentAccounts;
+        Math.abs(calculatedAmounts?.category_balance_credit) - creditFromInvestmentAccounts;
       // remove unrealized losses from budget calcs
       amountDebit =
-        Math.abs(calculatedAmounts[0]?.category_balance_debit) - expensesFromInvestmentAccounts;
+        Math.abs(calculatedAmounts?.category_balance_debit) - expensesFromInvestmentAccounts;
     }
 
     /* Logger.addLog(
@@ -346,7 +346,7 @@ const getCategoryDataForNewBudget = async (userId: bigint) => {
     const previousMonth = monthToUse > 1 ? monthToUse - 1 : 12;
     const previousMonthsYear = monthToUse > 1 ? yearToUse : yearToUse - 1;
     const previousMonthAmounts = await CategoryService.getAmountForCategoryInMonth(
-      category.category_id,
+      category.category_id as bigint,
       previousMonth,
       previousMonthsYear,
       true
@@ -369,7 +369,7 @@ const getCategoryDataForNewBudget = async (userId: bigint) => {
     }
 
     const sameMonthPreviousYearAmounts = await CategoryService.getAmountForCategoryInMonth(
-      category.category_id,
+      category.category_id as bigint,
       monthToUse,
       yearToUse - 1,
       true
@@ -393,13 +393,15 @@ const getCategoryDataForNewBudget = async (userId: bigint) => {
     }
 
     const last12MonthsAverageAmounts =
-      await CategoryService.getAverageAmountForCategoryInLast12Months(category.category_id)[0];
+      await CategoryService.getAverageAmountForCategoryInLast12Months(
+        category.category_id as bigint
+      )[0];
 
     if (last12MonthsAverageAmounts) {
       (category as any).avg_12_months_credit = Math.abs(
-          Number(
-              ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts.category_balance_credit)
-          )
+        Number(
+          ConvertUtils.convertBigIntegerToFloat(last12MonthsAverageAmounts.category_balance_credit)
+        )
       );
       (category as any).avg_12_months_debit = Math.abs(
         Number(
@@ -409,7 +411,7 @@ const getCategoryDataForNewBudget = async (userId: bigint) => {
     }
 
     const lifetimeAverageAmounts = await CategoryService.getAverageAmountForCategoryInLifetime(
-      category.category_id
+      category.category_id as bigint
     )[0];
     if (lifetimeAverageAmounts) {
       (category as any).avg_lifetime_credit = Math.abs(
