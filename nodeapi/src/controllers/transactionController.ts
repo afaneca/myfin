@@ -1,10 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import {NextFunction, Request, Response} from "express";
 import APIError from "../errorHandling/apiError.js";
 import Logger from "../utils/Logger.js";
 import CommonsController from "./commonsController.js";
 import TransactionService from "../services/transactionService.js";
-import { MYFIN } from "../consts.js";
-import joi from "joi";
+import {MYFIN} from "../consts.js";
+import joi from 'joi';
+import AccountService from '../services/accountService.js';
 
 // READ
 const getAllTrxForUserSchema = joi
@@ -171,13 +172,32 @@ const autoCategorizeTransaction = async (req: Request, res: Response, next: Next
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
     const input = await autoCategorizeTransactionSchema.validateAsync(req.body);
-    const data = await TransactionService.autoCategorizeTransaction(sessionData.userId, input.description, input.amount, input.type, input.accounts_account_from_id, input.accounts_account_to_id);
+    const data = await TransactionService.autoCategorizeTransaction(
+      sessionData.userId,
+      input.description,
+      input.amount,
+      input.type,
+      input.accounts_account_from_id,
+      input.accounts_account_to_id
+    );
     res.json(data);
   } catch (err) {
     Logger.addLog(err);
     next(err || APIError.internalServerError());
   }
 };
+
+const importTransactionsStep0 = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const data = await AccountService.getAllAccountsForUserWithAmounts(sessionData.userId, true);
+    res.json(data);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getTransactionsForUser,
   getFilteredTrxByPage,
@@ -186,5 +206,6 @@ export default {
   deleteTransaction,
   updateTransaction,
   getAllTransactionsForUserInCategoryAndInMonth,
-  autoCategorizeTransaction
+  autoCategorizeTransaction,
+  importTransactionsStep0,
 };

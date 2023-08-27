@@ -84,7 +84,7 @@ const accountService = {
     const onlyActiveExcerpt = onlyActive ? `AND a.status = ${MYFIN.ACCOUNT_STATUS.ACTIVE}` : '';
 
     return prisma.$queryRaw`SELECT a.account_id,
-                                       a.name,
+                                   a.name,
                                    a.type,
                                    a.description,
                                    a.status,
@@ -288,7 +288,7 @@ const accountService = {
     );
 
     /* Reset balance for next 2 months (in case there are no transactions in
-                                          these months and the balance doesn't get recalculated */
+                                                  these months and the balance doesn't get recalculated */
     addCustomBalanceSnapshotsPromises.push(
       accountService.addCustomBalanceSnapshot(
         accountId,
@@ -493,12 +493,12 @@ const accountService = {
         dbClient
       )) ?? { balance: 0 };
       /* Logger.addLog("---------");
-                  Logger.addStringifiedLog(balance);
-                  Logger.addLog("---------"); */
+                              Logger.addStringifiedLog(balance);
+                              Logger.addLog("---------"); */
       /* Logger.addStringifiedLog({
-                    account_id: account.account_id,
-                    balance: balance.balance
-                  }); */
+                                account_id: account.account_id,
+                                balance: balance.balance
+                              }); */
       accSnapshot.push({
         account_id: account.account_id,
         balance: balance.balance ?? 0,
@@ -600,6 +600,28 @@ const accountService = {
       await Promise.all(promises);
     }, dbClient);
   },
+  getAllAccountsForUserWithAmounts: async (
+    userId: bigint,
+    onlyActive = false,
+    dbClient = undefined
+  ) =>
+    performDatabaseRequest(async (dbTx) => {
+      return dbTx.$queryRaw`SELECT a.account_id,
+                                     a.name,
+                                     a.type,
+                                     a.description,
+                                     a.status,
+                                     a.color_gradient,
+                                     a.exclude_from_budgets,
+                                     (a.current_balance / 100) as 'balance',
+                                     a.users_user_id
+                              FROM accounts a
+                              WHERE users_user_id = ${userId}
+                                AND a.status LIKE ${onlyActive ? MYFIN.ACCOUNT_STATUS.ACTIVE : '%'}
+                              ORDER BY abs(balance) DESC, case when a.status = ${
+                                MYFIN.ACCOUNT_STATUS.INACTIVE
+                              } then 1 else 0 end`;
+    }, dbClient),
 };
 
 export default accountService;

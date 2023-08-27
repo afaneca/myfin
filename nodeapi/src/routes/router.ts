@@ -99,10 +99,9 @@ const router = (app) => {
     TransactionController.getAllTransactionsForUserInCategoryAndInMonth
   );
   trxRoutes.post('/auto-cat-trx', TransactionController.autoCategorizeTransaction);
-  /*trxRoutes.post('/import/step0', TransactionController.importTransactionsStep0)
-      trxRoutes.post('/import/step1', TransactionController.importTransactionsStep1)
-      trxRoutes.post('/import/step2', TransactionController.importTransactionsStep2)
-    */
+  trxRoutes.post('/import/step0', TransactionController.importTransactionsStep0);
+  //trxRoutes.post('/import/step1', TransactionController.importTransactionsStep1)
+  //trxRoutes.post('/import/step2', TransactionController.importTransactionsStep2)
 
   // INVEST ASSET ROUTES
   /* const investAssetRoutes = express.Router();
