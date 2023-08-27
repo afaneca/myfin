@@ -1,4 +1,4 @@
-import { prisma, setupPrismaTransaction } from '../config/prisma.js';
+import { getPrismaTransactionInstance, prisma } from '../config/prisma.js';
 import APIError from '../errorHandling/apiError.js';
 import { Prisma } from '@prisma/client';
 import CategoryService from './categoryService.js';
@@ -132,73 +132,72 @@ const getMonthlyPatrimonyProjections = async (userId: bigint, dbClient = undefin
    *    ...
    * ]
    */
-  return setupPrismaTransaction(async (prismaTx) => {
-    if (!dbClient) dbClient = prismaTx;
 
-    interface ExtendedBudget extends Prisma.budgetsUpdateInput {
-      planned_balance?: number;
-      planned_initial_balance?: number;
-      planned_final_balance?: number;
+  dbClient = await getPrismaTransactionInstance(dbClient);
+
+  interface ExtendedBudget extends Prisma.budgetsUpdateInput {
+    planned_balance?: number;
+    planned_initial_balance?: number;
+    planned_final_balance?: number;
+  }
+
+  const output: MonthlyPatrimonyProjections = {};
+
+  const budgets: Array<ExtendedBudget> = await BudgetService.getBudgetAfterCertainMonth(
+    userId,
+    previousMonth,
+    previousMonthYear,
+    dbClient
+  );
+  let lastPlannedFinalBalance = null;
+
+  for (const budget of budgets) {
+    budget.planned_balance = await BudgetService.calculateBudgetBalance(userId, budget, dbClient);
+    const month = budget.month as number;
+    const year = budget.year as number;
+    if (!lastPlannedFinalBalance) {
+      budget.planned_initial_balance = await AccountService.getBalancesSnapshotForMonthForUser(
+        userId,
+        month > 1 ? month - 1 : 12,
+        month > 1 ? year : year - 1,
+        true,
+        dbClient
+      );
+    } else {
+      budget.planned_initial_balance = lastPlannedFinalBalance;
     }
+    budget.planned_final_balance = budget.planned_initial_balance + budget.planned_balance;
+    lastPlannedFinalBalance = budget.planned_final_balance;
+  }
 
-    const output: MonthlyPatrimonyProjections = {};
+  const accountsFromPreviousMonth: Array<{
+    account_id: bigint;
+    type: string;
+    balance?: number;
+  }> = await dbClient.accounts.findMany({
+    where: {
+      users_user_id: userId,
+    },
+    select: {
+      account_id: true,
+      type: true,
+    },
+  });
 
-    const budgets: Array<ExtendedBudget> = await BudgetService.getBudgetAfterCertainMonth(
-      userId,
+  for (const account of accountsFromPreviousMonth) {
+    const balanceSnapshot = (await AccountService.getBalanceSnapshotAtMonth(
+      account.account_id,
       previousMonth,
       previousMonthYear,
       dbClient
-    );
-    let lastPlannedFinalBalance = null;
+    )) ?? { balance: 0 };
+    account.balance = balanceSnapshot.balance ?? 0;
+  }
 
-    for (const budget of budgets) {
-      budget.planned_balance = await BudgetService.calculateBudgetBalance(userId, budget, dbClient);
-      const month = budget.month as number;
-      const year = budget.year as number;
-      if (!lastPlannedFinalBalance) {
-        budget.planned_initial_balance = await AccountService.getBalancesSnapshotForMonthForUser(
-          userId,
-          month > 1 ? month - 1 : 12,
-          month > 1 ? year : year - 1,
-          true,
-          dbClient
-        );
-      } else {
-        budget.planned_initial_balance = lastPlannedFinalBalance;
-      }
-      budget.planned_final_balance = budget.planned_initial_balance + budget.planned_balance;
-      lastPlannedFinalBalance = budget.planned_final_balance;
-    }
+  output.budgets = budgets;
+  output.accountsFromPreviousMonth = accountsFromPreviousMonth;
 
-    const accountsFromPreviousMonth: Array<{
-      account_id: bigint;
-      type: string;
-      balance?: number;
-    }> = await dbClient.accounts.findMany({
-      where: {
-        users_user_id: userId,
-      },
-      select: {
-        account_id: true,
-        type: true,
-      },
-    });
-
-    for (const account of accountsFromPreviousMonth) {
-      const balanceSnapshot = (await AccountService.getBalanceSnapshotAtMonth(
-        account.account_id,
-        previousMonth,
-        previousMonthYear,
-        dbClient
-      )) ?? { balance: 0 };
-      account.balance = balanceSnapshot.balance ?? 0;
-    }
-
-    output.budgets = budgets;
-    output.accountsFromPreviousMonth = accountsFromPreviousMonth;
-
-    return output;
-  });
+  return output;
 };
 
 export default {

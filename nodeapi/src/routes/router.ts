@@ -32,7 +32,10 @@ const router = (app) => {
   accountsRoutes.delete('/', AccountController.deleteAccount);
   accountsRoutes.put('/', AccountController.updateAccount);
   accountsRoutes.get('/stats/balance-snapshots/', AccountController.getUserAccountsBalanceSnapshot);
-  /* accountsRoutes.put('/recalculate-balance/all', AccountController.recalculateAllUserAccountsBalances) */
+  accountsRoutes.get(
+    '/recalculate-balance/all',
+    AccountController.recalculateAllUserAccountsBalances
+  );
 
   // BUDGETS ROUTES
   const budgetRoutes = express.Router();
@@ -97,27 +100,27 @@ const router = (app) => {
   );
   trxRoutes.post('/auto-cat-trx', TransactionController.autoCategorizeTransaction);
   /*trxRoutes.post('/import/step0', TransactionController.importTransactionsStep0)
-      trxRoutes.post('/import/step1', TransactionController.importTransactionsStep1)
-      trxRoutes.post('/import/step2', TransactionController.importTransactionsStep2)
-    */
+        trxRoutes.post('/import/step1', TransactionController.importTransactionsStep1)
+        trxRoutes.post('/import/step2', TransactionController.importTransactionsStep2)
+      */
 
   // INVEST ASSET ROUTES
   /* const investAssetRoutes = express.Router();
-    investAssetRoutes.get('/', InvestAssetsController.getAllAssetsForUser);
-    investAssetRoutes.post('/', InvestAssetsController.createAsset);
-    investAssetRoutes.delete('/:id', InvestAssetsController.deleteAsset);
-    investAssetRoutes.delete('/:id', InvestAssetsController.updateAsset);
-    investAssetRoutes.delete('/:id/value', InvestAssetsController.updateCurrentAssetValue);
-    investAssetRoutes.delete('/summary', InvestAssetsController.getAllAssetsSummaryForUser);
-    investAssetRoutes.delete('/stats', InvestAssetsController.getAssetStatsForUser);
-    investAssetRoutes.delete('/stats/:id', InvestAssetsController.getAssetDetailsForUser); */
+      investAssetRoutes.get('/', InvestAssetsController.getAllAssetsForUser);
+      investAssetRoutes.post('/', InvestAssetsController.createAsset);
+      investAssetRoutes.delete('/:id', InvestAssetsController.deleteAsset);
+      investAssetRoutes.delete('/:id', InvestAssetsController.updateAsset);
+      investAssetRoutes.delete('/:id/value', InvestAssetsController.updateCurrentAssetValue);
+      investAssetRoutes.delete('/summary', InvestAssetsController.getAllAssetsSummaryForUser);
+      investAssetRoutes.delete('/stats', InvestAssetsController.getAssetStatsForUser);
+      investAssetRoutes.delete('/stats/:id', InvestAssetsController.getAssetDetailsForUser); */
 
   // INVEST TRANSACTION ROUTES
   /* const investTrxRoutes = express.Router();
-    investTrxRoutes.get('/', InvestTransactionsRouter.getAllTransactionsForUser);
-    investTrxRoutes.post('/', InvestTransactionsRouter.addTransaction);
-    investTrxRoutes.delete('/:id', InvestTransactionsRouter.removeTransaction);
-    investTrxRoutes.delete('/:id', InvestTransactionsRouter.updateTransaction); */
+      investTrxRoutes.get('/', InvestTransactionsRouter.getAllTransactionsForUser);
+      investTrxRoutes.post('/', InvestTransactionsRouter.addTransaction);
+      investTrxRoutes.delete('/:id', InvestTransactionsRouter.removeTransaction);
+      investTrxRoutes.delete('/:id', InvestTransactionsRouter.updateTransaction); */
 
   app.use('/users', usersRouter);
   app.use('/user', userRouter);

@@ -1,6 +1,5 @@
-import { prisma, setupPrismaTransaction } from '../config/prisma.js';
+import { getPrismaTransactionInstance, prisma } from '../config/prisma.js';
 import ConvertUtils from '../utils/convertUtils.js';
-import convertUtils from '../utils/convertUtils.js';
 import { MYFIN } from '../consts.js';
 import DateTimeUtils from '../utils/DateTimeUtils.js';
 import UserService from './userService.js';
@@ -67,14 +66,15 @@ const accountService = {
       data: accountObj,
     });
   },
-  getAccountsForUser: async (userId: bigint) =>
-    Account.findMany({
+  getAccountsForUser: async (userId: bigint, selectConfig = undefined, dbClient = prisma) =>
+    dbClient.accounts.findMany({
       where: {
         users_user_id: userId,
       },
+      select: selectConfig,
     }),
-  getActiveAccountsForUser: async (userId: bigint) =>
-    Account.findMany({
+  getActiveAccountsForUser: async (userId: bigint, dbClient = prisma) =>
+    dbClient.accounts.findMany({
       where: {
         users_user_id: userId,
         status: MYFIN.ACCOUNT_STATUS.ACTIVE,
@@ -234,7 +234,7 @@ const accountService = {
     accountId: bigint,
     fromDate: number,
     toDate: number,
-    prismaClient = prisma
+    dbClient = prisma
   ) => {
     /* Logger.addLog(`account: ${accountId} | fromDate: ${fromDate} | toDate: ${toDate}`); */
     /*
@@ -258,48 +258,58 @@ const accountService = {
       year1,
       month2,
       year2,
-      prismaClient
+      dbClient
     );
 
     let beginMonth = month1;
     let beginYear = year1;
 
-    let priorMonthsBalance: any = await accountService.getBalanceSnapshotAtMonth(
+    let priorMonthsBalance: any = (await accountService.getBalanceSnapshotAtMonth(
       accountId,
       beginMonth > 2 ? beginMonth - 2 : 12 - 2 + beginMonth,
       beginMonth > 2 ? beginYear : beginYear - 1,
-      prismaClient
-    );
-    priorMonthsBalance = convertUtils.convertFloatToBigInteger(priorMonthsBalance.balance || '0');
+      dbClient
+    )) ?? { balance: 0 };
+    priorMonthsBalance = ConvertUtils.convertFloatToBigInteger(priorMonthsBalance.balance || '0');
 
     if (!priorMonthsBalance) {
       priorMonthsBalance = 0;
     }
 
-    await accountService.addCustomBalanceSnapshot(
-      accountId,
-      beginMonth,
-      beginYear,
-      priorMonthsBalance,
-      prismaClient
+    let addCustomBalanceSnapshotsPromises = [];
+    addCustomBalanceSnapshotsPromises.push(
+      accountService.addCustomBalanceSnapshot(
+        accountId,
+        beginMonth,
+        beginYear,
+        priorMonthsBalance,
+        dbClient
+      )
     );
 
     /* Reset balance for next 2 months (in case there are no transactions in
-            these months and the balance doesn't get recalculated */
-    await accountService.addCustomBalanceSnapshot(
-      accountId,
-      beginMonth < 12 ? beginMonth + 1 : 1,
-      beginMonth < 12 ? beginYear : beginYear + 1,
-      priorMonthsBalance,
-      prismaClient
+                                        these months and the balance doesn't get recalculated */
+    addCustomBalanceSnapshotsPromises.push(
+      accountService.addCustomBalanceSnapshot(
+        accountId,
+        beginMonth < 12 ? beginMonth + 1 : 1,
+        beginMonth < 12 ? beginYear : beginYear + 1,
+        priorMonthsBalance,
+        dbClient
+      )
     );
-    await accountService.addCustomBalanceSnapshot(
-      accountId,
-      beginMonth < 11 ? beginMonth + 2 : 1,
-      beginMonth < 11 ? beginYear : beginYear + 1,
-      priorMonthsBalance,
-      prismaClient
+
+    addCustomBalanceSnapshotsPromises.push(
+      accountService.addCustomBalanceSnapshot(
+        accountId,
+        beginMonth < 11 ? beginMonth + 2 : 1,
+        beginMonth < 11 ? beginYear : beginYear + 1,
+        priorMonthsBalance,
+        dbClient
+      )
     );
+
+    await Promise.all(addCustomBalanceSnapshotsPromises);
 
     // Decrease begin month by 1
     if (beginMonth > 1) {
@@ -326,7 +336,7 @@ const accountService = {
       accountId,
       fromDate,
       toDate,
-      prismaClient
+      dbClient
     );
 
     let initialBalance = priorMonthsBalance;
@@ -355,32 +365,34 @@ const accountService = {
 
       initialBalance += trxAmount;
 
-      await accountService.addCustomBalanceSnapshot(
-        accountId,
-        month,
-        year,
-        initialBalance,
-        prismaClient
+      addCustomBalanceSnapshotsPromises = [];
+
+      addCustomBalanceSnapshotsPromises.push(
+        accountService.addCustomBalanceSnapshot(accountId, month, year, initialBalance, dbClient)
       );
-      await accountService.addCustomBalanceSnapshot(
-        accountId,
-        month < 12 ? month + 1 : 1,
-        month < 12 ? year : year + 1,
-        initialBalance,
-        prismaClient
+      addCustomBalanceSnapshotsPromises.push(
+        accountService.addCustomBalanceSnapshot(
+          accountId,
+          month < 12 ? month + 1 : 1,
+          month < 12 ? year : year + 1,
+          initialBalance,
+          dbClient
+        )
       );
-      await accountService.addCustomBalanceSnapshot(
-        accountId,
-        month < 11 ? month + 2 : 1,
-        month < 11 ? year : year + 1,
-        initialBalance,
-        prismaClient
+
+      addCustomBalanceSnapshotsPromises.push(
+        accountService.addCustomBalanceSnapshot(
+          accountId,
+          month < 11 ? month + 2 : 1,
+          month < 11 ? year : year + 1,
+          initialBalance,
+          dbClient
+        )
       );
+
+      await Promise.all(addCustomBalanceSnapshotsPromises);
     }
 
-    /* for (const trx in trxList) {
-        
-            } */
     /* Logger.addLog(`FINAL BALANCE: ${initialBalance}`); */
     return initialBalance;
   },
@@ -481,12 +493,12 @@ const accountService = {
         dbClient
       )) ?? { balance: 0 };
       /* Logger.addLog("---------");
-                  Logger.addStringifiedLog(balance);
-                  Logger.addLog("---------"); */
+                                                            Logger.addStringifiedLog(balance);
+                                                            Logger.addLog("---------"); */
       /* Logger.addStringifiedLog({
-                    account_id: account.account_id,
-                    balance: balance.balance
-                  }); */
+                                                              account_id: account.account_id,
+                                                              balance: balance.balance
+                                                            }); */
       accSnapshot.push({
         account_id: account.account_id,
         balance: balance.balance ?? 0,
@@ -494,68 +506,92 @@ const accountService = {
     }
     return accSnapshot;
   },
+  recalculateAndSetAccountBalance: async (
+    userId: bigint,
+    accountId: bigint,
+    dbClient = undefined
+  ) => {
+    dbClient = await getPrismaTransactionInstance(dbClient);
+    const recalculatedBalance = await accountService.recalculateBalanceForAccountIncrementally(
+      accountId,
+      0,
+      DateTimeUtils.getCurrentUnixTimestamp() + 1,
+      dbClient
+    );
+    await accountService.setNewAccountBalance(userId, accountId, recalculatedBalance, dbClient);
+  },
   getUserAccountsBalanceSnapshot: async (
     userId,
     dbClient = undefined
   ): Promise<Array<BalanceSnapshot>> => {
-    return setupPrismaTransaction(async (prismaTx) => {
-      if (!dbClient) dbClient = prismaTx;
-      const snapArr: Array<BalanceSnapshot> = [];
+    dbClient = await getPrismaTransactionInstance(dbClient);
+    const snapArr: Array<BalanceSnapshot> = [];
 
-      // If user has no accounts, return immediately an empty array
-      if (!((await accountService.getCountOfUserAccounts(userId, dbClient)) != 0)) {
-        return snapArr;
-      }
-      const firstUserTransactionDate = await UserService.getFirstUserTransactionDate(
-        userId,
-        dbClient
-      );
-      if (!firstUserTransactionDate) return snapArr;
-
-      let firstMonth = firstUserTransactionDate.month;
-      let firstYear = firstUserTransactionDate.year;
-
-      const currentMonth = DateTimeUtils.getMonthNumberFromTimestamp(
-        DateTimeUtils.getCurrentUnixTimestamp()
-      );
-      const currentYear = DateTimeUtils.getYearFromTimestamp(
-        DateTimeUtils.getCurrentUnixTimestamp()
-      );
-      const userAccounts = await dbClient.accounts.findMany({
-        where: {
-          users_user_id: userId,
-        },
-        select: {
-          account_id: true,
-        },
-      });
-      /* Logger.addStringifiedLog(accsArr); */
-      // Get balance snapshots for all accounts every month in between the first transaction and right now
-      while (
-        DateTimeUtils.monthIsEqualOrPriorTo(firstMonth, firstYear, currentMonth, currentYear)
-      ) {
-        /* Logger.addLog(`First Month: ${firstMonth} | First Year: ${firstYear} | Current Month: ${currentMonth} | Current Year: ${currentYear}`); */
-        snapArr.push({
-          month: firstMonth,
-          year: firstYear,
-          account_snapshots: await accountService.getAllBalancesSnapshotsForMonthForUser(
-            userId,
-            firstMonth,
-            firstYear,
-            userAccounts,
-            dbClient
-          ),
-        });
-
-        if (firstMonth < 12) firstMonth++;
-        else {
-          firstMonth = 1;
-          firstYear++;
-        }
-      }
-      /* Logger.addStringifiedLog(snapArr); */
+    // If user has no accounts, return an empty array immediately
+    if (!((await accountService.getCountOfUserAccounts(userId, dbClient)) != 0)) {
       return snapArr;
+    }
+    const firstUserTransactionDate = await UserService.getFirstUserTransactionDate(
+      userId,
+      dbClient
+    );
+    if (!firstUserTransactionDate) return snapArr;
+
+    let firstMonth = firstUserTransactionDate.month;
+    let firstYear = firstUserTransactionDate.year;
+
+    const currentMonth = DateTimeUtils.getMonthNumberFromTimestamp(
+      DateTimeUtils.getCurrentUnixTimestamp()
+    );
+    const currentYear = DateTimeUtils.getYearFromTimestamp(DateTimeUtils.getCurrentUnixTimestamp());
+    const userAccounts = await dbClient.accounts.findMany({
+      where: {
+        users_user_id: userId,
+      },
+      select: {
+        account_id: true,
+      },
     });
+    /* Logger.addStringifiedLog(accsArr); */
+    // Get balance snapshots for all accounts every month in between the first transaction and right now
+    while (DateTimeUtils.monthIsEqualOrPriorTo(firstMonth, firstYear, currentMonth, currentYear)) {
+      /* Logger.addLog(`First Month: ${firstMonth} | First Year: ${firstYear} | Current Month: ${currentMonth} | Current Year: ${currentYear}`); */
+      snapArr.push({
+        month: firstMonth,
+        year: firstYear,
+        account_snapshots: await accountService.getAllBalancesSnapshotsForMonthForUser(
+          userId,
+          firstMonth,
+          firstYear,
+          userAccounts,
+          dbClient
+        ),
+      });
+
+      if (firstMonth < 12) firstMonth++;
+      else {
+        firstMonth = 1;
+        firstYear++;
+      }
+    }
+    /* Logger.addStringifiedLog(snapArr); */
+    return snapArr;
+  },
+  recalculateAllUserAccountsBalances: async (userId: bigint, dbClient = undefined) => {
+    dbClient = await getPrismaTransactionInstance(dbClient);
+    const userAccounts = await accountService.getAccountsForUser(
+      userId,
+      { account_id: true },
+      dbClient
+    );
+    const promises = [];
+    for (const account of userAccounts) {
+      promises.push(
+        accountService.recalculateAndSetAccountBalance(userId, account.account_id, dbClient)
+      );
+    }
+
+    await Promise.all(promises);
   },
 };
 
