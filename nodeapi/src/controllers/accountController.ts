@@ -3,7 +3,7 @@ import APIError from "../errorHandling/apiError.js";
 import Logger from "../utils/Logger.js";
 import CommonsController from "./commonsController.js";
 import AccountService from "../services/accountService.js";
-import { NextFunction, Request, Response } from "express";
+import {NextFunction, Request, Response} from "express";
 
 // CREATE
 const createAccountSchema = joi.object({
@@ -115,10 +115,26 @@ const getUserAccountsBalanceSnapshot = async (req: Request, res: Response, next:
   }
 };
 
+const recalculateAllUserAccountsBalances = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    await AccountService.recalculateAllUserAccountsBalances(sessionData.userId);
+    res.json('All balances successfully recalculated!');
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   createAccount,
   getAllAccountsForUser,
   deleteAccount,
   updateAccount,
-  getUserAccountsBalanceSnapshot
+  getUserAccountsBalanceSnapshot,
+  recalculateAllUserAccountsBalances,
 };

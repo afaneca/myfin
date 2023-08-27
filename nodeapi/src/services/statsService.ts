@@ -1,4 +1,4 @@
-import { prisma, setupPrismaTransaction } from '../config/prisma.js';
+import { performDatabaseRequest, prisma } from '../config/prisma.js';
 import APIError from '../errorHandling/apiError.js';
 import { Prisma } from '@prisma/client';
 import CategoryService from './categoryService.js';
@@ -132,9 +132,7 @@ const getMonthlyPatrimonyProjections = async (userId: bigint, dbClient = undefin
    *    ...
    * ]
    */
-  return setupPrismaTransaction(async (prismaTx) => {
-    if (!dbClient) dbClient = prismaTx;
-
+  return performDatabaseRequest(async (dbTx) => {
     interface ExtendedBudget extends Prisma.budgetsUpdateInput {
       planned_balance?: number;
       planned_initial_balance?: number;
@@ -147,12 +145,12 @@ const getMonthlyPatrimonyProjections = async (userId: bigint, dbClient = undefin
       userId,
       previousMonth,
       previousMonthYear,
-      dbClient
+      dbTx
     );
     let lastPlannedFinalBalance = null;
 
     for (const budget of budgets) {
-      budget.planned_balance = await BudgetService.calculateBudgetBalance(userId, budget, dbClient);
+      budget.planned_balance = await BudgetService.calculateBudgetBalance(userId, budget, dbTx);
       const month = budget.month as number;
       const year = budget.year as number;
       if (!lastPlannedFinalBalance) {
@@ -161,7 +159,7 @@ const getMonthlyPatrimonyProjections = async (userId: bigint, dbClient = undefin
           month > 1 ? month - 1 : 12,
           month > 1 ? year : year - 1,
           true,
-          dbClient
+          dbTx
         );
       } else {
         budget.planned_initial_balance = lastPlannedFinalBalance;
@@ -174,7 +172,7 @@ const getMonthlyPatrimonyProjections = async (userId: bigint, dbClient = undefin
       account_id: bigint;
       type: string;
       balance?: number;
-    }> = await dbClient.accounts.findMany({
+    }> = await dbTx.accounts.findMany({
       where: {
         users_user_id: userId,
       },
@@ -189,7 +187,7 @@ const getMonthlyPatrimonyProjections = async (userId: bigint, dbClient = undefin
         account.account_id,
         previousMonth,
         previousMonthYear,
-        dbClient
+        dbTx
       )) ?? { balance: 0 };
       account.balance = balanceSnapshot.balance ?? 0;
     }
@@ -198,7 +196,7 @@ const getMonthlyPatrimonyProjections = async (userId: bigint, dbClient = undefin
     output.accountsFromPreviousMonth = accountsFromPreviousMonth;
 
     return output;
-  });
+  }, dbClient);
 };
 
 export default {

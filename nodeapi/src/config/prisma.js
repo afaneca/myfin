@@ -11,10 +11,20 @@ export const prisma = new PrismaClient({
   /* log: ["query"] */
 });
 
-export const setupPrismaTransaction = async (transactionBody, transactionConfig = {}) =>
-  prisma.$transaction(transactionBody, transactionConfig);
+export const performDatabaseRequest = async (
+  transactionBody,
+  prismaClient = undefined,
+  transactionConfig = {}
+) => {
+  if (!prismaClient) {
+    return prisma.$transaction(async (prismaTx) => {
+      return transactionBody(prismaTx);
+    }, transactionConfig);
+  }
+  return transactionBody(prisma);
+};
 
 export default {
   prisma,
-  setupPrismaTransaction,
+  setupPrismaTransaction: performDatabaseRequest,
 };

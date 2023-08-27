@@ -1,16 +1,19 @@
-import { prisma, setupPrismaTransaction } from "../config/prisma.js";
-import EntityService from "./entityService.js";
-import CategoryService from "./categoryService.js";
-import AccountService from "./accountService.js";
-import UserService from "./userService.js";
-import DateTimeUtils from "../utils/DateTimeUtils.js";
-import { MYFIN } from "../consts.js";
-import ConvertUtils from "../utils/convertUtils.js";
-import APIError from "../errorHandling/apiError.js";
-import Logger from "../utils/Logger.js";
-import RuleService from "./ruleService.js";
+import { performDatabaseRequest, prisma } from '../config/prisma.js';
+import EntityService from './entityService.js';
+import CategoryService from './categoryService.js';
+import AccountService from './accountService.js';
+import UserService from './userService.js';
+import DateTimeUtils from '../utils/DateTimeUtils.js';
+import { MYFIN } from '../consts.js';
+import ConvertUtils from '../utils/convertUtils.js';
+import APIError from '../errorHandling/apiError.js';
+import Logger from '../utils/Logger.js';
+import RuleService from './ruleService.js';
 
-const getTransactionsForUser = async (userId: bigint, trxLimit: number) => prisma.$queryRaw`SELECT transaction_id,
+const getTransactionsForUser = async (
+  userId: bigint,
+  trxLimit: number
+) => prisma.$queryRaw`SELECT transaction_id,
                                                                                                    transactions.date_timestamp,
                                                                                                    (transactions.amount / 100) as amount,
                                                                                                    transactions.type,
@@ -39,7 +42,12 @@ const getTransactionsForUser = async (userId: bigint, trxLimit: number) => prism
                                                                                             ORDER BY transactions.date_timestamp DESC
                                                                                             LIMIT ${trxLimit}`;
 
-const getFilteredTransactionsByForUser = async (userId: bigint, page: number, pageSize: number, searchQuery: string) => {
+const getFilteredTransactionsByForUser = async (
+  userId: bigint,
+  page: number,
+  pageSize: number,
+  searchQuery: string
+) => {
   const query = `%${searchQuery}%`;
   const offsetValue = page * pageSize;
 
@@ -120,36 +128,49 @@ const getFilteredTransactionsByForUser = async (userId: bigint, page: number, pa
   const [mainQueryResult, countQueryResult, totalCountQueryResult] = await prisma.$transaction([
     mainQuery,
     countQuery,
-    totalCountQuery
+    totalCountQuery,
   ]);
   return {
     results: mainQueryResult,
     filtered_count: countQueryResult[0].count,
-    total_count: totalCountQueryResult[0].count
+    total_count: totalCountQueryResult[0].count,
   };
 };
-const createTransactionStep0 = async (userId: bigint) => {
-  const [entities, categories, accounts] = await setupPrismaTransaction(async (_) => {
+const createTransactionStep0 = async (userId: bigint, dbClient = undefined) => {
+  const [entities, categories, accounts] = await performDatabaseRequest(async (_) => {
     const ents = await EntityService.getAllEntitiesForUser(userId);
     const cats = await CategoryService.getAllCategoriesForUser(userId);
     const accs = await AccountService.getActiveAccountsForUser(userId);
 
     return [ents, cats, accs];
-  });
+  }, dbClient);
 
   return {
     entities: entities,
     categories: categories,
-    accounts: accounts
+    accounts: accounts,
   };
 };
 
-export type CreateTransactionType = { amount: number, type: string, description: string, entity_id?: bigint, account_from_id?: bigint, account_to_id?: bigint, category_id?: bigint, date_timestamp: number, is_essential: boolean };
-const createTransaction = async (userId: bigint, trx: CreateTransactionType, prismaClient = undefined) => {
+export type CreateTransactionType = {
+  amount: number;
+  type: string;
+  description: string;
+  entity_id?: bigint;
+  account_from_id?: bigint;
+  account_to_id?: bigint;
+  category_id?: bigint;
+  date_timestamp: number;
+  is_essential: boolean;
+};
+const createTransaction = async (
+  userId: bigint,
+  trx: CreateTransactionType,
+  dbClient = undefined
+) => {
   Logger.addStringifiedLog(trx);
   trx.amount = ConvertUtils.convertFloatToBigInteger(trx.amount);
-  await setupPrismaTransaction(async (prismaTx) => {
-    prismaTx = prismaClient || prismaTx;
+  await performDatabaseRequest(async (prismaTx) => {
     await prismaTx.transactions.create({
       data: {
         date_timestamp: trx.date_timestamp,
@@ -160,8 +181,8 @@ const createTransaction = async (userId: bigint, trx: CreateTransactionType, pri
         accounts_account_from_id: trx.account_from_id,
         accounts_account_to_id: trx.account_to_id,
         categories_category_id: trx.category_id,
-        is_essential: trx.is_essential
-      }
+        is_essential: trx.is_essential,
+      },
     });
 
     await UserService.setupLastUpdateTimestamp(
@@ -218,16 +239,16 @@ const createTransaction = async (userId: bigint, trx: CreateTransactionType, pri
         );
         break;
     }
-  });
+  }, dbClient);
 };
 
-const deleteTransaction = async (userId: bigint, transactionId: number) => {
-  await setupPrismaTransaction(async (prismaTx) => {
+const deleteTransaction = async (userId: bigint, transactionId: number, dbClient = undefined) => {
+  await performDatabaseRequest(async (prismaTx) => {
     const trx = await prismaTx.transactions
       .findUniqueOrThrow({
         where: {
-          transaction_id: transactionId
-        }
+          transaction_id: transactionId,
+        },
       })
       .catch((err) => {
         throw APIError.notFound(`Transaction could not be found.`);
@@ -242,8 +263,8 @@ const deleteTransaction = async (userId: bigint, transactionId: number) => {
     const accountsCount = await prismaTx.accounts.count({
       where: {
         account_id: { in: [oldAccountTo || -1, oldAccountFrom || -1] },
-        users_user_id: userId
-      }
+        users_user_id: userId,
+      },
     });
     if (accountsCount === 0) {
       throw APIError.notFound(`Account could not be found.`);
@@ -252,8 +273,8 @@ const deleteTransaction = async (userId: bigint, transactionId: number) => {
     // Delete transaction
     await prismaTx.transactions.delete({
       where: {
-        transaction_id: transactionId
-      }
+        transaction_id: transactionId,
+      },
     });
 
     await UserService.setupLastUpdateTimestamp(
@@ -301,42 +322,46 @@ const deleteTransaction = async (userId: bigint, transactionId: number) => {
         await AccountService.setNewAccountBalance(userId, oldAccountFrom, newBalance, prismaTx);
         break;
     }
-  });
+  }, undefined);
 };
 
 export type UpdatedTrxType = {
-  new_amount: number,
-  new_type: string
-  new_description: string,
-  new_entity_id: bigint,
-  new_account_from_id: bigint,
-  new_account_to_id: bigint,
-  new_category_id: bigint,
-  new_date_timestamp: number,
-  new_is_essential: boolean,
-  transaction_id: bigint,
+  new_amount: number;
+  new_type: string;
+  new_description: string;
+  new_entity_id: bigint;
+  new_account_from_id: bigint;
+  new_account_to_id: bigint;
+  new_category_id: bigint;
+  new_date_timestamp: number;
+  new_is_essential: boolean;
+  transaction_id: bigint;
   /* SPLIT TRX */
-  is_split: boolean,
-  split_amount?: number,
-  split_category?: bigint,
-  split_entity?: bigint,
-  split_type?: string,
-  split_account_from?: bigint,
-  split_account_to?: bigint,
-  split_description?: string,
-  split_is_essential?: boolean
+  is_split: boolean;
+  split_amount?: number;
+  split_category?: bigint;
+  split_entity?: bigint;
+  split_type?: string;
+  split_account_from?: bigint;
+  split_account_to?: bigint;
+  split_description?: string;
+  split_is_essential?: boolean;
 };
-const updateTransaction = async (userId: bigint, updatedTrx: UpdatedTrxType) => {
+const updateTransaction = async (
+  userId: bigint,
+  updatedTrx: UpdatedTrxType,
+  dbClient = undefined
+) => {
   const trx = {
     ...updatedTrx,
     ...{
-      new_amount: ConvertUtils.convertFloatToBigInteger(updatedTrx.new_amount)
-    }
+      new_amount: ConvertUtils.convertFloatToBigInteger(updatedTrx.new_amount),
+    },
   };
   /* trx.amount = ConvertUtils.convertFloatToBigInteger(trx.amount); */
-  await setupPrismaTransaction(async (prismaTx) => {
+  await performDatabaseRequest(async (prismaTx) => {
     const outdatedTrx = await prismaTx.transactions.findUniqueOrThrow({
-      where: { transaction_id: trx.transaction_id }
+      where: { transaction_id: trx.transaction_id },
     });
 
     const oldAmount = outdatedTrx.amount;
@@ -380,8 +405,8 @@ const updateTransaction = async (userId: bigint, updatedTrx: UpdatedTrxType) => 
         accounts_account_from_id: trx.new_account_from_id,
         accounts_account_to_id: trx.new_account_to_id,
         categories_category_id: trx.new_category_id,
-        is_essential: trx.new_is_essential
-      }
+        is_essential: trx.new_is_essential,
+      },
     });
 
     await UserService.setupLastUpdateTimestamp(
@@ -503,12 +528,12 @@ const updateTransaction = async (userId: bigint, updatedTrx: UpdatedTrxType) => 
           category_id: trx.split_category,
           account_from_id: trx.split_account_from,
           account_to_id: trx.split_account_to,
-          is_essential: trx.split_is_essential
+          is_essential: trx.split_is_essential,
         },
         prismaTx
       );
     }
-  });
+  }, dbClient);
 };
 
 const getAllTransactionsForUserInCategoryAndInMonth = async (userId: bigint, month: number, year: number, catId: bigint, type: string, dbClient = prisma) => {
@@ -577,11 +602,29 @@ interface RuleInstructions {
   isEssential?: boolean;
 }
 
-const autoCategorizeTransaction = async (userId: bigint, description: string, amount: number, type: string, accountsFromId: bigint, accountsToId: bigint, dbClient = undefined): Promise<RuleInstructions> =>
-  setupPrismaTransaction(async (prismaTx) => {
+const autoCategorizeTransaction = async (
+  userId: bigint,
+  description: string,
+  amount: number,
+  type: string,
+  accountsFromId: bigint,
+  accountsToId: bigint,
+  dbClient = undefined
+): Promise<RuleInstructions> =>
+  performDatabaseRequest(async (prismaTx) => {
     if (!dbClient) dbClient = prismaTx;
-    const matchedRule = await RuleService.getRuleForTransaction(userId, description, amount, type, accountsFromId, accountsToId, MYFIN.RULES.MATCHING.IGNORE, MYFIN.RULES.MATCHING.IGNORE, dbClient);
-    Logger.addLog("Rule found:");
+    const matchedRule = await RuleService.getRuleForTransaction(
+      userId,
+      description,
+      amount,
+      type,
+      accountsFromId,
+      accountsToId,
+      MYFIN.RULES.MATCHING.IGNORE,
+      MYFIN.RULES.MATCHING.IGNORE,
+      dbClient
+    );
+    Logger.addLog('Rule found:');
     Logger.addStringifiedLog(matchedRule);
     if (!matchedRule) return {};
     return {
@@ -594,9 +637,9 @@ const autoCategorizeTransaction = async (userId: bigint, description: string, am
       selectedEntityID: matchedRule.assign_entity_id,
       selectedAccountFromID: matchedRule.assign_account_from_id,
       selectedAccountToID: matchedRule.assign_account_to_id,
-      isEssential: matchedRule.assign_is_essential
+      isEssential: matchedRule.assign_is_essential,
     };
-  }) as Promise<RuleInstructions>;
+  }, dbClient) as Promise<RuleInstructions>;
 
 export default {
   getTransactionsForUser,
