@@ -1,4 +1,4 @@
-import {getPrismaTransactionInstance, prisma} from '../config/prisma.js';
+import {prisma, setupPrismaTransaction} from '../config/prisma.js';
 import {MYFIN} from '../consts.js';
 import ConvertUtils from '../utils/convertUtils.js';
 import CategoryService from './categoryService.js';
@@ -33,7 +33,7 @@ const getAllCategoriesForUser = async (
                              WHERE budgets_users_user_id = ${userId}
                                AND (budgets_budget_id = ${budgetId})) b
                               RIGHT JOIN categories ON categories.category_id = b.categories_category_id
-                     WHERE users_user_id = ${userId}
+                       WHERE users_user_id = ${userId}
                          AND status = ${MYFIN.CATEGORY_STATUS.ACTIVE} `;
 
 const calculateBudgetBalance = async (
@@ -123,12 +123,12 @@ const getSumAmountsForBudget = async (userId, budget, dbClient = prisma) => {
         );
 
       /* Logger.addLog(
-                    `Category: ${category.category_id} | calculatedAmounts: ${JSON.stringify(
-                      calculatedAmounts
-                    )} | calculatedAmountsFromInvestmentAccounts: ${JSON.stringify(
-                      calculatedAmountsFromInvestmentAccounts
-                    )}`
-                  ); */
+              `Category: ${category.category_id} | calculatedAmounts: ${JSON.stringify(
+                calculatedAmounts
+              )} | calculatedAmountsFromInvestmentAccounts: ${JSON.stringify(
+                calculatedAmountsFromInvestmentAccounts
+              )}`
+            ); */
       // Unrealized gains
       const creditFromInvestmentAccounts =
         calculatedAmountsFromInvestmentAccounts?.account_balance_credit;
@@ -145,8 +145,8 @@ const getSumAmountsForBudget = async (userId, budget, dbClient = prisma) => {
     }
 
     /* Logger.addLog(
-              `Category: ${category.category_id} | amountCredit: ${amountCredit} | amountDebit: ${amountDebit}`
-            ); */
+          `Category: ${category.category_id} | amountCredit: ${amountCredit} | amountDebit: ${amountDebit}`
+        ); */
 
     if (!category.exclude_from_budgets) {
       balanceCredit += amountCredit;
@@ -185,10 +185,10 @@ const calculateBudgetBalanceChangePercentage = async (
   return ((finalBalance - initialBalance) / Math.abs(initialBalance)) * 100;
 };
 
-const getBudgetsListForUser = async (userId: bigint, dbClient = prisma) => {
+const getBudgetsListForUser = async (userId: bigint, dbclient = prisma) => {
   const whereCondition = { users_user_id: userId };
 
-  return dbClient.budgets.findMany({
+  return dbclient.budgets.findMany({
     where: whereCondition,
     select: {
       month: true,
@@ -198,41 +198,42 @@ const getBudgetsListForUser = async (userId: bigint, dbClient = prisma) => {
     orderBy: [{ year: 'desc' }, { month: 'desc' }],
   });
 };
-const getAllBudgetsForUser = async (userId: bigint, status: string, dbClient = undefined) => {
-  dbClient = await getPrismaTransactionInstance(dbClient);
-  let whereCondition = {};
-  if (status) {
-    whereCondition = {
-      users_user_id: userId,
-      status: status,
-    };
-  } else {
-    whereCondition = { users_user_id: userId };
-  }
-
-  const budgetsList = await dbClient.budgets.findMany({
-    where: whereCondition,
-    orderBy: [{ year: 'desc' }, { month: 'desc' }],
-  });
-
-  for await (const budget of budgetsList) {
-    budget.balance_value = await calculateBudgetBalance(userId, budget, dbClient);
-    budget.balance_change_percentage = await calculateBudgetBalanceChangePercentage(
-      userId,
-      budget,
-      budget.balance_value,
-      dbClient
-    );
-    const budgetSums = await getSumAmountsForBudget(userId, budget, dbClient);
-    budget.credit_amount = budgetSums.balance_credit;
-    budget.debit_amount = budgetSums.balance_debit;
-    if (parseFloat(budget.credit_amount) == 0) {
-      budget.savings_rate_percentage = 0;
+const getAllBudgetsForUser = async (userId: bigint, status: string) => {
+  return setupPrismaTransaction(async (prismaTx) => {
+    let whereCondition = {};
+    if (status) {
+      whereCondition = {
+        users_user_id: userId,
+        status: status,
+      };
     } else {
-      budget.savings_rate_percentage =
-        (parseFloat(budget.balance_value) / parseFloat(budget.credit_amount)) * 100;
+      whereCondition = { users_user_id: userId };
     }
-  }
+
+    const budgetsList = await prismaTx.budgets.findMany({
+      where: whereCondition,
+      orderBy: [{ year: 'desc' }, { month: 'desc' }],
+    });
+
+    for await (const budget of budgetsList) {
+      budget.balance_value = await calculateBudgetBalance(userId, budget, prismaTx);
+      budget.balance_change_percentage = await calculateBudgetBalanceChangePercentage(
+        userId,
+        budget,
+        budget.balance_value,
+        prismaTx
+      );
+      const budgetSums = await getSumAmountsForBudget(userId, budget, prismaTx);
+      budget.credit_amount = budgetSums.balance_credit;
+      budget.debit_amount = budgetSums.balance_debit;
+      if (parseFloat(budget.credit_amount) == 0) {
+        budget.savings_rate_percentage = 0;
+      } else {
+        budget.savings_rate_percentage =
+          (parseFloat(budget.balance_value) / parseFloat(budget.credit_amount)) * 100;
+      }
+    }
+  });
 };
 
 const getBudgetsForUserByPage = async (
@@ -302,32 +303,38 @@ const getFilteredBudgetsForUserByPage = async (
   page: number,
   pageSize: number,
   query: string,
-  status: string,
-  dbClient = undefined
-) => {
-  dbClient = await getPrismaTransactionInstance(dbClient);
-  const budgetsArr = await getBudgetsForUserByPage(userId, page, pageSize, query, status, dbClient);
-
-  for await (const budget of budgetsArr.results) {
-    budget.balance_value = await calculateBudgetBalance(userId, budget, dbClient);
-    budget.balance_change_percentage = await calculateBudgetBalanceChangePercentage(
+  status: string
+) =>
+  setupPrismaTransaction(async (prismaTx) => {
+    const budgetsArr = await getBudgetsForUserByPage(
       userId,
-      budget,
-      budget.balance_value,
-      dbClient
+      page,
+      pageSize,
+      query,
+      status,
+      prismaTx
     );
-    const budgetSums = await getSumAmountsForBudget(userId, budget, dbClient);
-    budget.credit_amount = budgetSums.balance_credit;
-    budget.debit_amount = budgetSums.balance_debit;
-    if (parseFloat(budget.credit_amount) === 0) {
-      budget.savings_rate_percentage = 0;
-    } else {
-      budget.savings_rate_percentage =
-        (parseFloat(budget.balance_value) / parseFloat(budget.credit_amount)) * 100;
+
+    for await (const budget of budgetsArr.results) {
+      budget.balance_value = await calculateBudgetBalance(userId, budget, prismaTx);
+      budget.balance_change_percentage = await calculateBudgetBalanceChangePercentage(
+        userId,
+        budget,
+        budget.balance_value,
+        prismaTx
+      );
+      const budgetSums = await getSumAmountsForBudget(userId, budget, prismaTx);
+      budget.credit_amount = budgetSums.balance_credit;
+      budget.debit_amount = budgetSums.balance_debit;
+      if (parseFloat(budget.credit_amount) === 0) {
+        budget.savings_rate_percentage = 0;
+      } else {
+        budget.savings_rate_percentage =
+          (parseFloat(budget.balance_value) / parseFloat(budget.credit_amount)) * 100;
+      }
     }
-  }
-  return budgetsArr;
-};
+    return budgetsArr;
+  });
 
 const getCategoryDataForNewBudget = async (userId: bigint) => {
   const categories = await CategoryService.getAllCategoriesForUser(userId);
@@ -462,7 +469,7 @@ const parseCatValuesIntoBudgetCategories = async (
       parseFloat(catValue.planned_value_debit)
     );
     /* Logger.addLog(`cat value debit: ${catValue.planned_value_debit} || converted: ${plannedValueDebit}`);
-            Logger.addStringifiedLog(catValue); */
+        Logger.addStringifiedLog(catValue); */
 
     promises.push(
       addOrUpdateCategoryValueInBudget(
@@ -477,29 +484,22 @@ const parseCatValuesIntoBudgetCategories = async (
   }
   return Promise.all(promises);
 };
-const createBudget = async (
-  userId,
-  month,
-  year,
-  catValuesArr,
-  observations,
-  dbClient = undefined
-) => {
-  dbClient = await getPrismaTransactionInstance(dbClient);
-  const budget = await dbClient.budgets.create({
-    data: {
-      month: month,
-      year: year,
-      observations: observations,
-      is_open: true,
-      users_user_id: userId,
-    },
-  });
+const createBudget = async (userId, month, year, catValuesArr, observations) =>
+  setupPrismaTransaction(async (prismaTx) => {
+    const budget = await prismaTx.budgets.create({
+      data: {
+        month: month,
+        year: year,
+        observations: observations,
+        is_open: true,
+        users_user_id: userId,
+      },
+    });
 
-  // ADD CAT VALUES TO BUDGET CATEGORIES
-  await parseCatValuesIntoBudgetCategories(userId, budget.budget_id, catValuesArr, dbClient);
-  return budget.budget_id;
-};
+    // ADD CAT VALUES TO BUDGET CATEGORIES
+    await parseCatValuesIntoBudgetCategories(userId, budget.budget_id, catValuesArr, prismaTx);
+    return budget.budget_id;
+  });
 
 const getTotalEssentialDebitTransactionsAmountForBudget = async (
   userId,
@@ -577,9 +577,9 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
       );
 
     /* Logger.addLog(`-----------------------
-            Category: ${category.name}
-            Calculated amounts: ${JSON.stringify(calculatedAmounts[0])}
-            `); */
+        Category: ${category.name}
+        Calculated amounts: ${JSON.stringify(calculatedAmounts[0])}
+        `); */
 
     // Unrealized gains
     const creditFromInvestmentAccounts = calculatedAmountsFromInvestmentAccounts
@@ -694,30 +694,22 @@ const getBudget = async (userId: bigint, budgetId: number | bigint, dbclient = p
   return budget;
 };
 
-const updateBudget = async (
-  userId,
-  budgetId,
-  month,
-  year,
-  catValuesArr,
-  observations,
-  dbClient = undefined
-) => {
-  dbClient = await getPrismaTransactionInstance(dbClient);
-  await dbClient.budgets.update({
-    where: {
-      users_user_id: userId,
-      budget_id: budgetId,
-    },
-    data: {
-      month,
-      year,
-      observations,
-    },
+const updateBudget = async (userId, budgetId, month, year, catValuesArr, observations) =>
+  setupPrismaTransaction(async (prismaTx) => {
+    await prismaTx.budgets.update({
+      where: {
+        users_user_id: userId,
+        budget_id: budgetId,
+      },
+      data: {
+        month,
+        year,
+        observations,
+      },
+    });
+    // ADD CAT VALUES TO BUDGET CATEGORIES
+    await parseCatValuesIntoBudgetCategories(userId, budgetId, catValuesArr, prismaTx);
   });
-  // ADD CAT VALUES TO BUDGET CATEGORIES
-  await parseCatValuesIntoBudgetCategories(userId, budgetId, catValuesArr, dbClient);
-};
 
 const changeBudgetStatus = async (userId, budgetId, isOpen, dbClient = prisma) =>
   dbClient.budgets.update({
@@ -730,28 +722,30 @@ const changeBudgetStatus = async (userId, budgetId, isOpen, dbClient = prisma) =
     },
   });
 
-const removeBudget = async (userId, budgetId, dbClient = undefined) => {
-  dbClient = await getPrismaTransactionInstance(dbClient);
+const removeBudget = async (userId, budgetId, dbClient = undefined) =>
+  setupPrismaTransaction(async (prismaTx) => {
+    if (!dbClient) {
+      dbClient = prismaTx;
+    }
+    await dbClient.budgets_has_categories.deleteMany({
+      where: {
+        budgets_budget_id: budgetId,
+        budgets_users_user_id: userId,
+      },
+    });
 
-  await dbClient.budgets_has_categories.deleteMany({
-    where: {
-      budgets_budget_id: budgetId,
-      budgets_users_user_id: userId,
-    },
+    await dbClient.budgets.delete({
+      where: {
+        budget_id: budgetId,
+        users_user_id: userId,
+      },
+    });
   });
-
-  await dbClient.budgets.delete({
-    where: {
-      budget_id: budgetId,
-      users_user_id: userId,
-    },
-  });
-};
 
 const getCountOfUserBudgets = async (userId, dbClient = prisma) =>
-  dbClient.budgets.count({
-    where: { users_user_id: userId },
-  });
+    dbClient.budgets.count({
+      where: {users_user_id: userId},
+    });
 
 const getBudgetAfterCertainMonth = async (
   userId: bigint,

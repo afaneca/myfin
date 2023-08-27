@@ -11,22 +11,10 @@ export const prisma = new PrismaClient({
   /* log: ["query"] */
 });
 
-/**
- * Sets up a prisma transaction (if ***prismaClient*** is undefined) and returns the db client instance to be used
- * @param transactionConfig
- * @param prismaClient - if defined, this function will simply return it instead of creating a new db transaction
- * @returns the db instance to be used
- */
-export const getPrismaTransactionInstance = async (prismaClient = undefined, transactionConfig = {}) => {
-  if (!prismaClient) {
-    await prisma.$transaction(async (prismaTx) => {
-      return prismaTx
-    }, transactionConfig);
-  }
-  return prismaClient;
-}
+export const setupPrismaTransaction = async (transactionBody, transactionConfig = {}) =>
+  prisma.$transaction(transactionBody, transactionConfig);
 
 export default {
   prisma,
-  getPrismaTransactionInstance,
+  setupPrismaTransaction,
 };
