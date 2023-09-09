@@ -1,16 +1,18 @@
-import {NextFunction, Request, Response} from "express";
-import APIError from "../errorHandling/apiError.js";
-import Logger from "../utils/Logger.js";
-import CommonsController from "./commonsController.js";
-import TransactionService from "../services/transactionService.js";
-import {MYFIN} from "../consts.js";
+import {NextFunction, Request, Response} from 'express';
+import APIError from '../errorHandling/apiError.js';
+import Logger from '../utils/Logger.js';
+import CommonsController from './commonsController.js';
+import TransactionService from '../services/transactionService.js';
+import {MYFIN} from '../consts.js';
 import joi from 'joi';
 import AccountService from '../services/accountService.js';
+import CategoryService from '../services/categoryService.js';
+import EntityService from '../services/entityService.js';
 
 // READ
 const getAllTrxForUserSchema = joi
   .object({
-    trx_limit: joi.number().default(300).min(1).max(300)
+    trx_limit: joi.number().default(300).min(1).max(300),
   })
   .unknown(true);
 
@@ -33,7 +35,7 @@ const getTransactionsForUser = async (req: Request, res: Response, next: NextFun
 const getFilteredTrxByPageSchema = joi
   .object({
     page_size: joi.number().default(MYFIN.DEFAULT_TRANSACTIONS_FETCH_LIMIT).min(1).max(300),
-    query: joi.string().empty("").default("")
+    query: joi.string().empty('').default(''),
   })
   .unknown(true);
 
@@ -69,13 +71,13 @@ const createTransactionStep0 = async (req, res, next) => {
 const createTransactionSchema = joi.object({
   amount: joi.number().required(),
   type: joi.string().trim().required(),
-  description: joi.string().trim().allow("").default(""),
-  entity_id: joi.number().empty(""),
-  account_from_id: joi.number().empty(""),
-  account_to_id: joi.number().empty(""),
-  category_id: joi.number().empty(""),
+  description: joi.string().trim().allow('').default(''),
+  entity_id: joi.number().empty(''),
+  account_from_id: joi.number().empty(''),
+  account_to_id: joi.number().empty(''),
+  category_id: joi.number().empty(''),
   date_timestamp: joi.number().required(),
-  is_essential: joi.boolean().required()
+  is_essential: joi.boolean().required(),
 });
 
 const createTransaction = async (req, res, next) => {
@@ -94,24 +96,24 @@ const createTransaction = async (req, res, next) => {
 const updateTransactionSchema = joi.object({
   new_amount: joi.number().required(),
   new_type: joi.string().trim().required(),
-  new_description: joi.string().trim().allow("").default(""),
-  new_entity_id: joi.number().empty(""),
-  new_account_from_id: joi.number().empty(""),
-  new_account_to_id: joi.number().empty(""),
-  new_category_id: joi.number().empty(""),
+  new_description: joi.string().trim().allow('').default(''),
+  new_entity_id: joi.number().empty(''),
+  new_account_from_id: joi.number().empty(''),
+  new_account_to_id: joi.number().empty(''),
+  new_category_id: joi.number().empty(''),
   new_date_timestamp: joi.number().required(),
   new_is_essential: joi.boolean().required(),
   transaction_id: joi.number().required(),
   /* SPLIT TRX */
   is_split: joi.boolean().default(false),
-  split_amount: joi.number().empty("").optional(),
-  split_category: joi.number().empty("").optional(),
-  split_entity: joi.number().empty("").optional(),
-  split_type: joi.string().trim().empty("").optional(),
-  split_account_from: joi.number().empty("").optional(),
-  split_account_to: joi.number().empty("").optional(),
-  split_description: joi.string().empty("").trim().optional(),
-  split_is_essential: joi.boolean().empty("").default(false).optional()
+  split_amount: joi.number().empty('').optional(),
+  split_category: joi.number().empty('').optional(),
+  split_entity: joi.number().empty('').optional(),
+  split_type: joi.string().trim().empty('').optional(),
+  split_account_from: joi.number().empty('').optional(),
+  split_account_to: joi.number().empty('').optional(),
+  split_description: joi.string().empty('').trim().optional(),
+  split_is_essential: joi.boolean().empty('').default(false).optional(),
 });
 
 const updateTransaction = async (req, res, next) => {
@@ -128,7 +130,7 @@ const updateTransaction = async (req, res, next) => {
 
 // DELETE
 const deleteTransactionSchema = joi.object({
-  transaction_id: joi.number().required()
+  transaction_id: joi.number().required(),
 });
 
 const deleteTransaction = async (req, res, next) => {
@@ -143,17 +145,31 @@ const deleteTransaction = async (req, res, next) => {
   }
 };
 
-const transactionsForUserInCategoryAndInMonthSchema = joi.object({
-  month: joi.number().required(),
-  year: joi.number().required(),
-  cat_id: joi.number().required(),
-  type: joi.string().allow(MYFIN.TRX_TYPES.EXPENSE, MYFIN.TRX_TYPES.INCOME, MYFIN.TRX_TYPES.TRANSFER)
-}).unknown(true);
-const getAllTransactionsForUserInCategoryAndInMonth = async (req: Request, res: Response, next: NextFunction) => {
+const transactionsForUserInCategoryAndInMonthSchema = joi
+  .object({
+    month: joi.number().required(),
+    year: joi.number().required(),
+    cat_id: joi.number().required(),
+    type: joi
+      .string()
+      .allow(MYFIN.TRX_TYPES.EXPENSE, MYFIN.TRX_TYPES.INCOME, MYFIN.TRX_TYPES.TRANSFER),
+  })
+  .unknown(true);
+const getAllTransactionsForUserInCategoryAndInMonth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const sessionData = await CommonsController.checkAuthSessionValidity(req);
     const input = await transactionsForUserInCategoryAndInMonthSchema.validateAsync(req.query);
-    const data = await TransactionService.getAllTransactionsForUserInCategoryAndInMonth(sessionData.userId, input.month, input.year, input.cat_id, input.type);
+    const data = await TransactionService.getAllTransactionsForUserInCategoryAndInMonth(
+      sessionData.userId,
+      input.month,
+      input.year,
+      input.cat_id,
+      input.type
+    );
     res.json(data);
   } catch (err) {
     Logger.addLog(err);
@@ -164,9 +180,11 @@ const getAllTransactionsForUserInCategoryAndInMonth = async (req: Request, res: 
 const autoCategorizeTransactionSchema = joi.object({
   description: joi.string().required(),
   amount: joi.number().required(),
-  type: joi.string().allow(MYFIN.TRX_TYPES.EXPENSE, MYFIN.TRX_TYPES.INCOME, MYFIN.TRX_TYPES.TRANSFER),
+  type: joi
+    .string()
+    .allow(MYFIN.TRX_TYPES.EXPENSE, MYFIN.TRX_TYPES.INCOME, MYFIN.TRX_TYPES.TRANSFER),
   account_from_id: joi.number().required(),
-  account_to_id: joi.number().required()
+  account_to_id: joi.number().required(),
 });
 const autoCategorizeTransaction = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -198,6 +216,46 @@ const importTransactionsStep0 = async (req: Request, res: Response, next: NextFu
   }
 };
 
+const importTrxStep1Schema = joi.object({
+  account_id: joi.number().required(),
+  trx_list: joi.any(),
+});
+
+const importTransactionsStep1 = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const input = await importTrxStep1Schema.validateAsync(req.body);
+
+    if (!(await AccountService.doesAccountBelongToUser(sessionData.userId, input.account_id))) {
+      throw APIError.notAuthorized();
+    }
+
+    const [fillData, categories, entities, accounts] = await Promise.all([
+      TransactionService.autoCategorizeTransactionList(
+        sessionData.userId,
+        input.account_id,
+        JSON.parse(input.trx_list)
+      ),
+      CategoryService.getAllCategoriesForUser(sessionData.userId, {
+        category_id: true,
+        name: true,
+      }),
+      EntityService.getAllEntitiesForUser(sessionData.userId, { entity_id: true, name: true }),
+      AccountService.getAccountsForUser(sessionData.userId, { account_id: true, name: true }),
+    ]);
+
+    res.json({
+      fillData,
+      categories,
+      entities,
+      accounts,
+    });
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getTransactionsForUser,
   getFilteredTrxByPage,
@@ -208,4 +266,5 @@ export default {
   getAllTransactionsForUserInCategoryAndInMonth,
   autoCategorizeTransaction,
   importTransactionsStep0,
+  importTransactionsStep1,
 };

@@ -626,20 +626,53 @@ const autoCategorizeTransaction = async (
     );
     Logger.addLog('Rule found:');
     Logger.addStringifiedLog(matchedRule);
-    if (!matchedRule) return {};
+
     return {
-      matching_rule: matchedRule.rule_id,
+      matching_rule: matchedRule?.rule_id,
       date: undefined,
       description: description,
       amount: amount,
       type: type,
-      selectedCategoryID: matchedRule.assign_category_id,
-      selectedEntityID: matchedRule.assign_entity_id,
-      selectedAccountFromID: matchedRule.assign_account_from_id,
-      selectedAccountToID: matchedRule.assign_account_to_id,
-      isEssential: matchedRule.assign_is_essential,
+      selectedCategoryID: matchedRule?.assign_category_id,
+      selectedEntityID: matchedRule?.assign_entity_id,
+      selectedAccountFromID: matchedRule?.assign_account_from_id,
+      selectedAccountToID: matchedRule?.assign_account_to_id,
+      isEssential: matchedRule?.assign_is_essential,
     };
   }, dbClient) as Promise<RuleInstructions>;
+
+interface TransactionPreRuleInstructions {
+  date?: number;
+  description?: string;
+  amount?: number;
+  type?: string;
+  accounts_account_from_id?: bigint;
+  accounts_account_to_id?: bigint;
+}
+
+const autoCategorizeTransactionList = async (
+  userId: bigint,
+  accountId: bigint,
+  trxList: Array<TransactionPreRuleInstructions>,
+  dbClient = undefined
+) => {
+  const promises = [];
+  for (const trx of trxList) {
+    promises.push(
+      autoCategorizeTransaction(
+        userId,
+        trx.description,
+        trx.amount,
+        trx.type,
+        trx.accounts_account_from_id,
+        trx.accounts_account_to_id,
+        dbClient
+      )
+    );
+  }
+
+  return Promise.all(promises);
+};
 
 export default {
   getTransactionsForUser,
@@ -650,5 +683,6 @@ export default {
   updateTransaction,
   getAllTransactionsForUserInCategoryAndInMonth,
   getCountOfUserTransactions,
-  autoCategorizeTransaction
+  autoCategorizeTransaction,
+  autoCategorizeTransactionList,
 };

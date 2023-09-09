@@ -117,28 +117,28 @@ const checkStringMatcher = (rule: Rule, attribute: string, ruleOperator: string,
   }
   switch (ruleOperator) {
     case MYFIN.RULES.OPERATOR.CONTAINS:
-      if (ruleValue.toUpperCase().includes(attribute.toUpperCase())) {
+      if (attribute.toUpperCase().includes(ruleValue.toUpperCase())) {
         return RuleMatcherResult.MATCHED;
       } else {
         // Fails the validation -> try the next rule
         return RuleMatcherResult.FAILED;
       }
     case MYFIN.RULES.OPERATOR.NOT_CONTAINS:
-      if (!ruleValue.toUpperCase().includes(attribute.toUpperCase())) {
+      if (!attribute.toUpperCase().includes(ruleValue.toUpperCase())) {
         return RuleMatcherResult.MATCHED;
       } else {
         // Fails the validation -> try the next rule
         return RuleMatcherResult.FAILED;
       }
     case MYFIN.RULES.OPERATOR.EQUALS:
-      if (ruleValue.toUpperCase() === attribute.toUpperCase()) {
+      if (attribute.toUpperCase() === ruleValue.toUpperCase()) {
         return RuleMatcherResult.MATCHED;
       } else {
         // Fails the validation -> try the next rule
         return RuleMatcherResult.FAILED;
       }
     case MYFIN.RULES.OPERATOR.NOT_EQUALS:
-      if (ruleValue.toUpperCase() !== attribute.toUpperCase()) {
+      if (attribute.toUpperCase() !== ruleValue.toUpperCase()) {
         return RuleMatcherResult.MATCHED;
       } else {
         // Fails the validation -> try the next rule
