@@ -88,7 +88,7 @@ model categories {
 }
 
 model entities {
-  entity_id     Int            @id @unique(map: "entity_id_UNIQUE") @default(autoincrement())
+  entity_id     BigInt         @id @unique(map: "entity_id_UNIQUE") @default(autoincrement())
   name          String         @db.VarChar(255)
   users_user_id BigInt
   transactions  transactions[]
@@ -184,7 +184,7 @@ model transactions {
   amount                   BigInt
   type                     String      @db.Char(1)
   description              String?     @db.LongText
-  entities_entity_id       Int?
+  entities_entity_id       BigInt?
   accounts_account_from_id BigInt?
   accounts_account_to_id   BigInt?
   categories_category_id   BigInt?

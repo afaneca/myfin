@@ -14,33 +14,33 @@ const getTransactionsForUser = async (
   userId: bigint,
   trxLimit: number
 ) => prisma.$queryRaw`SELECT transaction_id,
-                                                                                                   transactions.date_timestamp,
-                                                                                                   (transactions.amount / 100) as amount,
-                                                                                                   transactions.type,
-                                                                                                   transactions.is_essential,
-                                                                                                   transactions.description,
-                                                                                                   entities.entity_id,
-                                                                                                   entities.name               as entity_name,
-                                                                                                   categories_category_id,
-                                                                                                   categories.name             as category_name,
-                                                                                                   accounts_account_from_id,
-                                                                                                   acc_to.name                 as account_to_name,
-                                                                                                   accounts_account_to_id,
-                                                                                                   acc_from.name               as account_from_name
-                                                                                            FROM transactions
-                                                                                                     LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
-                                                                                                     LEFT JOIN categories
-                                                                                                               ON categories.category_id = transactions.categories_category_id
-                                                                                                     LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
-                                                                                                     LEFT JOIN accounts acc_to
-                                                                                                               ON acc_to.account_id = transactions.accounts_account_to_id
-                                                                                                     LEFT JOIN accounts acc_from
-                                                                                                               ON acc_from.account_id = transactions.accounts_account_from_id
-                                                                                            WHERE acc_to.users_user_id = ${userId}
-                                                                                               OR acc_from.users_user_id = ${userId}
-                                                                                            GROUP BY transaction_id
-                                                                                            ORDER BY transactions.date_timestamp DESC
-                                                                                            LIMIT ${trxLimit}`;
+                             transactions.date_timestamp,
+                             (transactions.amount / 100) as amount,
+                             transactions.type,
+                             transactions.is_essential,
+                             transactions.description,
+                             entities.entity_id,
+                             entities.name               as entity_name,
+                             categories_category_id,
+                             categories.name             as category_name,
+                             accounts_account_from_id,
+                             acc_to.name                 as account_to_name,
+                             accounts_account_to_id,
+                             acc_from.name               as account_from_name
+                      FROM transactions
+                             LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
+                             LEFT JOIN categories
+                                       ON categories.category_id = transactions.categories_category_id
+                             LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
+                             LEFT JOIN accounts acc_to
+                                       ON acc_to.account_id = transactions.accounts_account_to_id
+                             LEFT JOIN accounts acc_from
+                                       ON acc_from.account_id = transactions.accounts_account_from_id
+                      WHERE acc_to.users_user_id = ${userId}
+                         OR acc_from.users_user_id = ${userId}
+                      GROUP BY transaction_id
+                      ORDER BY transactions.date_timestamp DESC
+                      LIMIT ${trxLimit}`;
 
 const getFilteredTransactionsByForUser = async (
   userId: bigint,
@@ -67,61 +67,61 @@ const getFilteredTransactionsByForUser = async (
                                             accounts_account_to_id,
                                             acc_from.name               as account_from_name
                                      FROM transactions
-                                              LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
-                                              LEFT JOIN categories
-                                                        ON categories.category_id = transactions.categories_category_id
-                                              LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
-                                              LEFT JOIN accounts acc_to
-                                                        ON acc_to.account_id = transactions.accounts_account_to_id
-                                              LEFT JOIN accounts acc_from
-                                                        ON acc_from.account_id = transactions.accounts_account_from_id
+                                            LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
+                                            LEFT JOIN categories
+                                                      ON categories.category_id = transactions.categories_category_id
+                                            LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
+                                            LEFT JOIN accounts acc_to
+                                                      ON acc_to.account_id = transactions.accounts_account_to_id
+                                            LEFT JOIN accounts acc_from
+                                                      ON acc_from.account_id = transactions.accounts_account_from_id
                                      WHERE (acc_to.users_user_id = ${userId} OR acc_from.users_user_id = ${userId})
                                        AND (transactions.description LIKE
                                             ${query} OR
                                             acc_from.name LIKE ${query}
-                                         OR acc_to.name LIKE ${query}
-                                         OR amount LIKE ${query}
-                                         OR entities.name LIKE ${query}
-                                         OR categories.name LIKE ${query})
+                                       OR acc_to.name LIKE ${query}
+                                       OR amount LIKE ${query}
+                                       OR entities.name LIKE ${query}
+                                       OR categories.name LIKE ${query})
                                      GROUP BY transaction_id
                                      ORDER BY transactions.date_timestamp
-                                             DESC
+                                         DESC
                                      LIMIT ${pageSize} OFFSET ${offsetValue}`;
 
   // count of total of filtered results
   const countQuery = prisma.$queryRaw`SELECT count(*) as 'count'
                                       FROM (SELECT transactions.date_timestamp
                                             from transactions
-                                                     LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
-                                                     LEFT JOIN categories
-                                                               ON categories.category_id = transactions.categories_category_id
-                                                     LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
-                                                     LEFT JOIN accounts acc_to
-                                                               ON acc_to.account_id = transactions.accounts_account_to_id
-                                                     LEFT JOIN accounts acc_from
-                                                               ON acc_from.account_id = transactions.accounts_account_from_id
+                                                   LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
+                                                   LEFT JOIN categories
+                                                             ON categories.category_id = transactions.categories_category_id
+                                                   LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
+                                                   LEFT JOIN accounts acc_to
+                                                             ON acc_to.account_id = transactions.accounts_account_to_id
+                                                   LEFT JOIN accounts acc_from
+                                                             ON acc_from.account_id = transactions.accounts_account_from_id
                                             WHERE (acc_to.users_user_id = ${userId} OR acc_from.users_user_id = ${userId})
                                               AND (transactions.description LIKE
                                                    ${query} OR
                                                    acc_from.name LIKE ${query}
-                                                OR acc_to.name LIKE ${query}
-                                                OR amount LIKE ${query}
-                                                OR entities.name LIKE ${query}
-                                                OR categories.name LIKE
-                                                   ${query})
+                                              OR acc_to.name LIKE ${query}
+                                              OR amount LIKE ${query}
+                                              OR entities.name LIKE ${query}
+                                              OR categories.name LIKE
+                                                 ${query})
                                             GROUP BY transaction_id) trx`;
 
   const totalCountQuery = prisma.$queryRaw`SELECT count(*) as 'count'
                                            FROM (SELECT transactions.date_timestamp
                                                  from transactions
-                                                          LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
-                                                          LEFT JOIN categories
-                                                                    ON categories.category_id = transactions.categories_category_id
-                                                          LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
-                                                          LEFT JOIN accounts acc_to
-                                                                    ON acc_to.account_id = transactions.accounts_account_to_id
-                                                          LEFT JOIN accounts acc_from
-                                                                    ON acc_from.account_id = transactions.accounts_account_from_id
+                                                        LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
+                                                        LEFT JOIN categories
+                                                                  ON categories.category_id = transactions.categories_category_id
+                                                        LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
+                                                        LEFT JOIN accounts acc_to
+                                                                  ON acc_to.account_id = transactions.accounts_account_to_id
+                                                        LEFT JOIN accounts acc_from
+                                                                  ON acc_from.account_id = transactions.accounts_account_from_id
                                                  WHERE (acc_to.users_user_id = ${userId} OR acc_from.users_user_id = ${userId})
                                                  GROUP BY transaction_id) trx`;
 
@@ -241,6 +241,45 @@ const createTransaction = async (
     }
   }, dbClient);
 };
+
+const createTransactionsInBulk = async (
+  userId: bigint,
+  trxList: Array<CreateTransactionType>,
+  dbClient = undefined
+) =>
+  performDatabaseRequest(async (prismaTx) => {
+    let importedCnt = 0;
+    for (const trx of trxList) {
+      if (
+        !trx.date_timestamp ||
+        !trx.amount ||
+        !trx.type ||
+        (!trx.account_from_id && !trx.account_to_id)
+      ) {
+        continue;
+      }
+
+      // Both accounts (if defined) need to belong to the user making the request
+      if (
+        trx.account_from_id &&
+        !(await AccountService.doesAccountBelongToUser(userId, trx.account_from_id))
+      ) {
+        throw APIError.notAuthorized();
+      }
+
+      if (
+        trx.account_to_id &&
+        !(await AccountService.doesAccountBelongToUser(userId, trx.account_to_id))
+      ) {
+        throw APIError.notAuthorized();
+      }
+
+      await createTransaction(userId, trx, prismaTx);
+      importedCnt++;
+    }
+
+    return importedCnt;
+  }, dbClient);
 
 const deleteTransaction = async (userId: bigint, transactionId: number, dbClient = undefined) => {
   await performDatabaseRequest(async (prismaTx) => {
@@ -536,7 +575,14 @@ const updateTransaction = async (
   }, dbClient);
 };
 
-const getAllTransactionsForUserInCategoryAndInMonth = async (userId: bigint, month: number, year: number, catId: bigint, type: string, dbClient = prisma) => {
+const getAllTransactionsForUserInCategoryAndInMonth = async (
+  userId: bigint,
+  month: number,
+  year: number,
+  catId: bigint,
+  type: string,
+  dbClient = prisma
+) => {
   const nextMonth = month < 12 ? month + 1 : 1;
   const nextMonthsYear = month < 12 ? year : year + 1;
   const maxDate = new Date(nextMonthsYear, nextMonth - 1, 1);
@@ -558,33 +604,37 @@ const getAllTransactionsForUserInCategoryAndInMonth = async (userId: bigint, mon
                                    accounts_account_to_id,
                                    acc_from.name               as account_from_name
                             FROM transactions
-                                     LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
-                                     LEFT JOIN categories
-                                               ON categories.category_id = transactions.categories_category_id
-                                     LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
-                                     LEFT JOIN accounts acc_to
-                                               ON acc_to.account_id = transactions.accounts_account_to_id
-                                     LEFT JOIN accounts acc_from
-                                               ON acc_from.account_id = transactions.accounts_account_from_id
+                                   LEFT JOIN accounts ON accounts.account_id = transactions.accounts_account_from_id
+                                   LEFT JOIN categories
+                                             ON categories.category_id = transactions.categories_category_id
+                                   LEFT JOIN entities ON entities.entity_id = transactions.entities_entity_id
+                                   LEFT JOIN accounts acc_to
+                                             ON acc_to.account_id = transactions.accounts_account_to_id
+                                   LEFT JOIN accounts acc_from
+                                             ON acc_from.account_id = transactions.accounts_account_from_id
                             WHERE (acc_to.users_user_id = ${userId}
-                                OR acc_from.users_user_id = ${userId})
-                              AND categories.category_id = ${catId == -1n ? " NULL " : ` ${catId} `}
+                              OR acc_from.users_user_id = ${userId})
+                              AND categories.category_id = ${catId == -1n ? ' NULL ' : ` ${catId} `}
                               AND (transactions.type = ${type}
-                                OR transactions.type = 'T')
-                              AND transactions.date_timestamp >= ${DateTimeUtils.getUnixTimestampFromDate(minDate)}
-                              AND transactions.date_timestamp <= ${DateTimeUtils.getUnixTimestampFromDate(maxDate)}
+                              OR transactions.type = 'T')
+                              AND transactions.date_timestamp >= ${DateTimeUtils.getUnixTimestampFromDate(
+                                minDate
+                              )}
+                              AND transactions.date_timestamp <= ${DateTimeUtils.getUnixTimestampFromDate(
+                                maxDate
+                              )}
                             GROUP BY transaction_id
                             ORDER BY transactions.date_timestamp
-                                    DESC`;
+                                DESC`;
 };
 
 const getCountOfUserTransactions = async (userId: bigint, dbClient = prisma) => {
   const rawData = await dbClient.$queryRaw`SELECT count(DISTINCT (transaction_id)) as 'count'
                                            FROM transactions
-                                                    LEFT JOIN accounts ON transactions.accounts_account_from_id =
-                                                                          accounts.account_id or
-                                                                          transactions.accounts_account_to_id =
-                                                                          accounts.account_id
+                                                  LEFT JOIN accounts ON transactions.accounts_account_from_id =
+                                                                        accounts.account_id or
+                                                                        transactions.accounts_account_to_id =
+                                                                        accounts.account_id
                                            WHERE accounts.users_user_id = ${userId}`;
   return rawData[0].count;
 };
@@ -607,8 +657,9 @@ const autoCategorizeTransaction = async (
   description: string,
   amount: number,
   type: string,
-  accountsFromId: bigint,
-  accountsToId: bigint,
+  accountsFromId?: bigint,
+  accountsToId?: bigint,
+  date?: number,
   dbClient = undefined
 ): Promise<RuleInstructions> =>
   performDatabaseRequest(async (prismaTx) => {
@@ -629,14 +680,14 @@ const autoCategorizeTransaction = async (
 
     return {
       matching_rule: matchedRule?.rule_id,
-      date: undefined,
+      date: date,
       description: description,
       amount: amount,
       type: type,
       selectedCategoryID: matchedRule?.assign_category_id,
       selectedEntityID: matchedRule?.assign_entity_id,
-      selectedAccountFromID: matchedRule?.assign_account_from_id,
-      selectedAccountToID: matchedRule?.assign_account_to_id,
+      selectedAccountFromID: matchedRule?.assign_account_from_id ?? accountsFromId, //(type == MYFIN.TRX_TYPES.INCOME) ? matchedRule?.assign_account_from_id : accountsFromId,
+      selectedAccountToID: matchedRule?.assign_account_to_id ?? accountsToId, //(type == MYFIN.TRX_TYPES.INCOME) ? accountsToId :  matchedRule?.assign_account_to_id,//matchedRule?.assign_account_to_id || accountsToId,
       isEssential: matchedRule?.assign_is_essential,
     };
   }, dbClient) as Promise<RuleInstructions>;
@@ -664,8 +715,9 @@ const autoCategorizeTransactionList = async (
         trx.description,
         trx.amount,
         trx.type,
-        trx.accounts_account_from_id,
-        trx.accounts_account_to_id,
+        trx.type == MYFIN.TRX_TYPES.INCOME ? null : accountId,
+        trx.type != MYFIN.TRX_TYPES.INCOME ? null : accountId,
+        trx.date,
         dbClient
       )
     );
@@ -685,4 +737,5 @@ export default {
   getCountOfUserTransactions,
   autoCategorizeTransaction,
   autoCategorizeTransactionList,
+  createTransactionsInBulk,
 };

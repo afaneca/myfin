@@ -256,6 +256,26 @@ const importTransactionsStep1 = async (req: Request, res: Response, next: NextFu
   }
 };
 
+const importTrxStep2Schema = joi.object({
+  trx_list: joi.any(),
+});
+
+const importTransactionsStep2 = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const input = await importTrxStep2Schema.validateAsync(req.body);
+
+    const importedCnt = await TransactionService.createTransactionsInBulk(
+      sessionData.userId,
+      JSON.parse(input.trx_list)
+    );
+    res.json(`${importedCnt} transactions successfully imported!`);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getTransactionsForUser,
   getFilteredTrxByPage,
@@ -267,4 +287,5 @@ export default {
   autoCategorizeTransaction,
   importTransactionsStep0,
   importTransactionsStep1,
+  importTransactionsStep2,
 };
