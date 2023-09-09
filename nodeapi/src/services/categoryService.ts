@@ -152,13 +152,19 @@ const getAmountForCategoryInPeriod = async (
                             WHERE date_timestamp between ${fromDate} AND ${toDate}
                               AND categories_category_id = ${categoryId} `;
 };
+
+export interface CalculatedCategoryAmounts {
+  category_balance_credit: number;
+  category_balance_debit: number;
+}
+
 const getAmountForCategoryInMonth = async (
   categoryId: bigint,
   month: number,
   year: number,
   includeTransfers = true,
   dbClient = prisma
-): Promise<{ category_balance_credit: number; category_balance_debit: number }> => {
+): Promise<CalculatedCategoryAmounts> => {
   const nextMonth = month < 12 ? month + 1 : 1;
   const nextMonthsYear = month < 12 ? year : year + 1;
   const maxDate = DateTimeUtils.getUnixTimestampFromDate(
@@ -173,6 +179,7 @@ const getAmountForCategoryInMonth = async (
     includeTransfers,
     dbClient
   );
+
   return amounts[0];
 };
 

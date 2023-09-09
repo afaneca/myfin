@@ -11,7 +11,7 @@ import StatsController from '../controllers/statsController.js';
 const router = (app) => {
   // USERS ROUTES
   const userRouter = express.Router();
-  userRouter.post('/categoriesAndEntities', UserController.getUserCategoriesAndEntities);
+  userRouter.get('/categoriesAndEntities', UserController.getUserCategoriesAndEntities);
 
   const usersRouter = express.Router();
   usersRouter.post('/', UserController.createOne);
@@ -82,7 +82,10 @@ const router = (app) => {
     StatsController.getMonthlyPatrimonyProjections
   );
   statRoutes.get('/userStats', StatsController.getUserCounterStats);
-  //statRoutes.get('/category-expenses-evolution', StatsController.getCategoryExpensesEvolution)
+  statRoutes.get(
+    '/category-expenses-evolution',
+    StatsController.getCategoryEntityExpensesEvolution
+  );
   //statRoutes.get('/category-income-evolution', StatsController.getCategoryIncomeEvolution)
   //statRoutes.get('/year-by-year-income-expense-distribution', StatsController.getYearByYearIncomeExpenseDistribution)
 

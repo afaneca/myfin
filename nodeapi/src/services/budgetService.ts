@@ -769,12 +769,38 @@ const getBudgetAfterCertainMonth = async (
   year: number,
   dbClient = prisma
 ): Promise<Array<Prisma.budgetsUpdateInput>> => {
-  Logger.addLog(`month: ${month} | year: ${year}`);
+  /*Logger.addLog(`month: ${month} | year: ${year}`);*/
   return dbClient.$queryRaw`SELECT month, year, budget_id, users_user_id, observations, is_open, initial_balance
                             FROM budgets
                             WHERE budgets.users_user_id = ${userId}
                               AND ((year = ${year} AND month > ${month})
                               OR (year > ${year}))
+                            ORDER BY year ASC, month ASC`;
+};
+
+export enum BudgetListOrder {
+  DESCENDING = 'DESC',
+  ASCENDING = 'ASC',
+}
+
+const getBudgetsUntilCertainMonth = async (
+  userId: bigint,
+  month: number,
+  year: number,
+  ordering: BudgetListOrder,
+  dbClient = prisma
+): Promise<Array<Prisma.budgetsCreateManyInput>> => {
+  if (ordering === BudgetListOrder.DESCENDING) {
+    return dbClient.$queryRaw`SELECT month, year, budget_id, users_user_id, observations, is_open, initial_balance
+                              FROM budgets
+                              WHERE budgets.users_user_id = ${userId}
+                                AND ((year = ${year} AND month < ${month}) OR (year < ${year}))
+                              ORDER BY year DESC, month DESC`;
+  }
+  return dbClient.$queryRaw`SELECT month, year, budget_id, users_user_id, observations, is_open, initial_balance
+                            FROM budgets
+                            WHERE budgets.users_user_id = ${userId}
+                              AND ((year = ${year} AND month < ${month}) OR (year < ${year}))
                             ORDER BY year ASC, month ASC`;
 };
 
@@ -790,5 +816,6 @@ export default {
   getBudgetsListForUser,
   getCountOfUserBudgets,
   getBudgetAfterCertainMonth,
+  getBudgetsUntilCertainMonth,
   calculateBudgetBalance,
 };

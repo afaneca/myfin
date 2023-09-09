@@ -1,12 +1,12 @@
 import { performDatabaseRequest, prisma } from '../config/prisma.js';
 import APIError from '../errorHandling/apiError.js';
 import { Prisma } from '@prisma/client';
-import CategoryService from './categoryService.js';
+import CategoryService, { CalculatedCategoryAmounts } from './categoryService.js';
 import ConvertUtils from '../utils/convertUtils.js';
 import TransactionService from './transactionService.js';
-import EntityService from './entityService.js';
+import EntityService, { CalculatedEntityAmounts } from './entityService.js';
 import AccountService from './accountService.js';
-import BudgetService from './budgetService.js';
+import BudgetService, { BudgetListOrder } from './budgetService.js';
 import RuleService from './ruleService.js';
 import DateTimeUtils from '../utils/DateTimeUtils.js';
 
@@ -199,8 +199,84 @@ const getMonthlyPatrimonyProjections = async (userId: bigint, dbClient = undefin
   }, dbClient);
 };
 
+const getCategoryExpensesEvolution = async (
+  userId: bigint,
+  categoryId: bigint,
+  dbClient = undefined
+) =>
+  performDatabaseRequest(async (prismaTx) => {
+    const currentMonth = DateTimeUtils.getMonthNumberFromTimestamp();
+    const currentYear = DateTimeUtils.getYearFromTimestamp();
+    const budgetsList = await BudgetService.getBudgetsUntilCertainMonth(
+      userId,
+      currentMonth,
+      currentYear,
+      BudgetListOrder.DESCENDING,
+      prismaTx
+    );
+
+    const calculatedAmountPromises = [];
+    const performanceStart = performance.now();
+    for (const budget of budgetsList) {
+      /*Logger.addLog(`FOR LOOP for budget ${budget.budget_id}`);*/
+      calculatedAmountPromises.push(
+        CategoryService.getAmountForCategoryInMonth(categoryId, budget.month, budget.year)
+      );
+    }
+    /*Logger.addLog(`Waiting for all promises to be done...`);*/
+    const calculatedAmounts: Array<CalculatedCategoryAmounts> = await Promise.all(
+      calculatedAmountPromises
+    );
+    const performanceEnd = performance.now();
+    /*Logger.addLog(`All promises are done! (time: ${performanceEnd - performanceStart}ms)`);*/
+    return calculatedAmounts.map((calculatedAmount, index) => ({
+      value: ConvertUtils.convertBigIntegerToFloat(
+        BigInt(calculatedAmount.category_balance_debit ?? 0)
+      ),
+      month: budgetsList[index].month,
+      year: budgetsList[index].year,
+    }));
+  }, dbClient);
+
+const getEntityExpensesEvolution = async (userId: bigint, entityId: bigint, dbClient = undefined) =>
+  performDatabaseRequest(async (prismaTx) => {
+    const currentMonth = DateTimeUtils.getMonthNumberFromTimestamp();
+    const currentYear = DateTimeUtils.getYearFromTimestamp();
+    const budgetsList = await BudgetService.getBudgetsUntilCertainMonth(
+      userId,
+      currentMonth,
+      currentYear,
+      BudgetListOrder.DESCENDING,
+      prismaTx
+    );
+
+    const calculatedAmountPromises = [];
+    const performanceStart = performance.now();
+    for (const budget of budgetsList) {
+      /*Logger.addLog(`FOR LOOP for budget ${budget.budget_id}`);*/
+      calculatedAmountPromises.push(
+        EntityService.getAmountForEntityInMonth(entityId, budget.month, budget.year, prismaTx)
+      );
+    }
+    /*Logger.addLog(`Waiting for all promises to be done...`);*/
+    const calculatedAmounts: Array<CalculatedEntityAmounts> = await Promise.all(
+      calculatedAmountPromises
+    );
+    const performanceEnd = performance.now();
+    /*Logger.addLog(`All promises are done! (time: ${performanceEnd - performanceStart}ms)`);*/
+    return calculatedAmounts.map((calculatedAmount, index) => ({
+      value: ConvertUtils.convertBigIntegerToFloat(
+        BigInt(calculatedAmount.entity_balance_debit ?? 0)
+      ),
+      month: budgetsList[index].month,
+      year: budgetsList[index].year,
+    }));
+  }, dbClient);
+
 export default {
   getExpensesIncomeDistributionForMonth,
   getUserCounterStats,
   getMonthlyPatrimonyProjections,
+  getCategoryExpensesEvolution,
+  getEntityExpensesEvolution,
 };

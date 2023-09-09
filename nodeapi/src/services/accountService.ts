@@ -529,12 +529,12 @@ const accountService = {
       const snapArr: Array<BalanceSnapshot> = [];
 
       // If user has no accounts, return immediately an empty array
-      if (!((await accountService.getCountOfUserAccounts(userId, dbClient)) != 0)) {
+      if (!((await accountService.getCountOfUserAccounts(userId, prismaTx)) != 0)) {
         return snapArr;
       }
       const firstUserTransactionDate = await UserService.getFirstUserTransactionDate(
         userId,
-        dbClient
+        prismaTx
       );
       if (!firstUserTransactionDate) return snapArr;
 
@@ -547,7 +547,7 @@ const accountService = {
       const currentYear = DateTimeUtils.getYearFromTimestamp(
         DateTimeUtils.getCurrentUnixTimestamp()
       );
-      const userAccounts = await dbClient.accounts.findMany({
+      const userAccounts = await prismaTx.accounts.findMany({
         where: {
           users_user_id: userId,
         },
@@ -569,7 +569,7 @@ const accountService = {
             firstMonth,
             firstYear,
             userAccounts,
-            dbClient
+            prismaTx
           ),
         });
 
