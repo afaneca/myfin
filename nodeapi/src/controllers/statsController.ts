@@ -82,9 +82,39 @@ const getCategoryEntityExpensesEvolution = async (
   }
 };
 
+const getCategoryIncomeEvoSchema = joi
+  .object({
+    cat_id: joi.number(),
+    ent_id: joi.number(),
+  })
+  .xor('cat_id', 'ent_id')
+  .unknown(true);
+
+const getCategoryEntityIncomeEvolution = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const input = await getCategoryIncomeEvoSchema.validateAsync(req.query);
+    let data;
+    if (input.cat_id) {
+      data = await StatsService.getCategoryIncomeEvolution(sessionData.userId, input.cat_id);
+    } else {
+      data = await StatsService.getEntityIncomeEvolution(sessionData.userId, input.ent_id);
+    }
+    res.json(data);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getExpensesIncomeDistributionForMonth,
   getUserCounterStats,
   getMonthlyPatrimonyProjections,
   getCategoryEntityExpensesEvolution,
+  getCategoryEntityIncomeEvolution,
 };

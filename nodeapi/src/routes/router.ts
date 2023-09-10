@@ -86,7 +86,7 @@ const router = (app) => {
     '/category-expenses-evolution',
     StatsController.getCategoryEntityExpensesEvolution
   );
-  //statRoutes.get('/category-income-evolution', StatsController.getCategoryIncomeEvolution)
+  statRoutes.get('/category-income-evolution', StatsController.getCategoryEntityIncomeEvolution);
   //statRoutes.get('/year-by-year-income-expense-distribution', StatsController.getYearByYearIncomeExpenseDistribution)
 
   // TRANSACTIONS ROUTES

@@ -216,19 +216,14 @@ const getCategoryExpensesEvolution = async (
     );
 
     const calculatedAmountPromises = [];
-    const performanceStart = performance.now();
     for (const budget of budgetsList) {
-      /*Logger.addLog(`FOR LOOP for budget ${budget.budget_id}`);*/
       calculatedAmountPromises.push(
         CategoryService.getAmountForCategoryInMonth(categoryId, budget.month, budget.year)
       );
     }
-    /*Logger.addLog(`Waiting for all promises to be done...`);*/
     const calculatedAmounts: Array<CalculatedCategoryAmounts> = await Promise.all(
       calculatedAmountPromises
     );
-    const performanceEnd = performance.now();
-    /*Logger.addLog(`All promises are done! (time: ${performanceEnd - performanceStart}ms)`);*/
     return calculatedAmounts.map((calculatedAmount, index) => ({
       value: ConvertUtils.convertBigIntegerToFloat(
         BigInt(calculatedAmount.category_balance_debit ?? 0)
@@ -251,22 +246,81 @@ const getEntityExpensesEvolution = async (userId: bigint, entityId: bigint, dbCl
     );
 
     const calculatedAmountPromises = [];
-    const performanceStart = performance.now();
     for (const budget of budgetsList) {
-      /*Logger.addLog(`FOR LOOP for budget ${budget.budget_id}`);*/
       calculatedAmountPromises.push(
         EntityService.getAmountForEntityInMonth(entityId, budget.month, budget.year, prismaTx)
       );
     }
-    /*Logger.addLog(`Waiting for all promises to be done...`);*/
     const calculatedAmounts: Array<CalculatedEntityAmounts> = await Promise.all(
       calculatedAmountPromises
     );
-    const performanceEnd = performance.now();
-    /*Logger.addLog(`All promises are done! (time: ${performanceEnd - performanceStart}ms)`);*/
     return calculatedAmounts.map((calculatedAmount, index) => ({
       value: ConvertUtils.convertBigIntegerToFloat(
         BigInt(calculatedAmount.entity_balance_debit ?? 0)
+      ),
+      month: budgetsList[index].month,
+      year: budgetsList[index].year,
+    }));
+  }, dbClient);
+
+const getCategoryIncomeEvolution = async (
+  userId: bigint,
+  categoryId: bigint,
+  dbClient = undefined
+) =>
+  performDatabaseRequest(async (prismaTx) => {
+    const currentMonth = DateTimeUtils.getMonthNumberFromTimestamp();
+    const currentYear = DateTimeUtils.getYearFromTimestamp();
+    const budgetsList = await BudgetService.getBudgetsUntilCertainMonth(
+      userId,
+      currentMonth,
+      currentYear,
+      BudgetListOrder.DESCENDING,
+      prismaTx
+    );
+
+    const calculatedAmountPromises = [];
+    for (const budget of budgetsList) {
+      calculatedAmountPromises.push(
+        CategoryService.getAmountForCategoryInMonth(categoryId, budget.month, budget.year)
+      );
+    }
+    const calculatedAmounts: Array<CalculatedCategoryAmounts> = await Promise.all(
+      calculatedAmountPromises
+    );
+    return calculatedAmounts.map((calculatedAmount, index) => ({
+      value: ConvertUtils.convertBigIntegerToFloat(
+        BigInt(calculatedAmount.category_balance_credit ?? 0)
+      ),
+      month: budgetsList[index].month,
+      year: budgetsList[index].year,
+    }));
+  }, dbClient);
+
+const getEntityIncomeEvolution = async (userId: bigint, entityId: bigint, dbClient = undefined) =>
+  performDatabaseRequest(async (prismaTx) => {
+    const currentMonth = DateTimeUtils.getMonthNumberFromTimestamp();
+    const currentYear = DateTimeUtils.getYearFromTimestamp();
+    const budgetsList = await BudgetService.getBudgetsUntilCertainMonth(
+      userId,
+      currentMonth,
+      currentYear,
+      BudgetListOrder.DESCENDING,
+      prismaTx
+    );
+
+    const calculatedAmountPromises = [];
+    for (const budget of budgetsList) {
+      calculatedAmountPromises.push(
+        EntityService.getAmountForEntityInMonth(entityId, budget.month, budget.year, prismaTx)
+      );
+    }
+    const calculatedAmounts: Array<CalculatedEntityAmounts> = await Promise.all(
+      calculatedAmountPromises
+    );
+    return calculatedAmounts.map((calculatedAmount, index) => ({
+      value: ConvertUtils.convertBigIntegerToFloat(
+        BigInt(calculatedAmount.entity_balance_credit ?? 0)
       ),
       month: budgetsList[index].month,
       year: budgetsList[index].year,
@@ -279,4 +333,6 @@ export default {
   getMonthlyPatrimonyProjections,
   getCategoryExpensesEvolution,
   getEntityExpensesEvolution,
+  getCategoryIncomeEvolution,
+  getEntityIncomeEvolution,
 };
