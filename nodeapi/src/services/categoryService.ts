@@ -183,6 +183,26 @@ const getAmountForCategoryInMonth = async (
   return amounts[0];
 };
 
+const getAmountForCategoryInYear = async (
+  categoryId: bigint,
+  year: number,
+  includeTransfers = true,
+  dbClient = prisma
+): Promise<CalculatedCategoryAmounts> => {
+  const maxDate = DateTimeUtils.getUnixTimestampFromDate(new Date(year, 11, 31));
+  const minDate = DateTimeUtils.getUnixTimestampFromDate(new Date(year, 0, 1));
+  /* Logger.addLog(`cat id: ${categoryId} | month: ${month} | year: ${year} | minDate: ${minDate} | maxDate: ${maxDate}`); */
+  const amounts = await getAmountForCategoryInPeriod(
+    categoryId,
+    minDate,
+    maxDate,
+    includeTransfers,
+    dbClient
+  );
+
+  return amounts[0];
+};
+
 const getAverageAmountForCategoryInLifetime = async (
   categoryId: number | bigint,
   dbClient = prisma
@@ -263,4 +283,5 @@ export default {
   getAverageAmountForCategoryInLifetime,
   getAllCategoriesForBudget,
   getCountOfUserCategories,
+  getAmountForCategoryInYear,
 };

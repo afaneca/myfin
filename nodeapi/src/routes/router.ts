@@ -87,7 +87,10 @@ const router = (app) => {
     StatsController.getCategoryEntityExpensesEvolution
   );
   statRoutes.get('/category-income-evolution', StatsController.getCategoryEntityIncomeEvolution);
-  //statRoutes.get('/year-by-year-income-expense-distribution', StatsController.getYearByYearIncomeExpenseDistribution)
+  statRoutes.get(
+    '/year-by-year-income-expense-distribution',
+    StatsController.getYearByYearIncomeExpenseDistribution
+  );
 
   // TRANSACTIONS ROUTES
   const trxRoutes = express.Router();

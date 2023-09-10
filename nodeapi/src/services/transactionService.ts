@@ -726,6 +726,24 @@ const autoCategorizeTransactionList = async (
   return Promise.all(promises);
 };
 
+const getYearOfFirstTransactionForUser = async (
+  userId: bigint,
+  dbClient = prisma
+): Promise<number> => {
+  const result = await dbClient.$queryRaw`SELECT YEAR(FROM_UNIXTIME(date_timestamp)) as 'year'
+                                          FROM transactions
+                                                 INNER JOIN accounts account_from
+                                                            ON account_from.account_id = transactions.accounts_account_from_id
+                                                 INNER JOIN accounts account_to
+                                                            ON account_to.account_id = transactions.accounts_account_to_id
+                                          WHERE account_from.users_user_id = ${userId}
+                                             OR account_to.users_user_id = ${userId}
+                                          ORDER BY date_timestamp ASC
+                                          LIMIT 1`;
+
+  return result[0].year;
+};
+
 export default {
   getTransactionsForUser,
   getFilteredTransactionsByForUser,
@@ -738,4 +756,5 @@ export default {
   autoCategorizeTransaction,
   autoCategorizeTransactionList,
   createTransactionsInBulk,
+  getYearOfFirstTransactionForUser,
 };

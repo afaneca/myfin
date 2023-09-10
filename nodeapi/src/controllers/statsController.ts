@@ -111,10 +111,36 @@ const getCategoryEntityIncomeEvolution = async (
   }
 };
 
+const getYearByYearIncomeExpenseDistributionSchema = joi
+  .object({
+    year: joi.number().required(),
+  })
+  .unknown(true);
+
+const getYearByYearIncomeExpenseDistribution = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const input = await getYearByYearIncomeExpenseDistributionSchema.validateAsync(req.query);
+    const data = await StatsService.getYearByYearIncomeExpenseDistribution(
+      sessionData.userId,
+      input.year
+    );
+    res.json(data);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getExpensesIncomeDistributionForMonth,
   getUserCounterStats,
   getMonthlyPatrimonyProjections,
   getCategoryEntityExpensesEvolution,
   getCategoryEntityIncomeEvolution,
+  getYearByYearIncomeExpenseDistribution,
 };

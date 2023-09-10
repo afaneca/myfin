@@ -327,6 +327,72 @@ const getEntityIncomeEvolution = async (userId: bigint, entityId: bigint, dbClie
     }));
   }, dbClient);
 
+interface ExpandedCategoryWithYearlyAmounts {
+  category_id: bigint;
+  name: string;
+  type: string;
+  category_yearly_income: number;
+  category_yearly_expense: number;
+}
+
+export interface YearByYearIncomeDistributionOutput {
+  year_of_first_trx?: number;
+  categories?: Array<ExpandedCategoryWithYearlyAmounts>;
+}
+
+const getYearByYearIncomeExpenseDistribution = async (
+  userId: bigint,
+  year: number,
+  dbClient = undefined
+): Promise<YearByYearIncomeDistributionOutput> =>
+  performDatabaseRequest(async (prismaTx) => {
+    const output: YearByYearIncomeDistributionOutput = {};
+    output.year_of_first_trx = await TransactionService.getYearOfFirstTransactionForUser(
+      userId,
+      prismaTx
+    );
+
+    const categories = await CategoryService.getAllCategoriesForUser(
+      userId,
+      {
+        category_id: true,
+        name: true,
+        type: true,
+      },
+      prismaTx
+    );
+
+    const calculatedAmountPromises = [];
+    for (const category of categories) {
+      calculatedAmountPromises.push(
+        CategoryService.getAmountForCategoryInYear(
+          category.category_id as bigint,
+          year,
+          true,
+          prismaTx
+        )
+      );
+    }
+
+    const calculatedAmounts = await Promise.all(calculatedAmountPromises);
+
+    output.categories = categories.map((category, index) => {
+      return {
+        category_id: category.category_id as bigint,
+        name: category.name as string,
+        type: category.type as string,
+        category_yearly_income: ConvertUtils.convertBigIntegerToFloat(
+          calculatedAmounts[index].category_balance_credit
+        ) as number,
+        category_yearly_expense: ConvertUtils.convertBigIntegerToFloat(
+          calculatedAmounts[index].category_balance_debit
+        ) as number,
+      };
+    });
+
+    return output;
+  }, dbClient);
+
 export default {
   getExpensesIncomeDistributionForMonth,
   getUserCounterStats,
@@ -335,4 +401,5 @@ export default {
   getEntityExpensesEvolution,
   getCategoryIncomeEvolution,
   getEntityIncomeEvolution,
+  getYearByYearIncomeExpenseDistribution,
 };
