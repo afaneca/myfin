@@ -96,8 +96,8 @@ const accountService = {
                             WHERE users_user_id = ${userId} || ${onlyActiveExcerpt}
                             ORDER BY abs(balance) DESC, case when a.status = ${MYFIN.TRX_TYPES.EXPENSE} then 1 else 0 end`;
   },
-  doesAccountBelongToUser: async (userId: bigint, accountId: bigint) => {
-    const result = await Account.findUnique({
+  doesAccountBelongToUser: async (userId: bigint, accountId: bigint, dbClient = prisma) => {
+    const result = await dbClient.accounts.findUnique({
       where: {
         users_user_id: userId,
         account_id: accountId,

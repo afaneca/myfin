@@ -1,7 +1,8 @@
-import { prisma } from '../config/prisma.js';
+import { performDatabaseRequest, prisma } from '../config/prisma.js';
 import { Prisma } from '@prisma/client';
 import DateTimeUtils from '../utils/DateTimeUtils.js';
 import ConvertUtils from '../utils/convertUtils.js';
+import APIError from '../errorHandling/apiError.js';
 
 interface CalculatedAssetAmounts {
   invested_value?: number;
@@ -72,8 +73,8 @@ const calculateAssetAmounts = async (
     investedValue == 0 ? '∞' : (roiValue / (investedValue + feesAndTaxes)) * 100;
   const pricePerUnit = await getAverageBuyingPriceForAsset(asset.asset_id as bigint, dbClient);
   /*Logger.addLog(
-        `ASSET: (${asset.asset_id}) ${asset.name} | investedValue: ${investedValue} | withdrawnAmount: ${withdrawnAmount} | currentValue: ${currentValue} | feesAndTaxes: ${feesAndTaxes} | roiValue: ${roiValue} | roiPercentage: ${roiPercentage} | pricePerUnit: ${pricePerUnit}`
-    );*/
+                  `ASSET: (${asset.asset_id}) ${asset.name} | investedValue: ${investedValue} | withdrawnAmount: ${withdrawnAmount} | currentValue: ${currentValue} | feesAndTaxes: ${feesAndTaxes} | roiValue: ${roiValue} | roiPercentage: ${roiPercentage} | pricePerUnit: ${pricePerUnit}`
+              );*/
   return {
     asset_id: asset.asset_id as bigint,
     name: asset.name,
@@ -163,8 +164,114 @@ const updateAsset = async (userId: bigint, asset: Asset, dbClient = prisma) =>
     },
   });
 
+const doesAssetBelongToUser = async (userId: bigint, assetId: bigint, dbClient = prisma) => {
+  const result = await dbClient.invest_assets.findFirst({
+    where: {
+      users_user_id: userId,
+      asset_id: assetId,
+    },
+  });
+
+  return result !== null;
+};
+
+const performUpdateAssetValue = async (
+  month: number,
+  year: number,
+  assetId: bigint,
+  units: number | Prisma.Decimal,
+  withdrawnAmount: number,
+  newValue: number,
+  dbClient = prisma
+) => {
+  const latestSnapshot = await getLatestSnapshotForAsset(assetId, month, year, dbClient);
+  return dbClient.$queryRaw`INSERT INTO invest_asset_evo_snapshot (month, year, units, invested_amount, current_value,
+                                                                   invest_assets_asset_id, created_at, updated_at,
+                                                                   withdrawn_amount)
+                            VALUES (${month}, ${year}, ${units}, ${
+                              latestSnapshot?.invested_amount ?? 0
+                            },
+                                    ${ConvertUtils.convertFloatToBigInteger(newValue)}, ${assetId},
+                                    ${DateTimeUtils.getCurrentUnixTimestamp()},
+                                    ${DateTimeUtils.getCurrentUnixTimestamp()},
+                                    ${
+                                      withdrawnAmount
+                                        ? ConvertUtils.convertFloatToBigInteger(withdrawnAmount)
+                                        : 0
+                                    })
+                            ON DUPLICATE KEY UPDATE current_value = ${ConvertUtils.convertFloatToBigInteger(
+                              newValue
+                            )},
+                                                    updated_at    = ${DateTimeUtils.getCurrentUnixTimestamp()}`;
+};
+
+const updateAssetValue = async (
+  userId: bigint,
+  assetId: bigint,
+  newValue: number,
+  month: number,
+  year: number,
+  createBuffer = true,
+  dbClient = prisma
+) => {
+  const units = (
+    await dbClient.invest_assets.findFirst({
+      where: { users_user_id: userId, asset_id: assetId },
+      select: { units: true },
+    })
+  ).units;
+  const withdrawnAmount =
+    (await getLatestSnapshotForAsset(assetId, month, year, dbClient))?.withdrawn_amount ?? 0;
+
+  await performUpdateAssetValue(month, year, assetId, units, withdrawnAmount, newValue, dbClient);
+
+  const bufferPromises = [];
+  if (createBuffer) {
+    // Snapshot next 6 months also, to create a buffer (in case no more snapshots are added till then)
+    let nextMonth, nextMonthsYear;
+    for (let i = 0; i < 6; i++) {
+      nextMonth = month + 1 > 12 ? 1 : month + 1;
+      nextMonthsYear = nextMonth > 12 ? year + 1 : year;
+      bufferPromises.push(
+        performUpdateAssetValue(
+          nextMonth,
+          nextMonthsYear,
+          assetId,
+          units,
+          withdrawnAmount,
+          newValue,
+          dbClient
+        )
+      );
+    }
+  }
+
+  await Promise.all(bufferPromises);
+};
+
+const updateCurrentAssetValue = async (
+  userId: bigint,
+  assetId: bigint,
+  newValue: number,
+  dbClient = undefined
+) =>
+  performDatabaseRequest(async (prismaTx) => {
+    if (!(await doesAssetBelongToUser(userId, assetId, prismaTx))) {
+      throw APIError.notAuthorized();
+    }
+    await updateAssetValue(
+      userId,
+      assetId,
+      newValue,
+      DateTimeUtils.getMonthNumberFromTimestamp(),
+      DateTimeUtils.getYearFromTimestamp(),
+      prismaTx
+    );
+  }, dbClient);
+
 export default {
   getAllAssetsForUser,
   createAsset,
   updateAsset,
+  updateCurrentAssetValue,
 };

@@ -65,8 +65,30 @@ const updateAsset = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const updateCurrentAssetValueSchema = joi.object({
+  new_value: joi.number().required(),
+});
+
+const updateCurrentAssetValue = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const input = await updateCurrentAssetValueSchema.validateAsync(req.body);
+    const assetId = req.params.id;
+    await InvestAssetService.updateCurrentAssetValue(
+      sessionData.userId,
+      BigInt(assetId),
+      input.new_value
+    );
+    res.json(`Asset value successfully updated!  - ${assetId} - ${input.new_value}`);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getAllAssetsForUser,
   createAsset,
   updateAsset,
+  updateCurrentAssetValue,
 };
