@@ -7,6 +7,7 @@ import RuleController from '../controllers/ruleController.js';
 import CategoryController from '../controllers/categoryController.js';
 import BudgetController from '../controllers/budgetController.js';
 import StatsController from '../controllers/statsController.js';
+import InvestAssetsController from '../controllers/investAssetsController.js';
 
 const router = (app) => {
   // USERS ROUTES
@@ -110,15 +111,15 @@ const router = (app) => {
   trxRoutes.post('/import/step2', TransactionController.importTransactionsStep2);
 
   // INVEST ASSET ROUTES
-  /* const investAssetRoutes = express.Router();
-    investAssetRoutes.get('/', InvestAssetsController.getAllAssetsForUser);
-    investAssetRoutes.post('/', InvestAssetsController.createAsset);
-    investAssetRoutes.delete('/:id', InvestAssetsController.deleteAsset);
-    investAssetRoutes.delete('/:id', InvestAssetsController.updateAsset);
-    investAssetRoutes.delete('/:id/value', InvestAssetsController.updateCurrentAssetValue);
-    investAssetRoutes.delete('/summary', InvestAssetsController.getAllAssetsSummaryForUser);
-    investAssetRoutes.delete('/stats', InvestAssetsController.getAssetStatsForUser);
-    investAssetRoutes.delete('/stats/:id', InvestAssetsController.getAssetDetailsForUser); */
+  const investAssetRoutes = express.Router();
+  investAssetRoutes.get('/', InvestAssetsController.getAllAssetsForUser);
+  //investAssetRoutes.post('/', InvestAssetsController.createAsset);
+  //investAssetRoutes.delete('/:id', InvestAssetsController.deleteAsset);
+  //investAssetRoutes.delete('/:id', InvestAssetsController.updateAsset);
+  //investAssetRoutes.delete('/:id/value', InvestAssetsController.updateCurrentAssetValue);
+  //investAssetRoutes.delete('/summary', InvestAssetsController.getAllAssetsSummaryForUser);
+  //investAssetRoutes.delete('/stats', InvestAssetsController.getAssetStatsForUser);
+  //investAssetRoutes.delete('/stats/:id', InvestAssetsController.getAssetDetailsForUser);
 
   // INVEST TRANSACTION ROUTES
   /* const investTrxRoutes = express.Router();
@@ -138,7 +139,7 @@ const router = (app) => {
   app.use('/entities', entityRoutes);
   app.use('/rules', ruleRoutes);
   app.use('/stats', statRoutes);
-  /* app.use('/invest/stats', investAssetRoutes) */
+  app.use('/invest/assets', investAssetRoutes);
   /* app.use('/invest/trx', investTrxRoutes) */
 };
 

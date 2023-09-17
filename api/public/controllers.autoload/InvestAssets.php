@@ -64,10 +64,10 @@ class InvestAssets
                     "fees_taxes" => $feesAndTaxes
                 ];
             }
-
             // Sort assets array by current value (DESC)
             usort($res, function ($first, $second) {
-                return $second["current_value"] <=> $first["current_value"];
+                return $second["current_valu
+e"] <=> $first["current_value"];
             });
 
             return sendResponse($response, EnsoShared::$REST_OK, $res);
