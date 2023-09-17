@@ -72,8 +72,8 @@ const calculateAssetAmounts = async (
     investedValue == 0 ? '∞' : (roiValue / (investedValue + feesAndTaxes)) * 100;
   const pricePerUnit = await getAverageBuyingPriceForAsset(asset.asset_id as bigint, dbClient);
   /*Logger.addLog(
-      `ASSET: (${asset.asset_id}) ${asset.name} | investedValue: ${investedValue} | withdrawnAmount: ${withdrawnAmount} | currentValue: ${currentValue} | feesAndTaxes: ${feesAndTaxes} | roiValue: ${roiValue} | roiPercentage: ${roiPercentage} | pricePerUnit: ${pricePerUnit}`
-  );*/
+        `ASSET: (${asset.asset_id}) ${asset.name} | investedValue: ${investedValue} | withdrawnAmount: ${withdrawnAmount} | currentValue: ${currentValue} | feesAndTaxes: ${feesAndTaxes} | roiValue: ${roiValue} | roiPercentage: ${roiPercentage} | pricePerUnit: ${pricePerUnit}`
+    );*/
   return {
     asset_id: asset.asset_id as bigint,
     name: asset.name,
@@ -124,6 +124,30 @@ const getAllAssetsForUser = async (
   );
 };
 
+interface Asset {
+  assetId?: bigint;
+  name: string;
+  ticker: string;
+  units?: number;
+  type: string;
+  broker: string;
+}
+
+const createAsset = async (userId: bigint, asset: Asset, dbClient = prisma) =>
+  dbClient.invest_assets.create({
+    data: {
+      name: asset.name,
+      ticker: asset.ticker,
+      units: asset.units ?? 0,
+      type: asset.type,
+      broker: asset.broker,
+      created_at: DateTimeUtils.getCurrentUnixTimestamp(),
+      updated_at: DateTimeUtils.getCurrentUnixTimestamp(),
+      users_user_id: userId,
+    },
+  });
+
 export default {
   getAllAssetsForUser,
+  createAsset,
 };
