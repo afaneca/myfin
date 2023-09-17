@@ -39,7 +39,34 @@ const createAsset = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const updateAssetSchema = joi.object({
+  name: joi.string().required(),
+  type: joi
+    .string()
+    .allow(MYFIN.TRX_TYPES.EXPENSE, MYFIN.TRX_TYPES.INCOME, MYFIN.TRX_TYPES.TRANSFER)
+    .required(),
+  ticker: joi.string().optional().default(''),
+  broker: joi.string().optional().default(''),
+});
+
+const updateAsset = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const input = await updateAssetSchema.validateAsync(req.body);
+    const assetId = req.params.id;
+    await InvestAssetService.updateAsset(sessionData.userId, {
+      assetId: assetId,
+      ...input,
+    });
+    res.json(`Account updated!`);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getAllAssetsForUser,
   createAsset,
+  updateAsset,
 };

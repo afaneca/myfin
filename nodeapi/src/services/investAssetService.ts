@@ -127,7 +127,7 @@ const getAllAssetsForUser = async (
 interface Asset {
   assetId?: bigint;
   name: string;
-  ticker: string;
+  ticker?: string;
   units?: number;
   type: string;
   broker: string;
@@ -147,7 +147,24 @@ const createAsset = async (userId: bigint, asset: Asset, dbClient = prisma) =>
     },
   });
 
+const updateAsset = async (userId: bigint, asset: Asset, dbClient = prisma) =>
+  dbClient.invest_assets.update({
+    where: {
+      users_user_id: userId,
+      asset_id: asset.assetId,
+    },
+    data: {
+      name: asset.name,
+      ticker: asset.ticker,
+      units: asset.units,
+      type: asset.type,
+      broker: asset.broker,
+      updated_at: DateTimeUtils.getCurrentUnixTimestamp(),
+    },
+  });
+
 export default {
   getAllAssetsForUser,
   createAsset,
+  updateAsset,
 };
