@@ -232,8 +232,8 @@ const accountService = {
                                               ORDER BY date_timestamp ASC`,
   recalculateBalanceForAccountIncrementally: async (
     accountId: bigint,
-    fromDate: number,
-    toDate: number,
+    fromDate: number | bigint,
+    toDate: number | bigint,
     dbClient = prisma
   ) => {
     /* Logger.addLog(`account: ${accountId} | fromDate: ${fromDate} | toDate: ${toDate}`); */
@@ -398,7 +398,7 @@ const accountService = {
   },
   changeBalance: async (
     userId: bigint,
-    accountId: number,
+    accountId: bigint,
     offsetAmount: number,
     prismaClient = prisma
   ) => prismaClient.$queryRaw`UPDATE accounts

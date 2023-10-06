@@ -1,9 +1,8 @@
 import { performDatabaseRequest, prisma } from '../config/prisma.js';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import DateTimeUtils from '../utils/DateTimeUtils.js';
 import ConvertUtils from '../utils/convertUtils.js';
 import APIError from '../errorHandling/apiError.js';
-import { DefaultArgs } from '@prisma/client/runtime/library.js';
 
 interface CalculatedAssetAmounts {
   invested_value?: number;
@@ -293,6 +292,7 @@ const updateCurrentAssetValue = async (
       newValue,
       DateTimeUtils.getMonthNumberFromTimestamp(),
       DateTimeUtils.getYearFromTimestamp(),
+      true,
       prismaTx
     );
   }, dbClient);
@@ -538,26 +538,23 @@ const getAllAssetsSummaryForUser = async (userId: bigint, dbClient = prisma) =>
   }, dbClient);
 
 const deleteAsset = async (userId: bigint, assetId: bigint, dbClient = undefined) =>
-  performDatabaseRequest(
-    async (prismaTx: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>) => {
-      if (!(await doesAssetBelongToUser(userId, assetId, prismaTx))) {
-        throw APIError.notAuthorized();
-      }
+  performDatabaseRequest(async (prismaTx) => {
+    if (!(await doesAssetBelongToUser(userId, assetId, prismaTx))) {
+      throw APIError.notAuthorized();
+    }
 
-      // delete snapshot references
-      await prismaTx.invest_asset_evo_snapshot.deleteMany({
-        where: {
-          invest_assets_asset_id: assetId,
-        },
-      });
+    // delete snapshot references
+    await prismaTx.invest_asset_evo_snapshot.deleteMany({
+      where: {
+        invest_assets_asset_id: assetId,
+      },
+    });
 
-      // delete asset
-      await prismaTx.invest_assets.delete({
-        where: { asset_id: assetId },
-      });
-    },
-    dbClient
-  );
+    // delete asset
+    await prismaTx.invest_assets.delete({
+      where: { asset_id: assetId },
+    });
+  }, dbClient);
 
 export default {
   getAllAssetsForUser,

@@ -1,11 +1,11 @@
-import {performDatabaseRequest, prisma} from '../config/prisma.js';
-import {MYFIN} from '../consts.js';
-import ConvertUtils from '../utils/convertUtils.js';
-import CategoryService from './categoryService.js';
-import AccountService from './accountService.js';
-import DateTimeUtils from '../utils/DateTimeUtils.js';
-import Logger from '../utils/Logger.js';
-import {Prisma} from '@prisma/client';
+import { performDatabaseRequest, prisma } from "../config/prisma.js";
+import { MYFIN } from "../consts.js";
+import ConvertUtils from "../utils/convertUtils.js";
+import CategoryService from "./categoryService.js";
+import AccountService from "./accountService.js";
+import DateTimeUtils from "../utils/DateTimeUtils.js";
+import Logger from "../utils/Logger.js";
+import { Prisma } from "@prisma/client";
 
 /**
  * Gets all (active) categories for the user, with planned & current amounts
@@ -210,7 +210,20 @@ const getAllBudgetsForUser = async (userId: bigint, status: string, dbClient = u
       whereCondition = { users_user_id: userId };
     }
 
-    const budgetsList = await prismaTx.budgets.findMany({
+    const budgetsList: Array<{
+      budget_id: bigint;
+      month: number;
+      year: number;
+      observations: string;
+      is_open: boolean;
+      initial_balance: bigint;
+      users_user_id: bigint;
+      balance_value?: number;
+      balance_change_percentage?: number | 'NaN';
+      credit_amount?: number;
+      debit_amount?: number;
+      savings_rate_percentage?: number;
+    }> = await prismaTx.budgets.findMany({
       where: whereCondition,
       orderBy: [{ year: 'desc' }, { month: 'desc' }],
     });
@@ -226,11 +239,10 @@ const getAllBudgetsForUser = async (userId: bigint, status: string, dbClient = u
       const budgetSums = await getSumAmountsForBudget(userId, budget, prismaTx);
       budget.credit_amount = budgetSums.balance_credit;
       budget.debit_amount = budgetSums.balance_debit;
-      if (parseFloat(budget.credit_amount) == 0) {
+      if (budget.credit_amount == 0) {
         budget.savings_rate_percentage = 0;
       } else {
-        budget.savings_rate_percentage =
-          (parseFloat(budget.balance_value) / parseFloat(budget.credit_amount)) * 100;
+        budget.savings_rate_percentage = (budget.balance_value / budget.credit_amount) * 100;
       }
     }
   }, dbClient);

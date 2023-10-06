@@ -293,7 +293,7 @@ const deleteTransaction = async (userId: bigint, transactionId: number, dbClient
         throw APIError.notFound(`Transaction could not be found.`);
       });
 
-    const oldTimestamp = parseInt(trx.date_timestamp, 10);
+    const oldTimestamp = trx.date_timestamp;
     const oldType = trx.type;
     const oldAccountTo = trx.accounts_account_to_id;
     const oldAccountFrom = trx.accounts_account_from_id;
@@ -301,6 +301,7 @@ const deleteTransaction = async (userId: bigint, transactionId: number, dbClient
     // Make sure account belongs to user
     const accountsCount = await prismaTx.accounts.count({
       where: {
+        // @ts-expect-error expected
         account_id: { in: [oldAccountTo || -1, oldAccountFrom || -1] },
         users_user_id: userId,
       },
@@ -328,7 +329,7 @@ const deleteTransaction = async (userId: bigint, transactionId: number, dbClient
       case MYFIN.TRX_TYPES.INCOME:
         newBalance = await AccountService.recalculateBalanceForAccountIncrementally(
           oldAccountTo,
-          oldTimestamp - 1,
+          oldTimestamp - 1n,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
@@ -337,7 +338,7 @@ const deleteTransaction = async (userId: bigint, transactionId: number, dbClient
       case MYFIN.TRX_TYPES.EXPENSE:
         newBalance = await AccountService.recalculateBalanceForAccountIncrementally(
           oldAccountFrom,
-          oldTimestamp - 1,
+          oldTimestamp - 1n,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
@@ -347,14 +348,14 @@ const deleteTransaction = async (userId: bigint, transactionId: number, dbClient
       default:
         newBalance = await AccountService.recalculateBalanceForAccountIncrementally(
           oldAccountTo,
-          oldTimestamp - 1,
+          oldTimestamp - 1n,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
         await AccountService.setNewAccountBalance(userId, oldAccountTo, newBalance, prismaTx);
         newBalance = await AccountService.recalculateBalanceForAccountIncrementally(
           oldAccountFrom,
-          oldTimestamp - 1,
+          oldTimestamp - 1n,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
@@ -403,9 +404,9 @@ const updateTransaction = async (
       where: { transaction_id: trx.transaction_id },
     });
 
-    const oldAmount = outdatedTrx.amount;
+    const oldAmount = Number(outdatedTrx.amount);
     const oldType = outdatedTrx.type;
-    const oldTimestamp = parseInt(outdatedTrx.date_timestamp, 10);
+    const oldTimestamp = outdatedTrx.date_timestamp;
     const oldAccountTo = outdatedTrx.accounts_account_to_id;
     const oldAccountFrom = outdatedTrx.accounts_account_from_id;
 
@@ -461,7 +462,7 @@ const updateTransaction = async (
         await AccountService.changeBalance(userId, oldAccountTo, -oldAmount, prismaTx);
         await AccountService.recalculateBalanceForAccountIncrementally(
           oldAccountTo,
-          oldTimestamp - 1,
+          oldTimestamp - 1n,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
@@ -470,7 +471,7 @@ const updateTransaction = async (
         await AccountService.changeBalance(userId, oldAccountFrom, -oldAmount, prismaTx);
         await AccountService.recalculateBalanceForAccountIncrementally(
           oldAccountFrom,
-          oldTimestamp - 1,
+          oldTimestamp - 1n,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
@@ -480,14 +481,14 @@ const updateTransaction = async (
         await AccountService.changeBalance(userId, oldAccountTo, -oldAmount, prismaTx);
         await AccountService.recalculateBalanceForAccountIncrementally(
           oldAccountTo,
-          oldTimestamp - 1,
+          oldTimestamp - 1n,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
         await AccountService.changeBalance(userId, oldAccountTo, -oldAmount, prismaTx);
         await AccountService.recalculateBalanceForAccountIncrementally(
           oldAccountTo,
-          oldTimestamp - 1,
+          oldTimestamp - 1n,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
@@ -500,7 +501,7 @@ const updateTransaction = async (
       case MYFIN.TRX_TYPES.INCOME:
         newBalance = await AccountService.recalculateBalanceForAccountIncrementally(
           trx.new_account_to_id,
-          Math.min(trx.new_date_timestamp, oldTimestamp) - 1,
+          Math.min(trx.new_date_timestamp, Number(oldTimestamp)) - 1,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
@@ -514,7 +515,7 @@ const updateTransaction = async (
       case MYFIN.TRX_TYPES.EXPENSE:
         newBalance = await AccountService.recalculateBalanceForAccountIncrementally(
           trx.new_account_from_id,
-          Math.min(trx.new_date_timestamp, oldTimestamp) - 1,
+          Math.min(trx.new_date_timestamp, Number(oldTimestamp)) - 1,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
@@ -529,7 +530,7 @@ const updateTransaction = async (
       default:
         newBalance = await AccountService.recalculateBalanceForAccountIncrementally(
           trx.new_account_to_id,
-          Math.min(trx.new_date_timestamp, oldTimestamp) - 1,
+          Math.min(trx.new_date_timestamp, Number(oldTimestamp)) - 1,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );
@@ -541,7 +542,7 @@ const updateTransaction = async (
         );
         newBalance = await AccountService.recalculateBalanceForAccountIncrementally(
           trx.new_account_from_id,
-          Math.min(trx.new_date_timestamp, oldTimestamp) - 1,
+          Math.min(trx.new_date_timestamp, Number(oldTimestamp)) - 1,
           DateTimeUtils.getCurrentUnixTimestamp() + 1,
           prismaTx
         );

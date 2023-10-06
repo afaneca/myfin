@@ -248,7 +248,7 @@ const getEntityExpensesEvolution = async (userId: bigint, entityId: bigint, dbCl
     const calculatedAmountPromises = [];
     for (const budget of budgetsList) {
       calculatedAmountPromises.push(
-        EntityService.getAmountForEntityInMonth(entityId, budget.month, budget.year, prismaTx)
+        EntityService.getAmountForEntityInMonth(entityId, budget.month, budget.year, true, prismaTx)
       );
     }
     const calculatedAmounts: Array<CalculatedEntityAmounts> = await Promise.all(
@@ -312,7 +312,7 @@ const getEntityIncomeEvolution = async (userId: bigint, entityId: bigint, dbClie
     const calculatedAmountPromises = [];
     for (const budget of budgetsList) {
       calculatedAmountPromises.push(
-        EntityService.getAmountForEntityInMonth(entityId, budget.month, budget.year, prismaTx)
+        EntityService.getAmountForEntityInMonth(entityId, budget.month, budget.year, true, prismaTx)
       );
     }
     const calculatedAmounts: Array<CalculatedEntityAmounts> = await Promise.all(
