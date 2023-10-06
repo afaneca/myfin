@@ -118,15 +118,15 @@ const router = (app) => {
   investAssetRoutes.put('/:id', InvestAssetsController.updateAsset);
   investAssetRoutes.put('/:id/value', InvestAssetsController.updateCurrentAssetValue);
   //investAssetRoutes.get('/summary', InvestAssetsController.getAllAssetsSummaryForUser);
-  //investAssetRoutes.get('/stats', InvestAssetsController.getAssetStatsForUser);
+  investAssetRoutes.get('/stats', InvestAssetsController.getAssetStatsForUser);
   //investAssetRoutes.get('/stats/:id', InvestAssetsController.getAssetDetailsForUser);
 
   // INVEST TRANSACTION ROUTES
   /* const investTrxRoutes = express.Router();
-    investTrxRoutes.get('/', InvestTransactionsRouter.getAllTransactionsForUser);
-    investTrxRoutes.post('/', InvestTransactionsRouter.addTransaction);
-    investTrxRoutes.delete('/:id', InvestTransactionsRouter.removeTransaction);
-    investTrxRoutes.delete('/:id', InvestTransactionsRouter.updateTransaction); */
+      investTrxRoutes.get('/', InvestTransactionsRouter.getAllTransactionsForUser);
+      investTrxRoutes.post('/', InvestTransactionsRouter.addTransaction);
+      investTrxRoutes.delete('/:id', InvestTransactionsRouter.removeTransaction);
+      investTrxRoutes.delete('/:id', InvestTransactionsRouter.updateTransaction); */
 
   app.use('/users', usersRouter);
   app.use('/user', userRouter);

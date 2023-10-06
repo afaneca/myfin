@@ -86,9 +86,21 @@ const updateCurrentAssetValue = async (req: Request, res: Response, next: NextFu
   }
 };
 
+const getAssetStatsForUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const data = await InvestAssetService.getAssetStatsForUser(sessionData.userId);
+    res.json(data);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getAllAssetsForUser,
   createAsset,
   updateAsset,
   updateCurrentAssetValue,
+  getAssetStatsForUser,
 };
