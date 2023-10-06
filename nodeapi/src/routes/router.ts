@@ -117,7 +117,7 @@ const router = (app) => {
   //investAssetRoutes.delete('/:id', InvestAssetsController.deleteAsset);
   investAssetRoutes.put('/:id', InvestAssetsController.updateAsset);
   investAssetRoutes.put('/:id/value', InvestAssetsController.updateCurrentAssetValue);
-  //investAssetRoutes.get('/summary', InvestAssetsController.getAllAssetsSummaryForUser);
+  investAssetRoutes.get('/summary', InvestAssetsController.getAllAssetsSummaryForUser);
   investAssetRoutes.get('/stats', InvestAssetsController.getAssetStatsForUser);
   //investAssetRoutes.get('/stats/:id', InvestAssetsController.getAssetDetailsForUser);
 

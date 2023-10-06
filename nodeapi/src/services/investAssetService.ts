@@ -521,10 +521,26 @@ const getAssetStatsForUser = async (
     };
   }, dbClient);
 
+const getAllAssetsSummaryForUser = async (userId: bigint, dbClient = prisma) =>
+  performDatabaseRequest(async (prismaTx) => {
+    return prismaTx.invest_assets.findMany({
+      where: {
+        users_user_id: userId,
+      },
+      select: {
+        asset_id: true,
+        name: true,
+        ticker: true,
+        type: true,
+      },
+    });
+  }, dbClient);
+
 export default {
   getAllAssetsForUser,
   createAsset,
   updateAsset,
   updateCurrentAssetValue,
   getAssetStatsForUser,
+  getAllAssetsSummaryForUser,
 };
