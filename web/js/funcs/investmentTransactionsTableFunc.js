@@ -1,6 +1,6 @@
-import { StringUtils } from '../utils/stringUtils.js'
-import { DateUtils } from '../utils/dateUtils.js'
-import { Localization } from '../utils/localization.js'
+import { StringUtils } from "../utils/stringUtils.js";
+import { DateUtils } from "../utils/dateUtils.js";
+import { Localization } from "../utils/localization.js";
 
 export const InvestmentTransactionsTableFunc = {
   renderTransactionsTable: (trxs, containerId, editTrxCallback, removeTrxCallback) => {
@@ -57,7 +57,6 @@ export const InvestmentTransactionsTableFunc = {
     })
   },
   renderTransactionsRow: (trx, editTrxCallback, removeTrxCallback) => {
-
     return `
       <tr data-id='${trx.transaction_id}'>
         <td style="text-align: center;">

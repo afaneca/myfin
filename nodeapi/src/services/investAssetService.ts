@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import DateTimeUtils from '../utils/DateTimeUtils.js';
 import ConvertUtils from '../utils/convertUtils.js';
 import APIError from '../errorHandling/apiError.js';
+import { MYFIN } from '../consts.js';
 
 interface CalculatedAssetAmounts {
   invested_value?: number;
@@ -215,7 +216,9 @@ const performUpdateAssetValue = async (
                                       ${DateTimeUtils.getCurrentUnixTimestamp()},
                                       ${
                                         withdrawnAmount
-                                          ? ConvertUtils.convertFloatToBigInteger(withdrawnAmount)
+                                          ? ConvertUtils.convertFloatToBigInteger(
+                                              Number(withdrawnAmount)
+                                            )
                                           : 0
                                       })
                               ON DUPLICATE KEY UPDATE current_value = ${ConvertUtils.convertFloatToBigInteger(
@@ -599,6 +602,213 @@ const getAssetDetailsForUser = async (
       investedValue == 0 ? '∞' : (roiValue / (investedValue + feesAndTaxes)) * 100;*/
   }, dbClient);
 
+const addCustomBalanceSnapshot = async (
+  assetId: bigint,
+  month: number,
+  year: number,
+  units: number,
+  investedAmount: number,
+  currentAmount: number,
+  withdrawnAmount: number,
+  dbClient = prisma
+) => {
+  const currentTimestamp = DateTimeUtils.getCurrentUnixTimestamp();
+  return dbClient.$queryRaw`INSERT INTO invest_asset_evo_snapshot (month, year, units, invested_amount, current_value, invest_assets_asset_id, created_at, updated_at, withdrawn_amount)
+                                  VALUES (${month}, ${year}, ${units}, ${investedAmount}, ${currentAmount}, ${assetId}, ${currentTimestamp}, ${currentTimestamp}, ${withdrawnAmount})
+                                  ON DUPLICATE KEY UPDATE units = ${units}, invested_amount = ${investedAmount}, updated_at = ${currentTimestamp}, withdrawn_amount = ${withdrawnAmount};`;
+};
+
+const getAllTransactionsForAssetBetweenDates = async (
+  assetId: bigint,
+  fromDate: bigint | number,
+  toDate: bigint | number,
+  dbClient = prisma
+) =>
+  performDatabaseRequest(async (prismaTx) => {
+    return prismaTx.$queryRaw`SELECT * FROM invest_transactions 
+            WHERE date_timestamp BETWEEN ${fromDate} AND ${toDate}
+            AND invest_assets_asset_id = ${assetId}
+            ORDER BY date_timestamp ASC`;
+  }, dbClient);
+
+const recalculateSnapshotForAssetsIncrementally = async (
+  assetId: bigint,
+  originalFromDate: number | bigint,
+  originalToDate: number | bigint,
+  dbClient = undefined
+) =>
+  performDatabaseRequest(async (prismaTx) => {
+    /* Logger.addLog(`account: ${accountId} | fromDate: ${fromDate} | toDate: ${toDate}`); */
+    /*
+     * Given that I'm unable to know the invested/current amounts of an asset at any specific time (only at the end of each month),
+     * I will need to recalculate from the beginning of the month relative to $fromDate all the way to the end of
+     * month associated with $toDate.
+     *
+     * Will update units, current_amount & invested_amount
+     */
+
+    let beginMonth = DateTimeUtils.getMonthNumberFromTimestamp(originalFromDate);
+    let beginYear = DateTimeUtils.getYearFromTimestamp(originalFromDate);
+
+    // Get snapshot from 2 months prior of begin date
+    let priorMonthsSnapshot = await getLatestSnapshotForAsset(
+      assetId,
+      beginMonth > 2 ? beginMonth - 2 : 12 - 2 + beginMonth,
+      beginMonth > 2 ? beginYear : beginYear - 1,
+      prismaTx
+    );
+
+    if (!priorMonthsSnapshot) {
+      priorMonthsSnapshot = {
+        units: 0,
+        current_value: 0,
+        invested_amount: 0,
+        year: -1,
+        month: -1,
+        invest_assets_asset_id: assetId,
+        withdrawn_amount: 0,
+        updated_at: -1,
+        created_at: -1,
+      };
+    }
+
+    await addCustomBalanceSnapshot(
+      assetId,
+      beginMonth,
+      beginYear,
+      Number(priorMonthsSnapshot.units),
+      Number(priorMonthsSnapshot.invested_amount),
+      Number(priorMonthsSnapshot.current_value),
+      Number(priorMonthsSnapshot.withdrawn_amount),
+      prismaTx
+    );
+
+    // Reset snapshots for next 2 months (in case there are no transactions in these months and the balance doesn't get recalculated
+    let addCustomBalanceSnapshotsPromises = [];
+    addCustomBalanceSnapshotsPromises.push(
+      addCustomBalanceSnapshot(
+        assetId,
+        DateTimeUtils.incrementMonthByX(beginMonth, beginYear, 1).month, //beginMonth < 12 ? beginMonth + 1 : 1,
+        DateTimeUtils.incrementMonthByX(beginMonth, beginYear, 1).year, //beginMonth < 12 ? beginYear : beginYear + 1,
+        Number(priorMonthsSnapshot.units),
+        Number(priorMonthsSnapshot.invested_amount),
+        Number(priorMonthsSnapshot.current_value),
+        Number(priorMonthsSnapshot.withdrawn_amount),
+        prismaTx
+      )
+    );
+
+    addCustomBalanceSnapshotsPromises.push(
+      addCustomBalanceSnapshot(
+        assetId,
+        DateTimeUtils.incrementMonthByX(beginMonth, beginYear, 2).month, //beginMonth < 11 ? beginMonth + 2 : 1,
+        DateTimeUtils.incrementMonthByX(beginMonth, beginYear, 2).year, //beginMonth < 11 ? beginYear : beginYear + 1,
+        Number(priorMonthsSnapshot.units),
+        Number(priorMonthsSnapshot.invested_amount),
+        Number(priorMonthsSnapshot.current_value),
+        Number(priorMonthsSnapshot.withdrawn_amount),
+        prismaTx
+      )
+    );
+
+    await Promise.all(addCustomBalanceSnapshotsPromises);
+
+    if (beginMonth > 1) beginMonth--;
+    else {
+      beginMonth = 12;
+      beginYear--;
+    }
+
+    let endMonth = DateTimeUtils.getMonthNumberFromTimestamp(originalToDate);
+    let endYear = DateTimeUtils.getYearFromTimestamp(originalToDate);
+
+    if (endMonth < 12) endMonth++;
+    else {
+      endMonth = 1;
+      endYear++;
+    }
+
+    const fromDate = DateTimeUtils.getUnixTimestampFromDate(new Date(beginYear, beginMonth - 1, 1));
+    const toDate = DateTimeUtils.getUnixTimestampFromDate(new Date(endYear, endMonth - 1, 1));
+
+    const trxList = await getAllTransactionsForAssetBetweenDates(
+      assetId,
+      fromDate,
+      toDate,
+      prismaTx
+    );
+
+    let initialSnapshot = priorMonthsSnapshot;
+    if (!initialSnapshot) {
+      initialSnapshot = {
+        units: 0,
+        current_value: 0,
+        invested_amount: 0,
+        year: -1,
+        month: -1,
+        invest_assets_asset_id: assetId,
+        withdrawn_amount: 0,
+        updated_at: -1,
+        created_at: -1,
+      };
+    }
+
+    for (const trx of trxList) {
+      const trxDate = Number(trx.date_timestamp);
+      const month = DateTimeUtils.getMonthNumberFromTimestamp(trxDate);
+      const year = DateTimeUtils.getYearFromTimestamp(trxDate);
+
+      const trxType = trx.type;
+      let changeInAmounts = trx.total_price;
+      let changeInUnits = trx.units;
+
+      if (trxType == MYFIN.INVEST.TRX_TYPE.SELL) {
+        changeInUnits *= -1;
+        initialSnapshot.withdrawn_amount =
+          Number(initialSnapshot.withdrawn_amount) + parseFloat(changeInAmounts);
+      } else {
+        initialSnapshot.invested_amount =
+          Number(initialSnapshot.invested_amount) + parseFloat(changeInAmounts);
+      }
+
+      initialSnapshot.units = Number(initialSnapshot.units) + parseFloat(changeInUnits);
+
+      /* Automatically add snapshots for current & next 6 months in order to create a buffer*/
+      addCustomBalanceSnapshotsPromises = [];
+
+      addCustomBalanceSnapshotsPromises.push(
+        addCustomBalanceSnapshot(
+          assetId,
+          month,
+          year,
+          Number(initialSnapshot.units),
+          Number(initialSnapshot.invested_amount),
+          Number(initialSnapshot.current_value),
+          Number(initialSnapshot.withdrawn_amount),
+          prismaTx
+        )
+      );
+
+      for (let i = 1; i <= 6; i++) {
+        addCustomBalanceSnapshotsPromises.push(
+          addCustomBalanceSnapshot(
+            assetId,
+            DateTimeUtils.incrementMonthByX(month, year, i).month,
+            DateTimeUtils.incrementMonthByX(month, year, i).year,
+            Number(initialSnapshot.units),
+            Number(initialSnapshot.invested_amount),
+            Number(initialSnapshot.current_value),
+            Number(initialSnapshot.withdrawn_amount),
+            prismaTx
+          )
+        );
+      }
+
+      await Promise.all(addCustomBalanceSnapshotsPromises);
+    }
+
+    return initialSnapshot;
+  }, dbClient);
 
 export default {
   getAllAssetsForUser,
@@ -609,4 +819,6 @@ export default {
   getAllAssetsSummaryForUser,
   deleteAsset,
   getAssetDetailsForUser,
+  doesAssetBelongToUser,
+  recalculateSnapshotForAssetsIncrementally,
 };

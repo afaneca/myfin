@@ -127,7 +127,7 @@ const router = (app) => {
   investTrxRoutes.get('/', InvestTransactionsController.getAllTransactionsForUser);
   //investTrxRoutes.post('/', InvestTransactionsRouter.addTransaction);
   //investTrxRoutes.delete('/:id', InvestTransactionsRouter.removeTransaction);
-  //investTrxRoutes.delete('/:id', InvestTransactionsRouter.updateTransaction);
+  investTrxRoutes.put('/:id', InvestTransactionsController.updateTransaction);
 
   app.use('/users', usersRouter);
   app.use('/user', userRouter);

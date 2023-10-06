@@ -1,9 +1,9 @@
-import { DialogUtils } from '../utils/dialogUtils.js'
-import { ValidationUtils } from '../utils/validationUtils.js'
-import { PickerUtils } from '../utils/pickerUtils.js'
-import { DateUtils } from '../utils/dateUtils.js'
-import { Localization } from '../utils/localization.js'
-import { ToggleComponent } from '../components/toggleComponent.js'
+import { DialogUtils } from "../utils/dialogUtils.js";
+import { ValidationUtils } from "../utils/validationUtils.js";
+import { PickerUtils } from "../utils/pickerUtils.js";
+import { DateUtils } from "../utils/dateUtils.js";
+import { Localization } from "../utils/localization.js";
+import { ToggleComponent } from "../components/toggleComponent.js";
 
 export const InvestTransactionsModalFunc = {
   buildAddNewTransactionModal: (modalDivID = '#modal-global', assetsList, addTransactionBtnClickCallback) => {
@@ -106,7 +106,7 @@ export const InvestTransactionsModalFunc = {
     })
   },
   renderAssetsSelectOption: (asset, defaultAssetId = undefined) => `
-    <option value="${asset.asset_id}" ${(defaultAssetId && asset.asset_id === defaultAssetId) ? 'selected' : ''}>${asset.name}</option>
+    <option value="${asset.asset_id}" ${(defaultAssetId && asset.asset_id == defaultAssetId) ? "selected" : ""}>${asset.name}</option>
   `,
   showRemoveTrxConfirmationModal: (modalDivId, trxId, assetId, removeTrxCallback) => {
     $('#modal-global').modal('open')
@@ -130,6 +130,7 @@ export const InvestTransactionsModalFunc = {
   showEditTransactionModal: (
     modalDivID, assetsList, trxId, date_timestamp, trxType, totalPrice, name, assetType, ticker, broker, units, fees, observations, assetId,
     editAssetCallback) => {
+
     $(modalDivID).modal('open')
 
     let html = `

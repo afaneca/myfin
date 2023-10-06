@@ -31,28 +31,34 @@ const MYFIN = {
     CREDIT: 'CREAC',
     MEAL: 'MEALAC',
     WALLET: 'WALLET',
-    OTHER: "OTHAC"
+    OTHER: 'OTHAC',
   },
   CATEGORY_STATUS: {
-    ACTIVE: "Ativa",
-    INACTIVE: "Inativa"
+    ACTIVE: 'Ativa',
+    INACTIVE: 'Inativa',
   },
   TRX_TYPE_LABEL: {
-    DEBIT: "Débito",
-    CREDIT: "Crédito"
+    DEBIT: 'Débito',
+    CREDIT: 'Crédito',
   },
   RULES: {
     MATCHING: {
-      IGNORE: "RULES_MATCHING_IGNORE"
+      IGNORE: 'RULES_MATCHING_IGNORE',
     },
     OPERATOR: {
-      IGNORE: "IG",
-      EQUALS: "EQ",
-      NOT_EQUALS: "NEQ",
-      CONTAINS: "CONTAINS",
-      NOT_CONTAINS: "NOTCONTAINS"
-    }
-  }
+      IGNORE: 'IG',
+      EQUALS: 'EQ',
+      NOT_EQUALS: 'NEQ',
+      CONTAINS: 'CONTAINS',
+      NOT_CONTAINS: 'NOTCONTAINS',
+    },
+  },
+  INVEST: {
+    TRX_TYPE: {
+      BUY: 'B',
+      SELL: 'S',
+    },
+  },
 };
 
 export { HTTP_STATUS_CODE, MYFIN };
