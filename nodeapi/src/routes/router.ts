@@ -8,6 +8,7 @@ import CategoryController from '../controllers/categoryController.js';
 import BudgetController from '../controllers/budgetController.js';
 import StatsController from '../controllers/statsController.js';
 import InvestAssetsController from '../controllers/investAssetsController.js';
+import InvestTransactionsController from '../controllers/investTransactionsController.js';
 
 const router = (app) => {
   // USERS ROUTES
@@ -122,11 +123,11 @@ const router = (app) => {
   investAssetRoutes.get('/:id', InvestAssetsController.getAssetDetailsForUser);
 
   // INVEST TRANSACTION ROUTES
-  /* const investTrxRoutes = express.Router();
-      investTrxRoutes.get('/', InvestTransactionsRouter.getAllTransactionsForUser);
-      investTrxRoutes.post('/', InvestTransactionsRouter.addTransaction);
-      investTrxRoutes.delete('/:id', InvestTransactionsRouter.removeTransaction);
-      investTrxRoutes.delete('/:id', InvestTransactionsRouter.updateTransaction); */
+  const investTrxRoutes = express.Router();
+  investTrxRoutes.get('/', InvestTransactionsController.getAllTransactionsForUser);
+  //investTrxRoutes.post('/', InvestTransactionsRouter.addTransaction);
+  //investTrxRoutes.delete('/:id', InvestTransactionsRouter.removeTransaction);
+  //investTrxRoutes.delete('/:id', InvestTransactionsRouter.updateTransaction);
 
   app.use('/users', usersRouter);
   app.use('/user', userRouter);
@@ -140,7 +141,7 @@ const router = (app) => {
   app.use('/rules', ruleRoutes);
   app.use('/stats', statRoutes);
   app.use('/invest/assets', investAssetRoutes);
-  /* app.use('/invest/trx', investTrxRoutes) */
+  app.use('/invest/trx', investTrxRoutes);
 };
 
 export default router;
