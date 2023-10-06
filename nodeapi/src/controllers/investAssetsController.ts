@@ -108,6 +108,19 @@ const getAllAssetsSummaryForUser = async (req: Request, res: Response, next: Nex
   }
 };
 
+const deleteAsset = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const assetId = req.params.id;
+
+    await InvestAssetService.deleteAsset(sessionData.userId, BigInt(assetId));
+    res.json('Asset successfully deleted!');
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   getAllAssetsForUser,
   createAsset,
@@ -115,4 +128,5 @@ export default {
   updateCurrentAssetValue,
   getAssetStatsForUser,
   getAllAssetsSummaryForUser,
+  deleteAsset,
 };

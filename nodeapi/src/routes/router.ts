@@ -114,7 +114,7 @@ const router = (app) => {
   const investAssetRoutes = express.Router();
   investAssetRoutes.get('/', InvestAssetsController.getAllAssetsForUser);
   investAssetRoutes.post('/', InvestAssetsController.createAsset);
-  //investAssetRoutes.delete('/:id', InvestAssetsController.deleteAsset);
+  investAssetRoutes.delete('/:id', InvestAssetsController.deleteAsset);
   investAssetRoutes.put('/:id', InvestAssetsController.updateAsset);
   investAssetRoutes.put('/:id/value', InvestAssetsController.updateCurrentAssetValue);
   investAssetRoutes.get('/summary', InvestAssetsController.getAllAssetsSummaryForUser);
