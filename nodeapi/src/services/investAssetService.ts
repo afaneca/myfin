@@ -556,6 +556,50 @@ const deleteAsset = async (userId: bigint, assetId: bigint, dbClient = undefined
     });
   }, dbClient);
 
+const getAssetDetailsForUser = async (
+  userId: bigint,
+  assetId: bigint,
+  dbClient = undefined
+): Promise<InvestAssetWithCalculatedAmounts> =>
+  performDatabaseRequest(async (prismaTx) => {
+    if (!(await doesAssetBelongToUser(userId, assetId, prismaTx))) {
+      throw APIError.notAuthorized();
+    }
+
+    /*const asset = (await getAllAssetsForUser(userId, prismaTx)).find(
+      (assetItem) => assetItem.asset_id == assetId
+    );*/
+
+    const asset = await prismaTx.invest_assets.findUniqueOrThrow({
+      where: {
+        users_user_id: userId,
+        asset_id: assetId,
+      },
+    });
+
+    return calculateAssetAmounts(asset, prismaTx);
+    /*const month = DateTimeUtils.getMonthNumberFromTimestamp();
+    const year = DateTimeUtils.getYearFromTimestamp();
+    const snapshot = await getLatestSnapshotForAsset(assetId, null, null, prismaTx);
+    const investedValue = ConvertUtils.convertBigIntegerToFloat(
+      BigInt(snapshot?.invested_amount ?? 0)
+    );
+    const withdrawnAmount = ConvertUtils.convertBigIntegerToFloat(
+      BigInt(snapshot?.withdrawn_amount ?? 0)
+    );
+    const currentValue = ConvertUtils.convertBigIntegerToFloat(BigInt(snapshot?.current_value ?? 0));
+    const feesAndTaxes = parseFloat(
+      await getTotalFessAndTaxesForAsset(asset.asset_id as bigint, dbClient)
+    );
+
+    let currentlyInvestedValue = investedValue - withdrawnAmount;
+    if (currentlyInvestedValue < 0) currentlyInvestedValue = 0;
+    const roiValue = currentValue + withdrawnAmount - (investedValue + feesAndTaxes);
+    const roiPercentage =
+      investedValue == 0 ? '∞' : (roiValue / (investedValue + feesAndTaxes)) * 100;*/
+  }, dbClient);
+
+
 export default {
   getAllAssetsForUser,
   createAsset,
@@ -564,4 +608,5 @@ export default {
   getAssetStatsForUser,
   getAllAssetsSummaryForUser,
   deleteAsset,
+  getAssetDetailsForUser,
 };

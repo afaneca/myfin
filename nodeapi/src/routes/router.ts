@@ -119,7 +119,7 @@ const router = (app) => {
   investAssetRoutes.put('/:id/value', InvestAssetsController.updateCurrentAssetValue);
   investAssetRoutes.get('/summary', InvestAssetsController.getAllAssetsSummaryForUser);
   investAssetRoutes.get('/stats', InvestAssetsController.getAssetStatsForUser);
-  //investAssetRoutes.get('/stats/:id', InvestAssetsController.getAssetDetailsForUser);
+  investAssetRoutes.get('/:id', InvestAssetsController.getAssetDetailsForUser);
 
   // INVEST TRANSACTION ROUTES
   /* const investTrxRoutes = express.Router();
