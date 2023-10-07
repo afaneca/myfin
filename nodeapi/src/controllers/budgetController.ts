@@ -226,5 +226,5 @@ export default {
   changeBudgetStatus,
   removeBudget,
   getBudgetsListForUser,
-  updateBudgetCategoryPlannedValue,
+  updateBudgetCategoryPlannedValues,
 };

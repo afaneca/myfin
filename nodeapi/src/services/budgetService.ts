@@ -863,5 +863,5 @@ export default {
   getBudgetAfterCertainMonth,
   getBudgetsUntilCertainMonth,
   calculateBudgetBalance,
-  updateBudgetCategoryPlannedVaues,
+  updateBudgetCategoryPlannedValues,
 };
