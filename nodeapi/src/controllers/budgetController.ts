@@ -1,10 +1,10 @@
-import joi from 'joi';
-import Logger from '../utils/Logger.js';
-import APIError from '../errorHandling/apiError.js';
-import CommonsController from './commonsController.js';
-import BudgetService from '../services/budgetService.js';
-import {MYFIN} from '../consts.js';
-import {NextFunction, Request, Response} from "express";
+import joi from "joi";
+import Logger from "../utils/Logger.js";
+import APIError from "../errorHandling/apiError.js";
+import CommonsController from "./commonsController.js";
+import BudgetService from "../services/budgetService.js";
+import { MYFIN } from "../consts.js";
+import { NextFunction, Request, Response } from "express";
 
 // READ
 const getAllBudgetsForUserSchema = joi.object({
@@ -146,6 +146,33 @@ const updateBudget = async (req, res, next) => {
   }
 };
 
+const updateBudgetCategoryPlannedValuesSchema = joi
+  .object({
+    category_id: joi.number().required(),
+    planned_expense: joi.number().optional(),
+    planned_income: joi.number().optional(),
+  })
+  .or('planned_expense', 'planned_income');
+
+const updateBudgetCategoryPlannedValues = async (req, res, next) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    const input = await updateBudgetCategoryPlannedValuesSchema.validateAsync(req.body);
+    const budgetId = req.params.id as bigint;
+    await BudgetService.updateBudgetCategoryPlannedValues(
+      sessionData.userId,
+      budgetId,
+      input.categoryId,
+      input.planned_expense,
+      input.planned_income
+    );
+    res.json(`Budget was successfully updated.`);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 const changeBudgetStatusSchema = joi.object({
   budget_id: joi.number().min(1).required(),
   is_open: joi.boolean().required(),
@@ -199,4 +226,5 @@ export default {
   changeBudgetStatus,
   removeBudget,
   getBudgetsListForUser,
+  updateBudgetCategoryPlannedValue,
 };

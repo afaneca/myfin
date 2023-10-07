@@ -50,7 +50,7 @@ const router = (app) => {
   budgetRoutes.put('/status', BudgetController.changeBudgetStatus);
   budgetRoutes.delete('/', BudgetController.removeBudget);
   budgetRoutes.get('/list/summary', BudgetController.getBudgetsListForUser);
-  //budgetRoutes.put('/:id', BudgetController.updateBudgetCategoryPlannedValues)
+  budgetRoutes.put('/:id', BudgetController.updateBudgetCategoryPlannedValues);
 
   // CATEGORIES ROUTES
   const catRoutes = express.Router();

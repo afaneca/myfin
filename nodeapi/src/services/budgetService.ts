@@ -816,6 +816,39 @@ const getBudgetsUntilCertainMonth = async (
                             ORDER BY year ASC, month ASC`;
 };
 
+const updateBudgetCategoryPlannedValues = async (
+  userId: bigint,
+  budgetId: bigint,
+  categoryId: bigint,
+  plannedExpense?: number,
+  plannedIncome?: number,
+  dbClient = undefined
+) =>
+  performDatabaseRequest(async (prismaTx) => {
+    const currentAmounts = await prismaTx.budgets_has_categories.findUnique({
+      where: {
+        budgets_budget_id_budgets_users_user_id_categories_category_id: {
+          budgets_budget_id: budgetId,
+          categories_category_id: categoryId,
+          budgets_users_user_id: userId,
+        },
+      },
+      select: {
+        planned_amount_credit: true,
+        planned_amount_debit: true,
+      },
+    });
+
+    await addOrUpdateCategoryValueInBudget(
+      userId,
+      budgetId,
+      categoryId,
+      plannedIncome ?? currentAmounts.planned_amount_credit,
+      plannedExpense ?? currentAmounts.planned_amount_debit,
+      prismaTx
+    );
+  }, dbClient);
+
 export default {
   getAllBudgetsForUser,
   getFilteredBudgetsForUserByPage,
@@ -830,4 +863,5 @@ export default {
   getBudgetAfterCertainMonth,
   getBudgetsUntilCertainMonth,
   calculateBudgetBalance,
+  updateBudgetCategoryPlannedVaues,
 };
