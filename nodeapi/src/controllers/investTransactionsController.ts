@@ -10,7 +10,7 @@ import { MYFIN } from "../consts.js";
 
 const createTransactionSchema = joi.object({
   date_timestamp: joi.number().required(),
-  note: joi.string(),
+  note: joi.string().allow('').optional(),
   total_price: joi.number().required(),
   units: joi.number().required(),
   fees: joi.number().required(),

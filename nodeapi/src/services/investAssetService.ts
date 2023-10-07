@@ -547,6 +547,13 @@ const deleteAsset = async (userId: bigint, assetId: bigint, dbClient = undefined
       throw APIError.notAuthorized();
     }
 
+    // delete transactions
+    await prismaTx.invest_transactions.deleteMany({
+      where: {
+        invest_assets_asset_id: assetId,
+      },
+    });
+
     // delete snapshot references
     await prismaTx.invest_asset_evo_snapshot.deleteMany({
       where: {
