@@ -125,8 +125,8 @@ const router = (app) => {
   // INVEST TRANSACTION ROUTES
   const investTrxRoutes = express.Router();
   investTrxRoutes.get('/', InvestTransactionsController.getAllTransactionsForUser);
-  //investTrxRoutes.post('/', InvestTransactionsRouter.addTransaction);
-  //investTrxRoutes.delete('/:id', InvestTransactionsRouter.removeTransaction);
+  investTrxRoutes.post('/', InvestTransactionsController.createTransaction);
+  investTrxRoutes.delete('/:id', InvestTransactionsController.deleteTransaction);
   investTrxRoutes.put('/:id', InvestTransactionsController.updateTransaction);
 
   app.use('/users', usersRouter);

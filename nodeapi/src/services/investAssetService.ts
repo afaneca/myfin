@@ -4,6 +4,7 @@ import DateTimeUtils from '../utils/DateTimeUtils.js';
 import ConvertUtils from '../utils/convertUtils.js';
 import APIError from '../errorHandling/apiError.js';
 import { MYFIN } from '../consts.js';
+import Logger from '../utils/Logger.js';
 
 interface CalculatedAssetAmounts {
   invested_value?: number;
@@ -649,7 +650,7 @@ const recalculateSnapshotForAssetsIncrementally = async (
 
     let beginMonth = DateTimeUtils.getMonthNumberFromTimestamp(originalFromDate);
     let beginYear = DateTimeUtils.getYearFromTimestamp(originalFromDate);
-
+    Logger.addLog(`Begin month: ${beginMonth} | original from date: ${originalFromDate}`);
     // Get snapshot from 2 months prior of begin date
     let priorMonthsSnapshot = await getLatestSnapshotForAsset(
       assetId,
@@ -737,7 +738,9 @@ const recalculateSnapshotForAssetsIncrementally = async (
       toDate,
       prismaTx
     );
-
+    Logger.addLog(`----- dates between ${fromDate} & ${toDate}`);
+    Logger.addStringifiedLog(trxList);
+    Logger.addLog('-----');
     let initialSnapshot = priorMonthsSnapshot;
     if (!initialSnapshot) {
       initialSnapshot = {
@@ -759,7 +762,7 @@ const recalculateSnapshotForAssetsIncrementally = async (
       const year = DateTimeUtils.getYearFromTimestamp(trxDate);
 
       const trxType = trx.type;
-      let changeInAmounts = trx.total_price;
+      const changeInAmounts = trx.total_price;
       let changeInUnits = trx.units;
 
       if (trxType == MYFIN.INVEST.TRX_TYPE.SELL) {
