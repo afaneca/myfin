@@ -161,5 +161,5 @@ export default {
   getAllTransactionsForUser,
   updateTransaction,
   createTransaction,
-  deleteTransacton,
+  deleteTransaction,
 };
