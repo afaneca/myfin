@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "start": "ts-node server.js",
+    "start": "ts-node src/server.ts",
     "start:dev": "nodemon src/server.ts",
     "tsc": "tsc",
     "eslint": "eslint ./",
@@ -13,7 +13,7 @@
   "name": "nodeapi",
   "version": "0.0.1",
   "description": "NODE.js API for Myfin",
-  "main": "server.js",
+  "main": "src/server.js",
   "devDependencies": {
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
