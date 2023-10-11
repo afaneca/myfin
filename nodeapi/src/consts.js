@@ -58,6 +58,16 @@ const MYFIN = {
       BUY: 'B',
       SELL: 'S',
     },
+    ASSET_TYPE: {
+      PPR: 'ppr',
+      ETF: 'etf',
+      CRYPTO: 'crypto',
+      FIXED_INCOME: 'fixed',
+      INDEX_FUNDS: 'index',
+      INVESTMENT_FUNDS: 'if',
+      P2P: 'p2p',
+      STOCKS: 'stocks',
+    }
   },
 };
 

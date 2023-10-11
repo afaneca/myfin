@@ -745,6 +745,13 @@ const getYearOfFirstTransactionForUser = async (
   return result[0].year;
 };
 
+const deleteAllTransactionsFromUser = async (userId: bigint, dbClient = prisma) => {
+  return dbClient.$queryRaw`DELETE transactions FROM transactions 
+LEFT JOIN accounts acc_to ON acc_to.account_id = transactions.accounts_account_to_id 
+LEFT JOIN accounts acc_from ON acc_from.account_id = transactions.accounts_account_from_id
+WHERE acc_to.users_user_id = ${userId} OR acc_from.users_user_id = ${userId} `;
+};
+
 export default {
   getTransactionsForUser,
   getFilteredTransactionsByForUser,
@@ -758,4 +765,5 @@ export default {
   autoCategorizeTransactionList,
   createTransactionsInBulk,
   getYearOfFirstTransactionForUser,
+  deleteAllTransactionsFromUser,
 };

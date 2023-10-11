@@ -1,9 +1,9 @@
-import joi from 'joi';
-import APIError from '../errorHandling/apiError.js';
-import Logger from '../utils/Logger.js';
-import CommonsController from './commonsController.js';
-import UserService from '../services/userService.js';
-import {NextFunction, Request, Response} from 'express';
+import joi from "joi";
+import APIError from "../errorHandling/apiError.js";
+import Logger from "../utils/Logger.js";
+import CommonsController from "./commonsController.js";
+import UserService from "../services/userService.js";
+import { NextFunction, Request, Response } from "express";
 
 // CREATE
 const createUserSchema = joi.object({
@@ -95,10 +95,22 @@ const getUserCategoriesAndEntities = async (req: Request, res: Response, next: N
   }
 };
 
+const autoPopulateDemoData = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const sessionData = await CommonsController.checkAuthSessionValidity(req);
+    await UserService.autoPopulateDemoData(sessionData.userId);
+    res.json(`Demo data successfully populated.`);
+  } catch (err) {
+    Logger.addLog(err);
+    next(err || APIError.internalServerError());
+  }
+};
+
 export default {
   createOne,
   attemptLogin,
   checkSessionValidity,
   changeUserPassword,
   getUserCategoriesAndEntities,
+  autoPopulateDemoData,
 };

@@ -820,6 +820,12 @@ const recalculateSnapshotForAssetsIncrementally = async (
     return initialSnapshot;
   }, dbClient);
 
+const deleteAllAssetEvoSnapshotsForUser = async (userId: bigint, dbClient = prisma) => {
+  return dbClient.$queryRaw`DELETE invest_asset_evo_snapshot FROM invest_asset_evo_snapshot 
+    LEFT JOIN invest_assets ON invest_assets.asset_id = invest_asset_evo_snapshot.invest_assets_asset_id 
+    WHERE users_user_id = ${userId} `;
+};
+
 export default {
   getAllAssetsForUser,
   createAsset,
@@ -831,4 +837,5 @@ export default {
   getAssetDetailsForUser,
   doesAssetBelongToUser,
   recalculateSnapshotForAssetsIncrementally,
+  deleteAllAssetEvoSnapshotsForUser,
 };

@@ -6,12 +6,6 @@ import apiErrorHandler from './errorHandling/apiErrorHandler.js';
 
 const app = express();
 
-// TODO - cors settings
-/* var corsOptions = {
-    origin: "http://localhost:8081"
-  };
-
-  app.use(cors(corsOptions)); */
 app.use(cors());
 app.use(helmet());
 

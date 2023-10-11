@@ -5,6 +5,7 @@ import SessionManager from '../utils/sessionManager.js';
 import { Prisma } from '@prisma/client';
 import CategoryService from './categoryService.js';
 import EntityService from './entityService.js';
+import DemoDataManager from '../utils/demoDataManager.js';
 
 const User = prisma.users;
 
@@ -173,6 +174,7 @@ const userService = {
       }),
     };
   },
+  autoPopulateDemoData: async (userId: bigint, dbClient = undefined) => DemoDataManager.createMockData(userId, dbClient),
 };
 
 export default userService;

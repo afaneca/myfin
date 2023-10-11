@@ -20,6 +20,13 @@ const DateTimeUtils = {
       year: month + x > 12 ? year + 1 : year,
     };
   },
+  decrementMonthByX: (month, year, x) => {
+    const futureDate = new Date(year, month - 1 - x, 1);
+    return {
+      month: futureDate.getMonth() + 1,
+      year: futureDate.getFullYear(),
+    }
+  },
 };
 
 export default DateTimeUtils;

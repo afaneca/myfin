@@ -9,8 +9,9 @@ import BudgetController from '../controllers/budgetController.js';
 import StatsController from '../controllers/statsController.js';
 import InvestAssetsController from '../controllers/investAssetsController.js';
 import InvestTransactionsController from '../controllers/investTransactionsController.js';
+import { Express } from 'express-serve-static-core';
 
-const router = (app) => {
+const router = (app: Express) => {
   // USERS ROUTES
   const userRouter = express.Router();
   userRouter.get('/categoriesAndEntities', UserController.getUserCategoriesAndEntities);
@@ -18,7 +19,7 @@ const router = (app) => {
   const usersRouter = express.Router();
   usersRouter.post('/', UserController.createOne);
   usersRouter.put('/changePW/', UserController.changeUserPassword);
-  /* usersRouter.post('/demo/', UserController.autoPopulateDemoData) */
+  usersRouter.post('/demo/', UserController.autoPopulateDemoData);
 
   // AUTH ROUTES
   const authRoutes = express.Router();

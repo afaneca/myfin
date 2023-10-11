@@ -54,7 +54,7 @@ export type UpdateAccountType = {
   users_user_id: bigint;
 };
 const accountService = {
-  createAccount: async (account: CreateAccountType, userId: bigint) => {
+  createAccount: async (account: CreateAccountType, userId: bigint, dbClient = prisma) => {
     const accountObj = {
       ...account,
     };
@@ -62,7 +62,7 @@ const accountService = {
     accountObj.users_user_id = userId;
     // eslint-disable-next-line no-param-reassign
     accountObj.current_balance = ConvertUtils.convertFloatToBigInteger(account.current_balance);
-    return Account.create({
+    return dbClient.accounts.create({
       data: accountObj,
     });
   },
@@ -622,6 +622,11 @@ const accountService = {
                                 MYFIN.ACCOUNT_STATUS.INACTIVE
                               } then 1 else 0 end`;
     }, dbClient),
+  deleteBalanceSnapshotsForUser: async (userId: bigint, dbClient = prisma) => {
+    return dbClient.$queryRaw`DELETE balances_snapshot FROM balances_snapshot 
+      LEFT JOIN accounts ON accounts.account_id = balances_snapshot.accounts_account_id
+      WHERE users_user_id = ${userId} `;
+  },
 };
 
 export default accountService;

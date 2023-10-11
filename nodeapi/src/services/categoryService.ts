@@ -3,7 +3,6 @@ import { MYFIN } from '../consts.js';
 import { Prisma } from '@prisma/client';
 import DateTimeUtils from '../utils/DateTimeUtils.js';
 
-const Category = prisma.categories;
 const BudgetHasCategories = prisma.budgets_has_categories;
 
 /**
@@ -21,18 +20,18 @@ const getAllCategoriesForUser = async (
     where: { users_user_id: userId },
     select: selectAttributes,
   });
-const createCategory = async (category: Prisma.categoriesCreateInput) => {
-  return Category.create({ data: category });
+const createCategory = async (category: Prisma.categoriesCreateInput, dbClient = prisma) => {
+  return dbClient.categories.create({ data: category });
 };
 
-const deleteCategory = async (userId: bigint, categoryId: number) => {
+const deleteCategory = async (userId: bigint, categoryId: number, dbClient = prisma) => {
   const deleteBudgetHasCategoriesRefs = BudgetHasCategories.deleteMany({
     where: {
       categories_category_id: categoryId,
       budgets_users_user_id: userId,
     },
   });
-  const deleteCat = Category.delete({
+  const deleteCat = dbClient.categories.delete({
     where: {
       users_user_id: userId,
       category_id: categoryId,
@@ -42,8 +41,8 @@ const deleteCategory = async (userId: bigint, categoryId: number) => {
   return prisma.$transaction([deleteBudgetHasCategoriesRefs, deleteCat]);
 };
 
-const updateCategory = async (userId: bigint, categoryId, category: Prisma.categoriesUpdateInput) =>
-  Category.update({
+const updateCategory = async (userId: bigint, categoryId, category: Prisma.categoriesUpdateInput, dbClient = prisma) =>
+  dbClient.categories.update({
     where: {
       users_user_id: userId,
       category_id: categoryId,

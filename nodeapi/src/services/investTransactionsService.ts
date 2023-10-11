@@ -157,9 +157,16 @@ const deleteTransaction = async (userId: bigint, trxId: bigint, dbClient = undef
   });
 };
 
+const deleteAllTransactionsForUser = async (userId: bigint, dbClient = prisma) => {
+  return dbClient.$queryRaw`DELETE invest_transactions FROM invest_transactions 
+LEFT JOIN invest_assets ON invest_assets.asset_id = invest_transactions.invest_assets_asset_id
+WHERE users_user_id = ${userId}`;
+};
+
 export default {
   getAllTransactionsForUser,
   updateTransaction,
   createTransaction,
   deleteTransaction,
+  deleteAllTransactionsForUser,
 };

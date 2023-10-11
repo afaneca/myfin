@@ -34,8 +34,8 @@ const getAllRulesForUser = async (userId: bigint) => {
   };
 };
 
-const createRule = async (userId: bigint, rule: Prisma.rulesCreateInput) =>
-  Rule.create({
+const createRule = async (userId: bigint, rule: Prisma.rulesCreateInput, dbClient = prisma) =>
+  dbClient.rules.create({
     data: {
       users_user_id: userId,
       matcher_description_operator: rule.matcher_description_operator ?? "",

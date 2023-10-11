@@ -1,8 +1,7 @@
-import { prisma } from '../config/prisma.js';
-import { Prisma } from '@prisma/client';
-import DateTimeUtils from '../utils/DateTimeUtils.js';
+import { prisma } from "../config/prisma.js";
+import { Prisma } from "@prisma/client";
+import DateTimeUtils from "../utils/DateTimeUtils.js";
 
-const Entity = prisma.entities;
 
 /**
  * Fetches all categories associated with ***userId***.
@@ -20,20 +19,20 @@ const getAllEntitiesForUser = async (
     select: selectAttributes,
   });
 
-const createEntity = async (entity: Prisma.entitiesCreateInput) => {
-  return Entity.create({ data: entity });
+const createEntity = async (entity: Prisma.entitiesCreateInput, dbClient = prisma) => {
+  return dbClient.entities.create({ data: entity });
 };
 
-const deleteEntity = async (userId: bigint, entityId: number) =>
-  Entity.delete({
+const deleteEntity = async (userId: bigint, entityId: number, dbClient = prisma) =>
+  dbClient.entities.delete({
     where: {
       users_user_id: userId,
       entity_id: entityId,
     },
   });
 
-const updateEntity = async (userId: bigint, entityId: number, entity: Prisma.entitiesUpdateInput) =>
-  Entity.update({
+const updateEntity = async (userId: bigint, entityId: number, entity: Prisma.entitiesUpdateInput, dbClient = prisma) =>
+  dbClient.entities.update({
     where: {
       users_user_id: userId,
       entity_id: entityId,
