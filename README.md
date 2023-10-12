@@ -1,5 +1,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+📟 ***The API project is available [here](https://github.com/aFaneca/myfin-api/).*** 📟
+
 📱 ***The android mobile app project is available [here](https://github.com/aFaneca/myfin-android/).*** 📱
 
 #  🏦📈💳 MyFin - Personal Finances Platform 
@@ -24,18 +26,18 @@ MyFin is my <u>attempt</u> to solve all of these issues. It has helped me manage
 it can be useful for you as well.
 
 <p align="center">
-  <img src="/web/screenshots/1.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/2.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/3.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/4.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/13.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/14.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/16.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/17.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/18.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/19.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/20.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/15.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/1.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/2.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/3.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/4.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/13.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/14.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/16.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/17.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/18.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/19.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/20.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/15.PNG" alt="MyFin" width="400">
 </p>
 
 ## ✨ Features
