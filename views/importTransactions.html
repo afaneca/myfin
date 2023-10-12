@@ -1,0 +1,38 @@
+<div id="page-wrapper">
+    <div class="card-panel">
+        <span class="blue-text text-darken-2"><span data-i18n="transactions.importTransactions"></span></span><br>
+
+        <a id="import-from-file-btn" disabled
+           class="waves-effect waves-light btn right-align blue-gradient-bg"
+           style="margin: 10px;"><i
+                class="material-icons left">add_circle</i><span data-i18n="transactions.importFromCsv"></span></a>
+        <a id="import-from-clipboard-btn"
+           class="waves-effect waves-light btn right-align blue-gradient-bg"
+           style="margin: 10px;"><i
+                class="material-icons left">add_circle</i><span data-i18n="transactions.importFromClipboard"></span></a>
+
+        <a id="continue_import_btn" disabled
+           class="waves-effect waves-light btn right-align orange-gradient-bg"
+           style="margin: 10px;float:right;"><i
+                class="material-icons left">chevron_right</i><span data-i18n="transactions.continueImport"></span></a>
+        <div id="account-select"></div>
+        <p id="import_notes"></p>
+        <div id="table-wrapper">
+
+        </div>
+    </div>
+</div>
+
+
+<script type="module">
+  import { ImportTransactions } from "../js/importTransactions.js";
+  import { Localization } from "../js/utils/localization.js";
+
+  $(document).ready(function () {
+    $('p#import_notes').hide()
+    $('a#import-from-file-btn').click(() => ImportTransactions.importFromFileWasClicked())
+    $('a#import-from-clipboard-btn').click(() => ImportTransactions.importFromClipboardWasClicked())
+    $('a#continue_import_btn').click(() => ImportTransactions.continueImportWasClicked())
+    $('#import_notes').html(Localization.getString("transactions.importNotes"))
+  })
+</script>

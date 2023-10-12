@@ -1,0 +1,213 @@
+<div id="page-wrapper" xmlns="http://www.w3.org/1999/html">
+
+    <div class="card-panel">
+        <span class="main-accent-color"><span data-i18n="investments.investments"></span> <b>(beta)</b></span><br>
+        <div class="row" style="margin-top: 10px;">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s3"><a href="#tab-inv-dashboard" data-i18n="investments.summary"></a></li>
+                    <li class="tab col s3"><a href="#tab-inv-assets" data-i18n="investments.assets"></a></li>
+                    <li class="tab col s3"><a href="#tab-inv-transactions" data-i18n="investments.transactions"></a></li>
+                    <li class="tab col s3"><a href="#tab-inv-reports" data-i18n="investments.reports"></a></li>
+                </ul>
+            </div>
+
+            <div id="tab-inv-dashboard" class="col s12">
+                <div id="top-banner_wrapper" class=""
+                     style="height: 230px;margin-top: 10px;text-align: center;align-content: center;">
+                    <div class="col s4 no-margins" id="assets-dist-pie-chart">
+                        <div id="dashboard_assets_distribution_pie_chart"
+                             style="height: 300px; margin-top: 10px;"></div>
+                        <div class="card-panel empty-view hide"></div>
+                    </div>
+                    <div class="col s8">
+                        <b data-i18n="investments.topPerformers"></b>
+                        <div id="invest-reports-top-performing-wrapper" style="text-align:left;"></div>
+                    </div>
+
+                    <!--<div class="col s8 no-margins" id="evo-line-chart">
+                        <canvas id="dashboard_evolution_line_chart" style="margin: 0px;" width="400px"
+                                height="130"></canvas>
+                        <div class="card-panel empty-view hide"></div>
+                    </div>-->
+                </div>
+
+                <div class="col s12">
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value" id="invest-dashboard-top-panel-invested-value">
+                                -€</p>
+                            <p class="invest-dashboard-top-panel-description" data-i18n="investments.totalInvested"></p>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value" id="invest-dashboard-top-panel-current-value">
+                                -€</p>
+                            <p class="invest-dashboard-top-panel-description" data-i18n="investments.currentValue"></p>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value"><span
+                                    id="invest-dashboard-top-panel-roi-current-year-value">-€</span> (<span
+                                    id="invest-dashboard-top-panel-roi-current-year-percentage">-%</span>)</p>
+                            <p class="invest-dashboard-top-panel-description" id="current-year-roi-label">ROI -</p>
+                        </div>
+                    </div>
+                    <div class="col s3">
+                        <div class="card-panel invest-dashboard-top-panel">
+                            <p class="invest-dashboard-top-panel-value"><span
+                                    id="invest-dashboard-top-panel-roi-global-value">-€</span> (<span
+                                    id="invest-dashboard-top-panel-roi-global-percentage">-%</span>)</p>
+                            <p class="invest-dashboard-top-panel-description" data-i18n="investments.globalROI"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="tab-inv-assets" class="col s12">
+                <div class="card-panel">
+                    <a id="add-asset-btn" class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"><i
+                            class="material-icons left">add_circle</i><span data-i18n="investments.addAssetCTA"></span></a>
+                    <!--<hr>-->
+                    <div id="table-wrapper"></div>
+                </div>
+            </div>
+            <div id="tab-inv-transactions" class="col s12">
+                <div class="card-panel">
+                    <div class="card-panel">
+                        <a id="add-new-trx-btn" class="waves-effect waves-light btn green-gradient-bg"
+                           style="margin: 10px;"
+                        ><i
+                                class="material-icons left">add_circle</i><span data-i18n="investments.addTransactionCTA"></span> </a>
+                        <!--<hr>-->
+                        <div id="table-wrapper-transactions"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="tab-inv-reports">
+                <div id="topics-index-wrapper" style="padding-top: 50px;"></div>
+                <div class="row">
+                    <!---->
+                    <div class="col s12" style="margin-top:20px;">
+                        <p id="topic-distribution"><b style="font-size: x-large;" data-i18n="investments.distribution"></b></p>
+                        <div class="col s6 no-margins" id="reports-dist-pie-chart">
+                            <div id="reports_assets_distribution_pie_chart"
+                                 style="height: 300px; margin-top: 10px;"></div>
+                            <div class="card-panel empty-view hide"></div>
+                            <div style="text-align: center;font-style: italic;font-weight: 500;"><span data-i18n="investments.assetClasses"></span> </div>
+                        </div>
+                        <div class="col s6 no-margins" id="reports-inv-dist-pie-chart">
+                            <div id="reports_investments_distribution_pie_chart"
+                                 style="height: 300px; margin-top: 10px;"></div>
+                            <div class="card-panel empty-view hide"></div>
+                            <div style="text-align: center;font-style: italic;font-weight: 500;"><span data-i18n="investments.assets"></span></div>
+                        </div>
+                    </div>
+                    <!---->
+                    <div class="col s12" style="margin-top:35px;">
+                        <p id="topic-roi-by-asset"><b style="font-size: x-large;"><span data-i18n="investments.returnsByAsset"></span></b></p>
+                        <div id="roi_by_asset_table_wrapper"></div>
+                    </div>
+                    <!---->
+                    <div class="col s12" style="margin-top:35px;">
+                        <p id="topic-roi-by-asset-class"><b style="font-size: x-large;"><span data-i18n="investments.returnsByAssetClass"></span></b></p>
+                        <p><i><span data-i18n="common.soon"></span>...</i></p>
+                        <!--<table>
+                            <thead>
+                            <tr>
+                                <th>Ativo</th>
+                                <th>Classe de Ativo</th>
+                                <th>Valor Investido</th>
+                                <th>Valor Atual</th>
+                                <th>ROI Ano Atual</th>
+                                <th>ROI Global</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Bitcoin</td>
+                                <td>Crypto</td>
+                                <td>1 000€</td>
+                                <td>1 200€</td>
+                                <td>250€ (10.43%)</td>
+                                <td>750€ (23.71%)</td>
+                            </tr>
+                            <tr>
+                                <td>PPR AR</td>
+                                <td>PPR</td>
+                                <td>1 000€</td>
+                                <td>1 200€</td>
+                                <td>250€ (10.43%)</td>
+                                <td>750€ (23.71%)</td>
+                            </tr>
+                            </tbody>
+                        </table>-->
+                    </div>
+                    <div class="col s12" style="margin-top:35px;">
+                        <p id="topic-roi-by-year"><b style="font-size: x-large;" data-i18n="investments.combinedPerformanceByYear"></b></p>
+                        <div id="table-wrapper-roi-by-year"></div>
+                    </div>
+                    <!---->
+                    <div class="col s12" style="margin-top:35px;">
+                        <!--<h5 style="text-transform: uppercase;font-weight: bold;">
+                            <span class="green-gradient-bg" style="/* background: #4caf50; */padding: 4px;">Top de performance</span></h5>
+                        <hr class="green-gradient-bg" style="background: white;height: 2px;margin-top: -5px;text-transform: capitalize;">-->
+                        <p id="topic-evo-chart"><b style="font-size: x-large;" data-i18n="investments.portfolioEvolution"></b></p>
+                        <div class="col s12 no-margins" id="evo-line-chart">
+                            <canvas id="dashboard_evolution_line_chart" style="margin: 0px;" width="400px"
+                                    height="130"></canvas>
+                            <div class="card-panel empty-view hide"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../js/funcs/investmentAssetsTableFunc.js" type="module"></script>
+<script src="../js/funcs/investAssetsModalFunc.js" type="module"></script>
+<script src="../js/funcs/investmentTransactionsTableFunc.js" type="module"></script>
+<script src="../js/funcs/investTransactionsModalFunc.js" type="module"></script>
+<script src="../js/funcs/investmentDashboardChartsFunc.js" type="module"></script>
+<script src="../js/funcs/investmentReportsTableFunc.js" type="module"></script>
+<script type="module">
+  import { DialogUtils } from "../js/utils/dialogUtils.js";
+  import { Investments } from "../js/investments.js";
+  import { DateUtils } from "../js/utils/dateUtils.js";
+
+  $(document).ready(function () {
+    DialogUtils.initStandardModal()
+    $('#add-new-trx-btn').click(() => Investments.addNewTransactionClicked())
+    $('#add-asset-btn').click(() => Investments.addNewAssetClicked())
+    $('.tabs').tabs({
+      'onShow': (a, b) => {
+        let activeID = $(a)[0]['id']
+        Investments.changeTabs(activeID)
+      },
+    })
+
+    const currentYear = DateUtils.getCurrentYear()
+    $('#current-year-roi-label').text(`ROI ${currentYear}`)
+
+    const argsArr = configs.getUrlArgs()
+    const selectedTab = (argsArr && argsArr.hasOwnProperty('tab')) ? argsArr['tab'] : undefined
+
+    switch (selectedTab) {
+      case 'dashboard':
+      default:
+        $('.tabs').tabs('select', 'tab-inv-dashboard')
+        break
+      case 'assets':
+        $('.tabs').tabs('select', 'tab-inv-assets')
+        break
+      case 'transactions':
+        $('.tabs').tabs('select', 'tab-inv-transactions')
+        break
+      case 'reports':
+        $('.tabs').tabs('select', 'tab-inv-reports')
+        break
+    }
+  })
+</script>
