@@ -1,5 +1,0 @@
-.idea/
-/coverage/
-/vendor/
-/logs/*
-!/logs/README.md

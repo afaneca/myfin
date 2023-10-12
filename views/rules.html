@@ -1,0 +1,33 @@
+<div id="page-wrapper">
+
+    <div class="card-panel">
+        <span class="main-accent-color" data-i18n="rules.rules">Regras para Auto-Categorização</span><br>
+        <ul class="collapsible">
+            <li>
+                <div id="add-rule-collapsible-header" class="collapsible-header"><i
+                        class="material-icons">add_circle</i><span data-i18n="rules.addRule"></span>
+                </div>
+                <div class="collapsible-body">
+                    <div id="add-rule-form-wrapper"></div>
+                </div>
+            </li>
+        </ul>
+        <div id="table-wrapper">
+
+        </div>
+
+
+    </div>
+</div>
+
+
+<script type="module">
+  import { DialogUtils } from "../js/utils/dialogUtils.js";
+  import { Rules } from "../js/rules.js";
+
+  $(document).ready(function () {
+    DialogUtils.initStandardModal()
+    $('.collapsible').collapsible()
+    Rules.init()
+  })
+</script>
