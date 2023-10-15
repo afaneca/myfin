@@ -27,7 +27,8 @@ td {
 }
 
 #login-bg {
-    background: var(--main-body-background);
+    background-image: url('/img/login-bg.webp');
+    /*background: var(--main-body-background);*/
     /*background: #141E30;
     !* fallback for old browsers *!
     background: -webkit-linear-gradient(to bottom, #243B55, #141E30);
