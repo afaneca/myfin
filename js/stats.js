@@ -153,8 +153,8 @@ export const Stats = {
               flow: Math.round((cat.category_yearly_expense + Number.EPSILON) * 100) / 100,
             })
           }
-          yearlyCategorizedIncome += parseFloat(cat.category_yearly_income)
-          yearlyCategorizedExpense += parseFloat(cat.category_yearly_expense)
+          yearlyCategorizedIncome += parseFloat(cat.category_yearly_income ?? 0)
+          yearlyCategorizedExpense += parseFloat(cat.category_yearly_expense ?? 0)
         })
 
         const uncategorizedExpenses = yearlyCategorizedIncome - yearlyCategorizedExpense
