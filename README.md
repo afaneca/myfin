@@ -1,5 +1,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+📟 ***The API project is available [here](https://github.com/aFaneca/myfin-api/).*** 📟
+
 📱 ***The android mobile app project is available [here](https://github.com/aFaneca/myfin-android/).*** 📱
 
 #  🏦📈💳 MyFin - Personal Finances Platform 

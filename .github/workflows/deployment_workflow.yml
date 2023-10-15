@@ -17,7 +17,7 @@ jobs:
         key: ${{ secrets.MYFIN_SECRET }}
         port: ${{ secrets.MYFIN_SSH_PORT }}
         script: |
-          ./update_myfin.sh
+          ./update_myfin_web.sh
         
 
 
