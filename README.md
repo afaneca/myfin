@@ -24,18 +24,18 @@ MyFin is my <u>attempt</u> to solve all of these issues. It has helped me manage
 it can be useful for you as well.
 
 <p align="center">
-  <img src="/web/screenshots/1.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/2.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/3.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/4.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/13.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/14.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/16.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/17.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/18.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/19.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/20.PNG" alt="MyFin" width="400">
-  <img src="/web/screenshots/15.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/1.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/2.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/3.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/4.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/13.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/14.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/16.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/17.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/18.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/19.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/20.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/15.PNG" alt="MyFin" width="400">
 </p>
 
 ## ✨ Features
@@ -69,9 +69,6 @@ Here's some of the features currently in development or planned for the near fut
 
 # 🔰 Getting Started
 
-This project relies on PHP's Slim framework for its backend and there's where most of the initial setup will take place
-if you want to deploy this solution to your own server.
-
 [Here](https://github.com/aFaneca/myfin/wiki/Project-Setup#initial-setup) you can find the full documentation on the
 first steps to get started.
 
@@ -92,11 +89,3 @@ this project and make it your own or add something to it, you're more than welco
 - [Moment.js](https://momentjs.com/)
 - [i18next](https://github.com/i18next/jquery-i18next)
 - [Emoji Picker Element](https://github.com/nolanlawson/emoji-picker-element)
-
-## API
-
-- [Slim](https://www.slimframework.com/)
-- [Monolog](https://github.com/Seldaek/monolog)
-- [Phinx](https://phinx.org/)
-- [Phinx Migrations Generator](https://github.com/odan/phinx-migrations-generator/issues)
-- [PHP Dot Env](https://github.com/vlucas/phpdotenv)

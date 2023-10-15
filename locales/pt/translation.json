@@ -69,7 +69,10 @@
     "recentTransactions": "Transações Recentes",
     "current": "Atual",
     "remaining": "Restante",
-    "lastUpdate": "Última atualização"
+    "lastUpdate": "Última atualização",
+    "monthlyOverview": "Overview Mensal",
+    "incomeDistribution": "Distribuição de Receita",
+    "expenseDistribution": "Distribuição de Despesa"
   },
   "monthsShort": {
     "jan": "Jan",
