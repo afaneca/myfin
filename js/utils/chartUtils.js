@@ -1,6 +1,7 @@
 import { LayoutUtils } from "./layoutUtils.js";
 import { ArrayUtils } from "./arrayUtils.js";
 import { StringUtils } from "./stringUtils.js";
+import {Localization} from "./localization.js";
 
 let red_gradient,
   green_gradient,
@@ -142,7 +143,7 @@ export const chartUtils = {
         },
         title: {
           display: true,
-          text: 'Overview Mensal',
+          text: Localization.getString('dashboard.monthlyOverview'),
           position: 'bottom',
           color: LayoutUtils.getCSSVariableValue('--main-text-headline-color'),
           padding: {

@@ -1007,6 +1007,7 @@ svg:not(:root) {
     max-width: 100%;
     aspect-ratio: 1 / 1;
     height: 400px;
+    max-height: 50vh;
 }
 
 .side-nav-menu-item-icon {

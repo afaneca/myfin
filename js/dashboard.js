@@ -243,7 +243,7 @@ export var Dashboard = {
         if (datasetCredit.length > 0) {
           CHART_INCOME_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart(
             'chart_pie_income_distribution', datasetCredit, labelsCredit,
-            'Distribuição de Receita', catColorsCredit)
+            Localization.getString('dashboard.incomeDistribution'), catColorsCredit)
           $('#chart_pie_income_distribution').show()
           $('.card-panel.income_distribution').find('.empty-view').hide()
         }
@@ -257,7 +257,7 @@ export var Dashboard = {
         if (datasetDebit.length > 0) {
           CHART_EXPENSES_DISTRIBUTION = chartUtils.setupDebtDistributionPieChart(
             'chart_pie_spending_distribution', datasetDebit, labelsDebit,
-            'Distribuição de Despesa', catColorsDebit)
+              Localization.getString('dashboard.expenseDistribution'), catColorsDebit)
           $('#chart_pie_spending_distribution').show()
           $('.card-panel.spending_distribution').find('.empty-view').hide()
         }
