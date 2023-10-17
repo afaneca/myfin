@@ -18,6 +18,7 @@ export const TableUtils = {
       drawCallback: drawCallback,
       columns: columnsRenderingArr,
       rowId: customRowId,
+      stateSave: true,
     }
 
     return $(tableId).DataTable({...mainConfig, ...customConfigs});

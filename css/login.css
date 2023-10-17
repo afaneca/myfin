@@ -27,23 +27,16 @@ td {
 }
 
 #login-bg {
-    background-image: url('/img/login-bg.webp');
-    /*background: var(--main-body-background);*/
-    /*background: #141E30;
-    !* fallback for old browsers *!
-    background: -webkit-linear-gradient(to bottom, #243B55, #141E30);
-    !* Chrome 10-25, Safari 5.1-6 *!
-    background: linear-gradient(to bottom, #243B55, #141E30);*/
-    /*background-image: url('../img/login_bg.jpg');
+    background-image: url('/img/login-bg.jpeg');
     background-size: cover;
+    background-repeat: no-repeat;
     background-position: center;
-    background-repeat: no-repeat;*/
     position: absolute;
     width: 100%;
     height: 100%;
     /* Add the blur effect */
-    /*filter: blur(3px);
-    -webkit-filter: blur(3px);*/
+    filter: blur(35px);
+    -webkit-filter: blur(35px);
 }
 
 #toast-container {
