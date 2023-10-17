@@ -204,7 +204,8 @@
     "notYetRegisteredQuestion": "Not yet registered?",
     "signUp": "Sign Up",
     "alreadyRegisteredQuestion": "Already registered?",
-    "signIn": "Sign In"
+    "signIn": "Sign In",
+    "addUserDisabledError": "Sign ups are disabled in the API settings"
   },
   "accounts": {
     "accounts": "Accounts",
