@@ -204,7 +204,8 @@
     "notYetRegisteredQuestion": "Ainda não está registado?",
     "signUp": "Criar conta",
     "alreadyRegisteredQuestion": "Já registado?",
-    "signIn": "Entrar"
+    "signIn": "Entrar",
+    "addUserDisabledError": "A criação de utilizadores está desativada nas definições da API"
   },
   "accounts": {
     "accounts": "Contas",
