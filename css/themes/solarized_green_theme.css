@@ -99,3 +99,12 @@ label {
     border-right: 2px solid #fff;
     border-bottom: 2px solid #fff;
 }
+
+[type=checkbox].filled-in:checked+span:not(.lever):after {
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--main-light-blue);
+    background-color: var(--main-light-blue);
+    z-index: 0;
+}
