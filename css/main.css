@@ -1055,6 +1055,15 @@ svg:not(:root) {
     border: 2px solid var(--main-accent-color);
 }
 
+[type=checkbox].filled-in:checked+span:not(.lever):after {
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--main-accent-color);
+    background-color: var(--main-accent-color);
+    z-index: 0;
+}
+
 [type=radio]:not(:checked)+span:before, [type=radio]:not(:checked)+span:after {
     border: 2px solid var(--main-accent-color);
 }
