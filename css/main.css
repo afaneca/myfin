@@ -1073,7 +1073,7 @@ svg:not(:root) {
     /* -webkit-box-shadow: 0 0px 0px 0 rgb(0 0 0 / 14%), 0 1px 1px -2px rgb(0 0 0 / 12%), 0 1px 4px 0 rgb(0 0 0 / 20%); */
     /* box-shadow: 0 0px 0px 0 rgb(0 0 0 / 14%), 0 1px 1px -2px rgb(0 0 0 / 12%), 0 1px 4px 0 rgb(0 0 0 / 20%); */
     border-radius: 5px;
-    -webkit-box-shadow: 0 1px 20px 0 rgba(69,90,100,.08);
-    box-shadow: 0 1px 20px 0 rgba(69,90,100,.08);
+    -webkit-box-shadow: 0 1px 10px 0 rgba(69,90,100,.08);
+    box-shadow: 0 1px 10px 0 rgba(69,90,100,.08);
     border: none;
 }
