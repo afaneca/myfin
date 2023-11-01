@@ -527,6 +527,8 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
 
 .top-summary-key {
     font-size: small;
+    background: var(--main-card-background);
+    padding: 6px;
 }
 
 /* Tooltip container */
