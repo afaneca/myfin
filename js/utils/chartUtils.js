@@ -56,7 +56,7 @@ export const chartUtils = {
             var newFontSize = Math.floor(20 * widthRatio)
             var elementHeight = (chart.innerRadius * 2)
 
-            // Pick a new font size so it will not be larger than the height of
+            // Pick a new font sizeso it will not be larger than the height of
             // label.
             var fontSizeToUse = Math.min(newFontSize, elementHeight)
 

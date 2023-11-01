@@ -1,0 +1,91 @@
+:root {
+    /* Dark Gray theme */
+    --main-dark-background: #1f2d3d;
+    --main-light-gray-color: #c0ccda;
+    --main-dark-on-dark-background: #253649;
+}
+
+tr {
+    border-bottom: 1px solid var(--main-dark-background);
+}
+
+table.dataTable tbody tr {
+    background-color: var(--main-dark-on-dark-background);
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    border-bottom: 1px solid white; /*var(--main-light-green);*/
+}
+
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
+    background-color: #5a5a5a !important;
+}
+
+/*
+.select2-container--default .select2-selection--single {
+    background-color: var(--main-dark-background);
+}*/
+
+.btn.disabled, .disabled.btn-large, .disabled.btn-small, .btn-floating.disabled, .btn-large.disabled, .btn-small.disabled, .btn-flat.disabled, .btn:disabled, .btn-large:disabled, .btn-small:disabled, .btn-floating:disabled, .btn-large:disabled, .btn-small:disabled, .btn-flat:disabled, .btn[disabled], .btn-large[disabled], .btn-small[disabled], .btn-floating[disabled], .btn-large[disabled], .btn-small[disabled], .btn-flat[disabled] {
+    color: #635b5b !important;
+}
+
+/* Select2 */
+.select2-container--default .select2-selection--single {
+    background-color: var(--main-body-background);
+}
+
+.modal-content .select2-selection--single {
+    background: #1a212b;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color: rgb(0 0 0 / 20%);
+}
+
+.select2-container--default .select2-results__group {
+    background: #181a1c;
+}
+
+/* Side Nav */
+.side-nav-menu-active {
+    background: #00bcd4;
+    background: linear-gradient(to top, #0083B0, #00B4DB);
+    background: -webkit-linear-gradient(to top, #0083B0, #00B4DB);
+}
+
+.side-nav-menu-active:not(:hover) > i:not(:hover) {
+    color: var(--main-body-background) !important;
+}
+
+.side-nav-menu-active:not(:hover) > span:not(:hover) {
+    color: var(--main-body-background) !important;
+    font-weight: bold;
+}
+
+nav ul a:hover {
+    color: #ffffffa1;
+}
+
+.highlighted-budget-item {
+    border-bottom: 2px solid rgb(55 60 63);
+}
+
+
+.collapsible-body {
+    border-top: none !important;
+}
+
+.select-wrapper input.select-dropdown:focus {
+    border-bottom: 1px solid var(--main-accent-color);
+}
+
+input:not([type]):not(.browser-default):focus:not([readonly]), input[type=text]:not(.browser-default):focus:not([readonly]), input[type=password]:not(.browser-default):focus:not([readonly]), input[type=email]:not(.browser-default):focus:not([readonly]), input[type=url]:not(.browser-default):focus:not([readonly]), input[type=time]:not(.browser-default):focus:not([readonly]), input[type=date]:not(.browser-default):focus:not([readonly]), input[type=datetime]:not(.browser-default):focus:not([readonly]), input[type=datetime-local]:not(.browser-default):focus:not([readonly]), input[type=tel]:not(.browser-default):focus:not([readonly]), input[type=number]:not(.browser-default):focus:not([readonly]), input[type=search]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
+    border-bottom: 1px solid var(--main-accent-color);
+    -webkit-box-shadow: 0 1px 0 0 var(--main-accent-color);
+    box-shadow: 0 1px 0 0 var(--main-accent-color);
+}
+
+input:not([type]):not(.browser-default):focus:not([readonly])+label, input[type=text]:not(.browser-default):focus:not([readonly])+label, input[type=password]:not(.browser-default):focus:not([readonly])+label, input[type=email]:not(.browser-default):focus:not([readonly])+label, input[type=url]:not(.browser-default):focus:not([readonly])+label, input[type=time]:not(.browser-default):focus:not([readonly])+label, input[type=date]:not(.browser-default):focus:not([readonly])+label, input[type=datetime]:not(.browser-default):focus:not([readonly])+label, input[type=datetime-local]:not(.browser-default):focus:not([readonly])+label, input[type=tel]:not(.browser-default):focus:not([readonly])+label, input[type=number]:not(.browser-default):focus:not([readonly])+label, input[type=search]:not(.browser-default):focus:not([readonly])+label, textarea.materialize-textarea:focus:not([readonly])+label {
+    color: var(--main-accent-color);
+}
