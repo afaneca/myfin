@@ -6,6 +6,7 @@ import { BudgetServices } from "./services/budgetServices.js";
 import { DateUtils } from "./utils/dateUtils.js";
 import { StringUtils } from "./utils/stringUtils.js";
 import { Localization } from "./utils/localization.js";
+import { configs } from './configs.js'
 
 let showOnlyOpen = false;
 
@@ -20,6 +21,7 @@ export const Budgets = {
     Budgets.setupBudgetsTable(MYFIN.BUDGETS_FETCH_LIMIT);
   },
   setupBudgetsTable: (fetchLimit) => {
+    let resetFilters = configs.getUrlArgs()?.hasOwnProperty('resetFilters') ?? false
     $('#table-wrapper').html(Budgets.renderTable());
     TableUtils.setupDynamicTable('#budgets-table',
         fetchLimit,
@@ -60,7 +62,7 @@ export const Budgets = {
           'initComplete': () => {
             LayoutUtils.scrollToWithAnimation('.highlighted-budget-item', 400)
           }
-        },
+        }, resetFilters
     );
   },
   getColumnsRenderingArray: () => {

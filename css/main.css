@@ -1077,3 +1077,34 @@ svg:not(:root) {
     box-shadow: 0 1px 10px 0 rgba(69,90,100,.08);
     border: none;
 }
+
+.table-toolbar {
+    float:left;
+}
+
+.bold-link {
+    font-weight: bold;
+    text-decoration: underline;
+    text-underline-position: under;
+    text-decoration-thickness: 2px;
+    transition: 1s;
+}
+
+.bold-link:hover {
+    text-decoration: none;
+    transition: 1s;
+}
+
+.regular-link {
+    font-weight: normal;
+    text-decoration: underline;
+    text-underline-position: under;
+    text-decoration-thickness: 2px;
+    transition: 1s;
+    cursor: pointer;
+}
+
+.regular-link:hover {
+    text-decoration: none;
+    transition: 1s;
+}
