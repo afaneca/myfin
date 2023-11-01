@@ -10,9 +10,11 @@ import { DateUtils } from "./utils/dateUtils.js";
 import { StringUtils } from "./utils/stringUtils.js";
 import { Localization } from "./utils/localization.js";
 import { ToggleComponent } from "./components/toggleComponent.js";
+import { configs } from './configs.js'
 
 export var Transactions = {
   setupTransactionsTable: (fetchLimit = MYFIN.TRX_FETCH_LIMIT) => {
+    let resetFilters = configs.getUrlArgs()?.hasOwnProperty('resetFilters') ?? false
     $('#table-transactions-wrapper').html(Transactions.renderTable());
     TableUtils.setupDynamicTable('#transactions-table',
         fetchLimit,
@@ -35,7 +37,7 @@ export var Transactions = {
           Transactions.bindClickListenersForEditAction();
           // Click listener for delete trx click
           Transactions.bindClickListenersForRemoveAction();
-        },
+        },null, {}, resetFilters
     );
   },
   getColumnsRenderingArray: () => {

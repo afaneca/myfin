@@ -42,7 +42,8 @@
     "soon": "Em breve",
     "update": "Update",
     "accumulated": "Acumulado",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "resetFilters": "Limpar filtros"
   },
   "sidebar": {
     "dashboard": "Dashboard",
