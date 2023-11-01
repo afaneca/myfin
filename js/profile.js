@@ -150,6 +150,13 @@ export const Profile = {
                             <span>Mauve</span>
                         </label>
                     </p>
+                    <p>
+                        <label>
+                            <input name="theme-group" type="radio" value="${MYFIN.APP_THEMES.NORD_NIGHTFALL}"  ${(currentTheme ===
+      MYFIN.APP_THEMES.NORD_NIGHTFALL) ? ' checked ' : ''} />
+                            <span>Nord Nightfall</span>
+                        </label>
+                    </p>
                    `;
 
     $('#change-theme-radio-group-wrapper').html(html);

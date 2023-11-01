@@ -29,7 +29,6 @@ export const TransactionsListComponent = {
     
         .trx-type-amount {
             font-weight: 400;
-            font-size: larger;
         }
     
         .inner-icon {

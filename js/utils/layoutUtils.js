@@ -13,11 +13,12 @@ export var LayoutUtils = {
   changeTheme: (themeName) => {
     switch (themeName) {
       case MYFIN.APP_THEMES.DARK_BLUE:
-        // unload dark gray theme and light theme css
+        // unload theme's css
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.NORD_NIGHTFALL)
         LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.DARK_BLUE);
         break;
       case MYFIN.APP_THEMES.DARK_GRAY:
@@ -26,6 +27,7 @@ export var LayoutUtils = {
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.NORD_NIGHTFALL)
         // load dark gray theme css
         LayoutUtils.loadTheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
         LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.DARK_GRAY)
@@ -35,6 +37,7 @@ export var LayoutUtils = {
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.NORD_NIGHTFALL)
         // load dark gray theme css
         LayoutUtils.loadTheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
         LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.LIGHT)
@@ -45,6 +48,7 @@ export var LayoutUtils = {
         // unload dark gray theme and light theme css
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.NORD_NIGHTFALL)
         // load solarized green theme css
         LayoutUtils.loadTheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
         LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.SOLARIZED_GREEN)
@@ -53,9 +57,20 @@ export var LayoutUtils = {
         // unload dark gray theme and light theme css
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
         LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.NORD_NIGHTFALL)
         // load solarized green theme css
         LayoutUtils.loadTheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
         LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.MAUVE_THEME)
+        break
+      case MYFIN.APP_THEMES.NORD_NIGHTFALL:
+        // unload dark gray theme and light theme css
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.DARK_GRAY)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.LIGHT)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.SOLARIZED_GREEN)
+        LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
+        // load solarized green theme css
+        LayoutUtils.loadTheme(MYFIN.APP_THEMES_CSS_PATH.NORD_NIGHTFALL)
+        LocalDataManager.setCurrentTheme(MYFIN.APP_THEMES.NORD_NIGHTFALL)
         break
     }
 
@@ -76,6 +91,9 @@ export var LayoutUtils = {
     if (excludeThemePath !== MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME) {
       LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.MAUVE_THEME)
     }
+    if (excludeThemePath !== MYFIN.APP_THEMES_CSS_PATH.NORD_NIGHTFALL) {
+      LayoutUtils.unloadtheme(MYFIN.APP_THEMES_CSS_PATH.NORD_NIGHTFALL)
+    }
   },
   unloadtheme: (themePath) => {
     $('link[href=\'' + themePath + '\']').remove()
@@ -84,7 +102,7 @@ export var LayoutUtils = {
     $('head').append('<link type="text/css" rel="stylesheet" href="' + themePath + '" id="removable-css">')
   },
   getCurrentThemeName: () => {
-    return LocalDataManager.getCurrentTheme() ? LocalDataManager.getCurrentTheme() : MYFIN.APP_THEMES.DARK_GRAY
+    return LocalDataManager.getCurrentTheme() ? LocalDataManager.getCurrentTheme() : MYFIN.APP_THEMES.NORD_NIGHTFALL
   },
   getCurrentThemePath: () => {
     switch (LocalDataManager.getCurrentTheme()) {
