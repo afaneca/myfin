@@ -183,6 +183,7 @@
     "transactionSuccessfullyDeleted": "Transação removida com sucesso!",
     "editTransactionModalTitle": "Editar transação #<b>{{id}}</b>",
     "splitTransaction": "Dividir Transação",
+    "mergeTransactions": "Unir Transações",
     "transactionSuccessfullyUpdated": "Transação atualizada com sucesso!",
     "importTransactions": "Importar Transações",
     "importFromCsv": "Import de .csv",
@@ -196,7 +197,10 @@
     "importedTransactionsCnt": "Transações importadas: {{count}}",
     "newBalanceForAccountValue": "Novo saldo da conta {{account}}: {{value}}",
     "import": "Importar",
-    "transactionsSuccessfullyImported": "Transações importadas com sucesso!"
+    "transactionsSuccessfullyImported": "Transações importadas com sucesso!",
+    "deductFeesFromTransaction": "Descontas taxas/impostos da transação",
+    "generated_split_invest_trx_observations": "Taxas/impostos para transação de {{units}} {{ticker}}"
+
   },
   "login": {
     "fillAllFields": "Não deixe campos em branco",
