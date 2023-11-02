@@ -1,6 +1,6 @@
 export const InvestServices = {
   getAllAssets: (successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/assets/`;
+    const pageUrl = `${REST_SERVER_PATH}invest/assets/`
     $.ajax({
       async: true,
       type: 'GET',
@@ -14,18 +14,18 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   addAsset: (name, ticker, type, broker, successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/assets/`;
+    const pageUrl = `${REST_SERVER_PATH}invest/assets/`
     $.ajax({
       async: true,
       type: 'POST',
@@ -44,18 +44,18 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   deleteAsset: (assetId, successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/assets/${assetId}`;
+    const pageUrl = `${REST_SERVER_PATH}invest/assets/${assetId}`
     $.ajax({
       async: true,
       type: 'DELETE',
@@ -69,19 +69,19 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   editAsset: (
-      assetId, ticker, name, type, broker, successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/assets/${assetId}`;
+    assetId, ticker, name, type, broker, successCallback, errorCallback) => {
+    const pageUrl = `${REST_SERVER_PATH}invest/assets/${assetId}`
     $.ajax({
       async: true,
       type: 'PUT',
@@ -100,18 +100,18 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   getAllTransactions: (successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/trx/`;
+    const pageUrl = `${REST_SERVER_PATH}invest/trx/`
     $.ajax({
       async: true,
       type: 'GET',
@@ -125,20 +125,21 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   addTransaction: (
-      date_timestamp, note, total_price, units, fees, asset_id, type,
-      successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/trx/`;
+    date_timestamp, note, total_price, units, fees, asset_id, type, is_split,
+    split_total_price, split_units, split_note, split_type,
+    successCallback, errorCallback) => {
+    const pageUrl = `${REST_SERVER_PATH}invest/trx/`
     $.ajax({
       async: true,
       type: 'POST',
@@ -156,22 +157,27 @@ export const InvestServices = {
         fees,
         asset_id,
         type,
+        is_split,
+        split_total_price,
+        split_units,
+        split_note,
+        split_type,
       },
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   getAllAssetsSummary: (successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/assets/summary`;
+    const pageUrl = `${REST_SERVER_PATH}invest/assets/summary`
     $.ajax({
       async: true,
       type: 'GET',
@@ -185,18 +191,18 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   deleteTransaction: (trxId, successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/trx/${trxId}`;
+    const pageUrl = `${REST_SERVER_PATH}invest/trx/${trxId}`
     $.ajax({
       async: true,
       type: 'DELETE',
@@ -210,20 +216,20 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   editTransaction: (
-      trxId, date_timestamp, note, total_price, units, fees, asset_id, type,
-      successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/trx/${trxId}`;
+    trxId, date_timestamp, note, total_price, units, fees, asset_id, type,
+    successCallback, errorCallback) => {
+    const pageUrl = `${REST_SERVER_PATH}invest/trx/${trxId}`
     $.ajax({
       async: true,
       type: 'PUT',
@@ -245,18 +251,18 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   getAllAssetStats: (successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/assets/stats`;
+    const pageUrl = `${REST_SERVER_PATH}invest/assets/stats`
     $.ajax({
       async: true,
       type: 'GET',
@@ -270,18 +276,18 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   updateAssetValue: (assetId, new_value, successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/assets/${assetId}/value`;
+    const pageUrl = `${REST_SERVER_PATH}invest/assets/${assetId}/value`
     $.ajax({
       async: true,
       type: 'PUT',
@@ -291,22 +297,22 @@ export const InvestServices = {
         authusername: Cookies.get('username'),
         sessionkey: Cookies.get('sessionkey'),
       },
-      data: {new_value},
+      data: { new_value },
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
       },
-    });
+    })
   },
   getAssetDetails: (assetId, successCallback, errorCallback) => {
-    const pageUrl = `${REST_SERVER_PATH}invest/assets/${assetId}`;
+    const pageUrl = `${REST_SERVER_PATH}invest/assets/${assetId}`
     $.ajax({
       async: true,
       type: 'GET',
@@ -320,16 +326,16 @@ export const InvestServices = {
       url: pageUrl,
       success: (res) => {
         if (successCallback) {
-          successCallback(res);
+          successCallback(res)
         }
       },
       error: (err) => {
         if (errorCallback) {
-          errorCallback(err);
+          errorCallback(err)
         }
-      }
-    });
+      },
+    })
   },
-};
+}
 
 //# sourceURL=js/services/investServices.js

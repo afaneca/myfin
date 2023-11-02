@@ -33,10 +33,10 @@ export const Investments = {
     });
 
   },
-  addTransaction: (date, units, fees, amount, type, observations, assetId) => {
+  addTransaction: (date, units, fees, amount, type, observations, assetId, isSplit, splitTotalPrice, splitUnits, splitNote, splitType) => {
     LoadingManager.showLoading();
     InvestServices.addTransaction(date, observations, amount, parseFloat(units),
-        fees, assetId, type,
+        fees, assetId, type, isSplit, splitTotalPrice, splitUnits, splitNote, splitType,
         (res) => {
           // SUCCESS
           DialogUtils.showSuccessMessage(Localization.getString(
