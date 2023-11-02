@@ -926,7 +926,7 @@ export var Transactions = {
 
             if (wrapperLocator.is(':visible')) {
               wrapperLocator.hide();
-              btnLocator.text('Dividir Transação');
+              btnLocator.text(Localization.getString('transactions.splitTransaction'));
               btnIconLocator.text('call_split');
 
               // Sum to amount1 the value of amount2 (unless undefined)
@@ -939,7 +939,7 @@ export var Transactions = {
             }
             else {
               wrapperLocator.show();
-              btnLocator.text('Unir Transações');
+              btnLocator.text(Localization.getString('transactions.mergeTransactions'));
               btnIconLocator.text('call_merge');
 
               // Subtract from amount1 the value of amount2 (unless undefined)

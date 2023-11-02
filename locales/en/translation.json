@@ -183,6 +183,7 @@
     "transactionSuccessfullyDeleted": "Transaction successfully deleted!",
     "editTransactionModalTitle": "Edit transaction #<b>{{id}}</b>",
     "splitTransaction": "Split Transaction",
+    "mergeTransactions": "Merge Transactions",
     "transactionSuccessfullyUpdated": "Transaction successfully updated",
     "importTransactions": "Import Transactions",
     "importFromCsv": "Import from .csv",
@@ -196,7 +197,9 @@
     "importedTransactionsCnt": "Imported transactions: {{count}}",
     "newBalanceForAccountValue": "New balance for account {{account}}: {{value}}",
     "import": "Import",
-    "transactionsSuccessfullyImported": "Transactions successfully imported!"
+    "transactionsSuccessfullyImported": "Transactions successfully imported!",
+    "deductFeesFromTransaction": "Deduct fees/taxes from transaction",
+    "generated_split_invest_trx_observations": "Fees/taxes for {{units}} {{ticker}} transaction"
   },
   "login": {
     "fillAllFields": "Fill all fields and try again.",
