@@ -1,8 +1,9 @@
 :root {
-    /* Dark Gray theme */
+    /* Nord Nightfall theme */
     --main-dark-background: #1f2d3d;
     --main-light-gray-color: #c0ccda;
     --main-dark-on-dark-background: #253649;
+    --main-blue-background: #192431;
 }
 
 tr {
@@ -10,15 +11,21 @@ tr {
 }
 
 table.dataTable tbody tr {
-    background-color: var(--main-dark-on-dark-background);
+    background-color: var(--main-body-background);
+    border-bottom: 1px solid var(--main-card-background);
 }
 
 table.dataTable thead th, table.dataTable thead td {
-    border-bottom: 1px solid white; /*var(--main-light-green);*/
+    border-bottom: 1px solid var(--main-body-background);
+    background: var(--main-blue-background);
 }
 
 table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
-    background-color: #5a5a5a !important;
+    background-color: var(--main-blue-background) !important;
+}
+
+table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
+    background-color: var(--main-body-background);
 }
 
 /*
