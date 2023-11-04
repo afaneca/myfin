@@ -67,8 +67,17 @@
             </div>
             <div id="tab-inv-assets" class="col s12">
                 <div class="card-panel">
-                    <a id="add-asset-btn" class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;"><i
-                            class="material-icons left">add_circle</i><span data-i18n="investments.addAssetCTA"></span></a>
+                    <div>
+                        <a id="add-asset-btn" class="waves-effect waves-light btn green-gradient-bg" style="margin: 10px;float:left;"><i
+                                class="material-icons left">add_circle</i><span data-i18n="investments.addAssetCTA"></span></a>
+                        <p style="float:right;">
+                            <label>
+                                <input type="checkbox" id="show_inactives_cb"/>
+                                <span data-i18n="investments.showInactives"></span>
+                            </label>
+                        </p>
+                    </div>
+
                     <!--<hr>-->
                     <div id="table-wrapper"></div>
                 </div>

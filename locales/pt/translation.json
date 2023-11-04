@@ -314,7 +314,7 @@
   "budgets": {
     "budgets": "Orçamentos",
     "addBudget": "Adicionar Orçamento",
-    "onlyOpened": "Só abertos",
+    "onlyOpened": "Apenas abertos",
     "month": "Mês",
     "observations": "Observações",
     "balance": "Balanço",
@@ -424,7 +424,8 @@
     "year": "Ano",
     "roi": "ROI",
     "assetClass": "Classe de Ativos",
-    "feesAndTaxes": "Taxas e impostos"
+    "feesAndTaxes": "Taxas e impostos",
+    "showInactives": "Mostrar Inativos"
   },
   "stats": {
     "stats": "Estatísticas",

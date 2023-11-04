@@ -135,6 +135,32 @@ export const InvestServices = {
       },
     })
   },
+  getTransactionsByPage: (
+    page, pageSize, searchQuery = null, successCallback, errorCallback) => {
+    const pageUrl = `${REST_SERVER_PATH}invest/trx/filteredByPage/${page}`
+    $.ajax({
+      async: true,
+      type: 'GET',
+      dataType: 'json',
+      cache: false,
+      headers: {
+        authusername: Cookies.get('username'),
+        sessionkey: Cookies.get('sessionkey'),
+      },
+      data: { page_size: pageSize, query: searchQuery },
+      url: pageUrl,
+      success: (res) => {
+        if (successCallback) {
+          successCallback(res)
+        }
+      },
+      error: (err) => {
+        if (errorCallback) {
+          errorCallback(err)
+        }
+      },
+    })
+  },
   addTransaction: (
     date_timestamp, note, total_price, units, fees, asset_id, type, is_split,
     split_total_price, split_units, split_note, split_type,
