@@ -4,7 +4,7 @@ import { configs } from '../configs.js'
 export const TableUtils = {
   setupDynamicTable: (
     tableId, fetchLimit, columnsRenderingArr, renderPageCallback,
-    drawCallback, customRowId = null, customConfigs = {}, resetFilters = false) => {
+    drawCallback, customRowId = null, customConfigs = {}) => {
     const mainConfig = {
       ordering: false,
       paging: true,
@@ -31,13 +31,15 @@ export const TableUtils = {
     $('#table-reset-state-cta').
       click(() => TableUtils.resetDynamicTableState(instance))
 
-    if(resetFilters) TableUtils.resetDynamicTableState(instance)
+    /*if(resetFilters) TableUtils.resetDynamicTableState(instance)*/
     return instance
   },
-  resetDynamicTableState: (instance) => {
-    configs.goToPage(
-      configs.getCurrentPage(),
-      null, true)
+  resetDynamicTableState: (instance, autoReload = true) => {
+    if(autoReload){
+      configs.goToPage(
+        configs.getCurrentPage(),
+        null, true)
+    }
 
     instance.state.clear()
   },

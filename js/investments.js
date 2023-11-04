@@ -13,7 +13,10 @@ import { LoadingManager } from "./utils/loadingManager.js";
 import { InvestServices } from "./services/investServices.js";
 import { StringUtils } from "./utils/stringUtils.js";
 import { Localization } from "./utils/localization.js";
+import { configs } from './configs.js'
+import { TransactionServices } from './services/transactionServices.js'
 
+let transactionsTableInstance = null;
 export const Investments = {
   addNewAssetClicked: () => {
     InvestAssetsModalFunc.buildAddNewAccountModal('#modal-global',
@@ -393,10 +396,34 @@ export const Investments = {
   },
   initTabTransactions: (trxList) => {
     InvestmentTransactionsTableFunc.renderTransactionsTable(trxList,
-        '#table-wrapper-transactions', Investments.editTransactionClicked,
-        Investments.removeTransactionClicked);
+        '#table-wrapper-transactions');
 
-    TableUtils.setupStaticTable('#transactions-table');
+    const fetchLimit = MYFIN.TRX_FETCH_LIMIT;
+    if(transactionsTableInstance) TableUtils.resetDynamicTableState(transactionsTableInstance, false)
+    transactionsTableInstance = TableUtils.setupDynamicTable('#transactions-table',
+      fetchLimit,
+      InvestmentTransactionsTableFunc.getColumnsRenderingArray(),
+      (page, searchQuery, callback) => {
+        LoadingManager.showLoading();
+        InvestServices.getTransactionsByPage(page, fetchLimit,
+          searchQuery,
+          (resp) => {
+            // SUCCESS
+            LoadingManager.hideLoading();
+            callback({
+              data: resp.results,
+              recordsTotal: resp.total_count,
+              recordsFiltered: resp.filtered_count,
+            });
+          }, (err) => {LoadingManager.hideLoading();});
+      }, () => {
+        // Click listener for edit trx click
+        InvestmentTransactionsTableFunc.bindClickListenersForTrxEditAction(Investments.editTransactionClicked);
+        // Click listener for delete trx click
+        InvestmentTransactionsTableFunc.bindClickListenersForTrxRemoveAction(Investments.removeTransactionClicked);
+      },null, {}, true
+    );
+
     LoadingManager.hideLoading();
   },
   editTransactionClicked: (
