@@ -423,7 +423,8 @@
     "year": "Year",
     "roi": "ROI",
     "assetClass": "Asset Class",
-    "feesAndTaxes": "Fees & taxes"
+    "feesAndTaxes": "Fees & taxes",
+    "showInactives": "Show Inactives"
   },
   "stats": {
     "stats": "Stats",

@@ -4,7 +4,7 @@ import { Localization } from "../utils/localization.js";
 export const InvestmentAssetsTableFunc = {
   renderAssetsTable: (
       assets, containerId, editAssetCallback, removeAssetCallback,
-      updateValueCallback) => {
+      updateValueCallback, showInactives = false) => {
     $(containerId).html(`
       <table id="assets-table" class="display browser-defaults" style="width:100%">
         <thead>
@@ -21,7 +21,7 @@ export const InvestmentAssetsTableFunc = {
             </tr>
         </thead>
         <tbody>
-            ${assets.map(
+            ${assets.filter((asset) => (showInactives) ? 1 === 1 : parseFloat(asset.current_value) !== 0).map(
         asset => InvestmentAssetsTableFunc.renderAssetsRow(asset)).
         join('')}
         </tbody>
