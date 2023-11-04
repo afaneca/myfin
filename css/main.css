@@ -1108,3 +1108,7 @@ svg:not(:root) {
     text-decoration: none;
     transition: 1s;
 }
+
+.dataTables_wrapper .dataTables_filter input {
+    margin-left: 0;
+}
