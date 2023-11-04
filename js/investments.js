@@ -16,6 +16,7 @@ import { Localization } from "./utils/localization.js";
 import { configs } from './configs.js'
 import { TransactionServices } from './services/transactionServices.js'
 
+let showInactiveAssets = false
 let transactionsTableInstance = null;
 export const Investments = {
   addNewAssetClicked: () => {
@@ -387,9 +388,17 @@ export const Investments = {
         canvasId, assetDistributionChartData);
   },
   initTabAssets: (assetsList) => {
+    $('input#show_inactives_cb').change(() => {
+      showInactiveAssets = $('input#show_inactives_cb').
+        val($(this).is(':checked'))[0].checked
+      Investments.setupAssetsTable(assetsList)
+    })
+    Investments.setupAssetsTable(assetsList)
+  },
+  setupAssetsTable: (assetsList) => {
     InvestmentAssetsTableFunc.renderAssetsTable(assetsList, '#table-wrapper',
-        Investments.editAssetClicked, Investments.removeAssetClicked,
-        Investments.updateAssetValueClicked);
+      Investments.editAssetClicked, Investments.removeAssetClicked,
+      Investments.updateAssetValueClicked, showInactiveAssets);
 
     TableUtils.setupStaticTable('#assets-table');
     LoadingManager.hideLoading();
