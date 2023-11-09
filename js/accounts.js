@@ -442,7 +442,7 @@ export var Accounts = {
                         </div>
                         <div class="input-field col s6">
                             <i class="material-icons prefix">euro_symbol</i>
-                            <input id="current_balance" type="number" step="0.01" min="0.00" class="validate">
+                            <input id="current_balance" type="number" step="0.01" min="0.00" class="validate" disabled>
                             <label class="active" for="current_balance">${Localization.getString('accounts.currentBalance')} (€)</label>
                         </div>
                          <div class="input-field col s6">
