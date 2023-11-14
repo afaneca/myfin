@@ -55,7 +55,7 @@ export const InvestmentReportsTableFunc = {
           </tr>
         </thead>
         <tbody>
-            ${Object.keys(roiByYearList).map(year => InvestmentReportsTableFunc.renderROIByYearTableRow(year, roiByYearList[year][0]))
+            ${Object.keys(roiByYearList).map(year => InvestmentReportsTableFunc.renderROIByYearTableRow(year, roiByYearList[year]))
       .join('')}
         </tbody>
       </table>
