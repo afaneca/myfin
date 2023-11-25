@@ -46,7 +46,6 @@ export const BudgetDetails = {
       BudgetDetails.initBudget(budgetID)
     }
 
-    $('.tooltipped').tooltip()
     $('.collapsible').collapsible()
 
     BudgetDetails.setupObservationsShortcuts('#budget_observations')
@@ -231,32 +230,45 @@ export const BudgetDetails = {
       || (!isCredit && cat.planned_amount_debit == 0 && cat.current_amount_debit == 0)
     return `
             <tr style="border-bottom: none !important;">
-                <td style="padding:0px !important;"><div class="tooltip cat-name-for-tooltip"
+                <td style="padding:0px !important;"><div class="budget-category-tooltip cat-name-for-tooltip"
                 data-category-id="${cat.category_id}" data-category-is-credit="${isCredit}" data-category-exclude-from-budgets="${cat.exclude_from_budgets}">
                         <span style="border-bottom: 1px dotted black; ${catHasZeroValue
       ? 'color: #9ca8a9;'
-      : ''}">${cat.name} ${cat.exclude_from_budgets === '1'
+      : ''}">${cat.name} ${cat.exclude_from_budgets === 1
       ? '<i class="tiny material-icons hoverable">do_not_disturb_on</i>'
       : ''}</span>
-                        ${BudgetDetails.buildCategoryTooltip(cat, sameMonthLastYearLabel, isCredit)}
+                        ${BudgetDetails.buildCategoryTooltip(cat,
+      sameMonthLastYearLabel, isCredit)}
                  </td>
-                <td style="padding:0px !important;"><div class="input-field inline tooltip">
-                    <input ${(IS_OPEN) ? '' : ' disabled '} id="${cat.category_id}${(isCredit) ? 'credit' : 'debit'}" onClick="this.select();"
-                    value="${(isCredit) ? ((cat.planned_amount_credit) ? cat.planned_amount_credit : '0')
-      : ((cat.planned_amount_debit) ? cat.planned_amount_debit : '0')}" type="number" class="cat-input validate ${(isCredit)
+                <td style="padding:0px !important;"><div class="input-field inline budget-category-tooltip">
+                    <input ${(IS_OPEN)
+      ? ''
+      : ' disabled '} id="${cat.category_id}${(isCredit) ? 'credit' : 'debit'}" onClick="this.select();"
+                    value="${(isCredit) ? ((cat.planned_amount_credit)
+        ? cat.planned_amount_credit
+        : '0')
+      : ((cat.planned_amount_debit)
+        ? cat.planned_amount_debit
+        : '0')}" type="number" class="cat-input validate ${(isCredit)
       ? 'credit-input-estimated'
       : 'debit-input-estimated'} input" min="0.00" value="0.00" step="0.01" data-category-exclude-from-budgets="${cat.exclude_from_budgets}" required>
-                    <label for="${cat.category_id}" class="active">${Localization.getString('budgetDetails.estimated')} (€)</label>
+                    <label for="${cat.category_id}" class="active">${Localization.getString(
+      'budgetDetails.estimated')} (€)</label>
                 </div></td>
                 <td style="padding:0px !important;"><div class="input-field inline">
-                    <input disabled id="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" value="${(isCredit)
+                    <input disabled id="${StringUtils.normalizeStringForHtml(
+      cat.name)}_inline_${(isCredit) ? 'credit' : 'debit'}" value="${(isCredit)
       ? ((cat.current_amount_credit) ? cat.current_amount_credit : '0')
-      : ((cat.current_amount_debit) ? cat.current_amount_debit : '0')}" type="number" class="validate ${(isCredit)
+      : ((cat.current_amount_debit)
+        ? cat.current_amount_debit
+        : '0')}" type="number" class="validate ${(isCredit)
       ? 'credit-input-current'
-      : 'debit-input-current'} input tooltipped" min="0.00" value="0.00" step="0.01" data-category-exclude-from-budgets="${cat.exclude_from_budgets}" required>
-                    <label for="${StringUtils.normalizeStringForHtml(cat.name)}_inline_${(isCredit)
+      : 'debit-input-current'} input" min="0.00" value="0.00" step="0.01" data-category-exclude-from-budgets="${cat.exclude_from_budgets}" required>
+                    <label for="${StringUtils.normalizeStringForHtml(
+      cat.name)}_inline_${(isCredit)
       ? 'credit'
-      : 'debit'}" class="active">${Localization.getString('budgetDetails.current')} (€)</label>
+      : 'debit'}" class="active">${Localization.getString(
+      'budgetDetails.current')} (€)</label>
                 </div></td>
             </tr>
             <tr>
@@ -264,9 +276,13 @@ export const BudgetDetails = {
                     <div id="modded">
                         <div class="progress main-dark-bg">
                           
-                        <div class="determinate ${isCredit ? 'green-gradient-bg' : 'red-gradient-bg'}"
-                            style="width: ${BudgetDetails.getCorrectPercentageValueWithMaximumValue(cat.current_amount_credit,
-      cat.current_amount_debit, cat.planned_amount_credit, cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
+                        <div class="determinate ${isCredit
+      ? 'green-gradient-bg'
+      : 'red-gradient-bg'}"
+                            style="width: ${BudgetDetails.getCorrectPercentageValueWithMaximumValue(
+      cat.current_amount_credit,
+      cat.current_amount_debit, cat.planned_amount_credit,
+      cat.planned_amount_debit, isCredit)}%; animation: grow 2s;">
                               
                          </div>
                       </div>
@@ -284,11 +300,11 @@ export const BudgetDetails = {
   },
   buildCategoryTooltip: (cat, sameMonthLastYearLabel, isCredit) => {
     return `
-      <div class="tooltiptext">
+      <div class="budget-category-tooltip-text">
                           <span class="center-align" style="margin: 10px 0;font-style: italic;">
                               <center>${(cat.description) ? cat.description : Localization.getString('budgetDetails.noDescription')}</center>
                           </span>
-                          ${cat.exclude_from_budgets === '1'
+                          ${cat.exclude_from_budgets === 1
       ? `<center><i>(${Localization.getString('categories.excludedFromBudgets')})</i></center>`
       : ''}
                             <hr>

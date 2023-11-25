@@ -29,7 +29,6 @@ export const Categories = {
   initMergedTable: (catsList) => {
     $('#table-merged-wrapper').
       html(Categories.renderCreditCategoriesTable(catsList))
-    $('.tooltipped').tooltip()
     TableUtils.setupStaticTable('#debit-categories-table', () => {
       // Click listener for edit cat click
       Categories.bindClickListenersForEditAction()
@@ -70,7 +69,6 @@ export const Categories = {
 
     TableUtils.setupStaticTable('#debit-categories-table')
     $('select.cat-color-select').select2()
-    $('.tooltipped').tooltip()
 
     LoadingManager.hideLoading()
   },
@@ -114,10 +112,10 @@ export const Categories = {
                 <td>
                    ${Categories.renderColorColumn(cats.color_gradient)}
                 </td>
-                <td>${cats.name} ${cats.exclude_from_budgets === '1'
-      ? `<a class="tooltipped" data-position="right" data-tooltip="${Localization.getString(
-        'categories.excludedFromBudgets')}"> <i class="tiny material-icons hoverable">do_not_disturb_on</i></a>`
-      : ''}</td>
+                <td><div class="myfin-tooltip-trigger">${cats.name} ${cats.exclude_from_budgets === 1
+      ? `<a><i class="tiny material-icons hoverable">do_not_disturb_on</i></a><span class="myfin-tooltip-text">${Localization.getString(
+        'categories.excludedFromBudgets')}</span>`
+      : ''}</div></td>
                 <td>${cats.description}</td>
                 <td><span class="${(cats.status === 'Ativa')
       ? 'badge green-text text-accent-4'
@@ -336,7 +334,7 @@ export const Categories = {
     $('textarea#category_description').val(catDescription)
     $('#category_status_select').formSelect()
 
-    if (excludeFromBudgets === '1') {
+    if (excludeFromBudgets === 1) {
       $('input#exclude_from_budgets').prop('checked', 'checked')
     }
     //$(`select#category_type_select_edit

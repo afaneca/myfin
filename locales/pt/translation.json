@@ -425,7 +425,8 @@
     "roi": "ROI",
     "assetClass": "Classe de Ativos",
     "feesAndTaxes": "Taxas e impostos",
-    "showInactives": "Mostrar Inativos"
+    "showInactives": "Mostrar Inativos",
+    "updateValue": "Atualizar Valor"
   },
   "stats": {
     "stats": "Estatísticas",

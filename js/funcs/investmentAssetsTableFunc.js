@@ -27,7 +27,6 @@ export const InvestmentAssetsTableFunc = {
         </tbody>
       </table>
     `);
-    $('.tooltipped').tooltip();
     InvestmentAssetsTableFunc.bindClickListenersForEditAction(editAssetCallback);
     InvestmentAssetsTableFunc.bindClickListenersForRemoveAction(
         removeAssetCallback);
@@ -78,24 +77,25 @@ export const InvestmentAssetsTableFunc = {
         <td>${asset.units} ${asset.ticker}</td>
         <td>${StringUtils.formatMoney(asset.currently_invested_value)}<br>
             <span class="" style="font-size: small;font-style: italic;">${Localization.getString(
-        'investments.perUnitPrice',
-        {price: StringUtils.formatMoney(asset.price_per_unit)})}</span>
+      'investments.perUnitPrice',
+      { price: StringUtils.formatMoney(asset.price_per_unit) })}</span>
         </td>
         <td>${StringUtils.formatMoney(asset.fees_taxes)}</td>
         <td>${StringUtils.formatMoney(
-        asset.current_value)}<i style="font-size: larger;color: var(--main-accent-color) !important;margin-left: 5px;vertical-align: text-bottom;"
+      asset.current_value)}<div class="myfin-tooltip-trigger" style="display: inline;"><i style="font-size: larger;color: var(--main-accent-color) !important;margin-left: 5px;vertical-align: text-bottom;"
         data-asset-id="${asset.asset_id}" data-asset-name="${asset.name}" data-asset-current-value="${asset.current_value}"
-        class="material-icons table-action-icons action-update-value tooltipped" data-position="right" data-tooltip="Atualizar Valor">monetization_on</i></td>
+        class="material-icons table-action-icons action-update-value">monetization_on</i><span class="myfin-tooltip-text">${Localization.getString(
+      "investments.updateValue")}</span></div></td>
         <td>${StringUtils.formatMoney(
-        asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(
-        asset.relative_roi_percentage, true)}</td>
+      asset.absolute_roi_value)} ${InvestmentAssetsTableFunc.buildRoiPercentage(
+      asset.relative_roi_percentage, true)}</td>
         <td>
             <i data-asset-id="${asset.asset_id}" data-asset-ticker="${asset.ticker
-        ? asset.ticker
-        : ''}"
+      ? asset.ticker
+      : ''}"
              data-asset-name="${asset.name}" data-asset-type="${asset.type}" data-asset-broker="${asset.broker
-        ? asset.broker
-        : ''}"
+      ? asset.broker
+      : ''}"
              class="material-icons table-action-icons action-edit">create</i>
             <i data-asset-id="${asset.asset_id}" class="material-icons table-action-icons action-remove" style="margin-left:10px">delete</i>
         </td>

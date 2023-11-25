@@ -424,7 +424,8 @@
     "roi": "ROI",
     "assetClass": "Asset Class",
     "feesAndTaxes": "Fees & taxes",
-    "showInactives": "Show Inactives"
+    "showInactives": "Show Inactives",
+    "updateValue": "Update Value"
   },
   "stats": {
     "stats": "Stats",
