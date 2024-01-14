@@ -152,6 +152,7 @@
     "nrAccountsCreated": "Nr. de contas criadas",
     "nrBudgetsCreated": "Nr. de orçamentos criados",
     "nrRulesCreated": "Nr. de regras criadas",
+    "nrTagsCreated": "Nr. de tags criadas",
     "recalculateBalancesOfAllAccounts": "➥ Recalcular saldos de todas as contas",
     "changePasswordSuccessMessage": "Password atualizada com sucesso. Por favor, volte a iniciar sessão.",
     "passwordsDoNotMatchMessage": "As passwords não coincidem. Por favor, verifique o seu input e tente novamente.",
