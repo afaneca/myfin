@@ -69,18 +69,28 @@ export var Transactions = {
   buildFlowColumnForTable: (
       trx, type, val, meta) => `${Transactions.formatTypeToString(trx.type,
       trx.account_from_name, trx.account_to_name)}`,
-  buildDescriptionColumnForTable: (trx, type, val, meta) =>
-      `${trx.is_essential == true
-          ? LayoutUtils.buildEssentialTransactionBadge()
-          : ''}  
+  buildDescriptionColumnForTable: (trx, type, val, meta) => {
+    return `${trx.is_essential == true
+      ? LayoutUtils.buildEssentialTransactionBadge()
+      : ''}  
           ${trx.description}
           <p><i class="inline-icon material-icons">folder_shared</i>  ${(trx.category_name)
-          ? trx.category_name
-          : `<span class=\'medium-gray-color\'>${Localization.getString(
-              'common.noCategory')}</span>`}&nbsp;&nbsp;&nbsp;<i class="inline-icon material-icons">business</i> ${(trx.entity_name)
-          ? trx.entity_name
-          : `<span class=\'medium-gray-color\'>${Localization.getString(
-              'common.noEntity')}</span>`}</p>`,
+      ? trx.category_name
+      : `<span class=\'medium-gray-color\'>${Localization.getString(
+        'common.noCategory')}</span>`}&nbsp;&nbsp;&nbsp;<i class="inline-icon material-icons">business</i> ${(trx.entity_name)
+      ? trx.entity_name
+      : `<span class=\'medium-gray-color\'>${Localization.getString(
+        'common.noEntity')}</span>`}</p>
+
+        <p>${trx.tags.map((tag) => Transactions.buildTagChipForTable(tag)).join("")}</p>`
+  },
+  buildTagChipForTable: (tag) => {
+    return `
+      <div class="chip">
+        ${tag.name}
+      </div>
+    `
+  },
   buildAmountColumnForTable: (
       trx, type, val, meta) => `${Transactions.formatCurrencyColumn(trx.type,
       StringUtils.formatMoney(trx.amount))}`,
@@ -102,6 +112,7 @@ export var Transactions = {
          data-trx-type="${trx.type}"
          data-description="${StringUtils.removeLineBreaksFromString(
           trx.description)}"
+         data-tags-array="${JSON.stringify(trx.tags)}"
          data-is-essential="${trx.is_essential}"
          class="material-icons table-action-icons action-edit-trx">create</i>
         <i data-trx-id="${trx.transaction_id}"
@@ -122,6 +133,7 @@ export var Transactions = {
             this.dataset.trxType,
             this.dataset.description,
             this.dataset.isEssential,
+            this.dataset.tagsArray
         );
       });
     });

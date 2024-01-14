@@ -1146,3 +1146,9 @@ svg:not(:root) {
 .dataTables_wrapper .dataTables_filter input {
     margin-left: 0;
 }
+
+/* Chip */
+.chip {
+    background: var(--main-card-background);
+    color: var(--main-text-color);
+}
