@@ -54,7 +54,8 @@
     "rules": "Regras",
     "budgets": "Orçamentos",
     "investments": "Investimentos",
-    "statistics": "Estatísticas"
+    "statistics": "Estatísticas",
+    "tags": "Tags"
   },
   "topBar": {
     "operatingFunds": "Fundo de Maneio",
@@ -461,5 +462,19 @@
     "netWorthEvolutionProjection": "Projeção de Evolução do Património",
     "projectedBalanceAssetsPlusDebt": "Balanço Projetado (Ativos + Passivos)",
     "year": "Ano"
+  },
+  "tags": {
+    "tags": "Tags",
+    "addTagCTA": "Adicionar Tag",
+    "name": "Nome",
+    "description": "Descrição",
+    "addTagModalTitle": "Adicionar nova tag",
+    "tagSuccessfullyAdded": "Tag adicionada com sucesso!",
+    "deleteTagModalTitle": "Remover tag <b>#{{id}}</b>?",
+    "deleteTagModalSubtitle": "Tem a certeza de que pretende remover esta tag?",
+    "deleteTagModalAlert": "Esta ação é irreversível!",
+    "tagSuccessfullyDeleted": "Tag removida com sucesso!",
+    "editTagModalTitle": "Editar tag",
+    "tagSuccessfullyUpdated": "Tag atualizada com sucesso!"
   }
 }

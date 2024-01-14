@@ -327,4 +327,4 @@ export const TransactionServices = {
   },
 }
 
-//# sourceURL=js/actions/transactionServices.js
+//# sourceURL=js/services/transactionServices.js

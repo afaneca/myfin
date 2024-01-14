@@ -54,7 +54,8 @@
     "rules": "Rules",
     "budgets": "Budgets",
     "investments": "Investments",
-    "statistics": "Stats"
+    "statistics": "Stats",
+    "tags": "Tags"
   },
   "topBar": {
     "operatingFunds": "Operating Funds",
@@ -415,7 +416,7 @@
     "investedValue": "Invested value",
     "currentROI": "Current ROI",
     "editAsset": "Edit Asset",
-    "currentInvestValue":"Current valuation for investment in <b>{{name}}</b>",
+    "currentInvestValue": "Current valuation for investment in <b>{{name}}</b>",
     "deleteAssetModalTitle": "Delete asset <b>#{{id}}</b>?",
     "deleteAssetModalSubtitle": "Are you sure you want to delete this asset?",
     "deleteAssetModalAlert": "This action is irreversible!",
@@ -460,5 +461,19 @@
     "netWorthEvolutionProjection": "Net Worth Evolution Projection",
     "projectedBalanceAssetsPlusDebt": "Projected Balance (Assets + Debt)",
     "year": "Year"
+  },
+  "tags": {
+    "tags": "Tags",
+    "addTagCTA": "Add Tag",
+    "name": "Name",
+    "description": "Description",
+    "addTagModalTitle": "Add new tag",
+    "tagSuccessfullyAdded": "Tag successfully added!",
+    "deleteTagModalTitle": "Delete tag #<b>{{id}}</b>",
+    "deleteTagModalSubtitle": "Are you sure you want to delete this tag?",
+    "deleteTagModalAlert": "This action is irreversible!",
+    "tagSuccessfullyDeleted": "Entity successfully deleted!",
+    "editTagModalTitle": "Edit tag",
+    "tagSuccessfullyUpdated": "Tag successfully updated"
   }
 }
