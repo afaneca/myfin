@@ -134,7 +134,7 @@ export const TransactionServices = {
   },
   addTransaction: (
     amount, type, description, entity_id, account_from_id, account_to_id,
-    category_id, date_timestamp, is_essential, successCallback,
+    category_id, date_timestamp, is_essential, tagsArr, successCallback,
     errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'trxs/step1'
 
@@ -157,6 +157,7 @@ export const TransactionServices = {
         category_id,
         date_timestamp,
         is_essential,
+        tags: JSON.stringify(tagsArr),
       },
       url: pageUrl,
       success: function (response) {
@@ -205,10 +206,10 @@ export const TransactionServices = {
   },*/
   editTransaction: (trxID, new_amount, new_type, new_description, new_entity_id,
     new_account_from_id, new_account_to_id, new_category_id,
-    new_date_timestamp, new_is_essential,
+    new_date_timestamp, new_is_essential, new_tags,
     is_split, split_amount, split_category, split_entity, split_type,
     split_account_from, split_account_to, split_description,
-    split_is_essential,
+    split_is_essential, split_tags,
     successCallback, errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'trxs/'
 
@@ -239,6 +240,7 @@ export const TransactionServices = {
         new_category_id,
         new_date_timestamp,
         new_is_essential,
+        tags: JSON.stringify(new_tags),
         is_split,
         split_amount,
         split_category,
@@ -248,6 +250,7 @@ export const TransactionServices = {
         split_account_to,
         split_description,
         split_is_essential,
+        split_tags: JSON.stringify(split_tags),
       },
       url: pageUrl,
       success: function (response) {
@@ -327,4 +330,4 @@ export const TransactionServices = {
   },
 }
 
-//# sourceURL=js/actions/transactionServices.js
+//# sourceURL=js/services/transactionServices.js

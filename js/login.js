@@ -21,7 +21,6 @@ $('.login-form').submit(function (e) {
 })
 
 export function signUpLinkWasClicked () {
-  debugger
   isSignUp = !isSignUp
 
   if (isSignUp) {

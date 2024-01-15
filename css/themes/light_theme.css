@@ -10,6 +10,8 @@
     --main-modal-background: white;
     --main-disabled-color: var(--light-grey);
     --main-dashboard-angular-chart-background: var(--main-body-background);
+
+    --input-box-background: #e6e6e6;
 }
 
 /*body {

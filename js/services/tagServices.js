@@ -1,6 +1,88 @@
-export const UserServices = {
-  changeUserPassword: (current_password, new_password, successCallback, errorCallback) => {
-    var pageUrl = REST_SERVER_PATH + 'users/changePW/'
+export const TagServices = {
+  getTransactionsByPage: (page, pageSize, searchQuery = null, successCallback, errorCallback) => {
+    var pageUrl = REST_SERVER_PATH + `tags/filteredByPage/${page}`
+    $.ajax({
+      async: true,
+      type: 'GET',
+      dataType: 'json',
+      cache: false,
+      headers: {
+        authusername: Cookies.get('username'),
+        sessionkey: Cookies.get('sessionkey'),
+      },
+      data: { page_size: pageSize, query: searchQuery },
+      url: pageUrl,
+      success: function (response) {
+        if (successCallback) {
+          successCallback(response)
+        }
+      },
+      error: function (response) {
+        if (errorCallback) {
+          errorCallback(response)
+        }
+      },
+    })
+  },
+  addTag: (name, description, successCallback, errorCallback) => {
+    var pageUrl = REST_SERVER_PATH + 'tags/'
+
+    $.ajax({
+      async: true,
+      type: 'POST',
+      dataType: 'json',
+      cache: false,
+      headers: {
+        authusername: Cookies.get('username'),
+        sessionkey: Cookies.get('sessionkey'),
+      },
+      data: {
+        name,
+        description: description || "",
+      },
+      url: pageUrl,
+      success: function (response) {
+        if (successCallback) {
+          successCallback(response)
+        }
+      },
+      error: function (response) {
+        if (errorCallback) {
+          errorCallback(response)
+        }
+      },
+    })
+  },
+  removeTag: (tagId, successCallback, errorCallback) => {
+    var pageUrl = REST_SERVER_PATH + `tags/${tagId}`
+
+    $.ajax({
+      async: true,
+      type: 'DELETE',
+      dataType: 'json',
+      cache: false,
+      headers: {
+        authusername: Cookies.get('username'),
+        sessionkey: Cookies.get('sessionkey'),
+      },
+      data: {
+        tag_id: tagId,
+      },
+      url: pageUrl,
+      success: function (response) {
+        if (successCallback) {
+          successCallback(response)
+        }
+      },
+      error: function (response) {
+        if (errorCallback) {
+          errorCallback(response)
+        }
+      },
+    })
+  },
+  editTag: (tagId, newName, newDescription, successCallback, errorCallback) => {
+    var pageUrl = REST_SERVER_PATH + `tags/${tagId}`
 
     $.ajax({
       async: true,
@@ -12,8 +94,8 @@ export const UserServices = {
         sessionkey: Cookies.get('sessionkey'),
       },
       data: {
-        current_password,
-        new_password,
+        new_name: newName,
+        new_description: newDescription,
       },
       url: pageUrl,
       success: function (response) {
@@ -27,58 +109,7 @@ export const UserServices = {
         }
       },
     })
-  },
-  getAllCategoriesEntitiesTagsForUser: (successCallback, errorCallback) => {
-    var pageUrl = REST_SERVER_PATH + 'user/categoriesEntitiesTags'
-    $.ajax({
-      async: true,
-      type: 'GET',
-      dataType: 'json',
-      cache: false,
-      headers: {
-        authusername: Cookies.get('username'),
-        sessionkey: Cookies.get('sessionkey'),
-      },
-      data: {},
-      url: pageUrl,
-      success: function (response) {
-        if (successCallback) {
-          successCallback(response)
-        }
-      },
-      error: function (response) {
-        if (errorCallback) {
-          errorCallback(response)
-        }
-      },
-    })
-  },
-  populateWithDemoData: (successCallback, errorCallback) => {
-    var pageUrl = REST_SERVER_PATH + 'users/demo/'
-
-    $.ajax({
-      async: true,
-      type: 'POST',
-      dataType: 'json',
-      cache: false,
-      headers: {
-        authusername: Cookies.get('username'),
-        sessionkey: Cookies.get('sessionkey'),
-      },
-      data: {},
-      url: pageUrl,
-      success: function (response) {
-        if (successCallback) {
-          successCallback(response)
-        }
-      },
-      error: function (response) {
-        if (errorCallback) {
-          errorCallback(response)
-        }
-      }
-    });
   },
 }
 
-//# sourceURL=js/actions/userService.js
+//# sourceURL=js/services/tagServices.js

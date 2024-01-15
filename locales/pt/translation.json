@@ -54,7 +54,8 @@
     "rules": "Regras",
     "budgets": "Orçamentos",
     "investments": "Investimentos",
-    "statistics": "Estatísticas"
+    "statistics": "Estatísticas",
+    "tags": "Tags"
   },
   "topBar": {
     "operatingFunds": "Fundo de Maneio",
@@ -151,6 +152,7 @@
     "nrAccountsCreated": "Nr. de contas criadas",
     "nrBudgetsCreated": "Nr. de orçamentos criados",
     "nrRulesCreated": "Nr. de regras criadas",
+    "nrTagsCreated": "Nr. de tags criadas",
     "recalculateBalancesOfAllAccounts": "➥ Recalcular saldos de todas as contas",
     "changePasswordSuccessMessage": "Password atualizada com sucesso. Por favor, volte a iniciar sessão.",
     "passwordsDoNotMatchMessage": "As passwords não coincidem. Por favor, verifique o seu input e tente novamente.",
@@ -199,8 +201,9 @@
     "import": "Importar",
     "transactionsSuccessfullyImported": "Transações importadas com sucesso!",
     "deductFeesFromTransaction": "Descontas taxas/impostos da transação",
-    "generated_split_invest_trx_observations": "Taxas/impostos para transação de {{units}} {{ticker}}"
-
+    "generated_split_invest_trx_observations": "Taxas/impostos para transação de {{units}} {{ticker}}",
+    "addATagPlaceholder": "Adicione uma tag",
+    "addAnotherTagPlaceholder": "Adicione outra tag"
   },
   "login": {
     "fillAllFields": "Não deixe campos em branco",
@@ -460,6 +463,22 @@
     "projectionsTableFootnotes3": "Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo e contas de investimento",
     "netWorthEvolutionProjection": "Projeção de Evolução do Património",
     "projectedBalanceAssetsPlusDebt": "Balanço Projetado (Ativos + Passivos)",
-    "year": "Ano"
+    "year": "Ano",
+    "tags": "Tags"
+  },
+  "tags": {
+    "tags": "Tags",
+    "tag": "Tag",
+    "addTagCTA": "Adicionar Tag",
+    "name": "Nome",
+    "description": "Descrição",
+    "addTagModalTitle": "Adicionar nova tag",
+    "tagSuccessfullyAdded": "Tag adicionada com sucesso!",
+    "deleteTagModalTitle": "Remover tag <b>#{{id}}</b>?",
+    "deleteTagModalSubtitle": "Tem a certeza de que pretende remover esta tag?",
+    "deleteTagModalAlert": "Esta ação é irreversível!",
+    "tagSuccessfullyDeleted": "Tag removida com sucesso!",
+    "editTagModalTitle": "Editar tag",
+    "tagSuccessfullyUpdated": "Tag atualizada com sucesso!"
   }
 }

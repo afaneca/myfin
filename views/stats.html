@@ -69,7 +69,8 @@
                     <div class="chart">
                         <canvas id="chart"></canvas>
                     </div>
-                    <div class="row">
+                    <!-- Category -->
+                    <div class="row card-panel" style="border: 3px dotted var(--main-body-background);margin-top: 25px;">
                         <div class="col s6">
                             <h4 data-i18n="stats.incomeByCategory"></h4>
                             <div id="year-by-year-table-credit-wrapper" style="padding: 10px;"></div>
@@ -77,6 +78,28 @@
                         <div class="col s6">
                             <h4 data-i18n="stats.expensesByCategory"></h4>
                             <div id="year-by-year-table-debit-wrapper" style="padding: 10px;"></div>
+                        </div>
+                    </div>
+                    <!-- Entity -->
+                    <div class="row card-panel" style="border: 3px dotted var(--main-body-background);">
+                        <div class="col s6">
+                            <h4 data-i18n="stats.incomeByEntity"></h4>
+                            <div id="year-by-year-table-credit-wrapper-entity" style="padding: 10px;"></div>
+                        </div>
+                        <div class="col s6">
+                            <h4 data-i18n="stats.expensesByEntity"></h4>
+                            <div id="year-by-year-table-debit-wrapper-entity" style="padding: 10px;"></div>
+                        </div>
+                    </div>
+                    <!-- Tag -->
+                    <div class="row card-panel" style="border: 3px dotted var(--main-body-background);">
+                        <div class="col s6">
+                            <h4 data-i18n="stats.incomeByTag"></h4>
+                            <div id="year-by-year-table-credit-wrapper-tag" style="padding: 10px;"></div>
+                        </div>
+                        <div class="col s6">
+                            <h4 data-i18n="stats.expensesByTag"></h4>
+                            <div id="year-by-year-table-debit-wrapper-tag" style="padding: 10px;"></div>
                         </div>
                     </div>
                 </div>

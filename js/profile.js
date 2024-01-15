@@ -53,6 +53,10 @@ export const Profile = {
       $('span#counter_created_rules').text(statsData.nr_of_rules);
     }
 
+    if (statsData.nr_of_tags) {
+      $('span#counter_created_tags').text(statsData.nr_of_tags);
+    }
+
   },
   onChangePasswordBtnClick: () => {
     const oldPassword = $('input#current_pw').val();

@@ -7,6 +7,8 @@
     --main-disabled-color: #1B3A4B;
     --main-accent-color: #ffffff;
     --main-light-gray-color: #becbcd;
+
+    --input-box-background: #08464e;
 }
 
 .main-dark-bg {
@@ -107,4 +109,8 @@ label {
     border: 2px solid var(--main-light-blue);
     background-color: var(--main-light-blue);
     z-index: 0;
+}
+
+.dropdown-content li:hover, .dropdown-content li.active {
+    background-color: var(--main-body-background);
 }
