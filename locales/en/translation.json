@@ -54,7 +54,8 @@
     "rules": "Rules",
     "budgets": "Budgets",
     "investments": "Investments",
-    "statistics": "Stats"
+    "statistics": "Stats",
+    "tags": "Tags"
   },
   "topBar": {
     "operatingFunds": "Operating Funds",
@@ -146,11 +147,12 @@
     "newPasswordConfirmation": "New password (confirmation)",
     "changePasswordCTA": "Change Password",
     "nrTrxCreated": "Nr. of transactions created",
-    "nrEntitiesCreated": "Nr of entities created",
-    "nrCategoriesCreated": "Nr of categories created",
-    "nrAccountsCreated": "Nr of accounts created",
-    "nrBudgetsCreated": "Nr of budgets created",
-    "nrRulesCreated": "Nr of rules created",
+    "nrEntitiesCreated": "Nr. of entities created",
+    "nrCategoriesCreated": "Nr. of categories created",
+    "nrAccountsCreated": "Nr. of accounts created",
+    "nrBudgetsCreated": "Nr. of budgets created",
+    "nrRulesCreated": "Nr. of rules created",
+    "nrTagsCreated": "Nr. of tags created",
     "recalculateBalancesOfAllAccounts": "➥ Recalculate balances of all accounts",
     "changePasswordSuccessMessage": "Password successfully updated. Please, log back in.",
     "passwordsDoNotMatchMessage": "Passwords don't match. Please, verify your input and try again.",
@@ -199,7 +201,9 @@
     "import": "Import",
     "transactionsSuccessfullyImported": "Transactions successfully imported!",
     "deductFeesFromTransaction": "Deduct fees/taxes from transaction",
-    "generated_split_invest_trx_observations": "Fees/taxes for {{units}} {{ticker}} transaction"
+    "generated_split_invest_trx_observations": "Fees/taxes for {{units}} {{ticker}} transaction",
+    "addATagPlaceholder": "Add a tag",
+    "addAnotherTagPlaceholder": "Add another tag"
   },
   "login": {
     "fillAllFields": "Fill all fields and try again.",
@@ -415,7 +419,7 @@
     "investedValue": "Invested value",
     "currentROI": "Current ROI",
     "editAsset": "Edit Asset",
-    "currentInvestValue":"Current valuation for investment in <b>{{name}}</b>",
+    "currentInvestValue": "Current valuation for investment in <b>{{name}}</b>",
     "deleteAssetModalTitle": "Delete asset <b>#{{id}}</b>?",
     "deleteAssetModalSubtitle": "Are you sure you want to delete this asset?",
     "deleteAssetModalAlert": "This action is irreversible!",
@@ -436,6 +440,10 @@
     "yearByYear": "Year-By-Year",
     "incomeByCategory": "Income By Category",
     "expensesByCategory": "Expenses By Category",
+    "incomeByEntity": "Income By Entity",
+    "expensesByEntity": "Expenses By Entity",
+    "incomeByTag": "Income By Tag",
+    "expensesByTag": "Expenses By Tag",
     "projectedBalanceAssets": "Projected Balance (Assets)",
     "netIncome": "Net Income",
     "others": "Others",
@@ -459,6 +467,22 @@
     "projectionsTableFootnotes3": "This value is projected from budget data, not taking debt and investments into account",
     "netWorthEvolutionProjection": "Net Worth Evolution Projection",
     "projectedBalanceAssetsPlusDebt": "Projected Balance (Assets + Debt)",
-    "year": "Year"
+    "year": "Year",
+    "tags": "Tags"
+  },
+  "tags": {
+    "tags": "Tags",
+    "tag": "Tag",
+    "addTagCTA": "Add Tag",
+    "name": "Name",
+    "description": "Description",
+    "addTagModalTitle": "Add new tag",
+    "tagSuccessfullyAdded": "Tag successfully added!",
+    "deleteTagModalTitle": "Delete tag #<b>{{id}}</b>",
+    "deleteTagModalSubtitle": "Are you sure you want to delete this tag?",
+    "deleteTagModalAlert": "This action is irreversible!",
+    "tagSuccessfullyDeleted": "Tag successfully deleted!",
+    "editTagModalTitle": "Edit tag",
+    "tagSuccessfullyUpdated": "Tag successfully updated"
   }
 }

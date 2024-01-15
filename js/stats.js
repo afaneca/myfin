@@ -116,12 +116,31 @@ export const Stats = {
     StatServices.getYearByYearIncomeExpenseDistribution(yearByYearCurrentlySelectedYear,
       (resp) => {
         Stats.setupYearSelect('.year-select-wrapper', resp.year_of_first_trx, yearByYearCurrentlySelectedYear)
-        Stats.setupIncomeExpenseTable(resp.categories.filter((cat) => parseFloat(cat.category_yearly_income) > 0).
+        // Category
+        Stats.setupCategoryIncomeExpenseTable(resp.categories.filter((cat) => parseFloat(cat.category_yearly_income) > 0).
             sort((a, b) => b.category_yearly_income - a.category_yearly_income),
           '#year-by-year-table-credit-wrapper', true)
-        Stats.setupIncomeExpenseTable(resp.categories.filter((cat) => parseFloat(cat.category_yearly_expense) > 0).
+        Stats.setupCategoryIncomeExpenseTable(resp.categories.filter((cat) => parseFloat(cat.category_yearly_expense) > 0).
             sort((a, b) => b.category_yearly_expense - a.category_yearly_expense),
           '#year-by-year-table-debit-wrapper', false)
+
+        // Entity
+        Stats.setupEntityIncomeExpenseTable(resp.entities.filter((ent) => parseFloat(ent.entity_yearly_income) > 0).
+            sort((a, b) => b.entity_yearly_income - a.entity_yearly_income),
+          '#year-by-year-table-credit-wrapper-entity', true)
+        Stats.setupEntityIncomeExpenseTable(resp.entities.filter((ent) => parseFloat(ent.entity_yearly_expense) > 0).
+            sort((a, b) => b.entity_yearly_expense - a.entity_yearly_expense),
+          '#year-by-year-table-debit-wrapper-entity', false)
+
+        // Tag
+        Stats.setupTagIncomeExpenseTable(resp.tags.filter((tag) => parseFloat(tag.tag_yearly_income) > 0).
+            sort((a, b) => b.tag_yearly_income - a.tag_yearly_income),
+          '#year-by-year-table-credit-wrapper-tag', true)
+        Stats.setupTagIncomeExpenseTable(resp.tags.filter((tag) => parseFloat(tag.tag_yearly_expense) > 0).
+            sort((a, b) => b.tag_yearly_expense - a.tag_yearly_expense),
+          '#year-by-year-table-debit-wrapper-tag', false)
+
+
         $('select.year-selection-select').select2().on('change', (v) => {
           yearByYearCurrentlySelectedYear = $('select.year-selection-select').val()
           Stats.initTabYearByYear()
@@ -186,7 +205,7 @@ export const Stats = {
         DialogUtils.showErrorMessage()
       })
   },
-  setupIncomeExpenseTable: (categories, wrapperId, isCredit) => {
+  setupCategoryIncomeExpenseTable: (categories, wrapperId, isCredit) => {
     $(wrapperId).html('')
     const tableId = `table-${StringUtils.normalizeStringForHtml(wrapperId)}`
     const html = `
@@ -198,7 +217,7 @@ export const Stats = {
             </tr>
         </thead>
         <tbody>
-          ${categories.map((category) => Stats.renderIncomeExpenseTableRow(category, isCredit)).
+          ${categories.map((category) => Stats.renderCategoryIncomeExpenseTableRow(category, isCredit)).
       join('')}
         </tbody>
     </table>
@@ -207,11 +226,69 @@ export const Stats = {
     $(wrapperId).html(html)
     TableUtils.setupStaticTable(`table#${tableId}`, undefined, true, [[1, 'desc']], 5)
   },
-  renderIncomeExpenseTableRow: (category, isCredit) => {
+  renderCategoryIncomeExpenseTableRow: (category, isCredit) => {
     return `
     <tr>
         <td>${category.name}</td>
         <td>${StringUtils.formatMoney(isCredit ? category.category_yearly_income : category.category_yearly_expense)}</td>
+    </tr>
+    `
+  },
+  setupEntityIncomeExpenseTable: (entities, wrapperId, isCredit) => {
+    $(wrapperId).html('')
+    const tableId = `table-${StringUtils.normalizeStringForHtml(wrapperId)}`
+    const html = `
+      <table id='${tableId}' class='display browser-defaults' style='width:100%'>
+        <thead>
+            <tr>
+              <th>${Localization.getString('transactions.entity')}</th>
+              <th>${Localization.getString('common.value')}</th>
+            </tr>
+        </thead>
+        <tbody>
+          ${entities.map((entity) => Stats.renderEntityIncomeExpenseTableRow(entity, isCredit)).
+      join('')}
+        </tbody>
+    </table>
+    `
+
+    $(wrapperId).html(html)
+    TableUtils.setupStaticTable(`table#${tableId}`, undefined, true, [[1, 'desc']], 5)
+  },
+  renderEntityIncomeExpenseTableRow: (entity, isCredit) => {
+    return `
+    <tr>
+        <td>${entity.name}</td>
+        <td>${StringUtils.formatMoney(isCredit ? entity.entity_yearly_income : entity.entity_yearly_expense)}</td>
+    </tr>
+    `
+  },
+  setupTagIncomeExpenseTable: (tags, wrapperId, isCredit) => {
+    $(wrapperId).html('')
+    const tableId = `table-${StringUtils.normalizeStringForHtml(wrapperId)}`
+    const html = `
+      <table id='${tableId}' class='display browser-defaults' style='width:100%'>
+        <thead>
+            <tr>
+              <th>${Localization.getString('tags.tag')}</th>
+              <th>${Localization.getString('common.value')}</th>
+            </tr>
+        </thead>
+        <tbody>
+          ${tags.map((tag) => Stats.renderTagIncomeExpenseTableRow(tag, isCredit)).
+      join('')}
+        </tbody>
+    </table>
+    `
+
+    $(wrapperId).html(html)
+    TableUtils.setupStaticTable(`table#${tableId}`, undefined, true, [[1, 'desc']], 5)
+  },
+  renderTagIncomeExpenseTableRow: (tag, isCredit) => {
+    return `
+    <tr>
+        <td>${tag.name}</td>
+        <td>${StringUtils.formatMoney(isCredit ? tag.tag_yearly_income : tag.tag_yearly_expense)}</td>
     </tr>
     `
   },
@@ -269,11 +346,11 @@ export const Stats = {
       (optionId) => {
         Stats.onExpensesEvoFiltersChanged(true)
       })
-    UserServices.getAllCategoriesAndEntitiesForUser(
+    UserServices.getAllCategoriesEntitiesTagsForUser(
       (resp) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        Stats.setupCategorySelect(resp.categories, resp.entities, '#tab-expenses-per-cat')
+        Stats.setupCategorySelect(resp.categories, resp.entities, resp.tags, '#tab-expenses-per-cat')
 
         $('#tab-expenses-per-cat').find('select.category-selection-select').select2()
         $('select.category-selection-select').on('change', (v) => {
@@ -288,20 +365,20 @@ export const Stats = {
   },
   onExpensesEvoFiltersChanged: (useCachedData = false) => {
     let selectedPeriod = ToggleComponent.getSelectedOptionId(EXPENSES_EVO_TOGGLE_ID)
-    let selectedEntCatId = $('#tab-expenses-per-cat').find('select.category-selection-select').val()
-    let selectedCatId,
-      selectedEntId
-    if (selectedEntCatId.startsWith('cat-')) {
-      selectedCatId = selectedEntCatId.split('cat-')[1]
-    }
-    else if (selectedEntCatId.startsWith('ent-')) {
-      selectedEntId = selectedEntCatId.split('ent-')[1]
+    let selectedEntCatTagId = $('#tab-expenses-per-cat').find('select.category-selection-select').val()
+    let selectedCatId, selectedEntId, selectedTagId
+    if (selectedEntCatTagId.startsWith('cat-')) {
+      selectedCatId = selectedEntCatTagId.split('cat-')[1]
+    } else if (selectedEntCatTagId.startsWith('ent-')) {
+      selectedEntId = selectedEntCatTagId.split('ent-')[1]
+    } else if (selectedEntCatTagId.startsWith('tag-')) {
+      selectedTagId = selectedEntCatTagId.split('tag-')[1]
     }
 
     Stats.clearCanvasAndTableWrapper('#chart_pie_cat_expenses_evolution_table', 'chart_pie_cat_expenses_evolution')
     if (!useCachedData) {
       LoadingManager.showLoading()
-      StatServices.getCategoryExpensesEvolution(selectedCatId, selectedEntId,
+      StatServices.getCategoryExpensesEvolution(selectedCatId, selectedEntId, selectedTagId,
         (resp) => {
           // SUCCESS
           // cache into memory
@@ -403,7 +480,7 @@ export const Stats = {
     `
 
   },
-  setupCategorySelect: (categories, entities, wrapperDivLocator) => {
+  setupCategorySelect: (categories, entities, tags, wrapperDivLocator) => {
     $(wrapperDivLocator).find('div.categories-select-wrapper').html(
       `
     <div class='input-field col s3'>
@@ -415,6 +492,9 @@ export const Stats = {
     <optgroup label="${Localization.getString('stats.entities')}">
     ${entities.map(ent => Stats.renderEntitySelectOption(ent)).join('')}
     </optgroup>
+    <optgroup label="${Localization.getString('stats.tags')}">
+    ${tags.map(tag => Stats.renderTagSelectOption(tag)).join('')}
+    </optgroup>
     </select>
     </div>
     `,
@@ -424,21 +504,24 @@ export const Stats = {
     return `
     <option value='cat-${cat.category_id}'>${cat.name}</option>
     `
-
   },
   renderEntitySelectOption: ent => {
     return `
     <option value='ent-${ent.entity_id}'>${ent.name}</option>
     `
-
+  },
+  renderTagSelectOption: tag => {
+    return `
+    <option value='tag-${tag.tag_id}'>${tag.name}</option>
+    `
   },
   initIncomePerCatEvolution: () => {
     LoadingManager.showLoading()
-    UserServices.getAllCategoriesAndEntitiesForUser(
+    UserServices.getAllCategoriesEntitiesTagsForUser(
       (resp) => {
         // SUCCESS
         LoadingManager.hideLoading()
-        Stats.setupCategorySelect(resp.categories, resp.entities, '#tab-income-per-cat')
+        Stats.setupCategorySelect(resp.categories, resp.entities, resp.tags, '#tab-income-per-cat')
         const options = [
           {
             id: INCOME_EXPENSES_EVO_TOGGLE_OPTION_MONTH_KEY,
@@ -467,14 +550,15 @@ export const Stats = {
   },
   onIncomeEvoFiltersChanged: (useCachedData = false) => {
     let selectedPeriod = ToggleComponent.getSelectedOptionId(INCOME_EVO_TOGGLE_ID)
-    let selectedEntCatId = $('#tab-income-per-cat').find('select.category-selection-select').val()
+    let selectedEntCatTagId = $('#tab-income-per-cat').find('select.category-selection-select').val()
     let selectedCatId,
-      selectedEntId
-    if (selectedEntCatId.startsWith('cat-')) {
-      selectedCatId = selectedEntCatId.split('cat-')[1]
-    }
-    else if (selectedEntCatId.startsWith('ent-')) {
-      selectedEntId = selectedEntCatId.split('ent-')[1]
+      selectedEntId, selectedTagId
+    if (selectedEntCatTagId.startsWith('cat-')) {
+      selectedCatId = selectedEntCatTagId.split('cat-')[1]
+    } else if (selectedEntCatTagId.startsWith('ent-')) {
+      selectedEntId = selectedEntCatTagId.split('tag-')[1]
+    } else if (selectedEntCatTagId.startsWith('tag-')) {
+      selectedTagId = selectedEntCatTagId.split('tag-')[1]
     }
 
     Stats.clearCanvasAndTableWrapper('#chart_pie_cat_income_evolution_table', 'chart_pie_cat_income_evolution')
@@ -482,6 +566,7 @@ export const Stats = {
     if (!useCachedData) {
       LoadingManager.showLoading()
       StatServices.getCategoryIncomeEvolution(selectedCatId, selectedEntId,
+        selectedTagId,
         (resp) => {
           // SUCCESS
           // cache into memory

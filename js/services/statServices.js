@@ -129,7 +129,7 @@ export const StatServices = {
       },
     })
   },
-  getCategoryExpensesEvolution: (selectedCatID, selectedEntId, successCallback, errorCallback) => {
+  getCategoryExpensesEvolution: (selectedCatID, selectedEntId, selectedTagId, successCallback, errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'stats/category-expenses-evolution'
     $.ajax({
       async: true,
@@ -143,6 +143,7 @@ export const StatServices = {
       data: {
         cat_id: selectedCatID,
         ent_id: selectedEntId,
+        tag_id: selectedTagId,
       },
       url: pageUrl,
       success: function (response) {
@@ -157,7 +158,7 @@ export const StatServices = {
       },
     })
   },
-  getCategoryIncomeEvolution: (selectedCatID, selectedEntId, successCallback, errorCallback) => {
+  getCategoryIncomeEvolution: (selectedCatID, selectedEntId, selectedTagId, successCallback, errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'stats/category-income-evolution'
     $.ajax({
       async: true,
@@ -171,6 +172,7 @@ export const StatServices = {
       data: {
         cat_id: selectedCatID,
         ent_id: selectedEntId,
+        tag_id: selectedTagId,
       },
       url: pageUrl,
       success: function (response) {
