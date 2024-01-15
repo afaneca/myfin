@@ -1155,14 +1155,14 @@ svg:not(:root) {
 }
 
 .chips {
-    border-bottom: 0px !important;
+    /*border-bottom: 0px !important;*/
     background: var(--input-box-background);
     border-radius: 4px;
     padding: 0px 20px 0px 8px;
 }
 
 .chips.focus {
-    border-bottom: 0 !important;
+    /*border-bottom: 0 !important;*/
     border-bottom: 1px solid var(--main-accent-color);
     -webkit-box-shadow: 0 1px 0 0 var(--main-accent-color);
     box-shadow: 0 1px 0 0 var(--main-accent-color);

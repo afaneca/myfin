@@ -475,7 +475,7 @@
     "deleteTagModalTitle": "Delete tag #<b>{{id}}</b>",
     "deleteTagModalSubtitle": "Are you sure you want to delete this tag?",
     "deleteTagModalAlert": "This action is irreversible!",
-    "tagSuccessfullyDeleted": "Entity successfully deleted!",
+    "tagSuccessfullyDeleted": "Tag successfully deleted!",
     "editTagModalTitle": "Edit tag",
     "tagSuccessfullyUpdated": "Tag successfully updated"
   }

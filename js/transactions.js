@@ -117,7 +117,7 @@ export var Transactions = {
          data-trx-type="${trx.type}"
          data-description="${StringUtils.removeLineBreaksFromString(
       trx.description)}"
-         data-tags-array="${JSON.stringify(trx.tags)}"
+         data-tags-array="${encodeURIComponent(JSON.stringify(trx.tags))}"
          data-is-essential="${trx.is_essential}"
          class="material-icons table-action-icons action-edit-trx">create</i>
         <i data-trx-id="${trx.transaction_id}"
@@ -138,7 +138,7 @@ export var Transactions = {
           this.dataset.trxType,
           this.dataset.description,
           this.dataset.isEssential,
-          this.dataset.tagsArray,
+          JSON.parse(decodeURIComponent(this.dataset.tagsArray)),
         )
       })
     })
@@ -560,8 +560,8 @@ export var Transactions = {
   renderCategoriesSelectOptions: (cat) => `
         <option value="${cat.category_id}">${cat.name}</option>
     `,
-  getTagsFromAddTrxForm: () => {
-    const tags = M.Chips.getInstance($('#tags-chips-input')).chipsData
+  getSelectedTags: (locatorId) => {
+    const tags = M.Chips.getInstance($(locatorId)).chipsData
     const tagsArr = []
 
     for (const tag of tags) {
@@ -574,7 +574,7 @@ export var Transactions = {
     const amount = $('input#trx_amount').val()
     const type = ToggleComponent.getSelectedOptionId('add-transaction-type')
     const isEssential = $('input#cb-essential').is(':checked')
-    const tagsArr = Transactions.getTagsFromAddTrxForm()
+    const tagsArr = Transactions.getSelectedTags('#tags-chips-input')
     let account_from_id
     let account_to_id
     switch (type) {
@@ -681,7 +681,7 @@ export var Transactions = {
   showEditTransactionModal: (
     trxID, selectedAmount, selectedDateTimestamp, selectedEntityID,
     selectedCategoryID, selectedAccountFromID, selectedAccountToID,
-    selectedTypeID, selectedDescription, isEssential) => {
+    selectedTypeID, selectedDescription, isEssential, selectedTagsArr) => {
     LoadingManager.showLoading()
     TransactionServices.getAddTransactionStep0(
       (response) => {
@@ -690,6 +690,7 @@ export var Transactions = {
         const categoriesArr = response['categories']
         const typesArr = response['type']
         const accountsArr = response['accounts']
+        const tagsArr = response['tags']
 
         $('#modal-global').modal('open')
         let txt = `
@@ -780,7 +781,9 @@ export var Transactions = {
                                 </select>
                             </div> 
                         </div>
-                       
+                       <div class="row row-no-margin-bottom col s12 input-field" style="margin: 0 auto;">
+                            <div id="tags-chips-input" class="chips chips-autocomplete"></div>
+                        </div>    
                         <div id="split-trx-wrapper" style="display: none;">
                             <hr>
                             <div class="row row-no-margin-bottom">
@@ -852,8 +855,10 @@ export var Transactions = {
           'transactions.essential')}</span>
                                       </label>
                                     </p>
+                            <div class="row row-no-margin-bottom col s12 input-field" style="margin: 0 auto;">
+                            <div id="split-tags-chips-input" class="chips chips-autocomplete"></div>
+                        </div> 
                         </div>
-                        
                     </form>
                 </div>
                 `
@@ -935,6 +940,12 @@ export var Transactions = {
           (selectedOption) => {
             Transactions.manageAccountsSelectAvailability()
           })
+
+        Transactions.setupTagsChipsAutoComplete('#tags-chips-input', tagsArr,
+          selectedTagsArr)
+        Transactions.setupTagsChipsAutoComplete('#split-tags-chips-input',
+          tagsArr,
+          [])
 
         // AUTO-FILL
         $('input#trx_amount').val(selectedAmount)
@@ -1020,7 +1031,8 @@ export var Transactions = {
     const new_amount = $('input#trx_amount').val()
     const new_type = ToggleComponent.getSelectedOptionId(
       'add-transaction-type')
-
+    const tagsArr = Transactions.getSelectedTags('#tags-chips-input')
+    const splitTagsArr = Transactions.getSelectedTags('#split-tags-chips-input')
     const new_is_essential = $('input#cb-essential').is(':checked')
     let new_account_from_id
     let new_account_to_id
@@ -1101,10 +1113,10 @@ export var Transactions = {
 
     TransactionServices.editTransaction(trxID, new_amount, new_type,
       new_description, new_entity_id, new_account_from_id, new_account_to_id,
-      new_category_id, new_date_timestamp, new_is_essential,
+      new_category_id, new_date_timestamp, new_is_essential, tagsArr,
       isSplit, split_amount, split_category, split_entity, split_type,
       split_account_from, split_account_to, split_description,
-      split_is_essential,
+      split_is_essential, splitTagsArr,
       () => {
         // SUCCESS
         LoadingManager.hideLoading()
