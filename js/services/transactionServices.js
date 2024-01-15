@@ -134,7 +134,7 @@ export const TransactionServices = {
   },
   addTransaction: (
     amount, type, description, entity_id, account_from_id, account_to_id,
-    category_id, date_timestamp, is_essential, successCallback,
+    category_id, date_timestamp, is_essential, tagsArr, successCallback,
     errorCallback) => {
     var pageUrl = REST_SERVER_PATH + 'trxs/step1'
 
@@ -157,6 +157,7 @@ export const TransactionServices = {
         category_id,
         date_timestamp,
         is_essential,
+        tags: JSON.stringify(tagsArr),
       },
       url: pageUrl,
       success: function (response) {

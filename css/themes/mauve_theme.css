@@ -7,6 +7,8 @@
     --main-disabled-color: #282c3d;
     --main-accent-color: #ffffff;
     --main-light-gray-color: #e7e7e7;
+
+    --input-box-background: var(--main-card-background);
 }
 
 .main-dark-bg {
@@ -153,4 +155,8 @@ input:not([type]):disabled, input:not([type])[readonly="readonly"], input[type=t
 .select2-container--default.select2-container--disabled .select2-selection--single {
     background-color: #0000000f;
     cursor: not-allowed;
+}
+
+.dropdown-content li:hover, .dropdown-content li.active {
+    background-color: var(--main-body-background);
 }

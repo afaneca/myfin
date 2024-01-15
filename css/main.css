@@ -30,6 +30,7 @@
     --main-disabled-color: var(--light-grey);
     --main-dashboard-angular-chart-background: var(--main-body-background);
 
+    --input-box-background: #0a0b0d;
 }
 
 body {
@@ -1150,5 +1151,41 @@ svg:not(:root) {
 /* Chip */
 .chip {
     background: var(--main-card-background);
+    color: var(--main-text-color);
+}
+
+.chips {
+    border-bottom: 0px !important;
+    background: var(--input-box-background);
+    border-radius: 4px;
+    padding: 0px 20px 0px 8px;
+}
+
+.chips.focus {
+    border-bottom: 0 !important;
+    border-bottom: 1px solid var(--main-accent-color);
+    -webkit-box-shadow: 0 1px 0 0 var(--main-accent-color);
+    box-shadow: 0 1px 0 0 var(--main-accent-color);
+}
+
+.chips input:not([type]):not(.browser-default).input {
+    color: var(--main-text-color);
+}
+
+.dropdown-content li:hover, .dropdown-content li.active {
+    background-color: var(--main-accent-color);
+}
+
+.chip:focus {
+    outline: none;
+    background-color: #181a1c;
+    color: var(--main-text-color);
+}
+
+.autocomplete-content li .highlight {
+    color: var(--main-accent-color);
+}
+
+.autocomplete-content li:hover .highlight {
     color: var(--main-text-color);
 }

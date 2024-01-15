@@ -201,8 +201,9 @@
     "import": "Importar",
     "transactionsSuccessfullyImported": "Transações importadas com sucesso!",
     "deductFeesFromTransaction": "Descontas taxas/impostos da transação",
-    "generated_split_invest_trx_observations": "Taxas/impostos para transação de {{units}} {{ticker}}"
-
+    "generated_split_invest_trx_observations": "Taxas/impostos para transação de {{units}} {{ticker}}",
+    "addATagPlaceholder": "Adicione uma tag",
+    "addAnotherTagPlaceholder": "Adicione outra tag"
   },
   "login": {
     "fillAllFields": "Não deixe campos em branco",
