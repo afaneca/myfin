@@ -440,6 +440,10 @@
     "yearByYear": "Year-By-Year",
     "incomeByCategory": "Income By Category",
     "expensesByCategory": "Expenses By Category",
+    "incomeByEntity": "Income By Entity",
+    "expensesByEntity": "Expenses By Entity",
+    "incomeByTag": "Income By Tag",
+    "expensesByTag": "Expenses By Tag",
     "projectedBalanceAssets": "Projected Balance (Assets)",
     "netIncome": "Net Income",
     "others": "Others",
@@ -463,10 +467,12 @@
     "projectionsTableFootnotes3": "This value is projected from budget data, not taking debt and investments into account",
     "netWorthEvolutionProjection": "Net Worth Evolution Projection",
     "projectedBalanceAssetsPlusDebt": "Projected Balance (Assets + Debt)",
-    "year": "Year"
+    "year": "Year",
+    "tags": "Tags"
   },
   "tags": {
     "tags": "Tags",
+    "tag": "Tag",
     "addTagCTA": "Add Tag",
     "name": "Name",
     "description": "Description",

@@ -463,10 +463,12 @@
     "projectionsTableFootnotes3": "Este é um valor projetado através dos dados orçamentados, desconsiderando o passivo e contas de investimento",
     "netWorthEvolutionProjection": "Projeção de Evolução do Património",
     "projectedBalanceAssetsPlusDebt": "Balanço Projetado (Ativos + Passivos)",
-    "year": "Ano"
+    "year": "Ano",
+    "tags": "Tags"
   },
   "tags": {
     "tags": "Tags",
+    "tag": "Tag",
     "addTagCTA": "Adicionar Tag",
     "name": "Nome",
     "description": "Descrição",

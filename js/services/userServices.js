@@ -28,8 +28,8 @@ export const UserServices = {
       },
     })
   },
-  getAllCategoriesAndEntitiesForUser: (successCallback, errorCallback) => {
-    var pageUrl = REST_SERVER_PATH + 'user/categoriesAndEntities'
+  getAllCategoriesEntitiesTagsForUser: (successCallback, errorCallback) => {
+    var pageUrl = REST_SERVER_PATH + 'user/categoriesEntitiesTags'
     $.ajax({
       async: true,
       type: 'GET',
