@@ -3,7 +3,7 @@ import { queryClient } from "./data/react-query.ts";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import MyFinThemeProvider from "./providers/MyFinThemeProvider.tsx";
 import RoutesProvider from "./providers/RoutesProvider.tsx";
-
+import "./i18n.ts"
 
 function App() {
     return (

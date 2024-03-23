@@ -19,7 +19,6 @@ const Dashboard = () => {
 
     function handleLogout() {
         logout();
-        navigate(ROUTE_AUTH);
     }
 
     function showLoadingFor5Seconds() {

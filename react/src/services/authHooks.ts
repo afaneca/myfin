@@ -1,11 +1,16 @@
 import localStore from "../data/localStore.ts";
+import { queryClient } from "../data/react-query.ts";
 import AuthServices from "./authServices.ts";
-import {useMutation, useQuery} from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+
+const QUERY_KEY_SESSION_VALIDITY = "session_validity"
 
 export function useLogout() {
 
     function logout() {
+        debugger
         localStore.clearSessionData()
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY_SESSION_VALIDITY] })
     }
 
     return logout;
@@ -27,16 +32,16 @@ export function useLogin() {
 export function useAuthStatus(checkServer: boolean = true) {
     async function checkIsAuthenticated() {
         const hasLocalSessionData = localStore.getSessionData() != null
-        if (!checkServer) return hasLocalSessionData;
-
+        if (!hasLocalSessionData || !checkServer) return hasLocalSessionData;
+        debugger
         return AuthServices.validateSession()
     }
 
     const query = useQuery({
-        queryKey: ["session_validity"],
+        queryKey: [QUERY_KEY_SESSION_VALIDITY],
         queryFn: checkIsAuthenticated,
     })
 
-    return {isAuthenticated: query.isSuccess && query.data, ...query}
+    return { isAuthenticated: query.isSuccess && query.data, ...query }
 }
 

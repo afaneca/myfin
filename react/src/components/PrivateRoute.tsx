@@ -30,7 +30,6 @@ const PrivateRoute = () => {
 
     function doLogout() {
         logout()
-        navigate(ROUTE_AUTH);
     }
 
 

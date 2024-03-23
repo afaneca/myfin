@@ -6,19 +6,21 @@ import {useNavigate} from "react-router-dom";
 import {useAuthStatus, useLogin} from "../../services/authHooks.ts";
 import { ROUTE_DASHBOARD } from "../../providers/RoutesProvider.tsx";
 import { useEffect } from "react";
+import { useTranslation, Trans } from 'react-i18next';
 
 const Login = () => {
     const navigate = useNavigate();
     const authStatus = useAuthStatus(true);
     const loginRequest = useLogin();
+    const { t } = useTranslation();
 
     async function handleSubmit(username: string, password: string) {
         loginRequest.mutate({username, password})
     }
 
     const formValidationSchema = yup.object().shape({
-        username: yup.string().min(3).required('Username is required'),
-        password: yup.string().required('Password is required')
+        username: yup.string().min(3).required(t('login.fillAllFields')),
+        password: yup.string().required(t('login.fillAllFields'))
     });
 
     const initialValues = {
@@ -84,7 +86,7 @@ const Login = () => {
                                             color="primary"
                                             fullWidth
                                         >
-                                            Submit
+                                            {t('login.signIn')}
                                         </Button>
                                     </Form>
                                 );

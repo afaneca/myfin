@@ -8,7 +8,7 @@ const uiModeTag = "uiMode";
 
 const localStore = {
     getSessionData: (): UserSession => {
-        return JSON.parse(window.localStorage.getItem(`${storagePrefix}.${sessionDataTag}`) as string);
+        return JSON.parse(window.localStorage.getItem(`${storagePrefix}.${sessionDataTag}`) as string) ?? [];
     },
     setSessionData: (sessionData: UserSession) => {
         window.localStorage.setItem(`${storagePrefix}.${sessionDataTag}`, JSON.stringify(sessionData));
@@ -17,7 +17,7 @@ const localStore = {
         window.localStorage.removeItem(`${storagePrefix}.${sessionDataTag}`);
     },
     getUserAccounts: () : Array<Account> => {
-        return localStore.getSessionData()[userAccountsTag];
+        return localStore.getSessionData()[userAccountsTag] ?? [];
     },
     getUiMode: () : "light"|"dark" => {
         return window.localStorage.getItem(`${storagePrefix}.${uiModeTag}`) as "light"|"dark" ?? 'dark';
