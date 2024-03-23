@@ -46,14 +46,15 @@ const MyFinSidebar = () => {
             onClick={() => {
               toggleSidebarCollapse();
             }}
-            style={{ textAlign: 'center', marginBottom: '10px' }}
+            style={{ textAlign: 'left', marginBottom: 10, marginTop: 20 }}
           >
             {' '}
-            <h2>MyFin</h2>
+            <img src={theme.palette.mode === 'dark' ? "/res/logo_white_font_transparent_bg.png" : "/res/logo_transparent_bg_v2.png"} style={{width: '70%'}} />
           </MenuItem>
           <MenuItem
             icon={<DashboardOutlined />}
             component={<NavLink to={ROUTE_DASHBOARD} />}
+            style={{marginTop:35}}
           >
             {' '}
             {t('sidebar.dashboard')}

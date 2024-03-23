@@ -1,102 +1,141 @@
-import {Formik, Form} from "formik";
+import { Formik, Form } from 'formik';
 import * as yup from 'yup';
-import {Box, Button, Grid, TextField, Typography} from "@mui/material";
-import {MYFIN_BASE_API_URL} from "../../config";
-import {useNavigate} from "react-router-dom";
-import {useAuthStatus, useLogin} from "../../services/authHooks.ts";
-import { ROUTE_DASHBOARD } from "../../providers/RoutesProvider.tsx";
-import { useEffect } from "react";
-import { useTranslation, Trans } from 'react-i18next';
+import { Box, Button, Container, TextField, useTheme } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStatus, useLogin } from '../../services/authHooks.ts';
+import { ROUTE_DASHBOARD } from '../../providers/RoutesProvider.tsx';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../providers/SnackbarProvider.tsx';
 
 const Login = () => {
-    const navigate = useNavigate();
-    const authStatus = useAuthStatus(true);
-    const loginRequest = useLogin();
-    const { t } = useTranslation();
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const authStatus = useAuthStatus(true);
+  const loginRequest = useLogin();
+  const { t } = useTranslation();
+  const snackbar = useSnackbar();
 
-    async function handleSubmit(username: string, password: string) {
-        loginRequest.mutate({username, password})
+  async function handleSubmit(username: string, password: string) {
+    loginRequest.mutate({ username, password });
+  }
+
+  const formValidationSchema = yup.object().shape({
+    username: yup.string().min(3).required(t('login.fillAllFields')),
+    password: yup.string().required(t('login.fillAllFields')),
+  });
+
+  const initialValues = {
+    username: '',
+    password: '',
+  };
+
+  useEffect(() => {
+    if (loginRequest.isSuccess) {
+      navigate(ROUTE_DASHBOARD);
+    } else if (loginRequest.isError) {
+      console.log(loginRequest.error);
+      snackbar.showSnackbar(
+        t('login.wrongCredentialsError'),
+        AlertSeverity.ERROR,
+      );
     }
+  }, [loginRequest.isSuccess, loginRequest.isError]);
 
-    const formValidationSchema = yup.object().shape({
-        username: yup.string().min(3).required(t('login.fillAllFields')),
-        password: yup.string().required(t('login.fillAllFields'))
-    });
-
-    const initialValues = {
-        username: '',
-        password: '',
+  useEffect(() => {
+    if (authStatus.isAuthenticated) {
+      navigate(ROUTE_DASHBOARD);
     }
+  }, [authStatus.isAuthenticated]);
 
-    useEffect(() => {
-        if (loginRequest.isSuccess) {
-            navigate(ROUTE_DASHBOARD);
-        }
-    }, [loginRequest.isSuccess, navigate]) 
-    
-    useEffect(() => {
-        if(authStatus.isAuthenticated){
-            navigate(ROUTE_DASHBOARD)
-        }
-    }, [authStatus.isAuthenticated, navigate])
-
-
-    return (
-        <div>
-            <Grid container>
-                <Grid item sm={6} xs={12}>
-                    <Box m={5} p={3}>
-                        <Typography variant="h5">Login @ {MYFIN_BASE_API_URL}</Typography>
-                        {/*<Typography variant="h6">(Logged in: {localStore.isAuthenticated().toString()})</Typography>*/}
-                        {loginRequest.isError && <Typography variant="h6">Credenciais inválidas!</Typography>}
-                        {loginRequest.isLoading && <Typography variant="h6">Loading...</Typography>}
-                        <Formik initialValues={initialValues} validationSchema={formValidationSchema}
-                                onSubmit={(values) => handleSubmit(values.username, values.password)}>
-                            {(props) => {
-                                return (
-                                    <Form>
-                                        <TextField
-                                            id="username"
-                                            name="username"
-                                            label="Username"
-                                            margin="normal"
-                                            fullWidth
-                                            value={props.values.username}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            error={props.touched.username && Boolean(props.errors.username)}
-                                            helperText={props.touched.username && props.errors.username}
-                                        />
-                                        <TextField
-                                            id="password"
-                                            name="password"
-                                            label="Password"
-                                            type="password"
-                                            margin="normal"
-                                            fullWidth
-                                            value={props.values.password}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            error={props.touched.password && Boolean(props.errors.password)}
-                                            helperText={props.touched.password && props.errors.password}
-                                        />
-                                        <Button
-                                            variant="contained"
-                                            type="submit"
-                                            color="primary"
-                                            fullWidth
-                                        >
-                                            {t('login.signIn')}
-                                        </Button>
-                                    </Form>
-                                );
-                            }}
-                        </Formik>
-                    </Box>
-                </Grid>
-            </Grid>
-        </div>
-    );
+  return (
+    <div>
+      <Container maxWidth="xs">
+        <Box
+          p={3}
+          height="100vh"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
+        >
+          <img
+            src={
+              theme.palette.mode === 'dark'
+                ? '/res/logo_white_font_transparent_bg.png'
+                : '/res/logo_white_bg_v2.png'
+            }
+            width="60%"
+            style={{ marginBottom: 20 }}
+          />
+          <Formik
+            initialValues={initialValues}
+            validationSchema={formValidationSchema}
+            onSubmit={(values) =>
+              handleSubmit(values.username, values.password)
+            }
+          >
+            {(props) => {
+              return (
+                <Form>
+                  <TextField
+                    id="username"
+                    name="username"
+                    label="Username"
+                    margin="normal"
+                    fullWidth
+                    value={props.values.username}
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    error={
+                      props.touched.username && Boolean(props.errors.username)
+                    }
+                    helperText={props.touched.username && props.errors.username}
+                  />
+                  <TextField
+                    id="password"
+                    name="password"
+                    label="Password"
+                    type="password"
+                    margin="normal"
+                    fullWidth
+                    value={props.values.password}
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    error={
+                      props.touched.password && Boolean(props.errors.password)
+                    }
+                    helperText={props.touched.password && props.errors.password}
+                  />
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    color="primary"
+                    fullWidth
+                    style={{ marginTop: '16px' }}
+                  >
+                    {t('login.signIn')}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    type="submit"
+                    color="primary"
+                    fullWidth
+                    style={{ marginTop: '16px' }}
+                  >
+                    {t('login.signUp')}
+                  </Button>
+                </Form>
+              );
+            }}
+          </Formik>
+        </Box>
+      </Container>
+    </div>
+  );
 };
 
 export default Login;

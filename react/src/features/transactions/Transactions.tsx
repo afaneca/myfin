@@ -1,4 +1,15 @@
-import { Box, InputAdornment, LinearProgress, Paper, TextField, useTheme } from '@mui/material';
+import {
+  Box,
+  Chip,
+  Container,
+  InputAdornment,
+  LinearProgress,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import PageHeader from '../../components/PageHeader';
@@ -7,18 +18,40 @@ import { useGetTransactions } from '../../services/trxHooks';
 import { Transaction } from '../../services/trxServices';
 import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Search } from '@mui/icons-material';
-import { formatStringAsCurrency, formatNumberAsCurrency } from '../../utils/textUtils';
+import {
+  ArrowBack,
+  ArrowForward,
+  Business,
+  Delete,
+  Edit,
+  FolderShared,
+  Search,
+} from '@mui/icons-material';
+import {
+  formatStringAsCurrency,
+  formatNumberAsCurrency,
+} from '../../utils/textUtils';
+import { useTranslation } from 'react-i18next';
+import {
+  getDayNumberFromUnixTimestamp,
+  getMonthShortStringFromUnixTimestamp,
+  getShortYearFromUnixTimestamp,
+} from '../../utils/dateUtils';
 
 const Transactions = () => {
   const theme = useTheme();
   const loader = useLoading();
+  const { t } = useTranslation();
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 20,
     page: 0,
   });
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data, isLoading, isError, isRefetching } = useGetTransactions(paginationModel.page, paginationModel.pageSize, searchQuery);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { data, isLoading, isError, isRefetching } = useGetTransactions(
+    paginationModel.page,
+    paginationModel.pageSize,
+    searchQuery,
+  );
 
   useEffect(() => {
     // Show loading indicator when isLoading is true
@@ -29,41 +62,137 @@ const Transactions = () => {
     }
   }, [isLoading, loader]);
 
-
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
-      field: 'description',
-      headerName: 'description',
-      flex: 1,
-      /* width: 150, */
+      field: 'date',
+      headerName: t('common.date'),
+      flex: 100,
       editable: false,
       sortable: false,
+      renderCell: (params) => (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignContent="center"
+          alignItems="center"
+          flexDirection="column"
+        >
+          <span>
+            <b>{getDayNumberFromUnixTimestamp(params.value)}</b>/
+            {getMonthShortStringFromUnixTimestamp(params.value)}/
+            {getShortYearFromUnixTimestamp(params.value)}
+          </span>
+        </Box>
+      ),
     },
     {
-      field: 'amount',
-      headerName: 'amount',
-      flex: 1,
-      /* width: 150, */
+      field: 'flow',
+      headerName: t('transactions.flow'),
+      flex: 200,
       editable: false,
       sortable: false,
+      renderCell: (params) => (
+        <Stack>
+          <Stack direction="row" alignItems="center" gap={0.5}>
+            <ArrowBack fontSize="small" color={params.value.acc_from_name ? 'primary' : 'secondary'} />{' '}
+            {params.value.acc_from_name ?? t('common.externalAccount')}
+          </Stack>
+          <Stack direction="row" alignItems="center" gap={0.5}>
+            <ArrowForward fontSize="small" color={params.value.acc_to_name ? 'secondary' : 'primary'} />{' '}
+            {params.value.acc_to_name ?? t('common.externalAccount')}
+          </Stack>
+        </Stack>
+      ),
+    },
+    {
+      field: 'description',
+      headerName: t('common.description'),
+      /* flex: 1, */
+      flex: 700,
+      editable: false,
+      sortable: false,
+      renderCell: (params) => (
+        <Stack direction="column" gap={1} p={2}>
+          <Stack direction="row" alignItems="center" gap={0}>
+            {params.value.description ?? t('common.externalAccount')}
+          </Stack>
+          <Stack direction="row" alignItems="center" gap={0.5}>
+            <FolderShared fontSize="small" color="primary" />{' '}
+            {params.value.category ?? t('common.externalAccount')}
+            {'     '}
+            <Business fontSize="small" color="primary" />{' '}
+            {params.value.entity ?? t('common.externalAccount')}
+          </Stack>
+        </Stack>
+      ),
+    },
+    {
+      field: 'value',
+      headerName: t('common.value'),
+      /* flex: 1, */
+      flex: 150,
+      editable: false,
+      sortable: false,
+      renderCell: (params) => (
+        
+        <Chip color="primary" variant='outlined' label={<Typography variant="subtitle2"><strong>{params.value}</strong></Typography>} />
+      ),
+    },
+    {
+      field: 'actions',
+      headerName: t('common.actions'),
+      /* flex: 1, */
+      flex: 150,
+      editable: false,
+      sortable: false,
+      renderCell: (params) => (
+        <Stack direction="row" gap={3}>
+          <Edit fontSize="medium" color="action" />
+          <Delete fontSize="medium" color="action" />
+        </Stack>
+      ),
     },
   ];
 
-  if(isLoading){
+  if (isLoading) {
     return null;
   }
 
-  const rows = data.results.map((result: Transaction) => ({ id: result.transaction_id, description: result.description, amount: formatNumberAsCurrency(result.amount) }));
+  const rows = data.results.map((result: Transaction) => ({
+    id: result.transaction_id,
+    date: result.date_timestamp,
+    flow: {
+      acc_from_name: result.account_from_name,
+      acc_to_name: result.account_to_name,
+    },
+    description: {
+      description: result.description,
+      entity: result.entity_name,
+      category: result.category_name,
+    },
+    value: formatNumberAsCurrency(result.amount),
+  }));
 
   return (
-    <Paper elevation={2} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+    <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
       <Box display="flex" justifyContent="space-between" flexDirection="column">
-        <PageHeader title="TRANSACTIONS" subtitle="Read and update your personal info" />
+        <PageHeader
+          title="TRANSACTIONS"
+          subtitle="Read and update your personal info"
+        />
       </Box>
       <Grid container spacing={2}>
-        <Grid sm={12} lg={4} xsOffset='auto' lgOffset={8} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <TextField id="outlined-basic" label="Pesquisar" variant="outlined"
+        <Grid
+          sm={12}
+          lg={4}
+          xsOffset="auto"
+          lgOffset={8}
+          sx={{ display: 'flex', justifyContent: 'flex-end' }}
+        >
+          <TextField
+            id="outlined-basic"
+            label="Pesquisar"
+            variant="outlined"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -73,10 +202,11 @@ const Transactions = () => {
             }}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setSearchQuery(event.target.value);
-            }} />
+            }}
+          />
         </Grid>
         <Grid xs={12}>
-          <Box sx={{ height: 'auto', width: '100%', }}>
+          <Box sx={{ height: 'auto', width: '100%' }}>
             <DataGrid
               slots={{
                 loadingOverlay: LinearProgress,
@@ -86,16 +216,30 @@ const Transactions = () => {
               rows={rows}
               columns={columns}
               rowCount={data.filtered_count}
-              paginationMode='server'
+              paginationMode="server"
               paginationModel={paginationModel}
-              pageSizeOptions={[5, 10, 20]}
+              pageSizeOptions={[20, 50, 100]}
               onPaginationModelChange={setPaginationModel}
               disableRowSelectionOnClick
               autoHeight
+              getRowHeight={() => 'auto'}
               sx={{
-                '.MuiDataGrid-panelHeader': {
-                  background: 'red',
-                }
+                background: 'primary.dark',
+                boxShadow: 0,
+                border: 0,
+                borderColor: 'transparent',
+                '& .MuiDataGrid-cell': {
+                  backgroundColor: theme.palette.background.default,
+                  border: 0,
+                },
+                '& .MuiDataGrid-cell:hover': {
+                  backgroundColor: theme.palette.background.paper,
+                  border: 0,
+                },
+                '& .MuiDataGrid-columnHeader': {
+                  backgroundColor: "#1f2d3d",
+                  fontWeight: 700,
+               },
               }}
             />
           </Box>
@@ -103,7 +247,7 @@ const Transactions = () => {
       </Grid>
     </Paper>
   );
-}
+};
 
 const StyledGridOverlay = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -174,6 +318,6 @@ const NoRows = () => {
       <Box sx={{ mt: 1 }}>No Rows</Box>
     </StyledGridOverlay>
   );
-}
+};
 
 export default Transactions;

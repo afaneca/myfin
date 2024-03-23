@@ -18,7 +18,7 @@ const MyFinSnackbar = (props: Props) => {
             <Snackbar
                 open={props.open}
                 autoHideDuration={props.duration ?? 5_000}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 message={props.message}
                 onClose={props.handleClose}
             >

@@ -3,8 +3,15 @@ import { createContext, useContext, ReactNode, useState } from 'react';
 import Alert, { AlertColor } from '@mui/material/Alert';
 import MyFinSnackbar from "../components/MyFinSnackbar";
 
+export enum AlertSeverity {
+    ERROR = "error",
+    SUCCESS = "success",
+    INFO = "info",
+    WARNING = "warning"
+}
+
 interface SnackbarContextType {
-    showSnackbar: (message: string, serverity: AlertColor, duration?: number) => void;
+    showSnackbar: (message: string, serverity: AlertSeverity, duration?: number) => void;
 }
 
 const SnackbarContext = createContext({} as SnackbarContextType);

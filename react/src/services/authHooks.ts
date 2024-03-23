@@ -8,7 +8,6 @@ const QUERY_KEY_SESSION_VALIDITY = "session_validity"
 export function useLogout() {
 
     function logout() {
-        debugger
         localStore.clearSessionData()
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY_SESSION_VALIDITY] })
     }
@@ -33,7 +32,6 @@ export function useAuthStatus(checkServer: boolean = true) {
     async function checkIsAuthenticated() {
         const hasLocalSessionData = localStore.getSessionData() != null
         if (!hasLocalSessionData || !checkServer) return hasLocalSessionData;
-        debugger
         return AuthServices.validateSession()
     }
 
