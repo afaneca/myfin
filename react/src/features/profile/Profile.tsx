@@ -17,19 +17,17 @@ import i18next from 'i18next';
 import { useEffect, useState } from 'react';
 
 const Profile = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
   const { t } = useTranslation();
-  const [language, setLanguage] = useState(i18next.resolvedLanguage || 'en')
+  const [language, setLanguage] = useState(i18next.resolvedLanguage || 'en');
 
   useEffect(() => {
-    i18next.changeLanguage(language)
-  }, [language])
-  
+    i18next.changeLanguage(language);
+  }, [language]);
+
   function handleLanguageChange(event: React.ChangeEvent<HTMLInputElement>) {
     setLanguage(event.currentTarget.value);
   }
-
 
   return (
     <Paper elevation={2} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
@@ -64,4 +62,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

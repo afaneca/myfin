@@ -43,7 +43,9 @@
     "update": "Update",
     "accumulated": "Acumulado",
     "confirm": "Confirmar",
-    "resetFilters": "Limpar filtros"
+    "resetFilters": "Limpar filtros",
+    "yes": "Sim",
+    "no": "Não"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -179,7 +181,7 @@
     "autoCategorize": "Auto-Categorizar",
     "valueFieldMustHaveValueOverZero": "The field Value must have a positive value",
     "transactionsSuccessfullyAdded": "Transação adicionada com sucesso!",
-    "deleteTransactionModalTitle": "Remover transação #<b>{{id}}</b>",
+    "deleteTransactionModalTitle": "Remover transação #{{id}}",
     "deleteTransactionModalSubtitle": "Tem a certeza de que pretende remover esta transação?",
     "deleteTransactionModalAlert": "Esta ação é irreversível!",
     "transactionSuccessfullyDeleted": "Transação removida com sucesso!",
@@ -277,7 +279,7 @@
     "name": "Nome",
     "editEntityModalTitle": "Editar entidade <b>{{name}}</b>",
     "deleteEntityModalTitle": "Remover entidade <b>{{name}}</b>",
-    "deleteEntityModalSubtitle": "Tem a certeza de que pretende remover esta categoria?",
+    "deleteEntityModalSubtitle": "Tem a certeza de que pretende remover esta entidade?",
     "deleteEntityModalAlert": "Esta ação é irreversível!",
     "addEntityModalTitle": "Adicionar nova entidade",
     "entitySuccessfullyAdded": "Entidade adicionada com sucesso!",
@@ -311,7 +313,7 @@
     "no": "No",
     "essential": "Essencial",
     "deleteRuleModalTitle": "Remover regra <b>{{id}}</b>?",
-    "deleteRuleModalSubtitle": "Tem a certeza de que pretende remover esta categoria?",
+    "deleteRuleModalSubtitle": "Tem a certeza de que pretende remover esta regra?",
     "deleteRuleModalAlert": "Esta ação é irreversível!"
   },
   "budgets": {
@@ -408,7 +410,7 @@
     "observations": "Observações",
     "asset": "Ativo",
     "deleteTrxModalTitle": "Remover transação <b>{{id}}</b>?",
-    "deleteTrxModalSubtitle": "Tem a certeza de que pretende remover este orçamento?",
+    "deleteTrxModalSubtitle": "Tem a certeza de que pretende remover esta transação?",
     "deleteTrxModalAlert": "Esta ação é irreversível!",
     "addNewTransaction": "Adicionar nova transação",
     "typeOfTransaction": "Tipo de transação",

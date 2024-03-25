@@ -2,26 +2,25 @@ import {
   createContext,
   ReactNode,
   Suspense,
-  useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
 import localStore from '../data/localStore.ts';
-import {
-  CircularProgress,
-  createTheme,
-  CssBaseline,
-} from '@mui/material';
+import { CircularProgress, createTheme, CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { getDesignTokens } from '../theme';
 import { LoadingProvider } from './LoadingProvider.tsx';
 import { SnackbarProvider } from './SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
 import { en, pt } from 'yup-locales';
-import {setLocale} from 'yup';
+import { setLocale as setYupLocale } from 'yup';
+import * as locales from '@mui/material/locale';
 
-export const ColorModeContext = createContext({ toggleColorMode: () => {} });
+type SupportedLocales = keyof typeof locales;
+export const ColorModeContext = createContext({
+  toggleColorMode: () => {},
+});
 
 const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
   const [mode, setMode] = useState<'light' | 'dark'>(localStore.getUiMode());
@@ -35,33 +34,37 @@ const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
-  const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
+  const [locale, setLocale] = useState<SupportedLocales>('enUS');
+  const theme = useMemo(
+    () => createTheme(getDesignTokens(mode), locales[locale]),
+    [mode, locale],
+  );
   const { i18n } = useTranslation();
 
-function setYupLocale(language: string) {
-  console.log('SET LOCALE: ' + language);
-  switch(language){
-    case 'pt':
-      setLocale(pt);
-      break;
-      default: 
-      setLocale(en);
-      break;
+  function setAppLocale(language: string) {
+    switch (language) {
+      case 'pt':
+        setYupLocale(pt);
+        setLocale('ptPT');
+        break;
+      default:
+        setLocale('enUS');
+        setYupLocale(en);
+        break;
+    }
   }
-}
 
-  /* useEffect(() => {
+  useEffect(() => {
     const handleLanguageChange = () => {
-      console.log('NEW LANGUAGE: ' + i18n.language);
-      setYupLocale(i18n.language)
+      setAppLocale(i18n.language);
     };
 
+    setAppLocale(i18n.language);
     i18n.on('languageChanged', handleLanguageChange);
-    setYupLocale(i18n.language)
     return () => {
       i18n.off('languageChanged', handleLanguageChange);
     };
-  }, [i18n]); */
+  }, [i18n]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>

@@ -5,6 +5,8 @@ import { styled } from '@mui/material/styles';
 import type { GridColDef } from '@mui/x-data-grid/models/colDef/gridColDef';
 import { GridRowsProp } from '@mui/x-data-grid/models/gridRows';
 import { useTranslation } from 'react-i18next';
+import { ptPT, enUS } from '@mui/x-data-grid/locales';
+import i18next from 'i18next';
 
 type Props = {
   isRefetching: boolean;
@@ -27,6 +29,16 @@ const MyFinTable = (props: Props) => {
     paginationModel,
     setPaginationModel,
   } = props;
+
+  const getLocaleTextForDataGrid = () => {
+    switch (i18next.resolvedLanguage) {
+      case 'pt':
+        return ptPT.components.MuiDataGrid.defaultProps.localeText;
+      default:
+        return enUS.components.MuiDataGrid.defaultProps.localeText;
+    }
+  };
+
   return (
     <Box sx={{ height: 'auto', width: '100%' }}>
       <DataGrid
@@ -63,6 +75,7 @@ const MyFinTable = (props: Props) => {
             fontWeight: 700,
           },
         }}
+        localeText={getLocaleTextForDataGrid()}
       />
     </Box>
   );

@@ -10,10 +10,12 @@ import {
   AlertSeverity,
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
+import { useLoading } from '../../providers/LoadingProvider.tsx';
 
 const Login = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const loader = useLoading();
   const authStatus = useAuthStatus(true);
   const loginRequest = useLogin();
   const { t } = useTranslation();
@@ -49,6 +51,15 @@ const Login = () => {
       navigate(ROUTE_DASHBOARD);
     }
   }, [authStatus.isAuthenticated]);
+
+  useEffect(() => {
+    // Show loading indicator when isLoading is true
+    if (loginRequest.isPending) {
+      loader.showLoading();
+    } else {
+      loader.hideLoading();
+    }
+  }, [loginRequest.isPending]);
 
   return (
     <div>

@@ -43,7 +43,9 @@
     "update": "Update",
     "accumulated": "Accumulated",
     "confirm": "Confirm",
-    "resetFilters": "Reset filters"
+    "resetFilters": "Reset filters",
+    "yes": "Yes",
+    "no": "No"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -179,7 +181,7 @@
     "autoCategorize": "Auto-Categorize",
     "valueFieldMustHaveValueOverZero": "The field Value must have a positive value!",
     "transactionsSuccessfullyAdded": "Transaction successfully added!",
-    "deleteTransactionModalTitle": "Delete transaction #<b>{{id}}</b>",
+    "deleteTransactionModalTitle": "Delete transaction #{{id}}",
     "deleteTransactionModalSubtitle": "Are you sure that you want to delete this transaction?",
     "deleteTransactionModalAlert": "This action is irreversible!",
     "transactionSuccessfullyDeleted": "Transaction successfully deleted!",

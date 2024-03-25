@@ -36,6 +36,11 @@ import {
   AlertSeverity,
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
+import ConfirmationDialog from '../../components/ConfirmationDialog.tsx';
+
+function removeTransaction() {
+  debugger;
+}
 
 const Transactions = () => {
   const theme = useTheme();
@@ -46,6 +51,10 @@ const Transactions = () => {
     pageSize: 20,
     page: 0,
   });
+  const [actionableTransaction, setActionableTransaction] =
+    useState<Transaction | null>(null);
+  const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { data, isLoading, isError, isRefetching } = useGetTransactions(
     paginationModel.page,
@@ -71,6 +80,15 @@ const Transactions = () => {
       );
     }
   }, [isError]);
+
+  const handleEditTransactionClick = (trx: Transaction) => {
+    //TODO
+  };
+
+  const handleRemoveTransactionClick = (trx: Transaction) => {
+    setActionableTransaction(trx);
+    setRemoveDialogOpen(true);
+  };
 
   const columns: GridColDef[] = [
     {
@@ -167,8 +185,22 @@ const Transactions = () => {
       sortable: false,
       renderCell: (params) => (
         <Stack direction="row" gap={3}>
-          <Edit fontSize="medium" color="action" />
-          <Delete fontSize="medium" color="action" />
+          <Edit
+            fontSize="medium"
+            color="action"
+            onClick={() => {
+              handleEditTransactionClick(params.value);
+            }}
+            sx={{ cursor: 'pointer' }}
+          />
+          <Delete
+            fontSize="medium"
+            color="action"
+            sx={{ cursor: 'pointer' }}
+            onClick={() => {
+              handleRemoveTransactionClick(params.value);
+            }}
+          />
         </Stack>
       ),
     },
@@ -191,10 +223,55 @@ const Transactions = () => {
       category: result.category_name,
     },
     value: formatNumberAsCurrency(result.amount),
+    actions: result,
   }));
+
+  const removeTransactionConfirmationDialog = (
+    <ConfirmationDialog
+      isOpen={isRemoveDialogOpen}
+      onClose={() => setRemoveDialogOpen(false)}
+      onPositiveClick={() => removeTransaction()}
+      onNegativeClick={() => setRemoveDialogOpen(false)}
+      title={t('transactions.deleteTransactionModalTitle', {
+        id: actionableTransaction?.transaction_id,
+      })}
+      description={t('transactions.deleteTransactionModalSubtitle')}
+      positiveText={t('common.delete')}
+      negativeText={t('common.cancel')}
+    />
+    /*<Dialog
+          open={isRemoveDialogOpen}
+          onClose={() => {
+            setRemoveDialogOpen(false);
+          }}
+          aria-labelledby="confirmation-dialog-title"
+        >
+          <DialogTitle id="confirmation-dialog-title">
+            {t('transactions.deleteTransactionModalTitle', {
+              id: actionableTransaction?.transaction_id,
+            })}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <p>{t('transactions.deleteTransactionModalSubtitle')}</p>
+    
+              <strong>{t('transactions.deleteTransactionModalAlert')}</strong>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setRemoveDialogOpen(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button onClick={() => removeTransaction()} autoFocus>
+              {t('common.delete')}
+            </Button>
+          </DialogActions>
+        </Dialog>*/
+  );
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+      {removeTransactionConfirmationDialog}
       <Box display="flex" justifyContent="space-between" flexDirection="column">
         <PageHeader
           title="TRANSACTIONS"
@@ -211,7 +288,7 @@ const Transactions = () => {
         >
           <TextField
             id="outlined-basic"
-            label="Pesquisar"
+            label={t('common.search')}
             variant="outlined"
             InputProps={{
               endAdornment: (
