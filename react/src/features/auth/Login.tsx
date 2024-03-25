@@ -37,7 +37,6 @@ const Login = () => {
     if (loginRequest.isSuccess) {
       navigate(ROUTE_DASHBOARD);
     } else if (loginRequest.isError) {
-      console.log(loginRequest.error);
       snackbar.showSnackbar(
         t('login.wrongCredentialsError'),
         AlertSeverity.ERROR,
