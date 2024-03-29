@@ -76,7 +76,8 @@
     "lastUpdate": "Última atualização",
     "monthlyOverview": "Overview Mensal",
     "incomeDistribution": "Distribuição de Receita",
-    "expenseDistribution": "Distribuição de Despesa"
+    "expenseDistribution": "Distribuição de Despesa",
+    "monthlySavings": "Poupança mensal"
   },
   "monthsShort": {
     "jan": "Jan",

@@ -76,7 +76,8 @@
     "lastUpdate": "Last update",
     "monthlyOverview": "Monthly Overview",
     "incomeDistribution": "Income Distribution",
-    "expenseDistribution": "Expense Distribution"
+    "expenseDistribution": "Expense Distribution",
+    "monthlySavings": "Monthly savings"
   },
   "monthsShort": {
     "jan": "Jan",

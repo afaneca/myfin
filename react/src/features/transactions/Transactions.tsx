@@ -1,14 +1,12 @@
-import {
-  Box,
-  Chip,
-  InputAdornment,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-  useTheme,
-} from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
+import { useTheme } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
+import Box from '@mui/material/Box/Box';
+import Chip from '@mui/material/Chip/Chip';
+import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import Paper from '@mui/material/Paper/Paper';
+import Stack from '@mui/material/Stack/Stack';
+import TextField from '@mui/material/TextField/TextField';
+import Typography from '@mui/material/Typography/Typography';
 import { GridColDef } from '@mui/x-data-grid';
 import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
@@ -38,9 +36,7 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import ConfirmationDialog from '../../components/ConfirmationDialog.tsx';
 
-function removeTransaction() {
-  debugger;
-}
+function removeTransaction() {}
 
 const Transactions = () => {
   const theme = useTheme();

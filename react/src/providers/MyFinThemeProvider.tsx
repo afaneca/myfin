@@ -7,9 +7,11 @@ import {
   useState,
 } from 'react';
 import localStore from '../data/localStore.ts';
-import { CircularProgress, createTheme, CssBaseline } from '@mui/material';
+import { createTheme } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
+import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
-import { getDesignTokens } from '../theme';
+import { generateGlobalTheme } from '../theme';
 import { LoadingProvider } from './LoadingProvider.tsx';
 import { SnackbarProvider } from './SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +38,7 @@ const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
 
   const [locale, setLocale] = useState<SupportedLocales>('enUS');
   const theme = useMemo(
-    () => createTheme(getDesignTokens(mode), locales[locale]),
+    () => createTheme(generateGlobalTheme(mode), locales[locale]),
     [mode, locale],
   );
   const { i18n } = useTranslation();

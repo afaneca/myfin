@@ -1,13 +1,12 @@
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import { NavLink } from 'react-router-dom';
 import {
-  AccountCircleOutlined,
   DashboardOutlined,
   MenuOutlined,
   PaymentsOutlined,
 } from '@mui/icons-material';
-import { alpha, darken, lighten, useTheme } from '@mui/material';
+import { alpha, useTheme } from '@mui/material';
 import { ROUTE_DASHBOARD, ROUTE_TRX } from '../providers/RoutesProvider';
 import { useTranslation } from 'react-i18next';
 
@@ -49,12 +48,19 @@ const MyFinSidebar = () => {
             style={{ textAlign: 'left', marginBottom: 10, marginTop: 20 }}
           >
             {' '}
-            <img src={theme.palette.mode === 'dark' ? "/res/logo_white_font_transparent_bg.png" : "/res/logo_transparent_bg_v2.png"} style={{width: '70%'}} />
+            <img
+              src={
+                theme.palette.mode === 'dark'
+                  ? '/res/logo_white_font_transparent_bg.png'
+                  : '/res/logo_transparent_bg_v2.png'
+              }
+              style={{ width: '70%' }}
+            />
           </MenuItem>
           <MenuItem
             icon={<DashboardOutlined />}
             component={<NavLink to={ROUTE_DASHBOARD} />}
-            style={{marginTop:35}}
+            style={{ marginTop: 35 }}
           >
             {' '}
             {t('sidebar.dashboard')}

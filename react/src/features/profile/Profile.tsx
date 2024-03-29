@@ -1,18 +1,14 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Paper,
-  Radio,
-  RadioGroup,
-  Stack,
-  useTheme,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material';
+import Box from '@mui/material/Box/Box';
+import FormControl from '@mui/material/FormControl/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel/FormLabel';
+import Paper from '@mui/material/Paper/Paper';
+import Radio from '@mui/material/Radio/Radio';
+import RadioGroup from '@mui/material/RadioGroup/RadioGroup';
+import Stack from '@mui/material/Stack/Stack';
 import PageHeader from '../../components/PageHeader.tsx';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useEffect, useState } from 'react';
 

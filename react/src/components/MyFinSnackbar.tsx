@@ -1,4 +1,6 @@
-import { Alert, AlertColor, Snackbar } from '@mui/material';
+import Alert from '@mui/material/Alert/Alert';
+import Snackbar from '@mui/material/Snackbar/Snackbar';
+import { AlertColor } from '@mui/material/Alert';
 
 type Props = {
   open: boolean;

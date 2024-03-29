@@ -1,6 +1,8 @@
 import React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, LinearProgress, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
+import Box from '@mui/material/Box/Box';
+import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
 import { styled } from '@mui/material/styles';
 import type { GridColDef } from '@mui/x-data-grid/models/colDef/gridColDef';
 import { GridRowsProp } from '@mui/x-data-grid/models/gridRows';

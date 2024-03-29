@@ -1,6 +1,10 @@
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
-import { Box, Button, Container, TextField, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
+import Box from '@mui/material/Box/Box';
+import Button from '@mui/material/Button/Button';
+import Container from '@mui/material/Container/Container';
+import TextField from '@mui/material/TextField/TextField';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStatus, useLogin } from '../../services/authHooks.ts';
 import { ROUTE_DASHBOARD } from '../../providers/RoutesProvider.tsx';
