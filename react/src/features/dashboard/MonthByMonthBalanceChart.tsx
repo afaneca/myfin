@@ -31,7 +31,10 @@ const MonthlyOverviewChart = ({ data }: Props) => {
         valueScale={{ type: 'linear' }}
         indexScale={{ type: 'band', round: true }}
         colors={getBarColor}
-        labelTextColor="black"
+        labelTextColor={{
+          from: 'color',
+          modifiers: [['darker', 4]],
+        }}
         valueFormat={(value) => formatNumberAsCurrency(value)}
         markers={[
           {

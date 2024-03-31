@@ -1,32 +1,12 @@
 import { PaletteMode, ThemeOptions, colors } from '@mui/material';
 import { Theme as NivoTheme } from '@nivo/core';
-import { PaletteOptions } from '@mui/material/styles/createPalette';
+import { generateNivoThemeTheme } from '../utils/nivoUtils.ts';
 
 // Extend MUI's Theme object to include Nivo theme settings
 declare module '@mui/material/styles' {
   interface Theme {
-    nivo: NivoTheme; //NivoThemeSettings;
+    nivo: NivoTheme;
   }
-}
-function generateNivoThemeTheme(
-  _mode: 'light' | 'dark',
-  palette: PaletteOptions,
-): NivoTheme {
-  return {
-    text: {
-      fontSize: 11,
-      fill: palette.text?.primary,
-      outlineWidth: 0,
-      outlineColor: 'transparent',
-    },
-    tooltip: {
-      container: {
-        background: '#ffffff',
-        color: '#333333',
-        fontSize: 12,
-      },
-    },
-  };
 }
 
 const muiLightPalette = {
@@ -90,7 +70,7 @@ export const generateGlobalTheme = (mode: PaletteMode): ThemeOptions => {
       ...palette,
     },
     shape: {
-      borderRadius: 4,
+      borderRadius: 2,
     },
     shadows: ['0 1px 10px 0 rgba(69,90,100,.08)', ...Array(24).fill('none')],
     components: {

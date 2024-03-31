@@ -6,7 +6,7 @@ import Button from '@mui/material/Button/Button';
 import Container from '@mui/material/Container/Container';
 import TextField from '@mui/material/TextField/TextField';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStatus, useLogin } from '../../services/authHooks.ts';
+import { useAuthStatus, useLogin } from '../../services/auth/authHooks.ts';
 import { ROUTE_DASHBOARD } from '../../providers/RoutesProvider.tsx';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';

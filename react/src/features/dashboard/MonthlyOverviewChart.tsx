@@ -1,7 +1,8 @@
 import { useTheme } from '@mui/material';
 import Stack from '@mui/material/Stack/Stack';
-import { ResponsivePie } from '@nivo/pie';
+import { Pie, ResponsivePie } from '@nivo/pie';
 import { formatNumberAsCurrency } from '../../utils/textUtils.ts';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 interface ChartDataItem {
   id: string;
@@ -26,13 +27,16 @@ const MonthlyOverviewChart = ({ data }: Props) => {
     <Stack height={200}>
       <ResponsivePie
         data={data}
-        margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
+        margin={{ top: 20, right: 10, bottom: 20, left: 10 }}
         startAngle={-90}
         endAngle={90}
         innerRadius={0.5}
         padAngle={0.7}
         cornerRadius={3}
-        arcLabelsTextColor="black"
+        arcLabelsTextColor={{
+          from: 'color',
+          modifiers: [['darker', 4]],
+        }}
         activeOuterRadiusOffset={8}
         borderWidth={0}
         colors={getSliceColor}
@@ -42,6 +46,34 @@ const MonthlyOverviewChart = ({ data }: Props) => {
         theme={theme.nivo}
       />
     </Stack>
+    /*<Stack height={200}>
+      <AutoSizer style={{ width: '100%' }}>
+        {({ height, width }) => (
+          <Pie
+            data={data}
+            height={height}
+            width={width}
+            margin={{ top: 20, right: 10, bottom: 20, left: 10 }}
+            startAngle={-90}
+            endAngle={90}
+            innerRadius={0.5}
+            padAngle={0.7}
+            cornerRadius={3}
+            arcLabelsTextColor={{
+              from: 'color',
+              modifiers: [['darker', 4]],
+            }}
+            activeOuterRadiusOffset={8}
+            borderWidth={0}
+            colors={getSliceColor}
+            enableArcLinkLabels={false}
+            arcLabel={'id'}
+            valueFormat={(value) => formatNumberAsCurrency(value)}
+            theme={theme.nivo}
+          />
+        )}
+      </AutoSizer>
+    </Stack>*/
   );
 };
 

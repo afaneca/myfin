@@ -10,8 +10,8 @@ import Typography from '@mui/material/Typography/Typography';
 import { GridColDef } from '@mui/x-data-grid';
 import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
-import { useGetTransactions } from '../../services/trxHooks';
-import { Transaction } from '../../services/trxServices';
+import { useGetTransactions } from '../../services/trx/trxHooks.ts';
+import { Transaction } from '../../services/trx/trxServices.ts';
 import React, { useEffect, useState } from 'react';
 import {
   ArrowBack,

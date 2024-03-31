@@ -1,15 +1,23 @@
 import { ReactNode } from 'react';
-import { useTheme } from '@mui/material';
+import { useTheme, Theme, SxProps } from '@mui/material';
 import Box from '@mui/material/Box/Box';
 
-const DataCard = ({ children }: { children: ReactNode }) => {
+const DataCard = ({
+  children,
+  sx,
+}: {
+  children: ReactNode;
+  sx?: SxProps<Theme> | undefined;
+}) => {
   const theme = useTheme();
 
   return (
     <Box
-      bgcolor="background.paper"
       borderRadius={theme.shape.borderRadius}
-      sx={{ p: theme.spacing(2) }}
+      sx={{
+        ...{ p: theme.spacing(2), background: theme.palette.background.paper },
+        ...sx,
+      }}
     >
       {children}
     </Box>

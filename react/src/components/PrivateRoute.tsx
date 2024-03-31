@@ -1,5 +1,5 @@
 import { Outlet, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStatus, useLogout } from '../services/authHooks.ts';
+import { useAuthStatus, useLogout } from '../services/auth/authHooks.ts';
 import MyFinSidebar from './MyFinSidebar.tsx';
 import '../app.css';
 import { Box, AppBar, useTheme } from '@mui/material';
