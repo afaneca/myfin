@@ -1,4 +1,4 @@
-import { useTheme } from '@mui/material';
+import { Tooltip, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
@@ -19,6 +19,9 @@ import {
 import { MonthExpensesDistributionDataResponse } from '../../services/stats/statServices.ts';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
+import Typography from '@mui/material/Typography/Typography';
+import { AccessTime } from '@mui/icons-material';
+import Stack from '@mui/material/Stack/Stack';
 
 const monthByMonthData = [
   {
@@ -58,6 +61,7 @@ const Dashboard = () => {
     [],
   );
   const [incomeChartData, setIncomeChartData] = useState<ChartDataItem[]>([]);
+  const [lastUpdatedTimestamp, setLastUpdatedTimestamp] = useState<String>('');
 
   useEffect(() => {
     // Show loading indicator when isLoading is true
@@ -108,10 +112,17 @@ const Dashboard = () => {
     );
   };
 
+  const setupLastUpdatedTimestamp = (timestamp: number | undefined) => {
+    if (!timestamp) return '-';
+    setLastUpdatedTimestamp(dayjs.unix(timestamp).format('YYYY-MM-DD'));
+  };
+
   useEffect(() => {
     // Transform data & update state when fetch is successful
     if (monthIncomeExpensesDistributionData.isSuccess) {
-      // TODO: setup last updated timestamp
+      setupLastUpdatedTimestamp(
+        monthIncomeExpensesDistributionData.data.last_update_timestamp,
+      );
       setupIncomeDistributionChart(monthIncomeExpensesDistributionData.data);
       setupExpenseDistributionChart(monthIncomeExpensesDistributionData.data);
     }
@@ -137,8 +148,9 @@ const Dashboard = () => {
 
   return (
     <Grid container spacing={2} sx={{ p: theme.spacing(2) }}>
-      <Grid xs={3}>
+      <Grid xs={12} md={3}>
         <DatePicker
+          label={t('stats.month')}
           views={['month', 'year']}
           onChange={(newDate) => handleMonthChange(newDate)}
           value={dayjs(`${monthYear.year}-${addLeadingZero(monthYear.month)}`)}
@@ -148,9 +160,24 @@ const Dashboard = () => {
         xs={3}
         xsOffset={6}
         direction="column"
-        sx={{ display: 'flex', justifyContent: 'flex-end' }}
+        sx={{
+          // Hide on screens smaller than 'md'
+          display: { xs: 'none', sm: 'none', md: 'flex' },
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+        }}
       >
-        {/*TODO - show last updated timestamp*/}
+        <Tooltip title={t('dashboard.lastUpdate')}>
+          <Stack direction="row" alignItems="center" gap={0.5}>
+            <AccessTime
+              fontSize="inherit"
+              style={{ color: theme.palette.text.secondary }}
+            />
+            <Typography variant="button" color="text.secondary">
+              {lastUpdatedTimestamp}
+            </Typography>
+          </Stack>
+        </Tooltip>
       </Grid>
       <Grid xs={12} md={4}>
         <DataCard>
