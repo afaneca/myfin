@@ -4,7 +4,9 @@ import { useLoading } from '../../providers/LoadingProvider.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { useTranslation } from 'react-i18next';
 import DataCard from '../../components/DataCard.tsx';
-import MonthlyOverviewChart from './MonthlyOverviewChart.tsx';
+import MonthlyOverviewChart, {
+  ChartDataItem as MonthlyOverviewChartDataItem,
+} from './MonthlyOverviewChart.tsx';
 import { PanelTitle } from '../../theme/styled.ts';
 import DashboardPieChart, { ChartDataItem } from './DashboardPieChart.tsx';
 import MonthByMonthBalanceChart from './MonthByMonthBalanceChart.tsx';
@@ -61,7 +63,10 @@ const Dashboard = () => {
     [],
   );
   const [incomeChartData, setIncomeChartData] = useState<ChartDataItem[]>([]);
-  const [lastUpdatedTimestamp, setLastUpdatedTimestamp] = useState<String>('');
+  const [monthlyOverviewChartData, setMonthlyOverviewChartData] = useState<
+    MonthlyOverviewChartDataItem[]
+  >([]);
+  const [lastUpdatedTimestamp, setLastUpdatedTimestamp] = useState<string>('');
 
   useEffect(() => {
     // Show loading indicator when isLoading is true
@@ -117,29 +122,49 @@ const Dashboard = () => {
     setLastUpdatedTimestamp(dayjs.unix(timestamp).format('YYYY-MM-DD'));
   };
 
+  const setupMonthlyOverviewChart = (
+    data: MonthExpensesDistributionDataResponse,
+  ) => {
+    let totalExpensesRealAmount = 0;
+    let totalExpensesBudgetedAmount = 0;
+
+    data.categories?.forEach((category) => {
+      if (category.exclude_from_budgets !== 1) {
+        totalExpensesRealAmount += category.current_amount_debit ?? 0;
+        totalExpensesBudgetedAmount += parseFloat(
+          category.planned_amount_debit ?? '0',
+        );
+      }
+    });
+
+    setMonthlyOverviewChartData([
+      {
+        id: t('dashboard.current'),
+        type: '0',
+        value: totalExpensesRealAmount,
+      },
+      {
+        id: t('dashboard.remaining'),
+        type: '1',
+        value: Math.max(
+          totalExpensesBudgetedAmount - totalExpensesRealAmount,
+          0,
+        ),
+      },
+    ]);
+  };
+
   useEffect(() => {
     // Transform data & update state when fetch is successful
     if (monthIncomeExpensesDistributionData.isSuccess) {
       setupLastUpdatedTimestamp(
         monthIncomeExpensesDistributionData.data.last_update_timestamp,
       );
+      setupMonthlyOverviewChart(monthIncomeExpensesDistributionData.data);
       setupIncomeDistributionChart(monthIncomeExpensesDistributionData.data);
       setupExpenseDistributionChart(monthIncomeExpensesDistributionData.data);
     }
   }, [monthIncomeExpensesDistributionData.data]);
-
-  const data = [
-    {
-      id: t('dashboard.current'),
-      type: '0',
-      value: 5,
-    },
-    {
-      id: t('dashboard.remaining'),
-      type: '1',
-      value: 5,
-    },
-  ];
 
   const handleMonthChange = (newDate: Dayjs | null) => {
     if (newDate == null) return;
@@ -182,7 +207,7 @@ const Dashboard = () => {
       <Grid xs={12} md={4}>
         <DataCard>
           <PanelTitle>{t('dashboard.monthlyOverview')}</PanelTitle>
-          <MonthlyOverviewChart data={data} />
+          <MonthlyOverviewChart data={monthlyOverviewChartData} />
         </DataCard>
       </Grid>
       <Grid xs={12} md={8}>
