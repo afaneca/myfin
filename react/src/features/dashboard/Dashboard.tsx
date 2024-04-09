@@ -132,12 +132,12 @@ const Dashboard = () => {
     {
       id: t('dashboard.current'),
       type: '0',
-      value: 188,
+      value: 5,
     },
     {
       id: t('dashboard.remaining'),
       type: '1',
-      value: 345,
+      value: 5,
     },
   ];
 

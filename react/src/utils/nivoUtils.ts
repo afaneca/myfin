@@ -56,6 +56,10 @@ export const nivoGradients = {
     { offset: 0, color: '#424242' },
     { offset: 45, color: '#757575' },
   ]),
+  [ColorGradient.LightGray]: createNivoGradientObject(ColorGradient.LightGray, [
+    { offset: 0, color: '#797979' },
+    { offset: 45, color: '#b9b7b7' },
+  ]),
   [ColorGradient.Purple]: createNivoGradientObject(ColorGradient.Purple, [
     { offset: 0, color: '#7b1fa2' },
     { offset: 45, color: '#ba68c8' },
@@ -122,23 +126,31 @@ export const nivoGradients = {
     { offset: 0, color: '#2c3e50' },
     { offset: 45, color: '#bdc3c7' },
   ]),
+  [ColorGradient.Dull]: createNivoGradientObject(ColorGradient.Dull, [
+    { offset: 0, color: '#C9D6FF' },
+    { offset: 45, color: '#E2E2E2' },
+  ]),
 };
 
 export const generateDefsForGradients = () => {
   return Object.values(nivoGradients);
 };
 
-export const generateFillArrayForGradients = () => {
+export const generateFillArrayForGradients = (
+  defaultMatchId = ColorGradient.Decent,
+) => {
   return [
     ...Object.keys(nivoGradients).map((gradientId) => ({
       // @ts-expect-error 'd' could assume different structural identities
-      match: (d) => d.data.color === gradientId,
+      match: (d) =>
+        d.data.color === gradientId ||
+        (d.data.data && d.data.data.color == gradientId),
       id: gradientId,
     })),
     {
       // catch-all
       match: () => true,
-      id: ColorGradient.Decent,
+      id: defaultMatchId,
     },
   ];
 };

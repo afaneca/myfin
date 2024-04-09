@@ -5,6 +5,7 @@ export const enum ColorGradient {
   Green = 'green-gradient',
   Orange = 'orange-gradient',
   DarkGray = 'dark-gray-gradient',
+  LightGray = 'light-gray-gradient',
   Purple = 'purple-gradient',
   Pink = 'pink-gradient',
   DarkBlue = 'dark-blue-gradient',
@@ -20,4 +21,5 @@ export const enum ColorGradient {
   OrangeCoral = 'orange-coral-gradient',
   Decent = 'decent-gradient',
   Dusk = 'dusk-gradient',
+  Dull = 'dull-gradient',
 }
