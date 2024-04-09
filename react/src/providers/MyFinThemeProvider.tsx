@@ -18,6 +18,10 @@ import { useTranslation } from 'react-i18next';
 import { en, pt } from 'yup-locales';
 import { setLocale as setYupLocale } from 'yup';
 import * as locales from '@mui/material/locale';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/pt.js';
+import 'dayjs/locale/en.js';
 
 type SupportedLocales = keyof typeof locales;
 export const ColorModeContext = createContext({
@@ -36,7 +40,8 @@ const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
-  const [locale, setLocale] = useState<SupportedLocales>('enUS');
+  const [locale, setLocale] = useState<SupportedLocales>('ptPT');
+  const [dayJsLocale, setDayJsLocale] = useState<'en' | 'pt'>('pt');
   const theme = useMemo(
     () => createTheme(generateGlobalTheme(mode), locales[locale]),
     [mode, locale],
@@ -46,12 +51,14 @@ const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
   function setAppLocale(language: string) {
     switch (language) {
       case 'pt':
-        setYupLocale(pt);
         setLocale('ptPT');
+        setYupLocale(pt);
+        setDayJsLocale('pt');
         break;
       default:
         setLocale('enUS');
         setYupLocale(en);
+        setDayJsLocale('en');
         break;
     }
   }
@@ -70,14 +77,19 @@ const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <Suspense fallback={<CircularProgress color="inherit" />}>
-          <CssBaseline />
-          <LoadingProvider>
-            <SnackbarProvider>{children}</SnackbarProvider>
-          </LoadingProvider>
-        </Suspense>
-      </ThemeProvider>
+      <LocalizationProvider
+        dateAdapter={AdapterDayjs}
+        adapterLocale={dayJsLocale}
+      >
+        <ThemeProvider theme={theme}>
+          <Suspense fallback={<CircularProgress color="inherit" />}>
+            <CssBaseline />
+            <LoadingProvider>
+              <SnackbarProvider>{children}</SnackbarProvider>
+            </LoadingProvider>
+          </Suspense>
+        </ThemeProvider>
+      </LocalizationProvider>
     </ColorModeContext.Provider>
   );
 };

@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { useTranslation } from 'react-i18next';
 import DataCard from '../../components/DataCard.tsx';
 import MonthlyOverviewChart from './MonthlyOverviewChart.tsx';
@@ -10,11 +10,15 @@ import DashboardPieChart, { ChartDataItem } from './DashboardPieChart.tsx';
 import MonthByMonthBalanceChart from './MonthByMonthBalanceChart.tsx';
 import { useGetMonthExpensesIncomeDistributionData } from '../../services/stats/statHooks.ts';
 import { useEffect, useState } from 'react';
+import { addLeadingZero } from '../../utils/textUtils.ts';
+
 import {
   AlertSeverity,
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import { MonthExpensesDistributionDataResponse } from '../../services/stats/statServices.ts';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
 
 const monthByMonthData = [
   {
@@ -44,7 +48,10 @@ const Dashboard = () => {
   const loader = useLoading();
   const snackbar = useSnackbar();
   const { t } = useTranslation();
-  const [monthYear, setMonthYear] = useState({ month: 3, year: 2023 });
+  const [monthYear, setMonthYear] = useState({
+    month: dayjs().month(),
+    year: dayjs().year(),
+  });
   const monthIncomeExpensesDistributionData =
     useGetMonthExpensesIncomeDistributionData(monthYear.month, monthYear.year);
   const [expensesChartData, setExpensesChartData] = useState<ChartDataItem[]>(
@@ -123,8 +130,28 @@ const Dashboard = () => {
     },
   ];
 
+  const handleMonthChange = (newDate: Dayjs | null) => {
+    if (newDate == null) return;
+    setMonthYear({ month: newDate.month() + 1, year: newDate.year() });
+  };
+
   return (
     <Grid container spacing={2} sx={{ p: theme.spacing(2) }}>
+      <Grid xs={3}>
+        <DatePicker
+          views={['month', 'year']}
+          onChange={(newDate) => handleMonthChange(newDate)}
+          value={dayjs(`${monthYear.year}-${addLeadingZero(monthYear.month)}`)}
+        />
+      </Grid>
+      <Grid
+        xs={3}
+        xsOffset={6}
+        direction="column"
+        sx={{ display: 'flex', justifyContent: 'flex-end' }}
+      >
+        {/*TODO - show last updated timestamp*/}
+      </Grid>
       <Grid xs={12} md={4}>
         <DataCard>
           <PanelTitle>{t('dashboard.monthlyOverview')}</PanelTitle>

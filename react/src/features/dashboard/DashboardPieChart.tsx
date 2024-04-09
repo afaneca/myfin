@@ -7,6 +7,7 @@ import {
 } from '../../utils/nivoUtils.ts';
 
 import Paper from '@mui/material/Paper/Paper';
+import { formatNumberAsCurrency } from '../../utils/textUtils.ts';
 
 export interface ChartDataItem {
   id: string;
@@ -67,6 +68,7 @@ const DashboardPieChart = ({ data, sx }: Props) => {
           from: 'color',
           modifiers: [['darker', 4]],
         }}
+        valueFormat={(value) => formatNumberAsCurrency(value)}
         defs={generateDefsForGradients()}
         fill={generateFillArrayForGradients()}
         arcLinkLabel={(e) => truncateFromMiddle(e.id + '')}
