@@ -38,3 +38,18 @@ export function useGetTopSummaryValues() {
 
   return { operatingFundsSum, investingSum, debtSum, netWorthSum };
 }
+
+export function useGetDebtAccounts() {
+  const { userAccounts: accounts } = useUserData();
+  return accounts?.filter((acc) => acc.type == AccountType.Credit) ?? [];
+}
+
+export function useGetInvestingAccounts() {
+  const { userAccounts: accounts } = useUserData();
+  return (
+    accounts?.filter(
+      (acc) =>
+        acc.type == AccountType.Investing || acc.type == AccountType.Savings,
+    ) ?? []
+  );
+}

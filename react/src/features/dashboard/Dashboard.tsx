@@ -24,6 +24,11 @@ import dayjs, { Dayjs } from 'dayjs';
 import Typography from '@mui/material/Typography/Typography';
 import { AccessTime } from '@mui/icons-material';
 import Stack from '@mui/material/Stack/Stack';
+import {
+  useGetDebtAccounts,
+  useGetInvestingAccounts,
+} from '../../services/user/userHooks.ts';
+import { Account } from '../../services/auth/authServices.ts';
 
 const monthByMonthData = [
   {
@@ -68,6 +73,11 @@ const Dashboard = () => {
   >([]);
   const [lastUpdatedTimestamp, setLastUpdatedTimestamp] = useState<string>('');
 
+  const debtAccounts = useGetDebtAccounts();
+  const investAccounts = useGetInvestingAccounts();
+  const [debtChartData, setDebtChartData] = useState<ChartDataItem[]>([]);
+  const [investChartData, setInvestChartData] = useState<ChartDataItem[]>([]);
+
   useEffect(() => {
     // Show loading indicator when isLoading is true
     if (monthIncomeExpensesDistributionData.isLoading) {
@@ -87,12 +97,69 @@ const Dashboard = () => {
     }
   }, [monthIncomeExpensesDistributionData.isError]);
 
+  useEffect(() => {
+    // Transform data & update state when fetch is successful
+    if (monthIncomeExpensesDistributionData.isSuccess) {
+      setupLastUpdatedTimestamp(
+        monthIncomeExpensesDistributionData.data.last_update_timestamp,
+      );
+      setupMonthlyOverviewChart(monthIncomeExpensesDistributionData.data);
+      setupIncomeDistributionChart(monthIncomeExpensesDistributionData.data);
+      setupExpenseDistributionChart(monthIncomeExpensesDistributionData.data);
+    }
+  }, [monthIncomeExpensesDistributionData.data]);
+
+  useEffect(() => {
+    setupDebtDistributionChart(debtAccounts);
+  }, [debtAccounts]);
+
+  useEffect(() => {
+    setupInvestDistributionChart(investAccounts);
+  }, [investAccounts]);
+
+  const setupDebtDistributionChart = (accounts: Account[]) => {
+    setDebtChartData(
+      accounts
+        ?.filter((acc) => acc.balance != 0)
+        ?.sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance))
+        ?.slice(0, 5)
+        ?.map((acc) => ({
+          id: acc.name ?? '',
+          color: acc.color_gradient ?? '',
+          value: Math.abs(acc.balance ?? 0),
+        })) ?? [],
+    );
+  };
+
+  const setupInvestDistributionChart = (accounts: Account[]) => {
+    setInvestChartData(
+      accounts
+        ?.filter((acc) => acc.balance != 0)
+        ?.sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance))
+        ?.slice(0, 5)
+        ?.map((acc) => ({
+          id: acc.name ?? '',
+          color: acc.color_gradient ?? '',
+          value: acc.balance ?? 0,
+        })) ?? [],
+    );
+  };
+
   const setupIncomeDistributionChart = (
     data: MonthExpensesDistributionDataResponse,
   ) => {
     setIncomeChartData(
       data.categories
-        ?.filter((category) => category.current_amount_credit != 0)
+        ?.filter(
+          (category) =>
+            category.current_amount_credit != 0 &&
+            category.exclude_from_budgets != 1,
+        )
+        ?.sort(
+          (a, b) =>
+            Math.abs(b.current_amount_credit ?? 0) -
+            Math.abs(a.current_amount_credit ?? 0),
+        )
         ?.slice(0, 5)
         ?.map((category) => ({
           id: category.name ?? '',
@@ -108,6 +175,11 @@ const Dashboard = () => {
     setExpensesChartData(
       data.categories
         ?.filter((category) => category.current_amount_debit != 0)
+        ?.sort(
+          (a, b) =>
+            Math.abs(b.current_amount_debit ?? 0) -
+            Math.abs(a.current_amount_debit ?? 0),
+        )
         ?.slice(0, 5)
         ?.map((category) => ({
           id: category.name ?? '',
@@ -153,18 +225,6 @@ const Dashboard = () => {
       },
     ]);
   };
-
-  useEffect(() => {
-    // Transform data & update state when fetch is successful
-    if (monthIncomeExpensesDistributionData.isSuccess) {
-      setupLastUpdatedTimestamp(
-        monthIncomeExpensesDistributionData.data.last_update_timestamp,
-      );
-      setupMonthlyOverviewChart(monthIncomeExpensesDistributionData.data);
-      setupIncomeDistributionChart(monthIncomeExpensesDistributionData.data);
-      setupExpenseDistributionChart(monthIncomeExpensesDistributionData.data);
-    }
-  }, [monthIncomeExpensesDistributionData.data]);
 
   const handleMonthChange = (newDate: Dayjs | null) => {
     if (newDate == null) return;
@@ -219,16 +279,25 @@ const Dashboard = () => {
       <Grid xs={12} lg={6}>
         <DataCard>
           <PanelTitle>{t('dashboard.incomeDistribution')}</PanelTitle>
-          <DashboardPieChart
-            data={incomeChartData}
-            /*sx={{ height: 400 }}*/
-          />
+          <DashboardPieChart data={incomeChartData} />
         </DataCard>
       </Grid>
       <Grid xs={12} lg={6}>
         <DataCard>
           <PanelTitle>{t('dashboard.expenseDistribution')}</PanelTitle>
           <DashboardPieChart data={expensesChartData} />
+        </DataCard>
+      </Grid>
+      <Grid xs={12} lg={6}>
+        <DataCard>
+          <PanelTitle>{t('common.investmentPortfolio')}</PanelTitle>
+          <DashboardPieChart data={investChartData} />
+        </DataCard>
+      </Grid>
+      <Grid xs={12} lg={6}>
+        <DataCard>
+          <PanelTitle>{t('common.debtDistribution')}</PanelTitle>
+          <DashboardPieChart data={debtChartData} />
         </DataCard>
       </Grid>
     </Grid>
