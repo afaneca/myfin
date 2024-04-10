@@ -45,6 +45,26 @@ const MonthlyOverviewChart = ({ data }: Props) => {
         margin={{ top: 20, right: 0, bottom: 40, left: 0 }}
         valueScale={{ type: 'linear' }}
         indexScale={{ type: 'band', round: true }}
+        axisTop={null}
+        axisRight={null}
+        axisBottom={{
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: 0,
+          legend: 'month',
+          legendPosition: 'middle',
+          legendOffset: 32,
+          truncateTickAt: 0,
+        }}
+        axisLeft={{
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: 0,
+          legend: 'food',
+          legendPosition: 'middle',
+          legendOffset: -40,
+          truncateTickAt: 0,
+        }}
         /*colors={getBarColor}*/
         labelTextColor={{
           from: 'color',

@@ -22,11 +22,24 @@ const localStore = {
       JSON.stringify(sessionData),
     );
   },
+  setUserAccounts: (accounts: Account[]) => {
+    window.localStorage.setItem(
+      `${storagePrefix}.${userAccountsTag}`,
+      JSON.stringify(accounts),
+    );
+  },
   clearSessionData: () => {
     window.localStorage.removeItem(`${storagePrefix}.${sessionDataTag}`);
+    window.localStorage.removeItem(`${storagePrefix}.${userAccountsTag}`);
   },
   getUserAccounts: (): Array<Account> => {
-    return localStore.getSessionData()[userAccountsTag] ?? [];
+    return (
+      JSON.parse(
+        window.localStorage.getItem(
+          `${storagePrefix}.${userAccountsTag}`,
+        ) as string,
+      ) ?? []
+    );
   },
   getUiMode: (): 'light' | 'dark' => {
     return (

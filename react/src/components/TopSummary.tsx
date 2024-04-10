@@ -1,11 +1,10 @@
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { useGetTopSummaryValues } from '../services/user/userHooks.ts';
-import { formatStringAsCurrency } from '../utils/textUtils';
+import { formatNumberAsCurrency } from '../utils/textUtils';
 
 const TopSummary = () => {
-  const { operatingFundsSum, investingSum, debtSum, netWorthsum } =
+  const { operatingFundsSum, investingSum, debtSum, netWorthSum } =
     useGetTopSummaryValues();
-
   return (
     <Stack
       direction="row"
@@ -16,19 +15,19 @@ const TopSummary = () => {
     >
       <Stack direction="column">
         <TopSummaryLabel value="Operating funds" />
-        <TopSummaryAmount value={formatStringAsCurrency(operatingFundsSum)} />
+        <TopSummaryAmount value={formatNumberAsCurrency(operatingFundsSum)} />
       </Stack>
       <Stack direction="column">
         <TopSummaryLabel value="Investing" />
-        <TopSummaryAmount value={formatStringAsCurrency(investingSum)} />
+        <TopSummaryAmount value={formatNumberAsCurrency(investingSum)} />
       </Stack>
       <Stack direction="column">
         <TopSummaryLabel value="Debt" />
-        <TopSummaryAmount value={formatStringAsCurrency(debtSum)} />
+        <TopSummaryAmount value={formatNumberAsCurrency(debtSum)} />
       </Stack>
       <Stack direction="column">
         <TopSummaryLabel value="Net worth" />
-        <TopSummaryAmount value={formatStringAsCurrency(netWorthsum)} />
+        <TopSummaryAmount value={formatNumberAsCurrency(netWorthSum)} />
       </Stack>
     </Stack>
   );

@@ -27,14 +27,13 @@ export type UserSession = {
   email: string;
   sessionkey: string;
   last_update_timestamp: number;
-  accounts: Array<Account>;
 };
 
 export type AttemptLoginDto = {
   username: string;
   password: string;
 };
-const attemptLogin = (data: AttemptLoginDto): Promise<UserSession> => {
+const attemptLogin = (data: AttemptLoginDto) => {
   return axios.post('/auth', data);
 };
 

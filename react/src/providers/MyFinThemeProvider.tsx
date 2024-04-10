@@ -22,6 +22,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/pt.js';
 import 'dayjs/locale/en.js';
+import { UserContextProvider } from './UserProvider.tsx';
 
 type SupportedLocales = keyof typeof locales;
 export const ColorModeContext = createContext({
@@ -77,19 +78,21 @@ const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <LocalizationProvider
-        dateAdapter={AdapterDayjs}
-        adapterLocale={dayJsLocale}
-      >
-        <ThemeProvider theme={theme}>
-          <Suspense fallback={<CircularProgress color="inherit" />}>
-            <CssBaseline />
-            <LoadingProvider>
-              <SnackbarProvider>{children}</SnackbarProvider>
-            </LoadingProvider>
-          </Suspense>
-        </ThemeProvider>
-      </LocalizationProvider>
+      <UserContextProvider>
+        <LocalizationProvider
+          dateAdapter={AdapterDayjs}
+          adapterLocale={dayJsLocale}
+        >
+          <ThemeProvider theme={theme}>
+            <Suspense fallback={<CircularProgress color="inherit" />}>
+              <CssBaseline />
+              <LoadingProvider>
+                <SnackbarProvider>{children}</SnackbarProvider>
+              </LoadingProvider>
+            </Suspense>
+          </ThemeProvider>
+        </LocalizationProvider>
+      </UserContextProvider>
     </ColorModeContext.Provider>
   );
 };
