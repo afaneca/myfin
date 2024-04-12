@@ -40,6 +40,11 @@ const getTransactions = (page: number, page_size?: number, query?: string) => {
   });
 };
 
+const removeTransaction = (trxId: number) => {
+  return axios.delete<string>(`/trxs`, { data: { transaction_id: trxId } });
+};
+
 export default {
   getTransactions,
+  removeTransaction,
 };

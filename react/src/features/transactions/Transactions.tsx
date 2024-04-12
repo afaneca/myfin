@@ -10,7 +10,10 @@ import Typography from '@mui/material/Typography/Typography';
 import { GridColDef } from '@mui/x-data-grid';
 import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
-import { useGetTransactions } from '../../services/trx/trxHooks.ts';
+import {
+  useGetTransactions,
+  useRemoveTransaction,
+} from '../../services/trx/trxHooks.ts';
 import { Transaction } from '../../services/trx/trxServices.ts';
 import React, { useEffect, useState } from 'react';
 import {
@@ -36,10 +39,6 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import ConfirmationDialog from '../../components/ConfirmationDialog.tsx';
 
-function removeTransaction() {
-  //TODO
-}
-
 const Transactions = () => {
   const theme = useTheme();
   const loader = useLoading();
@@ -54,31 +53,37 @@ const Transactions = () => {
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { data, isLoading, isFetching, isError, isRefetching } =
-    useGetTransactions(
-      paginationModel.page,
-      paginationModel.pageSize,
-      searchQuery,
-    );
+  const getTransactionsRequest = useGetTransactions(
+    paginationModel.page,
+    paginationModel.pageSize,
+    searchQuery,
+  );
+  const removeTransactionRequest = useRemoveTransaction();
 
   useEffect(() => {
     // Show loading indicator when isLoading is true
-    if (isLoading) {
+    if (getTransactionsRequest.isLoading) {
       loader.showLoading();
     } else {
       loader.hideLoading();
     }
-  }, [isLoading]);
+  }, [getTransactionsRequest.isLoading]);
 
   useEffect(() => {
     // Show error when isError is true
-    if (isError) {
+    if (getTransactionsRequest.isError || removeTransactionRequest.isError) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
     }
-  }, [isError]);
+  }, [getTransactionsRequest.isError, removeTransactionRequest.isError]);
+
+  const removeTransaction = () => {
+    if (!actionableTransaction) return;
+    removeTransactionRequest.mutate(actionableTransaction?.transaction_id);
+    setRemoveDialogOpen(false);
+  };
 
   const handleEditTransactionClick = (trx: Transaction) => {
     //TODO
@@ -205,25 +210,27 @@ const Transactions = () => {
     },
   ];
 
-  if (isFetching || !data) {
+  if (getTransactionsRequest.isLoading || !getTransactionsRequest.data) {
     return null;
   }
 
-  const rows = data.results.map((result: Transaction) => ({
-    id: result.transaction_id,
-    date: result.date_timestamp,
-    flow: {
-      acc_from_name: result.account_from_name,
-      acc_to_name: result.account_to_name,
-    },
-    description: {
-      description: result.description,
-      entity: result.entity_name,
-      category: result.category_name,
-    },
-    value: formatNumberAsCurrency(result.amount),
-    actions: result,
-  }));
+  const rows = getTransactionsRequest.data.results.map(
+    (result: Transaction) => ({
+      id: result.transaction_id,
+      date: result.date_timestamp,
+      flow: {
+        acc_from_name: result.account_from_name,
+        acc_to_name: result.account_to_name,
+      },
+      description: {
+        description: result.description,
+        entity: result.entity_name,
+        category: result.category_name,
+      },
+      value: formatNumberAsCurrency(result.amount),
+      actions: result,
+    }),
+  );
 
   const removeTransactionConfirmationDialog = (
     <ConfirmationDialog
@@ -238,34 +245,6 @@ const Transactions = () => {
       positiveText={t('common.delete')}
       negativeText={t('common.cancel')}
     />
-    /*<Dialog
-          open={isRemoveDialogOpen}
-          onClose={() => {
-            setRemoveDialogOpen(false);
-          }}
-          aria-labelledby="confirmation-dialog-title"
-        >
-          <DialogTitle id="confirmation-dialog-title">
-            {t('transactions.deleteTransactionModalTitle', {
-              id: actionableTransaction?.transaction_id,
-            })}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              <p>{t('transactions.deleteTransactionModalSubtitle')}</p>
-    
-              <strong>{t('transactions.deleteTransactionModalAlert')}</strong>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setRemoveDialogOpen(false)}>
-              {t('common.cancel')}
-            </Button>
-            <Button onClick={() => removeTransaction()} autoFocus>
-              {t('common.delete')}
-            </Button>
-          </DialogActions>
-        </Dialog>*/
   );
 
   return (
@@ -303,10 +282,10 @@ const Transactions = () => {
         </Grid>
         <Grid xs={12}>
           <MyFinTable
-            isRefetching={isRefetching}
+            isRefetching={getTransactionsRequest.isRefetching}
             rows={rows}
             columns={columns}
-            itemCount={data.filtered_count}
+            itemCount={getTransactionsRequest.data.filtered_count}
             paginationModel={paginationModel}
             setPaginationModel={setPaginationModel}
           />
