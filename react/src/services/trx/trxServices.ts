@@ -31,12 +31,8 @@ export type Tag = {
   description?: string;
 };
 
-const getTransactions = (
-  page: number,
-  page_size?: number,
-  query?: string,
-): Promise<TransactionsPageResponse> => {
-  return axios.get(`/trxs/filteredByPage/${page}`, {
+const getTransactions = (page: number, page_size?: number, query?: string) => {
+  return axios.get<TransactionsPageResponse>(`/trxs/filteredByPage/${page}`, {
     params: {
       page_size,
       query,

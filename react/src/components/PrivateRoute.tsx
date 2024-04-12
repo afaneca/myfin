@@ -1,4 +1,4 @@
-import { Outlet, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStatus, useLogout } from '../services/auth/authHooks.ts';
 import MyFinSidebar from './MyFinSidebar.tsx';
 import '../app.css';
@@ -6,7 +6,7 @@ import { Box, AppBar, useTheme } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Brightness4IconOutlined from '@mui/icons-material/Brightness4Outlined';
 import Brightness7IconOutlined from '@mui/icons-material/Brightness7Outlined';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { ColorModeContext } from '../providers/MyFinThemeProvider.tsx';
 import { AccountCircleOutlined, LogoutOutlined } from '@mui/icons-material';
 import TopSummary from './TopSummary.tsx';
@@ -39,10 +39,10 @@ const PrivateRoute = () => {
 
   useEffect(() => {
     // Navigate to the authentication route if the user is no longer authenticated
-    if (!authStatus.isPending && !authStatus.isAuthenticated) {
+    if (!authStatus.isFetching && !authStatus.isAuthenticated) {
       navigate(ROUTE_AUTH);
     }
-  }, [authStatus.isPending, authStatus.isAuthenticated, navigate]);
+  }, [authStatus.isFetching, authStatus.isAuthenticated, navigate]);
 
   return (
     <>

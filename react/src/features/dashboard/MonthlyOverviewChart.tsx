@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper/Paper';
 import { useEffect, useState } from 'react';
 import { ColorGradient } from '../../consts';
 
-interface ChartDataItem {
+export interface ChartDataItem {
   id: string;
   type: string;
   value: number;

@@ -36,7 +36,9 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import ConfirmationDialog from '../../components/ConfirmationDialog.tsx';
 
-function removeTransaction() {}
+function removeTransaction() {
+  //TODO
+}
 
 const Transactions = () => {
   const theme = useTheme();
@@ -52,11 +54,12 @@ const Transactions = () => {
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { data, isLoading, isError, isRefetching } = useGetTransactions(
-    paginationModel.page,
-    paginationModel.pageSize,
-    searchQuery,
-  );
+  const { data, isLoading, isFetching, isError, isRefetching } =
+    useGetTransactions(
+      paginationModel.page,
+      paginationModel.pageSize,
+      searchQuery,
+    );
 
   useEffect(() => {
     // Show loading indicator when isLoading is true
@@ -202,7 +205,7 @@ const Transactions = () => {
     },
   ];
 
-  if (isLoading) {
+  if (isFetching || !data) {
     return null;
   }
 

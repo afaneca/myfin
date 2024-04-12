@@ -39,7 +39,7 @@ export function useAuthStatus(checkServer: boolean = true) {
 
   async function checkIsAuthenticated() {
     const hasLocalSessionData = userSessionData != null;
-    if (!hasLocalSessionData || !checkServer) return hasLocalSessionData;
+    if (!checkServer) return Promise.resolve(hasLocalSessionData);
     return AuthServices.validateSession();
   }
 
@@ -47,6 +47,5 @@ export function useAuthStatus(checkServer: boolean = true) {
     queryKey: [QUERY_KEY_SESSION_VALIDITY],
     queryFn: checkIsAuthenticated,
   });
-
-  return { isAuthenticated: query.isSuccess && query.data, ...query };
+  return { isAuthenticated: query.isSuccess ? query.data : null, ...query };
 }

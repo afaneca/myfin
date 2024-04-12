@@ -1,5 +1,4 @@
 import { Tooltip, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +29,7 @@ import {
 } from '../../services/user/userHooks.ts';
 import { Account } from '../../services/auth/authServices.ts';
 
+// TODO - add real data
 const monthByMonthData = [
   {
     month: 'Ago 2022',
@@ -53,7 +53,6 @@ const monthByMonthData = [
   },
 ];
 const Dashboard = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
   const loader = useLoading();
   const snackbar = useSnackbar();
@@ -110,15 +109,15 @@ const Dashboard = () => {
   }, [monthIncomeExpensesDistributionData.data]);
 
   useEffect(() => {
-    setupDebtDistributionChart(debtAccounts);
+    setDebtChartData(generateDebtIncomeDistributionChartData(debtAccounts));
   }, [debtAccounts]);
 
   useEffect(() => {
-    setupInvestDistributionChart(investAccounts);
+    setInvestChartData(generateDebtIncomeDistributionChartData(investAccounts));
   }, [investAccounts]);
 
-  const setupDebtDistributionChart = (accounts: Account[]) => {
-    setDebtChartData(
+  const generateDebtIncomeDistributionChartData = (accounts: Account[]) => {
+    return (
       accounts
         ?.filter((acc) => acc.balance != 0)
         ?.sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance))
@@ -127,21 +126,7 @@ const Dashboard = () => {
           id: acc.name ?? '',
           color: acc.color_gradient ?? '',
           value: Math.abs(acc.balance ?? 0),
-        })) ?? [],
-    );
-  };
-
-  const setupInvestDistributionChart = (accounts: Account[]) => {
-    setInvestChartData(
-      accounts
-        ?.filter((acc) => acc.balance != 0)
-        ?.sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance))
-        ?.slice(0, 5)
-        ?.map((acc) => ({
-          id: acc.name ?? '',
-          color: acc.color_gradient ?? '',
-          value: acc.balance ?? 0,
-        })) ?? [],
+        })) ?? []
     );
   };
 
