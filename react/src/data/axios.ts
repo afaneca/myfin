@@ -12,12 +12,18 @@ function authRequestInterceptor(
   }
 
   config.headers!.Accept = 'application/json';
+  config.headers['Cache-Control'] = 'no-cache';
+  config.headers['Pragma'] = 'no-cache';
+  config.headers['Expires'] = '0';
 
   return config;
 }
 
 export const axios = Axios.create({
   baseURL: MYFIN_BASE_API_URL,
+  params: {
+    t: new Date().getTime(),
+  },
 });
 
 axios.interceptors.request.use(authRequestInterceptor);
