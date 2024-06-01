@@ -27,7 +27,8 @@ const muiLightPalette = {
     light: colors.grey[100],
   },
   background: {
-    paper: colors.grey[100],
+    default: '#f5f5f5',
+    paper: 'white',
   },
   text: {
     primary: '#0e141f',

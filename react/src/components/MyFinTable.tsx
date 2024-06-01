@@ -21,6 +21,38 @@ type Props = {
   >;
 };
 
+const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+  border: 0,
+  color: '#757575',
+  '& .MuiDataGrid-row': {
+    background: `${theme.palette.background.default}`,
+    borderBottom: `1px solid ${theme.palette.background.paper}`,
+  },
+  '& .MuiDataGrid-iconSeparator': {
+    display: 'none',
+  },
+  '& .MuiDataGrid-columnHeaders': {
+    background: `${theme.palette.mode === 'light' ? 'white' : '#192431'}`,
+    color: `${theme.palette.text.primary}`,
+    border: 'none',
+  },
+  '& .MuiDataGrid-columnHeaderTitle': {
+    fontWeight: 700,
+  },
+  '& .MuiDataGrid-row.Mui-selected': {
+    background: ' #FFFFFF',
+    border: '1px solid #73A0FF',
+  },
+  '& .MuiDataGrid-cell': {
+    color: `${theme.palette.text.primary}`,
+    boxSizing: 'none',
+    borderBottom: 'none',
+  },
+  '& .MuiPaginationItem-root': {
+    borderRadius: 0,
+  },
+}));
+
 const MyFinTable = (props: Props) => {
   const theme = useTheme();
   const {
@@ -43,7 +75,7 @@ const MyFinTable = (props: Props) => {
 
   return (
     <Box sx={{ height: 'auto', width: '100%' }}>
-      <DataGrid
+      <StyledDataGrid
         slots={{
           loadingOverlay: LinearProgress,
           noRowsOverlay: NoRows,
@@ -59,7 +91,8 @@ const MyFinTable = (props: Props) => {
         disableRowSelectionOnClick
         autoHeight
         getRowHeight={() => 'auto'}
-        sx={{
+        /*sx={{
+
           background: 'primary.dark',
           boxShadow: 0,
           border: 0,
@@ -76,7 +109,7 @@ const MyFinTable = (props: Props) => {
             backgroundColor: '#1f2d3d',
             fontWeight: 700,
           },
-        }}
+        }}*/
         localeText={getLocaleTextForDataGrid()}
       />
     </Box>
