@@ -1,5 +1,4 @@
 import { axios } from '../../data/axios.ts';
-import { debug } from 'node:util';
 
 export type Account = {
   account_id: number;

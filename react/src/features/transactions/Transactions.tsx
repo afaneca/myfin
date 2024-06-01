@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack/Stack';
 import TextField from '@mui/material/TextField/TextField';
 import Typography from '@mui/material/Typography/Typography';
 import { GridColDef } from '@mui/x-data-grid';
+import Drawer from '@mui/material/Drawer';
 import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
 import {
@@ -17,9 +18,11 @@ import {
 import { Transaction } from '../../services/trx/trxServices.ts';
 import React, { useEffect, useState } from 'react';
 import {
+  AddCircleOutline,
   ArrowBack,
   ArrowForward,
   Business,
+  ContentCopy,
   Delete,
   Edit,
   FolderShared,
@@ -37,7 +40,9 @@ import {
   AlertSeverity,
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
-import ConfirmationDialog from '../../components/ConfirmationDialog.tsx';
+import Button from '@mui/material/Button/Button';
+import RemoveTransactionDialog from './RemoveTransactionDialog.tsx';
+import AddTransactionDialog from './AddTransactionDialog.tsx';
 
 const Transactions = () => {
   const theme = useTheme();
@@ -52,6 +57,7 @@ const Transactions = () => {
     useState<Transaction | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [isAddTrxDialogOpen, setAddTrxDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const getTransactionsRequest = useGetTransactions(
     paginationModel.page,
@@ -92,6 +98,14 @@ const Transactions = () => {
   const handleRemoveTransactionClick = (trx: Transaction) => {
     setActionableTransaction(trx);
     setRemoveDialogOpen(true);
+  };
+
+  const handleImportTransactionsClick = () => {
+    // TODO
+  };
+
+  const handleAddTransactionClick = () => {
+    setAddTrxDialogOpen(true);
   };
 
   const columns: GridColDef[] = [
@@ -232,24 +246,21 @@ const Transactions = () => {
     }),
   );
 
-  const removeTransactionConfirmationDialog = (
-    <ConfirmationDialog
-      isOpen={isRemoveDialogOpen}
-      onClose={() => setRemoveDialogOpen(false)}
-      onPositiveClick={() => removeTransaction()}
-      onNegativeClick={() => setRemoveDialogOpen(false)}
-      title={t('transactions.deleteTransactionModalTitle', {
-        id: actionableTransaction?.transaction_id,
-      })}
-      description={t('transactions.deleteTransactionModalSubtitle')}
-      positiveText={t('common.delete')}
-      negativeText={t('common.cancel')}
-    />
-  );
-
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
-      {removeTransactionConfirmationDialog}
+      <AddTransactionDialog
+        isOpen={isAddTrxDialogOpen}
+        onClose={() => setAddTrxDialogOpen(false)}
+        onPositiveClick={() => setAddTrxDialogOpen(false)}
+        onNegativeClick={() => setAddTrxDialogOpen(false)}
+      />
+      <RemoveTransactionDialog
+        isOpen={isRemoveDialogOpen}
+        onClose={() => setRemoveDialogOpen(false)}
+        onPositiveClick={() => removeTransaction()}
+        onNegativeClick={() => setRemoveDialogOpen(false)}
+        transaction={actionableTransaction}
+      />
       <Box display="flex" justifyContent="space-between" flexDirection="column">
         <PageHeader
           title="TRANSACTIONS"
@@ -257,13 +268,39 @@ const Transactions = () => {
         />
       </Box>
       <Grid container spacing={2}>
+        <Grid sm={8} xs={12} container spacing={2}>
+          <Grid>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddCircleOutline />}
+              onClick={() => {
+                handleAddTransactionClick();
+              }}
+            >
+              {t('transactions.addTransactionCTA')}
+            </Button>
+          </Grid>
+          <Grid>
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<ContentCopy />}
+              onClick={() => {
+                handleImportTransactionsClick();
+              }}
+            >
+              {t('transactions.importTransactionCTA')}
+            </Button>
+          </Grid>
+        </Grid>
         <Grid
           sm={12}
           lg={4}
           xsOffset="auto"
-          lgOffset={8}
           sx={{ display: 'flex', justifyContent: 'flex-end' }}
         >
+          {' '}
           <TextField
             id="outlined-basic"
             label={t('common.search')}

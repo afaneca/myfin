@@ -1,4 +1,6 @@
 import { axios } from '../../data/axios.ts';
+import { Status } from '../stats/statServices.ts';
+import { Account } from '../auth/authServices.ts';
 
 export type TransactionsPageResponse = {
   filtered_count: number;
@@ -24,6 +26,12 @@ export type Transaction = {
   tags?: Array<Tag>;
 };
 
+export enum TransactionType {
+  Income = 'I',
+  Expense = 'E',
+  Transfer = 'T',
+}
+
 export type Tag = {
   tag_id: number;
   users_user_id: number;
@@ -40,6 +48,51 @@ const getTransactions = (page: number, page_size?: number, query?: string) => {
   });
 };
 
+export interface Category {
+  users_user_id?: number;
+  category_id?: number;
+  name?: string;
+  status?: Status;
+  type?: string;
+  description?: string;
+  color_gradient?: null | string;
+  exclude_from_budgets: boolean;
+}
+
+export interface Entity {
+  entity_id: number;
+  name: string;
+  users_user_id: number;
+}
+
+export type TransactionStep0Response = {
+  accounts: Account[];
+  categories: Category[];
+  entities: Entity[];
+  tags: Tag[];
+};
+
+const addTransactionStep0 = () => {
+  return axios.post<TransactionStep0Response>('/trxs/step0');
+};
+
+export type AddTransactionRequest = {
+  amount: number;
+  type: TransactionType;
+  description?: string;
+  entity_id?: number;
+  account_from_id?: number;
+  account_to_id?: number;
+  category_id?: number;
+  date_timestamp?: number;
+  is_essential: boolean;
+  tags?: string;
+};
+
+const addTransactionStep1 = (data: AddTransactionRequest): Promise<string> => {
+  return axios.post('/trxs/step1', data);
+};
+
 const removeTransaction = (trxId: number) => {
   return axios.delete<string>(`/trxs`, { data: { transaction_id: trxId } });
 };
@@ -47,4 +100,6 @@ const removeTransaction = (trxId: number) => {
 export default {
   getTransactions,
   removeTransaction,
+  addTransactionStep0,
+  addTransactionStep1,
 };

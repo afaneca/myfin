@@ -1,6 +1,6 @@
 import { axios } from '../../data/axios.ts';
 
-export interface Category {
+export interface CategoryWithCalculatedAmounts {
   users_user_id?: number;
   category_id?: number;
   name?: string;
@@ -24,7 +24,7 @@ export enum Status {
 
 export interface MonthExpensesDistributionDataResponse {
   last_update_timestamp?: number;
-  categories?: Category[];
+  categories?: CategoryWithCalculatedAmounts[];
 }
 
 const getMonthExpensesIncomeDistributionData = (

@@ -166,7 +166,7 @@
   "transactions": {
     "transactions": "Transactions",
     "addTransactionCTA": "Add Transaction",
-    "importTransactionCTA": "Import Transaction",
+    "importTransactionCTA": "Import Transactions",
     "flow": "Flow",
     "essential": "Essential",
     "dateOfTransaction": "Date of transaction",

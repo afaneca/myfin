@@ -166,7 +166,7 @@
   "transactions": {
     "transactions": "Transações",
     "addTransactionCTA": "Adicionar Transação",
-    "importTransactionCTA": "Importar Transação",
+    "importTransactionCTA": "Importar Transações",
     "flow": "Fluxo",
     "essential": "Essencial",
     "dateOfTransaction": "Data da transação",
