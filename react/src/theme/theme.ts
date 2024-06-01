@@ -3,10 +3,12 @@ import { Theme as NivoTheme } from '@nivo/core';
 import { generateNivoThemeTheme } from '../utils/nivoUtils.ts';
 
 // Extend MUI's Theme object to include Nivo theme settings
+interface MyFinTheme extends ThemeOptions {
+  nivo: NivoTheme;
+}
+
 declare module '@mui/material/styles' {
-  interface Theme {
-    nivo: NivoTheme;
-  }
+  interface Theme extends MyFinTheme {}
 }
 
 const muiLightPalette = {
@@ -63,27 +65,15 @@ const muiDarkPalette = {
   },
 };
 
-export const generateGlobalTheme = (mode: PaletteMode): ThemeOptions => {
+export const generateGlobalTheme = (mode: PaletteMode): MyFinTheme => {
   const palette = mode === 'light' ? muiLightPalette : muiDarkPalette;
+
   return {
-    palette: {
-      mode,
-      ...palette,
-    },
-    shape: {
-      borderRadius: 2,
-    },
-    shadows: ['0 1px 10px 0 rgba(69,90,100,.08)', ...Array(24).fill('none')],
+    palette: { mode, ...palette },
+    shape: { borderRadius: 2 },
+    // Use the combined shadows array
     components: {
       // component style overrides in here
-    },
-    overrides: {
-      /*MuiGrid: {
-        container: {
-          width: '100% !important',
-          margin: '0 !important',
-        },
-      },*/
     },
     // theme for nivo charts
     nivo: generateNivoThemeTheme(mode, palette),

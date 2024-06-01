@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material';
 import Stack from '@mui/material/Stack/Stack';
-import { ResponsiveBar } from '@nivo/bar';
+import { BarDatum, ResponsiveBar } from '@nivo/bar';
 import { formatNumberAsCurrency } from '../../utils/textUtils.ts';
 import {
   generateDefsForGradients,
@@ -39,7 +39,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
   return (
     <Stack height={200}>
       <ResponsiveBar
-        data={chartData}
+        data={chartData as unknown as readonly BarDatum[]}
         keys={['balance']}
         indexBy="month"
         margin={{ top: 20, right: 0, bottom: 40, left: 0 }}

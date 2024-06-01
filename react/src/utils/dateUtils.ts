@@ -89,7 +89,14 @@ export const isCurrentMonthAndYear = (month: number, year: number) => {
 
 export const convertDateStringToUnixTimestamp = (
   dateStr: string,
-  format: string = 'DD-MM-YYYY',
+  format: string = 'DD/MM/YYYY',
 ) => {
   return dayjs(dateStr, format).unix();
+};
+
+export const convertUnixTimestampToDateString = (
+  unixTs: number,
+  format: string = 'DD/MM/YYYY',
+) => {
+  return dayjs.unix(unixTs).format(format);
 };

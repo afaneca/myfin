@@ -1,6 +1,5 @@
 import React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box/Box';
 import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
 import { styled } from '@mui/material/styles';
@@ -54,7 +53,6 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 const MyFinTable = (props: Props) => {
-  const theme = useTheme();
   const {
     isRefetching,
     rows,

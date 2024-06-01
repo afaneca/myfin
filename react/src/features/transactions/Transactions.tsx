@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack/Stack';
 import TextField from '@mui/material/TextField/TextField';
 import Typography from '@mui/material/Typography/Typography';
 import { GridColDef } from '@mui/x-data-grid';
-import Drawer from '@mui/material/Drawer';
 import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
 import {
@@ -43,6 +42,7 @@ import {
 import Button from '@mui/material/Button/Button';
 import RemoveTransactionDialog from './RemoveTransactionDialog.tsx';
 import AddTransactionDialog from './AddTransactionDialog.tsx';
+import EditTransactionDialog from './EditTransactionDialog.tsx';
 
 const Transactions = () => {
   const theme = useTheme();
@@ -92,7 +92,8 @@ const Transactions = () => {
   };
 
   const handleEditTransactionClick = (trx: Transaction) => {
-    //TODO
+    setActionableTransaction(trx);
+    setEditDialogOpen(true);
   };
 
   const handleRemoveTransactionClick = (trx: Transaction) => {
@@ -285,6 +286,13 @@ const Transactions = () => {
         onPositiveClick={() => setAddTrxDialogOpen(false)}
         onNegativeClick={() => setAddTrxDialogOpen(false)}
       />
+      <EditTransactionDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+        onPositiveClick={() => setEditDialogOpen(false)}
+        onNegativeClick={() => setEditDialogOpen(false)}
+        transaction={actionableTransaction}
+      />
       <RemoveTransactionDialog
         isOpen={isRemoveDialogOpen}
         onClose={() => setRemoveDialogOpen(false)}
@@ -294,8 +302,8 @@ const Transactions = () => {
       />
       <Box display="flex" justifyContent="space-between" flexDirection="column">
         <PageHeader
-          title="TRANSACTIONS"
-          subtitle="Read and update your personal info"
+          title={t('transactions.transactions')}
+          subtitle={t('transactions.strapLine')}
         />
       </Box>
       <Grid container spacing={2}>

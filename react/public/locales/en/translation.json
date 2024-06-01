@@ -165,6 +165,7 @@
   },
   "transactions": {
     "transactions": "Transactions",
+    "strapLine": "All your transactions live here",
     "addTransactionCTA": "Add Transaction",
     "importTransactionCTA": "Import Transactions",
     "flow": "Flow",

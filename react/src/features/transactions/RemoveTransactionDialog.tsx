@@ -1,4 +1,3 @@
-import React from 'react';
 import ConfirmationDialog from '../../components/ConfirmationDialog.tsx';
 import { Transaction } from '../../services/trx/trxServices.ts';
 import { useTranslation } from 'react-i18next';

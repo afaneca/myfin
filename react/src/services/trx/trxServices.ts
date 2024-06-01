@@ -93,6 +93,35 @@ const addTransactionStep1 = (data: AddTransactionRequest): Promise<string> => {
   return axios.post('/trxs/step1', data);
 };
 
+export type EditTransactionRequest = {
+  new_amount: number;
+  new_type: TransactionType;
+  new_description?: string;
+  new_entity_id?: number;
+  new_account_from_id?: number;
+  new_account_to_id?: number;
+  new_category_id?: number;
+  new_date_timestamp?: number;
+  new_is_essential: boolean;
+  transaction_id: number;
+  tags?: string;
+  /* Split trx */
+  is_split?: boolean;
+  split_amount?: number;
+  split_category?: number;
+  split_entity?: number;
+  split_type?: TransactionType;
+  split_account_from?: number;
+  split_account_to?: number;
+  split_description?: string;
+  split_is_essential?: boolean;
+  split_tags?: string;
+};
+
+const editTransaction = (data: EditTransactionRequest): Promise<string> => {
+  return axios.put('/trxs', data);
+};
+
 const removeTransaction = (trxId: number) => {
   return axios.delete<string>(`/trxs`, { data: { transaction_id: trxId } });
 };
@@ -102,4 +131,5 @@ export default {
   removeTransaction,
   addTransactionStep0,
   addTransactionStep1,
+  editTransaction,
 };

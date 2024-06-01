@@ -1,6 +1,9 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '../../data/react-query.ts';
-import TrxServices, { AddTransactionRequest } from './trxServices.ts';
+import TrxServices, {
+  AddTransactionRequest,
+  EditTransactionRequest,
+} from './trxServices.ts';
 
 const QUERY_KEY_GET_TRANSACTIONS = 'QUERY_KEY_GET_TRANSACTIONS';
 const QUERY_KEY_ADD_TRANSACTION_STEP0 = 'QUERY_KEY_ADD_TRANSACTION_STEP0';
@@ -62,5 +65,20 @@ export function useAddTransactionStep1() {
 
   return useMutation({
     mutationFn: addTransaction,
+  });
+}
+
+export function useEditTransaction() {
+  async function editTransaction(trx: EditTransactionRequest) {
+    const request = await TrxServices.editTransaction(trx);
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_TRANSACTIONS],
+    });
+    return request;
+  }
+
+  return useMutation({
+    mutationFn: editTransaction,
   });
 }
