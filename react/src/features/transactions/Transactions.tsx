@@ -1,4 +1,4 @@
-import { useTheme } from '@mui/material';
+import { ListItem, useTheme } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import Box from '@mui/material/Box/Box';
 import Chip from '@mui/material/Chip/Chip';
@@ -15,7 +15,7 @@ import {
   useGetTransactions,
   useRemoveTransaction,
 } from '../../services/trx/trxHooks.ts';
-import { Transaction } from '../../services/trx/trxServices.ts';
+import { Tag, Transaction } from '../../services/trx/trxServices.ts';
 import React, { useEffect, useState } from 'react';
 import {
   AddCircleOutline,
@@ -174,6 +174,36 @@ const Transactions = () => {
             <Business fontSize="small" color="primary" />{' '}
             {params.value.entity ?? t('common.externalAccount')}
           </Stack>
+          <Stack direction="row" alignItems="center" gap={0.5}>
+            {params.value.tags.length > 0 && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row', // Set flexDirection to 'row' to align chips side by side
+                  justifyContent: 'flex-start', // Adjust alignment as needed
+                  flexWrap: 'wrap', // Allow wrapping of chips
+                  listStyle: 'none',
+                  p: 0.5,
+                  m: 0,
+                }}
+                component="ul"
+              >
+                {params.value.tags.map((data: Tag) => {
+                  return (
+                    <ListItem key={data.tag_id} sx={{ width: 'auto', p: 0.5 }}>
+                      <Chip
+                        label={data.name}
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        onClick={() => {}}
+                      />
+                    </ListItem>
+                  );
+                })}
+              </Box>
+            )}
+          </Stack>
         </Stack>
       ),
     },
@@ -240,6 +270,7 @@ const Transactions = () => {
         description: result.description,
         entity: result.entity_name,
         category: result.category_name,
+        tags: result.tags,
       },
       value: formatNumberAsCurrency(result.amount),
       actions: result,
