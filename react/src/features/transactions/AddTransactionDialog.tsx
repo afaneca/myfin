@@ -12,6 +12,7 @@ import {
   Autocomplete,
   AutocompleteRenderInputParams,
   Checkbox,
+  Grow,
   ToggleButton,
   ToggleButtonGroup,
 } from '@mui/material';
@@ -23,6 +24,8 @@ import {
   Description,
   Euro,
   FolderShared,
+  Star,
+  StarBorder,
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -88,6 +91,8 @@ const AddTransactionDialog = (props: Props) => {
   const [isAccountFromRequired, setAccountFromRequired] =
     useState<boolean>(true);
   const [isAccountToRequired, setAccountToRequired] = useState<boolean>(false);
+  const [essentialValue, setEssentialValue] = useState<boolean>(false);
+  const [isEssentialVisible, setEssentialVisible] = useState(false);
 
   useEffect(() => {
     if (!props.isOpen) return;
@@ -145,6 +150,10 @@ const AddTransactionDialog = (props: Props) => {
 
     setAccountFromRequired(shouldAccountFromBeEnabled);
     setAccountToRequired(shouldAccountToBeEnabled);
+    setEssentialVisible(transactionType == TransactionType.Expense);
+    if (transactionType != TransactionType.Expense) {
+      setEssentialValue(false);
+    }
   }, [transactionType]);
 
   useEffect(() => {
@@ -238,11 +247,17 @@ const AddTransactionDialog = (props: Props) => {
           <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
             <Grid md={4} xs={12}>
               {/* Essential */}
-              <FormControlLabel
-                control={<Checkbox />}
-                label={t('transactions.essential')}
-                name="essential"
-              />
+              <Grow in={isEssentialVisible}>
+                <FormControlLabel
+                  control={
+                    <Checkbox icon={<StarBorder />} checkedIcon={<Star />} />
+                  }
+                  label={t('transactions.essential')}
+                  name="essential"
+                  checked={essentialValue}
+                  onChange={(_e, checked) => setEssentialValue(checked)}
+                />
+              </Grow>
             </Grid>
             <Grid xs={12} md={8} display="flex" justifyContent="flex-end">
               {/* Transaction type */}

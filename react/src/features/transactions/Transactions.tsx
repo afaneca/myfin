@@ -1,4 +1,4 @@
-import { ListItem, useTheme } from '@mui/material';
+import { ListItem, Tooltip, useTheme } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import Box from '@mui/material/Box/Box';
 import Chip from '@mui/material/Chip/Chip';
@@ -26,6 +26,7 @@ import {
   Edit,
   FolderShared,
   Search,
+  Stars,
 } from '@mui/icons-material';
 import { formatNumberAsCurrency } from '../../utils/textUtils';
 import { useTranslation } from 'react-i18next';
@@ -43,6 +44,7 @@ import Button from '@mui/material/Button/Button';
 import RemoveTransactionDialog from './RemoveTransactionDialog.tsx';
 import AddTransactionDialog from './AddTransactionDialog.tsx';
 import EditTransactionDialog from './EditTransactionDialog.tsx';
+import IconButton from '@mui/material/IconButton';
 
 const Transactions = () => {
   const theme = useTheme();
@@ -117,19 +119,38 @@ const Transactions = () => {
       editable: false,
       sortable: false,
       renderCell: (params) => (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignContent="center"
-          alignItems="center"
-          flexDirection="column"
-        >
-          <span>
-            <b>{getDayNumberFromUnixTimestamp(params.value)}</b>/
-            {getMonthShortStringFromUnixTimestamp(params.value)}/
-            {getShortYearFromUnixTimestamp(params.value)}
-          </span>
-        </Box>
+        <Stack direction="column" alignItems="center" gap={0.5}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            height="100%" // Adjust as needed to center within the available space
+          >
+            <span style={{ textAlign: 'center' }}>
+              <b>
+                {getDayNumberFromUnixTimestamp(params.value.date_timestamp)}
+              </b>{' '}
+              {/*<br />*/}
+              <span>
+                {getMonthShortStringFromUnixTimestamp(
+                  params.value.date_timestamp,
+                )}
+                {" '"}
+                {getShortYearFromUnixTimestamp(params.value.date_timestamp)}
+              </span>
+            </span>
+          </Box>
+          <Tooltip title={t('transactions.essential')}>
+            <IconButton
+              sx={{
+                display: params.value.essential === 1 ? 'flex' : 'none',
+              }}
+            >
+              <Stars fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
       ),
     },
     {
@@ -262,7 +283,10 @@ const Transactions = () => {
   const rows = getTransactionsRequest.data.results.map(
     (result: Transaction) => ({
       id: result.transaction_id,
-      date: result.date_timestamp,
+      date: {
+        date_timestamp: result.date_timestamp,
+        essential: result.is_essential,
+      },
       flow: {
         acc_from_name: result.account_from_name,
         acc_to_name: result.account_to_name,

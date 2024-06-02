@@ -187,7 +187,7 @@
     "deleteTransactionModalSubtitle": "Are you sure that you want to delete this transaction?",
     "deleteTransactionModalAlert": "This action is irreversible!",
     "transactionSuccessfullyDeleted": "Transaction successfully deleted!",
-    "editTransactionModalTitle": "Edit transaction #<b>{{id}}</b>",
+    "editTransactionModalTitle": "Edit transaction #{{id}}",
     "splitTransaction": "Split Transaction",
     "mergeTransactions": "Merge Transactions",
     "transactionSuccessfullyUpdated": "Transaction successfully updated",
