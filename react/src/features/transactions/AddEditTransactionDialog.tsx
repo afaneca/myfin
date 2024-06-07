@@ -1,5 +1,8 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react';
-import { TransactionType } from '../../services/trx/trxServices.ts';
+import {
+  Transaction,
+  TransactionType,
+} from '../../services/trx/trxServices.ts';
 import { useTranslation } from 'react-i18next';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent/DialogContent';
@@ -28,11 +31,12 @@ import {
   StarBorder,
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { useUserData } from '../../providers/UserProvider.tsx';
 import {
   useAddTransactionStep0,
   useAddTransactionStep1,
+  useEditTransaction,
 } from '../../services/trx/trxHooks.ts';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
 import {
@@ -40,12 +44,14 @@ import {
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import { convertDateStringToUnixTimestamp } from '../../utils/dateUtils.ts';
+import { inferTrxType } from '../../utils/transactionUtils.ts';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onPositiveClick: () => void;
   onNegativeClick: () => void;
+  transaction: Transaction | null;
 }
 
 interface IdLabelPair {
@@ -53,15 +59,27 @@ interface IdLabelPair {
   label: string;
 }
 
-const AddTransactionDialog = (props: Props) => {
+const AddEditTransactionDialog = (props: Props) => {
+  const isEditForm = props.transaction !== null;
+
+  const getInitialIdLabelPair = (id?: number, name?: string) => {
+    if (id == null || name == null) return null;
+    return { id: id, label: name };
+  };
+
   const { t } = useTranslation();
   const loader = useLoading();
   const snackbar = useSnackbar();
   const addTransactionStep0Request = useAddTransactionStep0();
   const addTransactionStep1Request = useAddTransactionStep1();
+  const editTransactionRequest = useEditTransaction();
   const [transactionType, setTransactionType] = useState<TransactionType>(
     TransactionType.Expense,
   );
+  const [essentialValue, setEssentialValue] = useState<boolean>(false);
+  const [amountValue, setAmountValue] = useState<number | null>(null);
+  const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs());
+  const [descriptionValue, setDescriptionValue] = useState<string>('');
   const [isAccountFromEnabled, setAccountFromEnabled] = useState<boolean>(true);
   const [isAccountToEnabled, setAccountToEnabled] = useState<boolean>(true);
 
@@ -91,8 +109,46 @@ const AddTransactionDialog = (props: Props) => {
   const [isAccountFromRequired, setAccountFromRequired] =
     useState<boolean>(true);
   const [isAccountToRequired, setAccountToRequired] = useState<boolean>(false);
-  const [essentialValue, setEssentialValue] = useState<boolean>(false);
   const [isEssentialVisible, setEssentialVisible] = useState(false);
+
+  useEffect(() => {
+    setTransactionType(
+      inferTrxType(props.transaction) || TransactionType.Expense,
+    );
+    setEssentialValue(props.transaction?.is_essential == 1);
+    setAmountValue(props.transaction?.amount || null);
+    setDateValue(
+      props.transaction?.date_timestamp != null
+        ? dayjs.unix(props.transaction.date_timestamp)
+        : dayjs(),
+    );
+    setDescriptionValue(props.transaction?.description || '');
+    setAccountFromValue(
+      getInitialIdLabelPair(
+        props.transaction?.accounts_account_from_id,
+        props.transaction?.account_from_name,
+      ),
+    );
+    setAccountToValue(
+      getInitialIdLabelPair(
+        props.transaction?.accounts_account_to_id,
+        props.transaction?.account_to_name,
+      ),
+    );
+    setCategoryValue(
+      getInitialIdLabelPair(
+        props.transaction?.categories_category_id,
+        props.transaction?.category_name,
+      ),
+    );
+    setEntityValue(
+      getInitialIdLabelPair(
+        props.transaction?.entity_id,
+        props.transaction?.entity_name,
+      ),
+    );
+    setSelectedTags(props.transaction?.tags?.map((tag) => tag.name) || []);
+  }, [props.transaction]);
 
   useEffect(() => {
     if (!props.isOpen) return;
@@ -103,6 +159,7 @@ const AddTransactionDialog = (props: Props) => {
     // Show loading indicator when isLoading is true
     if (
       addTransactionStep0Request.isLoading ||
+      editTransactionRequest.isPending ||
       addTransactionStep1Request.isPending
     ) {
       loader.showLoading();
@@ -111,6 +168,7 @@ const AddTransactionDialog = (props: Props) => {
     }
   }, [
     addTransactionStep0Request.isPending,
+    editTransactionRequest.isPending,
     addTransactionStep1Request.isPending,
   ]);
 
@@ -118,6 +176,7 @@ const AddTransactionDialog = (props: Props) => {
     // Show error when isError is true
     if (
       addTransactionStep0Request.isError ||
+      editTransactionRequest.isError ||
       addTransactionStep1Request.isError
     ) {
       snackbar.showSnackbar(
@@ -125,13 +184,20 @@ const AddTransactionDialog = (props: Props) => {
         AlertSeverity.ERROR,
       );
     }
-  }, [addTransactionStep0Request.isError, addTransactionStep1Request.isError]);
+  }, [
+    addTransactionStep0Request.isError,
+    editTransactionRequest.isError,
+    addTransactionStep1Request.isError,
+  ]);
 
   useEffect(() => {
-    if (addTransactionStep1Request.isSuccess) {
+    if (
+      editTransactionRequest.isSuccess ||
+      addTransactionStep1Request.isSuccess
+    ) {
       props.onPositiveClick();
     }
-  }, [addTransactionStep1Request.isSuccess]);
+  }, [editTransactionRequest.isSuccess, addTransactionStep1Request.isSuccess]);
 
   useEffect(() => {
     const shouldAccountFromBeEnabled =
@@ -226,22 +292,53 @@ const AddTransactionDialog = (props: Props) => {
           const entity = entityValue;
 
           // Process the form data as needed
-          addTransactionStep1Request.mutate({
-            amount: formJson.amount as number,
-            type: transactionType,
-            description: formJson.description,
-            account_from_id: accountFrom?.id,
-            account_to_id: accountTo?.id,
-            category_id: category?.id,
-            entity_id: entity?.id,
-            tags: JSON.stringify(selectedTags),
-            date_timestamp: convertDateStringToUnixTimestamp(formJson.date),
-            is_essential: isEssential,
-          });
+          if (isEditForm) {
+            editTransactionRequest.mutate({
+              transaction_id: props.transaction?.transaction_id ?? -1,
+              new_amount: formJson.amount as number,
+              new_type: transactionType,
+              new_description: formJson.description,
+              new_account_from_id:
+                typeof accountFrom === 'string' ? undefined : accountFrom?.id,
+              new_account_to_id:
+                typeof accountTo === 'string' ? undefined : accountTo?.id,
+              new_category_id:
+                typeof category === 'string' ? undefined : category?.id,
+              new_entity_id:
+                typeof entity === 'string' ? undefined : entity?.id,
+              tags: JSON.stringify(selectedTags),
+              new_date_timestamp: convertDateStringToUnixTimestamp(
+                formJson.date,
+              ),
+              new_is_essential: isEssential,
+            });
+          } else {
+            addTransactionStep1Request.mutate({
+              amount: formJson.amount as number,
+              type: transactionType,
+              description: formJson.description,
+              account_from_id: accountFrom?.id,
+              account_to_id: accountTo?.id,
+              category_id: category?.id,
+              entity_id: entity?.id,
+              tags: JSON.stringify(selectedTags),
+              date_timestamp: convertDateStringToUnixTimestamp(formJson.date),
+              is_essential: isEssential,
+            });
+          }
         },
       }}
     >
-      <DialogTitle>{t('transactions.addNewTransaction')}</DialogTitle>
+      <DialogTitle>
+        {t(
+          isEditForm
+            ? 'transactions.editTransactionModalTitle'
+            : 'transactions.addNewTransaction',
+          {
+            id: props.transaction?.transaction_id,
+          },
+        )}
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} rowSpacing={2}>
           <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
@@ -252,9 +349,9 @@ const AddTransactionDialog = (props: Props) => {
                   control={
                     <Checkbox icon={<StarBorder />} checkedIcon={<Star />} />
                   }
+                  checked={essentialValue}
                   label={t('transactions.essential')}
                   name="essential"
-                  checked={essentialValue}
                   onChange={(_e, checked) => setEssentialValue(checked)}
                 />
               </Grow>
@@ -297,6 +394,8 @@ const AddTransactionDialog = (props: Props) => {
                 margin="dense"
                 id="amount"
                 name="amount"
+                value={amountValue || ''}
+                onChange={(e) => setAmountValue(Number(e.target.value))}
                 label={t('common.value')}
                 type="number"
                 fullWidth
@@ -317,7 +416,8 @@ const AddTransactionDialog = (props: Props) => {
               <DatePicker
                 name="date"
                 label={t('transactions.dateOfTransaction')}
-                defaultValue={dayjs()}
+                value={dateValue}
+                onChange={(newValue) => setDateValue(newValue)}
                 format="DD/MM/YYYY"
                 slotProps={{
                   textField: {
@@ -338,6 +438,8 @@ const AddTransactionDialog = (props: Props) => {
                 margin="dense"
                 id="description"
                 name="description"
+                value={descriptionValue}
+                onChange={(e) => setDescriptionValue(e.target.value)}
                 label={t('common.description')}
                 type="text"
                 fullWidth
@@ -470,6 +572,7 @@ const AddTransactionDialog = (props: Props) => {
               id="tags"
               options={tagOptionsValue}
               freeSolo
+              value={selectedTags}
               onChange={handleTagsChange}
               /*renderTags={(
                 value: IdLabelPair[],
@@ -498,10 +601,12 @@ const AddTransactionDialog = (props: Props) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onNegativeClick}>{t('common.cancel')}</Button>
-        <Button type="submit">{t('common.add')}</Button>
+        <Button type="submit">
+          {t(isEditForm ? 'common.edit' : 'common.add')}
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AddTransactionDialog;
+export default AddEditTransactionDialog;

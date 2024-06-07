@@ -42,8 +42,7 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import Button from '@mui/material/Button/Button';
 import RemoveTransactionDialog from './RemoveTransactionDialog.tsx';
-import AddTransactionDialog from './AddTransactionDialog.tsx';
-import EditTransactionDialog from './EditTransactionDialog.tsx';
+import AddEditTransactionDialog from './AddEditTransactionDialog.tsx';
 import IconButton from '@mui/material/IconButton';
 
 const Transactions = () => {
@@ -59,7 +58,6 @@ const Transactions = () => {
     useState<Transaction | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
-  const [isAddTrxDialogOpen, setAddTrxDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const getTransactionsRequest = useGetTransactions(
     paginationModel.page,
@@ -87,6 +85,12 @@ const Transactions = () => {
     }
   }, [getTransactionsRequest.isError, removeTransactionRequest.isError]);
 
+  useEffect(() => {
+    if (isRemoveDialogOpen == false && isEditDialogOpen == false) {
+      setActionableTransaction(null);
+    }
+  }, [isEditDialogOpen, isRemoveDialogOpen]);
+
   const removeTransaction = () => {
     if (!actionableTransaction) return;
     removeTransactionRequest.mutate(actionableTransaction?.transaction_id);
@@ -108,7 +112,8 @@ const Transactions = () => {
   };
 
   const handleAddTransactionClick = () => {
-    setAddTrxDialogOpen(true);
+    /*setAddTrxDialogOpen(true);*/
+    setEditDialogOpen(true);
   };
 
   const columns: GridColDef[] = [
@@ -191,10 +196,10 @@ const Transactions = () => {
           </Stack>
           <Stack direction="row" alignItems="center" gap={0.5}>
             <FolderShared fontSize="small" color="primary" />{' '}
-            {params.value.category ?? t('common.externalAccount')}
+            {params.value.category ?? t('common.noCategory')}
             {'     '}
             <Business fontSize="small" color="primary" />{' '}
-            {params.value.entity ?? t('common.externalAccount')}
+            {params.value.entity ?? t('common.noEntity')}
           </Stack>
           <Stack direction="row" alignItems="center" gap={0.5}>
             {params.value.tags.length > 0 && (
@@ -304,13 +309,7 @@ const Transactions = () => {
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
-      <AddTransactionDialog
-        isOpen={isAddTrxDialogOpen}
-        onClose={() => setAddTrxDialogOpen(false)}
-        onPositiveClick={() => setAddTrxDialogOpen(false)}
-        onNegativeClick={() => setAddTrxDialogOpen(false)}
-      />
-      <EditTransactionDialog
+      <AddEditTransactionDialog
         isOpen={isEditDialogOpen}
         onClose={() => setEditDialogOpen(false)}
         onPositiveClick={() => setEditDialogOpen(false)}
