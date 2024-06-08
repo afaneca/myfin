@@ -9,17 +9,17 @@ export type TransactionsPageResponse = {
 };
 
 export type Transaction = {
-  transaction_id: number;
+  transaction_id: bigint;
   account_from_name?: string;
   account_to_name?: string;
-  accounts_account_from_id?: number;
-  accounts_account_to_id?: number;
+  accounts_account_from_id?: bigint;
+  accounts_account_to_id?: bigint;
   amount: number;
-  categories_category_id?: number;
+  categories_category_id?: bigint;
   category_name?: string;
   date_timestamp?: number;
   description?: string;
-  entity_id?: number;
+  entity_id?: bigint;
   entity_name?: string;
   is_essential: 0 | 1;
   tag_names?: Array<string>;
@@ -49,8 +49,8 @@ const getTransactions = (page: number, page_size?: number, query?: string) => {
 };
 
 export interface Category {
-  users_user_id?: number;
-  category_id?: number;
+  users_user_id?: bigint;
+  category_id?: bigint;
   name?: string;
   status?: Status;
   type?: string;
@@ -60,7 +60,7 @@ export interface Category {
 }
 
 export interface Entity {
-  entity_id: number;
+  entity_id: bigint;
   name: string;
   users_user_id: number;
 }
@@ -80,10 +80,10 @@ export type AddTransactionRequest = {
   amount: number;
   type: TransactionType;
   description?: string;
-  entity_id?: number;
-  account_from_id?: number;
-  account_to_id?: number;
-  category_id?: number;
+  entity_id?: bigint;
+  account_from_id?: bigint;
+  account_to_id?: bigint;
+  category_id?: bigint;
   date_timestamp?: number;
   is_essential: boolean;
   tags?: string;
@@ -97,22 +97,22 @@ export type EditTransactionRequest = {
   new_amount: number;
   new_type: TransactionType;
   new_description?: string;
-  new_entity_id?: number;
-  new_account_from_id?: number;
-  new_account_to_id?: number;
-  new_category_id?: number;
+  new_entity_id?: bigint;
+  new_account_from_id?: bigint;
+  new_account_to_id?: bigint;
+  new_category_id?: bigint;
   new_date_timestamp?: number;
   new_is_essential: boolean;
-  transaction_id: number;
+  transaction_id: bigint;
   tags?: string;
   /* Split trx */
   is_split?: boolean;
   split_amount?: number;
-  split_category?: number;
-  split_entity?: number;
+  split_category?: bigint;
+  split_entity?: bigint;
   split_type?: TransactionType;
-  split_account_from?: number;
-  split_account_to?: number;
+  split_account_from?: bigint;
+  split_account_to?: bigint;
   split_description?: string;
   split_is_essential?: boolean;
   split_tags?: string;
@@ -122,8 +122,33 @@ const editTransaction = (data: EditTransactionRequest): Promise<string> => {
   return axios.put('/trxs', data);
 };
 
-const removeTransaction = (trxId: number) => {
+const removeTransaction = (trxId: bigint) => {
   return axios.delete<string>(`/trxs`, { data: { transaction_id: trxId } });
+};
+
+export type AutoCategorizeTransactionRequest = {
+  description: string;
+  amount: number;
+  type: TransactionType;
+  account_from_id: bigint;
+  account_to_id: bigint;
+};
+
+export type RuleInstructions = {
+  matching_rule?: bigint;
+  date?: number;
+  description?: string;
+  amount?: number;
+  type?: TransactionType;
+  selectedCategoryID?: bigint;
+  selectedEntityID?: bigint;
+  selectedAccountFromID?: bigint;
+  selectedAccountToID?: bigint;
+  isEssential?: boolean;
+};
+
+const autoCategorizeTrx = (request: AutoCategorizeTransactionRequest) => {
+  return axios.post<RuleInstructions>(`/trxs/auto-cat-trx`, request);
 };
 
 export default {
@@ -132,4 +157,5 @@ export default {
   addTransactionStep0,
   addTransactionStep1,
   editTransaction,
+  autoCategorizeTrx,
 };

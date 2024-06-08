@@ -57,7 +57,7 @@ const Transactions = () => {
   const [actionableTransaction, setActionableTransaction] =
     useState<Transaction | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
-  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [isAddEditDialogOpen, setEditDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const getTransactionsRequest = useGetTransactions(
     paginationModel.page,
@@ -86,10 +86,10 @@ const Transactions = () => {
   }, [getTransactionsRequest.isError, removeTransactionRequest.isError]);
 
   useEffect(() => {
-    if (isRemoveDialogOpen == false && isEditDialogOpen == false) {
+    if (isRemoveDialogOpen == false && isAddEditDialogOpen == false) {
       setActionableTransaction(null);
     }
-  }, [isEditDialogOpen, isRemoveDialogOpen]);
+  }, [isAddEditDialogOpen, isRemoveDialogOpen]);
 
   const removeTransaction = () => {
     if (!actionableTransaction) return;
@@ -309,13 +309,15 @@ const Transactions = () => {
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
-      <AddEditTransactionDialog
-        isOpen={isEditDialogOpen}
-        onClose={() => setEditDialogOpen(false)}
-        onPositiveClick={() => setEditDialogOpen(false)}
-        onNegativeClick={() => setEditDialogOpen(false)}
-        transaction={actionableTransaction}
-      />
+      {isAddEditDialogOpen && (
+        <AddEditTransactionDialog
+          isOpen={isAddEditDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          onPositiveClick={() => setEditDialogOpen(false)}
+          onNegativeClick={() => setEditDialogOpen(false)}
+          transaction={actionableTransaction}
+        />
+      )}
       <RemoveTransactionDialog
         isOpen={isRemoveDialogOpen}
         onClose={() => setRemoveDialogOpen(false)}

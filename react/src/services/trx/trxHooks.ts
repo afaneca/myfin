@@ -2,11 +2,15 @@ import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '../../data/react-query.ts';
 import TrxServices, {
   AddTransactionRequest,
+  AutoCategorizeTransactionRequest,
   EditTransactionRequest,
 } from './trxServices.ts';
 
 const QUERY_KEY_GET_TRANSACTIONS = 'QUERY_KEY_GET_TRANSACTIONS';
 const QUERY_KEY_ADD_TRANSACTION_STEP0 = 'QUERY_KEY_ADD_TRANSACTION_STEP0';
+const MUTATION_KEY_AUTO_CATEGORIZE_TRANSACTION = [
+  'MUTATION_KEY_AUTO_CATEGORIZE_TRANSACTION',
+];
 
 export function useGetTransactions(
   page: number,
@@ -26,7 +30,7 @@ export function useGetTransactions(
 }
 
 export function useRemoveTransaction() {
-  async function removeTransaction(trxId: number) {
+  async function removeTransaction(trxId: bigint) {
     const request = await TrxServices.removeTransaction(trxId);
 
     void queryClient.invalidateQueries({
@@ -80,5 +84,19 @@ export function useEditTransaction() {
 
   return useMutation({
     mutationFn: editTransaction,
+  });
+}
+
+export function useAutoCategorizeTransaction() {
+  async function autoCategorizeTransaction(
+    trx: AutoCategorizeTransactionRequest,
+  ) {
+    const request = await TrxServices.autoCategorizeTrx(trx);
+    return request.data;
+  }
+
+  return useMutation({
+    mutationFn: autoCategorizeTransaction,
+    mutationKey: MUTATION_KEY_AUTO_CATEGORIZE_TRANSACTION,
   });
 }

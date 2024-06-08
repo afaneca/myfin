@@ -1,7 +1,7 @@
 import { axios } from '../../data/axios.ts';
 
 export type Account = {
-  account_id: number;
+  account_id: bigint;
   name: string;
   type: AccountType;
   description: string;
@@ -22,7 +22,7 @@ export enum AccountType {
 }
 
 export type UserSession = {
-  user_id: number;
+  user_id: bigint;
   username: string;
   email: string;
   sessionkey: string;

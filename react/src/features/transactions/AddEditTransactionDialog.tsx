@@ -18,11 +18,13 @@ import {
   Grow,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
 } from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import {
   AccountCircle,
+  AutoAwesome,
   Business,
   Description,
   Euro,
@@ -36,6 +38,7 @@ import { useUserData } from '../../providers/UserProvider.tsx';
 import {
   useAddTransactionStep0,
   useAddTransactionStep1,
+  useAutoCategorizeTransaction,
   useEditTransaction,
 } from '../../services/trx/trxHooks.ts';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
@@ -45,6 +48,7 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import { convertDateStringToUnixTimestamp } from '../../utils/dateUtils.ts';
 import { inferTrxType } from '../../utils/transactionUtils.ts';
+import IconButton from '@mui/material/IconButton';
 
 interface Props {
   isOpen: boolean;
@@ -55,14 +59,14 @@ interface Props {
 }
 
 interface IdLabelPair {
-  id: number;
+  id: bigint;
   label: string;
 }
 
 const AddEditTransactionDialog = (props: Props) => {
   const isEditForm = props.transaction !== null;
 
-  const getInitialIdLabelPair = (id?: number, name?: string) => {
+  const getInitialIdLabelPair = (id?: bigint, name?: string) => {
     if (id == null || name == null) return null;
     return { id: id, label: name };
   };
@@ -72,6 +76,7 @@ const AddEditTransactionDialog = (props: Props) => {
   const snackbar = useSnackbar();
   const addTransactionStep0Request = useAddTransactionStep0();
   const addTransactionStep1Request = useAddTransactionStep1();
+  const autoCategorizeTransactionRequest = useAutoCategorizeTransaction();
   const editTransactionRequest = useEditTransaction();
   const [transactionType, setTransactionType] = useState<TransactionType>(
     TransactionType.Expense,
@@ -110,6 +115,7 @@ const AddEditTransactionDialog = (props: Props) => {
     useState<boolean>(true);
   const [isAccountToRequired, setAccountToRequired] = useState<boolean>(false);
   const [isEssentialVisible, setEssentialVisible] = useState(false);
+  const [isAutoCatVisible, setAutoCatVisible] = useState(false);
 
   useEffect(() => {
     setTransactionType(
@@ -160,7 +166,8 @@ const AddEditTransactionDialog = (props: Props) => {
     if (
       addTransactionStep0Request.isLoading ||
       editTransactionRequest.isPending ||
-      addTransactionStep1Request.isPending
+      addTransactionStep1Request.isPending ||
+      autoCategorizeTransactionRequest.isPending
     ) {
       loader.showLoading();
     } else {
@@ -170,6 +177,7 @@ const AddEditTransactionDialog = (props: Props) => {
     addTransactionStep0Request.isPending,
     editTransactionRequest.isPending,
     addTransactionStep1Request.isPending,
+    autoCategorizeTransactionRequest.isPending,
   ]);
 
   useEffect(() => {
@@ -177,7 +185,8 @@ const AddEditTransactionDialog = (props: Props) => {
     if (
       addTransactionStep0Request.isError ||
       editTransactionRequest.isError ||
-      addTransactionStep1Request.isError
+      addTransactionStep1Request.isError ||
+      autoCategorizeTransactionRequest.isError
     ) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
@@ -188,6 +197,7 @@ const AddEditTransactionDialog = (props: Props) => {
     addTransactionStep0Request.isError,
     editTransactionRequest.isError,
     addTransactionStep1Request.isError,
+    autoCategorizeTransactionRequest.isError,
   ]);
 
   useEffect(() => {
@@ -237,14 +247,14 @@ const AddEditTransactionDialog = (props: Props) => {
     if (!addTransactionStep0Request.isSuccess) return;
     setCategoryOptionsValue(
       addTransactionStep0Request.data.categories.map((category) => ({
-        id: category.category_id || 0,
+        id: category.category_id || 0n,
         label: category.name || '',
       })),
     );
 
     setEntityOptionsValue(
       addTransactionStep0Request.data.entities.map((entity) => ({
-        id: entity.entity_id || 0,
+        id: entity.entity_id || 0n,
         label: entity.name || '',
       })),
     );
@@ -253,6 +263,52 @@ const AddEditTransactionDialog = (props: Props) => {
       addTransactionStep0Request.data.tags.map((tag) => tag.name),
     );
   }, [addTransactionStep0Request.isSuccess]);
+
+  useEffect(() => {
+    if (
+      !autoCategorizeTransactionRequest.isSuccess ||
+      !autoCategorizeTransactionRequest.data.matching_rule
+    )
+      return;
+
+    const newData = autoCategorizeTransactionRequest.data;
+    // Type
+    setTransactionType(newData.type || TransactionType.Expense);
+    // Date
+    // Description
+    setDescriptionValue(newData.description || '');
+    // Amount
+    setAmountValue(newData.amount || null);
+    // Category
+    setCategoryValue(
+      categoryOptionsValue.find(
+        (cat) => cat.id == newData.selectedCategoryID,
+      ) || null,
+    );
+    // Entity
+    setEntityValue(
+      entityOptionsValue.find((ent) => ent.id == newData.selectedEntityID) ||
+        null,
+    );
+    // Account From
+    setAccountFromValue(
+      accountOptionsValue.find(
+        (acc) => acc.id == newData.selectedAccountFromID,
+      ) || null,
+    );
+    // Account To
+    setAccountToValue(
+      accountOptionsValue.find(
+        (acc) => acc.id == newData.selectedAccountToID,
+      ) || null,
+    );
+    // Essential
+    setEssentialValue(newData.isEssential == true);
+  }, [autoCategorizeTransactionRequest.isSuccess]);
+
+  useEffect(() => {
+    setAutoCatVisible(!!descriptionValue);
+  }, [descriptionValue]);
 
   const onTransferTypeSelected = (
     _: React.MouseEvent<HTMLElement>,
@@ -266,12 +322,22 @@ const AddEditTransactionDialog = (props: Props) => {
     }
   };
 
-  function handleTagsChange(
+  const handleTagsChange = (
     _e: SyntheticEvent<Element, Event>,
     value: string[],
-  ) {
+  ) => {
     setSelectedTags(value);
-  }
+  };
+
+  const handleAutoCategorizeClick = () => {
+    autoCategorizeTransactionRequest.mutate({
+      description: descriptionValue,
+      amount: Number(amountValue),
+      account_from_id: BigInt(accountFromValue?.id || -1n),
+      account_to_id: BigInt(accountToValue?.id || -1n),
+      type: transactionType,
+    });
+  };
 
   return (
     <Dialog
@@ -294,7 +360,7 @@ const AddEditTransactionDialog = (props: Props) => {
           // Process the form data as needed
           if (isEditForm) {
             editTransactionRequest.mutate({
-              transaction_id: props.transaction?.transaction_id ?? -1,
+              transaction_id: props.transaction?.transaction_id ?? -1n,
               new_amount: formJson.amount as number,
               new_type: transactionType,
               new_description: formJson.description,
@@ -448,6 +514,20 @@ const AddEditTransactionDialog = (props: Props) => {
                   startAdornment: (
                     <InputAdornment position="start">
                       <Description />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Tooltip title={t('transactions.autoCategorize')}>
+                        <IconButton
+                          aria-label={t('transactions.autoCategorize')}
+                          onClick={handleAutoCategorizeClick}
+                          edge="end"
+                          sx={{ display: isAutoCatVisible ? 'block' : 'none' }}
+                        >
+                          <AutoAwesome color="primary" />
+                        </IconButton>
+                      </Tooltip>
                     </InputAdornment>
                   ),
                 }}
