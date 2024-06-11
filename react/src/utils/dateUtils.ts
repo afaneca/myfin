@@ -1,5 +1,10 @@
 import i18n from '../i18n';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const getLocalizedDatesObj = () => {
   return {
@@ -90,13 +95,21 @@ export const isCurrentMonthAndYear = (month: number, year: number) => {
 export const convertDateStringToUnixTimestamp = (
   dateStr: string,
   format: string = 'DD/MM/YYYY',
-) => {
-  return dayjs(dateStr, format).unix();
+): number => {
+  return dayjs.tz(dateStr + ' 09:00', format + ' HH:mm', 'UTC').unix();
 };
 
 export const convertUnixTimestampToDateString = (
   unixTs: number,
   format: string = 'DD/MM/YYYY',
 ) => {
-  return dayjs.unix(unixTs).format(format);
+  return dayjs.unix(unixTs).utc().format(format);
+};
+
+export const getCurrentYear = () => {
+  return new Date().getFullYear();
+};
+
+export const getCurrentMonth = () => {
+  return new Date().getMonth() + 1;
 };
