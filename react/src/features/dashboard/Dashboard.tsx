@@ -38,6 +38,7 @@ import {
 import { Account } from '../../services/auth/authServices.ts';
 
 const Dashboard = () => {
+  const MONTH_BY_MONTH_MAX_MONTHS = 6;
   const theme = useTheme();
   const loader = useLoading();
   const snackbar = useSnackbar();
@@ -64,7 +65,7 @@ const Dashboard = () => {
   const investAccounts = useGetInvestingAccounts();
   const [debtChartData, setDebtChartData] = useState<ChartDataItem[]>([]);
   const [investChartData, setInvestChartData] = useState<ChartDataItem[]>([]);
-  const getMonthByMonthData = useGetMonthByMonthData(5);
+  const getMonthByMonthData = useGetMonthByMonthData(MONTH_BY_MONTH_MAX_MONTHS);
 
   useEffect(() => {
     // Show loading indicator when isLoading is true
@@ -117,7 +118,7 @@ const Dashboard = () => {
      * Else, show data for most recent budgeted month & 4 previous months
      */
     const transformedData: MonthByMonthChartDataItem[] = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < MONTH_BY_MONTH_MAX_MONTHS; i++) {
       const currentDate = dayjs().subtract(i, 'month');
       const budget = data.find(
         (budget) => budget.month === currentDate.month() + 1,

@@ -1,4 +1,4 @@
-import { SxProps, Theme, useTheme } from '@mui/material';
+import { SxProps, Theme, useMediaQuery, useTheme } from '@mui/material';
 import Stack from '@mui/material/Stack/Stack';
 import { ResponsivePie } from '@nivo/pie';
 import {
@@ -22,6 +22,7 @@ interface Props {
 
 const DashboardPieChart = ({ data, sx }: Props) => {
   const theme = useTheme();
+  const matchesMdScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const truncateFromMiddle = (
     fullStr = '',
@@ -52,7 +53,11 @@ const DashboardPieChart = ({ data, sx }: Props) => {
     >
       <ResponsivePie
         data={data}
-        margin={{ top: 80, right: 80, bottom: 80, left: 80 }}
+        margin={
+          matchesMdScreen
+            ? { top: 20, right: 20, bottom: 20, left: 20 }
+            : { top: 60, right: 60, bottom: 60, left: 60 }
+        }
         animate={true}
         innerRadius={0.5}
         padAngle={0.7}
@@ -61,8 +66,8 @@ const DashboardPieChart = ({ data, sx }: Props) => {
         borderWidth={0}
         arcLinkLabelsSkipAngle={10}
         arcLinkLabelsThickness={2}
-        enableArcLinkLabels={true}
-        enableArcLabels={false}
+        enableArcLinkLabels={!matchesMdScreen}
+        enableArcLabels={matchesMdScreen}
         arcLabelsSkipAngle={10}
         arcLabelsTextColor={{
           from: 'color',
