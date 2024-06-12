@@ -6,13 +6,14 @@ import {
   MenuOutlined,
   PaymentsOutlined,
 } from '@mui/icons-material';
-import { alpha, useTheme } from '@mui/material';
+import { alpha, useMediaQuery, useTheme } from '@mui/material';
 import { ROUTE_DASHBOARD, ROUTE_TRX } from '../providers/RoutesProvider';
 import { useTranslation } from 'react-i18next';
 
 const MyFinSidebar = () => {
-  const [isCollapsed, setCollapsed] = useState(false);
   const theme = useTheme();
+  const matchesMdScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const [isCollapsed, setCollapsed] = useState(matchesMdScreen);
   const { t } = useTranslation();
 
   function toggleSidebarCollapse() {
