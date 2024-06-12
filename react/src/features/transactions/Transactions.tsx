@@ -14,7 +14,11 @@ import {
   useGetTransactions,
   useRemoveTransaction,
 } from '../../services/trx/trxHooks.ts';
-import { Tag, Transaction } from '../../services/trx/trxServices.ts';
+import {
+  Tag,
+  Transaction,
+  TransactionType,
+} from '../../services/trx/trxServices.ts';
 import React, { useEffect, useState } from 'react';
 import {
   AddCircleOutline,
@@ -44,6 +48,7 @@ import Button from '@mui/material/Button/Button';
 import RemoveTransactionDialog from './RemoveTransactionDialog.tsx';
 import AddEditTransactionDialog from './AddEditTransactionDialog.tsx';
 import IconButton from '@mui/material/IconButton';
+import { inferTrxType } from '../../utils/transactionUtils.ts';
 
 const Transactions = () => {
   const theme = useTheme();
@@ -242,11 +247,11 @@ const Transactions = () => {
       sortable: false,
       renderCell: (params) => (
         <Chip
-          color="primary"
+          color={params.value.chipColor}
           variant="outlined"
           label={
             <Typography variant="subtitle2">
-              <strong>{params.value}</strong>
+              <strong>{params.value.amount}</strong>
             </Typography>
           }
         />
@@ -285,6 +290,18 @@ const Transactions = () => {
     return null;
   }
 
+  function getChipColorForAmount(trx: Transaction): string {
+    switch (inferTrxType(trx)) {
+      case TransactionType.Expense:
+        return 'primary';
+      case TransactionType.Income:
+        return 'secondary';
+      case TransactionType.Transfer:
+      default:
+        return 'default';
+    }
+  }
+
   const rows = getTransactionsRequest.data.results.map(
     (result: Transaction) => ({
       id: result.transaction_id,
@@ -302,7 +319,10 @@ const Transactions = () => {
         category: result.category_name,
         tags: result.tags,
       },
-      value: formatNumberAsCurrency(result.amount),
+      value: {
+        amount: formatNumberAsCurrency(result.amount),
+        chipColor: getChipColorForAmount(result),
+      },
       actions: result,
     }),
   );
