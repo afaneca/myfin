@@ -519,14 +519,18 @@ const AddEditTransactionDialog = (props: Props) => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <Tooltip title={t('transactions.autoCategorize')}>
-                        <IconButton
-                          aria-label={t('transactions.autoCategorize')}
-                          onClick={handleAutoCategorizeClick}
-                          edge="end"
-                          sx={{ display: isAutoCatVisible ? 'block' : 'none' }}
-                        >
-                          <AutoAwesome color="primary" />
-                        </IconButton>
+                        <Grow in={isAutoCatVisible}>
+                          <IconButton
+                            aria-label={t('transactions.autoCategorize')}
+                            onClick={handleAutoCategorizeClick}
+                            edge="end"
+                            /*sx={{
+                              display: isAutoCatVisible ? 'block' : 'none',
+                            }}*/
+                          >
+                            <AutoAwesome color="primary" />
+                          </IconButton>
+                        </Grow>
                       </Tooltip>
                     </InputAdornment>
                   ),

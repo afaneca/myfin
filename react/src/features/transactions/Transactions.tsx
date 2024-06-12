@@ -19,7 +19,7 @@ import {
   Transaction,
   TransactionType,
 } from '../../services/trx/trxServices.ts';
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
   AddCircleOutline,
   ArrowBack,
@@ -56,7 +56,7 @@ const Transactions = () => {
   const snackbar = useSnackbar();
   const { t } = useTranslation();
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 20,
+    pageSize: 50,
     page: 0,
   });
   const [actionableTransaction, setActionableTransaction] =
@@ -242,7 +242,7 @@ const Transactions = () => {
     {
       field: 'value',
       headerName: t('common.value'),
-      flex: 150,
+      flex: 170,
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -416,4 +416,4 @@ const Transactions = () => {
   );
 };
 
-export default Transactions;
+export default memo(Transactions);

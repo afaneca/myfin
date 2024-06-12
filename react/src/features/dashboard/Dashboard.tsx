@@ -15,7 +15,7 @@ import {
   useGetMonthByMonthData,
   useGetMonthExpensesIncomeDistributionData,
 } from '../../services/stats/statHooks.ts';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { addLeadingZero } from '../../utils/textUtils.ts';
 
 import {
@@ -320,4 +320,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default memo(Dashboard);
