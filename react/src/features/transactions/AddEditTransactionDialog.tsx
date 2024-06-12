@@ -78,9 +78,8 @@ const AddEditTransactionDialog = (props: Props) => {
   const addTransactionStep1Request = useAddTransactionStep1();
   const autoCategorizeTransactionRequest = useAutoCategorizeTransaction();
   const editTransactionRequest = useEditTransaction();
-  const [transactionType, setTransactionType] = useState<TransactionType>(
-    TransactionType.Expense,
-  );
+  const [transactionType, setTransactionType] =
+    useState<TransactionType | null>(null);
   const [essentialValue, setEssentialValue] = useState<boolean>(false);
   const [amountValue, setAmountValue] = useState<number | null>(null);
   const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs());
@@ -210,6 +209,7 @@ const AddEditTransactionDialog = (props: Props) => {
   }, [editTransactionRequest.isSuccess, addTransactionStep1Request.isSuccess]);
 
   useEffect(() => {
+    if (!transactionType) return;
     const shouldAccountFromBeEnabled =
       transactionType !== TransactionType.Income;
     const shouldAccountToBeEnabled =
@@ -335,7 +335,7 @@ const AddEditTransactionDialog = (props: Props) => {
       amount: Number(amountValue),
       account_from_id: BigInt(accountFromValue?.id || -1n),
       account_to_id: BigInt(accountToValue?.id || -1n),
-      type: transactionType,
+      type: transactionType ?? TransactionType.Expense,
     });
   };
 
@@ -362,7 +362,7 @@ const AddEditTransactionDialog = (props: Props) => {
             editTransactionRequest.mutate({
               transaction_id: props.transaction?.transaction_id ?? -1n,
               new_amount: formJson.amount as number,
-              new_type: transactionType,
+              new_type: transactionType ?? TransactionType.Expense,
               new_description: formJson.description,
               new_account_from_id:
                 typeof accountFrom === 'string' ? undefined : accountFrom?.id,
@@ -381,7 +381,7 @@ const AddEditTransactionDialog = (props: Props) => {
           } else {
             addTransactionStep1Request.mutate({
               amount: formJson.amount as number,
-              type: transactionType,
+              type: transactionType ?? TransactionType.Expense,
               description: formJson.description,
               account_from_id: accountFrom?.id,
               account_to_id: accountTo?.id,
