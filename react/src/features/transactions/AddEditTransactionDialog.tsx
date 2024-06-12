@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent/DialogContent';
 import TextField from '@mui/material/TextField/TextField';
 import DialogActions from '@mui/material/DialogActions/DialogActions';
 import Button from '@mui/material/Button/Button';
-import Dialog from '@mui/material/Dialog';
+import Dialog from '@mui/material/Dialog/Dialog';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import {
   Autocomplete,

@@ -8,8 +8,13 @@ import MonthlyOverviewChart, {
 } from './MonthlyOverviewChart.tsx';
 import { PanelTitle } from '../../theme/styled.ts';
 import DashboardPieChart, { ChartDataItem } from './DashboardPieChart.tsx';
-import MonthByMonthBalanceChart from './MonthByMonthBalanceChart.tsx';
-import { useGetMonthExpensesIncomeDistributionData } from '../../services/stats/statHooks.ts';
+import MonthByMonthBalanceChart, {
+  MonthByMonthChartDataItem,
+} from './MonthByMonthBalanceChart.tsx';
+import {
+  useGetMonthByMonthData,
+  useGetMonthExpensesIncomeDistributionData,
+} from '../../services/stats/statHooks.ts';
 import { useEffect, useState } from 'react';
 import { addLeadingZero } from '../../utils/textUtils.ts';
 
@@ -17,7 +22,10 @@ import {
   AlertSeverity,
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
-import { MonthExpensesDistributionDataResponse } from '../../services/stats/statServices.ts';
+import {
+  MonthByMonthDataItem,
+  MonthExpensesDistributionDataResponse,
+} from '../../services/stats/statServices.ts';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import Typography from '@mui/material/Typography/Typography';
@@ -29,29 +37,6 @@ import {
 } from '../../services/user/userHooks.ts';
 import { Account } from '../../services/auth/authServices.ts';
 
-// TODO - add real data
-const monthByMonthData = [
-  {
-    month: 'Ago 2022',
-    balance: 501.23,
-  },
-  {
-    month: 'Set 2022',
-    balance: 111.89,
-  },
-  {
-    month: 'Out 2022',
-    balance: -500,
-  },
-  {
-    month: 'Nov 2022',
-    balance: -592.21,
-  },
-  {
-    month: 'Dez 2022',
-    balance: 672.22,
-  },
-];
 const Dashboard = () => {
   const theme = useTheme();
   const loader = useLoading();
@@ -70,31 +55,47 @@ const Dashboard = () => {
   const [monthlyOverviewChartData, setMonthlyOverviewChartData] = useState<
     MonthlyOverviewChartDataItem[]
   >([]);
+  const [monthByMonthChartData, setMonthByMonthChartData] = useState<
+    MonthByMonthChartDataItem[]
+  >([]);
   const [lastUpdatedTimestamp, setLastUpdatedTimestamp] = useState<string>('');
 
   const debtAccounts = useGetDebtAccounts();
   const investAccounts = useGetInvestingAccounts();
   const [debtChartData, setDebtChartData] = useState<ChartDataItem[]>([]);
   const [investChartData, setInvestChartData] = useState<ChartDataItem[]>([]);
+  const getMonthByMonthData = useGetMonthByMonthData(5);
 
   useEffect(() => {
     // Show loading indicator when isLoading is true
-    if (monthIncomeExpensesDistributionData.isLoading) {
+    if (
+      monthIncomeExpensesDistributionData.isLoading ||
+      getMonthByMonthData.isLoading
+    ) {
       loader.showLoading();
     } else {
       loader.hideLoading();
     }
-  }, [monthIncomeExpensesDistributionData.isLoading]);
+  }, [
+    monthIncomeExpensesDistributionData.isLoading,
+    getMonthByMonthData.isLoading,
+  ]);
 
   useEffect(() => {
     // Show error when isError is true
-    if (monthIncomeExpensesDistributionData.isError) {
+    if (
+      monthIncomeExpensesDistributionData.isError ||
+      getMonthByMonthData.isError
+    ) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
     }
-  }, [monthIncomeExpensesDistributionData.isError]);
+  }, [
+    monthIncomeExpensesDistributionData.isError,
+    getMonthByMonthData.isError,
+  ]);
 
   useEffect(() => {
     // Transform data & update state when fetch is successful
@@ -107,6 +108,35 @@ const Dashboard = () => {
       setupExpenseDistributionChart(monthIncomeExpensesDistributionData.data);
     }
   }, [monthIncomeExpensesDistributionData.data]);
+
+  function transformBudgetData(
+    data: MonthByMonthDataItem[],
+  ): MonthByMonthChartDataItem[] {
+    /**
+     * If it contains budget for current month, get data for current & previous 4 months.
+     * Else, show data for most recent budgeted month & 4 previous months
+     */
+    const transformedData: MonthByMonthChartDataItem[] = [];
+    for (let i = 0; i < 5; i++) {
+      const currentDate = dayjs().subtract(i, 'month');
+      const budget = data.find(
+        (budget) => budget.month === currentDate.month() + 1,
+      );
+      const balance = budget ? budget.balance_value : 0;
+      transformedData[i] = {
+        month: `${currentDate.month() + 1}/${currentDate.year()}`,
+        balance,
+      };
+    }
+    return transformedData.reverse();
+  }
+
+  useEffect(() => {
+    // transform budget data
+    if (getMonthByMonthData.isSuccess) {
+      setMonthByMonthChartData(transformBudgetData(getMonthByMonthData.data));
+    }
+  }, [getMonthByMonthData.data]);
 
   useEffect(() => {
     setDebtChartData(generateDebtIncomeDistributionChartData(debtAccounts));
@@ -258,7 +288,7 @@ const Dashboard = () => {
       <Grid xs={12} md={8}>
         <DataCard>
           <PanelTitle>{t('dashboard.monthlySavings')}</PanelTitle>
-          <MonthByMonthBalanceChart data={monthByMonthData} />
+          <MonthByMonthBalanceChart data={monthByMonthChartData} />
         </DataCard>
       </Grid>
       <Grid xs={12} lg={6}>

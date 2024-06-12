@@ -18,3 +18,15 @@ export function useGetMonthExpensesIncomeDistributionData(
     queryFn: getMonthExpensesIncomeDistribution,
   });
 }
+
+export function useGetMonthByMonthData(limit: number = 5) {
+  async function getMonthByMonthData() {
+    const response = await statServices.getMonthByMonthData(limit);
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: ['month-by-month', limit],
+    queryFn: getMonthByMonthData,
+  });
+}

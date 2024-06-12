@@ -42,6 +42,21 @@ const getMonthExpensesIncomeDistributionData = (
   );
 };
 
+export interface MonthByMonthDataItem {
+  month: number;
+  year: number;
+  balance_value: number;
+}
+
+const getMonthByMonthData = (limit: number) => {
+  return axios.get<MonthByMonthDataItem[]>(`/stats/dashboard/month-by-month`, {
+    params: {
+      limit,
+    },
+  });
+};
+
 export default {
   getMonthExpensesIncomeDistributionData,
+  getMonthByMonthData,
 };
