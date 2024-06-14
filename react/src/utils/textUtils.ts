@@ -16,6 +16,13 @@ export const formatNumberAsCurrency = (
   return formatter.format(text);
 };
 
+export const formatNumberAsPercentage = (
+  value: number,
+  forceLeadingSign: boolean = false,
+) => {
+  return `${forceLeadingSign && value > 0 ? '+' : ''}${value.toFixed(2)}%`;
+};
+
 export const addLeadingZero = (num: number, places: number = 2) =>
   String(num).padStart(places, '0');
 

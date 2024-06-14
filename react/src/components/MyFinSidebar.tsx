@@ -2,12 +2,18 @@ import { useState } from 'react';
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import { NavLink } from 'react-router-dom';
 import {
+  Book,
   DashboardOutlined,
+  FolderCopy,
   MenuOutlined,
   PaymentsOutlined,
 } from '@mui/icons-material';
 import { alpha, useMediaQuery, useTheme } from '@mui/material';
-import { ROUTE_DASHBOARD, ROUTE_TRX } from '../providers/RoutesProvider';
+import {
+  ROUTE_BUDGETS,
+  ROUTE_DASHBOARD,
+  ROUTE_TRX,
+} from '../providers/RoutesProvider';
 import { useTranslation } from 'react-i18next';
 
 const MyFinSidebar = () => {
@@ -72,6 +78,13 @@ const MyFinSidebar = () => {
           >
             {' '}
             {t('sidebar.transactions')}
+          </MenuItem>
+          <MenuItem
+            icon={<FolderCopy />}
+            component={<NavLink to={ROUTE_BUDGETS} />}
+          >
+            {' '}
+            {t('sidebar.budgets')}
           </MenuItem>
         </Menu>
       </Sidebar>

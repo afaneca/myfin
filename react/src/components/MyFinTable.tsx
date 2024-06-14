@@ -84,10 +84,17 @@ const MyFinTable = (props: Props) => {
         rowCount={itemCount}
         paginationMode="server"
         paginationModel={paginationModel}
-        pageSizeOptions={[20, 50, 100]}
+        pageSizeOptions={[5, 10, 15, 20, 50, 100]}
         onPaginationModelChange={setPaginationModel}
         disableRowSelectionOnClick
         autoHeight
+        /*autosizeOptions={{
+          columns: ['name', 'status', 'createdBy'],
+          includeHeaders: true,
+          includeOutliers: true,
+          outliersFactor: 1,
+          expand: true,
+        }}*/
         getRowHeight={() => 'auto'}
         /*sx={{
 

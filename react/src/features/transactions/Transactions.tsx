@@ -71,8 +71,8 @@ const Transactions = () => {
   );
   const removeTransactionRequest = useRemoveTransaction();
 
+  // Show loading indicator when isLoading is true
   useEffect(() => {
-    // Show loading indicator when isLoading is true
     if (getTransactionsRequest.isLoading) {
       loader.showLoading();
     } else {
@@ -80,8 +80,8 @@ const Transactions = () => {
     }
   }, [getTransactionsRequest.isLoading]);
 
+  // Show error when isError is true
   useEffect(() => {
-    // Show error when isError is true
     if (getTransactionsRequest.isError || removeTransactionRequest.isError) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
@@ -126,6 +126,7 @@ const Transactions = () => {
       field: 'date',
       headerName: t('common.date'),
       flex: 100,
+      minWidth: 100,
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -135,7 +136,7 @@ const Transactions = () => {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            height="100%" // Adjust as needed to center within the available space
+            height="100%"
           >
             <span style={{ textAlign: 'center' }}>
               <b>
@@ -167,6 +168,7 @@ const Transactions = () => {
       field: 'flow',
       headerName: t('transactions.flow'),
       flex: 200,
+      minWidth: 200,
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -192,6 +194,7 @@ const Transactions = () => {
       field: 'description',
       headerName: t('common.description'),
       flex: 700,
+      minWidth: 400,
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -243,6 +246,7 @@ const Transactions = () => {
       field: 'value',
       headerName: t('common.value'),
       flex: 170,
+      minWidth: 100,
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -261,6 +265,7 @@ const Transactions = () => {
       field: 'actions',
       headerName: t('common.actions'),
       flex: 150,
+      minWidth: 100,
       editable: false,
       sortable: false,
       renderCell: (params) => (

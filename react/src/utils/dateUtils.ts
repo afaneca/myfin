@@ -66,6 +66,9 @@ export const getLocalizedDatesObj = () => {
   };
 };
 
+export const getMonthsFullName = (monthNumber: number) => {
+  return getLocalizedDatesObj().months[monthNumber - 1];
+};
 export const getMonthsShortName = (monthNumber: number) => {
   return getLocalizedDatesObj().monthsShort[monthNumber - 1];
 };

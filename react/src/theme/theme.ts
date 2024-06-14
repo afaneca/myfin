@@ -63,6 +63,12 @@ const muiDarkPalette = {
     primary: colors.grey[100],
     secondary: colors.grey[400],
   },
+  error: {
+    main: colors.red[400],
+  },
+  success: {
+    main: colors.green[400],
+  },
 };
 
 export const generateGlobalTheme = (mode: PaletteMode): MyFinTheme => {

@@ -321,6 +321,7 @@
   },
   "budgets": {
     "budgets": "Budgets",
+    "strapLine": "Plan your future here",
     "addBudget": "Add Budget",
     "onlyOpened": "Only Opened",
     "month": "Month",
