@@ -45,7 +45,7 @@ import {
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import Button from '@mui/material/Button/Button';
-import RemoveTransactionDialog from './RemoveTransactionDialog.tsx';
+import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import AddEditTransactionDialog from './AddEditTransactionDialog.tsx';
 import IconButton from '@mui/material/IconButton';
 import { inferTrxType } from '../../utils/transactionUtils.ts';
@@ -342,13 +342,19 @@ const Transactions = () => {
           transaction={actionableTransaction}
         />
       )}
-      <RemoveTransactionDialog
-        isOpen={isRemoveDialogOpen}
-        onClose={() => setRemoveDialogOpen(false)}
-        onPositiveClick={() => removeTransaction()}
-        onNegativeClick={() => setRemoveDialogOpen(false)}
-        transaction={actionableTransaction}
-      />
+      {isRemoveDialogOpen && (
+        <GenericConfirmationDialog
+          isOpen={isRemoveDialogOpen}
+          onClose={() => setRemoveDialogOpen(false)}
+          onPositiveClick={() => removeTransaction()}
+          onNegativeClick={() => setRemoveDialogOpen(false)}
+          titleText={t('transactions.deleteTransactionModalTitle', {
+            id: actionableTransaction?.transaction_id,
+          })}
+          descriptionText={t('transactions.deleteTransactionModalSubtitle')}
+          positiveText={t('common.delete')}
+        />
+      )}
       <Box display="flex" justifyContent="space-between" flexDirection="column">
         <PageHeader
           title={t('transactions.transactions')}
