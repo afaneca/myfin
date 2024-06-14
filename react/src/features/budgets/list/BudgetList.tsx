@@ -33,6 +33,7 @@ import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import MyFinTable from '../../../components/MyFinTable.tsx';
 import Typography from '@mui/material/Typography/Typography';
 import Chip from '@mui/material/Chip/Chip';
+import IconButton from '@mui/material/IconButton';
 
 const BudgetList = () => {
   const theme = useTheme();
@@ -205,23 +206,27 @@ const BudgetList = () => {
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-        <Stack direction="row" gap={3}>
-          <Visibility
-            fontSize="medium"
-            color="action"
-            onClick={() => {
-              goToBudgetDetails(params.value);
-            }}
-            sx={{ cursor: 'pointer' }}
-          />
-          <Delete
-            fontSize="medium"
-            color="action"
-            sx={{ cursor: 'pointer' }}
-            onClick={() => {
-              handleRemoveBudgetClick(params.value);
-            }}
-          />
+        <Stack direction="row" gap={0}>
+          <IconButton aria-label={t('common.seeMore')}>
+            <Visibility
+              fontSize="medium"
+              color="action"
+              onClick={() => {
+                goToBudgetDetails(params.value);
+              }}
+              /*sx={{ cursor: 'pointer' }}*/
+            />
+          </IconButton>
+          <IconButton aria-label={t('common.remove')}>
+            <Delete
+              fontSize="medium"
+              color="action"
+              /*sx={{ cursor: 'pointer' }}*/
+              onClick={() => {
+                handleRemoveBudgetClick(params.value);
+              }}
+            />
+          </IconButton>
         </Stack>
       ),
     },

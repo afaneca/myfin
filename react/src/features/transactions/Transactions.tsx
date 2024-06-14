@@ -269,28 +269,29 @@ const Transactions = () => {
       editable: false,
       sortable: false,
       renderCell: (params) => (
-        <Stack direction="row" gap={3}>
-          <Edit
-            fontSize="medium"
-            color="action"
-            onClick={() => {
-              handleEditTransactionClick(params.value);
-            }}
-            sx={{ cursor: 'pointer' }}
-          />
-          <Delete
-            fontSize="medium"
-            color="action"
-            sx={{ cursor: 'pointer' }}
-            onClick={() => {
-              handleRemoveTransactionClick(params.value);
-            }}
-          />
+        <Stack direction="row" gap={0}>
+          <IconButton aria-label={t('common.edit')}>
+            <Edit
+              fontSize="medium"
+              color="action"
+              onClick={() => {
+                handleEditTransactionClick(params.value);
+              }}
+            />
+          </IconButton>
+          <IconButton aria-label={t('common.remove')}>
+            <Delete
+              fontSize="medium"
+              color="action"
+              onClick={() => {
+                handleRemoveTransactionClick(params.value);
+              }}
+            />
+          </IconButton>
         </Stack>
       ),
     },
   ];
-
   if (getTransactionsRequest.isLoading || !getTransactionsRequest.data) {
     return null;
   }
