@@ -174,8 +174,12 @@ const BudgetList = () => {
           <Stack direction="row" alignItems="center" gap={0.5} mt={0.5}>
             <Chip
               size="small"
-              variant="outlined"
-              color={getPercentageTextColor(params.value.changePercentage)}
+              variant={params.value.highlighted ? 'filled' : 'outlined'}
+              color={
+                params.value.highlighted
+                  ? 'default'
+                  : getPercentageTextColor(params.value.changePercentage)
+              }
               label={formatNumberAsPercentage(
                 params.value.changePercentage,
                 true,
@@ -225,21 +229,20 @@ const BudgetList = () => {
               handleRemoveBudgetClick(params.value);
             }}
           >
-            <Delete
-              fontSize="medium"
-              color="action"
-              /*sx={{ cursor: 'pointer' }}*/
-            />
+            <Delete fontSize="medium" color="action" />
           </IconButton>
         </Stack>
       ),
     },
   ];
 
+  const shouldRowBeHighlighted = (budget: Budget): Boolean => {
+    return budget.month == getCurrentMonth() && budget.year == getCurrentYear();
+  };
+
   const rows = getBudgetsRequest.data.results.map((result: Budget) => ({
     id: result.budget_id,
-    highlight:
-      result.month == getCurrentMonth() && result.year == getCurrentYear(),
+    highlight: shouldRowBeHighlighted(result),
     status: result.is_open,
     month: {
       month: result.month,
@@ -251,13 +254,14 @@ const BudgetList = () => {
     balance: {
       value: result.balance_value,
       changePercentage: result.balance_change_percentage,
+      highlighted: shouldRowBeHighlighted(result),
     },
     savings: result.savings_rate_percentage,
     actions: result,
   }));
 
   return (
-    <Paper elevation={2} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+    <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <PageHeader
           title={t('budgets.budgets')}

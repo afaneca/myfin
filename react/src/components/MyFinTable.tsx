@@ -18,14 +18,28 @@ type Props = {
   setPaginationModel: React.Dispatch<
     React.SetStateAction<{ pageSize: number; page: number }>
   >;
+  onRowClicked?: (id: bigint) => void;
 };
 
 const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   border: 0,
-  color: '#757575',
+  '& .highlighted-row': {
+    background: 'linear-gradient(to top, #0083B0, #00B4DB)',
+    '&:hover': {
+      backgroundColor: 'blue',
+      cursor: 'pointer',
+    },
+  },
+  '& .regular-row': {
+    backgroundColor: `${theme.palette.background.default}`,
+    border: 'none',
+    '&:hover': {
+      backgroundColor: `${theme.palette.background.paper}`,
+      cursor: 'pointer',
+    },
+  },
   '& .MuiDataGrid-row': {
-    background: `${theme.palette.background.default}`,
-    borderBottom: `1px solid ${theme.palette.background.paper}`,
+    borderBottom: `0px solid ${theme.palette.background.paper}`,
   },
   '& .MuiDataGrid-iconSeparator': {
     display: 'none',
@@ -38,17 +52,10 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   '& .MuiDataGrid-columnHeaderTitle': {
     fontWeight: 700,
   },
-  '& .MuiDataGrid-row.Mui-selected': {
-    background: ' #FFFFFF',
-    border: '1px solid #73A0FF',
-  },
   '& .MuiDataGrid-cell': {
     color: `${theme.palette.text.primary}`,
     boxSizing: 'none',
     borderBottom: 'none',
-  },
-  '& .MuiPaginationItem-root': {
-    borderRadius: 0,
   },
 }));
 
@@ -87,40 +94,18 @@ const MyFinTable = (props: Props) => {
         pageSizeOptions={[5, 10, 15, 20, 50, 100]}
         onPaginationModelChange={setPaginationModel}
         disableRowSelectionOnClick
+        onRowClick={(row) => props.onRowClicked?.(BigInt(row.id))}
         autoHeight
-        /*autosizeOptions={{
-          columns: ['name', 'status', 'createdBy'],
-          includeHeaders: true,
-          includeOutliers: true,
-          outliersFactor: 1,
-          expand: true,
-        }}*/
         getRowHeight={() => 'auto'}
+        getRowClassName={(params) =>
+          params.row.highlight == true ? 'highlighted-row' : 'regular-row'
+        }
         sx={{
           '& .MuiDataGrid-cell': {
             display: 'flex',
             alignItems: 'center',
           },
         }}
-        /*sx={{
-
-          background: 'primary.dark',
-          boxShadow: 0,
-          border: 0,
-          borderColor: 'transparent',
-          '& .MuiDataGrid-cell': {
-            backgroundColor: theme.palette.background.default,
-            border: 0,
-          },
-          '& .MuiDataGrid-cell:hover': {
-            backgroundColor: theme.palette.background.paper,
-            border: 0,
-          },
-          '& .MuiDataGrid-columnHeader': {
-            backgroundColor: '#1f2d3d',
-            fontWeight: 700,
-          },
-        }}*/
         localeText={getLocaleTextForDataGrid()}
       />
     </Box>
