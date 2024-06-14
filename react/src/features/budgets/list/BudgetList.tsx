@@ -5,7 +5,10 @@ import Paper from '@mui/material/Paper/Paper';
 import Box from '@mui/material/Box/Box';
 import PageHeader from '../../../components/PageHeader.tsx';
 import Stack from '@mui/material/Stack/Stack';
-import { useGetBudgets } from '../../../services/budget/budgetHooks.ts';
+import {
+  useGetBudgets,
+  useRemoveBudget,
+} from '../../../services/budget/budgetHooks.ts';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import { GridColDef } from '@mui/x-data-grid';
 import {
@@ -38,6 +41,7 @@ import MyFinTable from '../../../components/MyFinTable.tsx';
 import Typography from '@mui/material/Typography/Typography';
 import Chip from '@mui/material/Chip/Chip';
 import IconButton from '@mui/material/IconButton';
+import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
 
 const BudgetList = () => {
   const theme = useTheme();
@@ -54,6 +58,9 @@ const BudgetList = () => {
     paginationModel.pageSize,
     searchQuery,
   );
+  const [actionableBudget, setActionableBudget] = useState<Budget | null>(null);
+  const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
+  const removeBudgetRequest = useRemoveBudget();
 
   // Loading
   useEffect(() => {
@@ -66,13 +73,19 @@ const BudgetList = () => {
 
   // Error
   useEffect(() => {
-    if (getBudgetsRequest.isError) {
+    if (getBudgetsRequest.isError || removeBudgetRequest.isError) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
     }
-  }, [getBudgetsRequest.isError]);
+  }, [getBudgetsRequest.isError, removeBudgetRequest.isError]);
+
+  useEffect(() => {
+    if (isRemoveDialogOpen == false) {
+      setActionableBudget(null);
+    }
+  }, [isRemoveDialogOpen]);
 
   if (getBudgetsRequest.isLoading || !getBudgetsRequest.data) {
     return null;
@@ -89,13 +102,20 @@ const BudgetList = () => {
     }
   };
 
-  function goToBudgetDetails(_: Budget) {
+  const goToBudgetDetails = (budget: Budget) => {
     // TODO
-  }
+  };
 
-  function handleRemoveBudgetClick(_: Budget) {
-    // TODO
-  }
+  const handleRemoveBudgetClick = (budget: Budget) => {
+    setActionableBudget(budget);
+    setRemoveDialogOpen(true);
+  };
+
+  const removeBudget = () => {
+    if (!actionableBudget) return;
+    removeBudgetRequest.mutate(actionableBudget?.budget_id);
+    setRemoveDialogOpen(false);
+  };
 
   const columns: GridColDef[] = [
     {
@@ -200,7 +220,11 @@ const BudgetList = () => {
       renderCell: (params) => (
         <Chip
           color={getPercentageTextColor(params.value)}
-          label={formatNumberAsPercentage(params.value, true)}
+          label={
+            params.value == 0
+              ? '-%'
+              : formatNumberAsPercentage(params.value, true)
+          }
           variant="filled"
           size="small"
         />
@@ -236,7 +260,7 @@ const BudgetList = () => {
     },
   ];
 
-  const shouldRowBeHighlighted = (budget: Budget): Boolean => {
+  const shouldRowBeHighlighted = (budget: Budget): boolean => {
     return budget.month == getCurrentMonth() && budget.year == getCurrentYear();
   };
 
@@ -262,6 +286,20 @@ const BudgetList = () => {
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+      {isRemoveDialogOpen && (
+        <GenericConfirmationDialog
+          isOpen={isRemoveDialogOpen}
+          onClose={() => setRemoveDialogOpen(false)}
+          onPositiveClick={() => removeBudget()}
+          onNegativeClick={() => setRemoveDialogOpen(false)}
+          titleText={t('budgets.deleteBudgetModalTitle', {
+            month: actionableBudget?.month,
+            year: actionableBudget?.year,
+          })}
+          descriptionText={t('budgets.deleteBudgetModalSubtitle')}
+          positiveText={t('common.delete')}
+        />
+      )}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <PageHeader
           title={t('budgets.budgets')}

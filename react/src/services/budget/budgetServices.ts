@@ -28,6 +28,11 @@ const getBudgets = (page: number, page_size: number, query?: string) => {
   });
 };
 
+const removeBudget = (budgetId: bigint) => {
+  return axios.delete<string>(`/budgets`, { data: { budget_id: budgetId } });
+};
+
 export default {
   getBudgets,
+  removeBudget,
 };

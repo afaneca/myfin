@@ -328,7 +328,7 @@
     "observations": "Observations",
     "balance": "Balance",
     "savings": "Savings",
-    "deleteBudgetModalTitle": "Delete <b>{{month}}/{{year}}</b> budget?",
+    "deleteBudgetModalTitle": "Delete {{month}}/{{year}} budget?",
     "deleteBudgetModalSubtitle": "Are you sure you want to delete this budget?",
     "deleteBudgetModalAlert": "This action is irreversible!"
   },
