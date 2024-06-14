@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import { NavLink } from 'react-router-dom';
 import {
-  Book,
   DashboardOutlined,
   FolderCopy,
   MenuOutlined,

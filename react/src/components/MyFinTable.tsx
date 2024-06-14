@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridSlots } from '@mui/x-data-grid';
 import Box from '@mui/material/Box/Box';
 import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
 import { styled } from '@mui/material/styles';
@@ -75,7 +75,7 @@ const MyFinTable = (props: Props) => {
     <Box sx={{ height: 'auto', width: '100%' }}>
       <StyledDataGrid
         slots={{
-          loadingOverlay: LinearProgress,
+          loadingOverlay: LinearProgress as GridSlots['loadingOverlay'],
           noRowsOverlay: NoRows,
         }}
         loading={isRefetching}
@@ -96,6 +96,12 @@ const MyFinTable = (props: Props) => {
           expand: true,
         }}*/
         getRowHeight={() => 'auto'}
+        sx={{
+          '& .MuiDataGrid-cell': {
+            display: 'flex',
+            alignItems: 'center',
+          },
+        }}
         /*sx={{
 
           background: 'primary.dark',

@@ -16,7 +16,6 @@ import { Budget } from '../../../services/budget/budgetServices.ts';
 import {
   AddCircleOutline,
   Delete,
-  Edit,
   Lock,
   LockOpen,
   Search,
@@ -85,6 +84,14 @@ const BudgetList = () => {
     }
   };
 
+  function goToBudgetDetails(_: Budget) {
+    // TODO
+  }
+
+  function handleRemoveBudgetClick(_: Budget) {
+    // TODO
+  }
+
   const columns: GridColDef[] = [
     {
       field: 'status',
@@ -125,11 +132,7 @@ const BudgetList = () => {
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (params) => (
-        <>
-          <p>{params.value}</p>
-        </>
-      ),
+      renderCell: (params) => <p>{params.value}</p>,
     },
     {
       field: 'expenses',
@@ -207,7 +210,7 @@ const BudgetList = () => {
             fontSize="medium"
             color="action"
             onClick={() => {
-              /*handleEditTransactionClick(params.value);*/
+              goToBudgetDetails(params.value);
             }}
             sx={{ cursor: 'pointer' }}
           />
@@ -216,7 +219,7 @@ const BudgetList = () => {
             color="action"
             sx={{ cursor: 'pointer' }}
             onClick={() => {
-              /*handleRemoveTransactionClick(params.value);*/
+              handleRemoveBudgetClick(params.value);
             }}
           />
         </Stack>
