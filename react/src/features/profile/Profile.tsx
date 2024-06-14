@@ -29,8 +29,8 @@ const Profile = () => {
     <Paper elevation={2} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <PageHeader
-          title="PROFILE"
-          subtitle="Read and update your personal info"
+          title={t('profile.profileManagement')}
+          subtitle={t('profile.strapLine')}
         />
       </Box>
       <Stack spacing={2} alignItems="flex-start">

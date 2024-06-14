@@ -136,6 +136,7 @@
   },
   "profile": {
     "profileManagement": "Gestão de Perfil",
+    "strapLine": "Veja e atualize os seus dados e preferências pessoais",
     "changeLanguage": "Alterar Linguagem",
     "changeTheme": "Alterar Tema",
     "changePassword": "Alterar Password",
