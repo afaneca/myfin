@@ -1,4 +1,4 @@
-import { useTheme } from '@mui/material';
+import { Link, useTheme } from '@mui/material';
 import Box from '@mui/material/Box/Box';
 import FormControl from '@mui/material/FormControl/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
@@ -11,6 +11,7 @@ import PageHeader from '../../components/PageHeader.tsx';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useEffect, useState } from 'react';
+import Typography from '@mui/material/Typography/Typography';
 
 const Profile = () => {
   const theme = useTheme();
@@ -26,34 +27,52 @@ const Profile = () => {
   }
 
   return (
-    <Paper elevation={2} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <PageHeader
-          title={t('profile.profileManagement')}
-          subtitle={t('profile.strapLine')}
-        />
-      </Box>
-      <Stack spacing={2} alignItems="flex-start">
-        <FormControl>
-          <FormLabel id="demo-radio-buttons-group-label">
-            {t('profile.changeLanguage')}
-          </FormLabel>
-          <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            value={language}
-            name="radio-buttons-group"
-            onChange={handleLanguageChange}
+    <>
+      <Paper elevation={2} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <PageHeader
+            title={t('profile.profileManagement')}
+            subtitle={t('profile.strapLine')}
+          />
+        </Box>
+        <Stack spacing={2} alignItems="flex-start">
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">
+              {t('profile.changeLanguage')}
+            </FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              value={language}
+              name="radio-buttons-group"
+              onChange={handleLanguageChange}
+            >
+              <FormControlLabel
+                value="pt"
+                control={<Radio />}
+                label="Português (pt-PT)"
+              />
+              <FormControlLabel
+                value="en"
+                control={<Radio />}
+                label="English"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Stack>
+      </Paper>
+      <Box display="flex" justifyContent="center">
+        <Typography variant="caption">
+          {t('profile.version')}:{' '}
+          <Link
+            href="https://github.com/afaneca/myfin/releases"
+            target="_blank"
+            rel="noopener"
           >
-            <FormControlLabel
-              value="pt"
-              control={<Radio />}
-              label="Português (pt-PT)"
-            />
-            <FormControlLabel value="en" control={<Radio />} label="English" />
-          </RadioGroup>
-        </FormControl>
-      </Stack>
-    </Paper>
+            {import.meta.env.PACKAGE_VERSION}
+          </Link>
+        </Typography>
+      </Box>
+    </>
   );
 };
 

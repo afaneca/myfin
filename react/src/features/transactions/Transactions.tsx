@@ -270,23 +270,21 @@ const Transactions = () => {
       sortable: false,
       renderCell: (params) => (
         <Stack direction="row" gap={0}>
-          <IconButton aria-label={t('common.edit')}>
-            <Edit
-              fontSize="medium"
-              color="action"
-              onClick={() => {
-                handleEditTransactionClick(params.value);
-              }}
-            />
+          <IconButton
+            aria-label={t('common.edit')}
+            onClick={() => {
+              handleEditTransactionClick(params.value);
+            }}
+          >
+            <Edit fontSize="medium" color="action" />
           </IconButton>
-          <IconButton aria-label={t('common.remove')}>
-            <Delete
-              fontSize="medium"
-              color="action"
-              onClick={() => {
-                handleRemoveTransactionClick(params.value);
-              }}
-            />
+          <IconButton
+            aria-label={t('common.delete')}
+            onClick={() => {
+              handleRemoveTransactionClick(params.value);
+            }}
+          >
+            <Delete fontSize="medium" color="action" />
           </IconButton>
         </Stack>
       ),

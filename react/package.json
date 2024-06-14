@@ -1,7 +1,7 @@
 {
-  "name": "react-mvp",
+  "name": "myfin-web",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -34,6 +34,7 @@
     "react-i18next": "^14.1.0",
     "react-pro-sidebar": "^1.1.0",
     "react-router-dom": "^6.22.0",
+    "vite-plugin-package-version": "^1.1.0",
     "yup": "^1.3.3",
     "yup-locales": "^1.2.21"
   },

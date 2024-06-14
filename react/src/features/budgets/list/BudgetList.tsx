@@ -21,7 +21,11 @@ import {
   Search,
   Visibility,
 } from '@mui/icons-material';
-import { getMonthsFullName } from '../../../utils/dateUtils.ts';
+import {
+  getCurrentMonth,
+  getCurrentYear,
+  getMonthsFullName,
+} from '../../../utils/dateUtils.ts';
 import {
   formatNumberAsCurrency,
   formatNumberAsPercentage,
@@ -207,24 +211,24 @@ const BudgetList = () => {
       filterable: false,
       renderCell: (params) => (
         <Stack direction="row" gap={0}>
-          <IconButton aria-label={t('common.seeMore')}>
-            <Visibility
-              fontSize="medium"
-              color="action"
-              onClick={() => {
-                goToBudgetDetails(params.value);
-              }}
-              /*sx={{ cursor: 'pointer' }}*/
-            />
+          <IconButton
+            aria-label={t('common.seeMore')}
+            onClick={() => {
+              goToBudgetDetails(params.value);
+            }}
+          >
+            <Visibility fontSize="medium" color="action" />
           </IconButton>
-          <IconButton aria-label={t('common.remove')}>
+          <IconButton
+            aria-label={t('common.delete')}
+            onClick={() => {
+              handleRemoveBudgetClick(params.value);
+            }}
+          >
             <Delete
               fontSize="medium"
               color="action"
               /*sx={{ cursor: 'pointer' }}*/
-              onClick={() => {
-                handleRemoveBudgetClick(params.value);
-              }}
             />
           </IconButton>
         </Stack>
@@ -234,6 +238,8 @@ const BudgetList = () => {
 
   const rows = getBudgetsRequest.data.results.map((result: Budget) => ({
     id: result.budget_id,
+    highlight:
+      result.month == getCurrentMonth() && result.year == getCurrentYear(),
     status: result.is_open,
     month: {
       month: result.month,
