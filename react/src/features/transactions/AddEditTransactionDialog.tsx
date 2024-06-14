@@ -338,7 +338,7 @@ const AddEditTransactionDialog = (props: Props) => {
   useEffect(() => {
     let splitAmount = splitTransactionFormState?.amount ?? 0;
     if (isSplitTransactionFormOpen) splitAmount *= -1;
-    setAmountValue((prevState) => parseFloat(prevState ?? 0) + splitAmount);
+    setAmountValue((prevState) => Number(prevState ?? 0 + '') + splitAmount);
   }, [isSplitTransactionFormOpen]);
 
   const onTransactionTypeSelected = (
@@ -990,7 +990,7 @@ const SplitTransactionForm = ({
             margin="dense"
             id="split_description"
             name="split_description"
-            value={state?.description}
+            value={state?.description ?? ''}
             onChange={(e) => handleDescriptionChange(e.target.value)}
             label={t('common.description')}
             type="text"
@@ -1013,7 +1013,7 @@ const SplitTransactionForm = ({
             id="split_account_from"
             disabled={!isAccountFromRequired}
             options={state?.accountOptions ?? []}
-            value={state?.accountFrom}
+            value={state?.accountFrom ?? null}
             onChange={(_event, value) => {
               handleAccountFromChange(value as IdLabelPair);
             }}
@@ -1041,7 +1041,7 @@ const SplitTransactionForm = ({
             id="split_account_to"
             disabled={!isAccountToRequired}
             options={state?.accountOptions ?? []}
-            value={state?.accountTo}
+            value={state?.accountTo ?? null}
             onChange={(_event, value) => {
               handleAccountToChange(value as IdLabelPair);
             }}
@@ -1068,7 +1068,7 @@ const SplitTransactionForm = ({
         <Grid xs={12} md={6}>
           <Autocomplete
             id="split_category"
-            value={state?.category}
+            value={state?.category ?? null}
             onChange={(_event, value) => {
               handleCategoryChange(value as IdLabelPair);
             }}
@@ -1094,7 +1094,7 @@ const SplitTransactionForm = ({
         <Grid xs={12} md={6}>
           <Autocomplete
             id="split_entity"
-            value={state?.entity}
+            value={state?.entity ?? null}
             onChange={(_event, value) => {
               handleEntityChange(value as IdLabelPair);
             }}
