@@ -15,6 +15,7 @@ import {
   Autocomplete,
   AutocompleteRenderInputParams,
   Checkbox,
+  Collapse,
   Grow,
   ToggleButton,
   ToggleButtonGroup,
@@ -26,11 +27,15 @@ import {
   AccountCircle,
   AutoAwesome,
   Business,
+  CallMerge,
+  CallSplit,
   Description,
   Euro,
   FolderShared,
+  Send,
   Star,
   StarBorder,
+  Undo,
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
@@ -115,6 +120,11 @@ const AddEditTransactionDialog = (props: Props) => {
   const [isAccountToRequired, setAccountToRequired] = useState<boolean>(false);
   const [isEssentialVisible, setEssentialVisible] = useState(false);
   const [isAutoCatVisible, setAutoCatVisible] = useState(false);
+  const [isSplitTransactionFormOpen, setSplitTransactionFormOpen] =
+    useState(false);
+  const [splitTransactionFormState, setSplitTransactionFormState] = useState<
+    SplitTransactionFormState | undefined
+  >();
 
   useEffect(() => {
     setTransactionType(
@@ -234,34 +244,48 @@ const AddEditTransactionDialog = (props: Props) => {
 
   useEffect(() => {
     if (userAccounts) {
-      setAccountOptionsValue(
-        userAccounts.map((acc) => ({
-          id: acc.account_id,
-          label: acc.name,
-        })),
-      );
+      const accounts = userAccounts.map((acc) => ({
+        id: acc.account_id,
+        label: acc.name,
+      }));
+      setAccountOptionsValue(accounts);
+      setSplitTransactionFormState((prevState) => ({
+        ...prevState,
+        accountOptions: accounts,
+      }));
     }
   }, [userAccounts]);
 
   useEffect(() => {
     if (!addTransactionStep0Request.isSuccess) return;
-    setCategoryOptionsValue(
-      addTransactionStep0Request.data.categories.map((category) => ({
+    const categories = addTransactionStep0Request.data.categories.map(
+      (category) => ({
         id: category.category_id || 0n,
         label: category.name || '',
-      })),
+      }),
     );
+    setCategoryOptionsValue(categories);
+    setSplitTransactionFormState((prevState) => ({
+      ...prevState,
+      categoryOptions: categories,
+    }));
 
-    setEntityOptionsValue(
-      addTransactionStep0Request.data.entities.map((entity) => ({
-        id: entity.entity_id || 0n,
-        label: entity.name || '',
-      })),
-    );
+    const entities = addTransactionStep0Request.data.entities.map((entity) => ({
+      id: entity.entity_id || 0n,
+      label: entity.name || '',
+    }));
+    setEntityOptionsValue(entities);
+    setSplitTransactionFormState((prevState) => ({
+      ...prevState,
+      entityOptions: entities,
+    }));
 
-    setTagOptionsValue(
-      addTransactionStep0Request.data.tags.map((tag) => tag.name),
-    );
+    const tags = addTransactionStep0Request.data.tags.map((tag) => tag.name);
+    setTagOptionsValue(tags);
+    setSplitTransactionFormState((prevState) => ({
+      ...prevState,
+      tagOptions: tags,
+    }));
   }, [addTransactionStep0Request.isSuccess]);
 
   useEffect(() => {
@@ -310,7 +334,14 @@ const AddEditTransactionDialog = (props: Props) => {
     setAutoCatVisible(!!descriptionValue);
   }, [descriptionValue]);
 
-  const onTransferTypeSelected = (
+  // When the split sub-form is toggled, add/subtract the split value from the original value
+  useEffect(() => {
+    let splitAmount = splitTransactionFormState?.amount ?? 0;
+    if (isSplitTransactionFormOpen) splitAmount *= -1;
+    setAmountValue((prevState) => parseFloat(prevState ?? 0) + splitAmount);
+  }, [isSplitTransactionFormOpen]);
+
+  const onTransactionTypeSelected = (
     _: React.MouseEvent<HTMLElement>,
     newType: string | null,
   ) => {
@@ -339,6 +370,10 @@ const AddEditTransactionDialog = (props: Props) => {
     });
   };
 
+  const handleSplitTransactionClick = () => {
+    setSplitTransactionFormOpen(!isSplitTransactionFormOpen);
+  };
+
   return (
     <Dialog
       fullWidth
@@ -356,6 +391,42 @@ const AddEditTransactionDialog = (props: Props) => {
           const accountTo = accountToValue;
           const category = categoryValue;
           const entity = entityValue;
+
+          const splitAmount = isSplitTransactionFormOpen
+            ? splitTransactionFormState?.amount
+            : undefined;
+
+          const splitCategory = isSplitTransactionFormOpen
+            ? splitTransactionFormState?.category
+            : undefined;
+
+          const splitEntity = isSplitTransactionFormOpen
+            ? splitTransactionFormState?.entity
+            : undefined;
+
+          const splitType = isSplitTransactionFormOpen
+            ? splitTransactionFormState?.type
+            : undefined;
+
+          const splitAccountFrom = isSplitTransactionFormOpen
+            ? splitTransactionFormState?.accountFrom?.id
+            : undefined;
+
+          const splitAccountTo = isSplitTransactionFormOpen
+            ? splitTransactionFormState?.accountTo?.id
+            : undefined;
+
+          const splitDescription = isSplitTransactionFormOpen
+            ? splitTransactionFormState?.description
+            : undefined;
+
+          const splitEssential = isSplitTransactionFormOpen
+            ? splitTransactionFormState?.isEssential
+            : undefined;
+
+          const splitTags = isSplitTransactionFormOpen
+            ? JSON.stringify(splitTransactionFormState?.tags)
+            : undefined;
 
           // Process the form data as needed
           if (isEditForm) {
@@ -377,6 +448,16 @@ const AddEditTransactionDialog = (props: Props) => {
                 formJson.date,
               ),
               new_is_essential: isEssential,
+              is_split: isSplitTransactionFormOpen,
+              split_amount: splitAmount,
+              split_category: splitCategory?.id,
+              split_entity: splitEntity?.id,
+              split_type: splitType ?? TransactionType.Expense,
+              split_account_from: splitAccountFrom,
+              split_account_to: splitAccountTo,
+              split_description: splitDescription,
+              split_is_essential: splitEssential,
+              split_tags: splitTags,
             });
           } else {
             addTransactionStep1Request.mutate({
@@ -427,7 +508,7 @@ const AddEditTransactionDialog = (props: Props) => {
               <ToggleButtonGroup
                 value={transactionType}
                 exclusive
-                onChange={onTransferTypeSelected}
+                onChange={onTransactionTypeSelected}
                 aria-label={t('transactions.typeOfTrx')}
               >
                 <ToggleButton
@@ -524,9 +605,6 @@ const AddEditTransactionDialog = (props: Props) => {
                             aria-label={t('transactions.autoCategorize')}
                             onClick={handleAutoCategorizeClick}
                             edge="end"
-                            /*sx={{
-                              display: isAutoCatVisible ? 'block' : 'none',
-                            }}*/
                           >
                             <AutoAwesome color="primary" />
                           </IconButton>
@@ -658,20 +736,6 @@ const AddEditTransactionDialog = (props: Props) => {
               freeSolo
               value={selectedTags}
               onChange={handleTagsChange}
-              /*renderTags={(
-                value: IdLabelPair[],
-                getTagProps: (arg0: { index: any }) => JSX.IntrinsicAttributes,
-              ) =>
-                value.map((option: any, index: any) => {
-                  return (
-                    <Chip
-                      key={option.id}
-                      label={option.label}
-                      {...getTagProps({ index })}
-                    />
-                  );
-                })
-              }*/
               renderInput={(params: AutocompleteRenderInputParams) => (
                 <TextField
                   {...params}
@@ -681,15 +745,397 @@ const AddEditTransactionDialog = (props: Props) => {
               )}
             />
           </Grid>
+          <Grid xs={12} marginTop={4}>
+            <Collapse in={isSplitTransactionFormOpen}>
+              <SplitTransactionForm
+                state={splitTransactionFormState ?? {}}
+                handleEssentialInputChange={(checked) =>
+                  setSplitTransactionFormState((prevState) => ({
+                    ...prevState,
+                    isEssential: checked,
+                  }))
+                }
+                handleTransactionTypeChange={(type) =>
+                  setSplitTransactionFormState((prevState) => ({
+                    ...prevState,
+                    type,
+                  }))
+                }
+                handleAccountFromChange={(accountFrom) =>
+                  setSplitTransactionFormState((prevState) => ({
+                    ...prevState,
+                    accountFrom,
+                  }))
+                }
+                handleAccountToChange={(accountTo) =>
+                  setSplitTransactionFormState((prevState) => ({
+                    ...prevState,
+                    accountTo,
+                  }))
+                }
+                handleAmountChange={(amount) =>
+                  setSplitTransactionFormState((prevState) => ({
+                    ...prevState,
+                    amount,
+                  }))
+                }
+                handleCategoryChange={(category) =>
+                  setSplitTransactionFormState((prevState) => ({
+                    ...prevState,
+                    category,
+                  }))
+                }
+                handleDescriptionChange={(description) =>
+                  setSplitTransactionFormState((prevState) => ({
+                    ...prevState,
+                    description,
+                  }))
+                }
+                handleEntityChange={(entity) =>
+                  setSplitTransactionFormState((prevState) => ({
+                    ...prevState,
+                    entity,
+                  }))
+                }
+                handleTagsChange={(tags) =>
+                  setSplitTransactionFormState((prevState) => ({
+                    ...prevState,
+                    tags,
+                  }))
+                }
+                isOpen={isSplitTransactionFormOpen}
+              />
+            </Collapse>
+          </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.onNegativeClick}>{t('common.cancel')}</Button>
-        <Button type="submit">
+        {isEditForm && (
+          <Button
+            variant="text"
+            onClick={handleSplitTransactionClick}
+            startIcon={
+              isSplitTransactionFormOpen ? <CallMerge /> : <CallSplit />
+            }
+          >
+            {isSplitTransactionFormOpen
+              ? t('transactions.mergeTransactions')
+              : t('transactions.splitTransaction')}
+          </Button>
+        )}
+
+        <Button
+          variant="outlined"
+          startIcon={<Undo />}
+          onClick={props.onNegativeClick}
+        >
+          {t('common.cancel')}
+        </Button>
+        <Button variant="contained" startIcon={<Send />} type="submit">
           {t(isEditForm ? 'common.edit' : 'common.add')}
         </Button>
       </DialogActions>
     </Dialog>
+  );
+};
+
+type SplitTransactionFormState = {
+  amount?: number;
+  description?: string;
+  type?: TransactionType;
+  accountFrom?: IdLabelPair;
+  accountTo?: IdLabelPair;
+  category?: IdLabelPair;
+  entity?: IdLabelPair;
+  isEssential?: boolean;
+  tags?: string[];
+  accountOptions?: IdLabelPair[];
+  categoryOptions?: IdLabelPair[];
+  entityOptions?: IdLabelPair[];
+  tagOptions?: string[];
+};
+
+type SplitTransactionFormProps = {
+  isOpen: boolean;
+  state?: SplitTransactionFormState;
+  handleEssentialInputChange: (checked: boolean) => void;
+  handleTransactionTypeChange: (type: TransactionType) => void;
+  handleDescriptionChange: (input: string) => void;
+  handleAccountFromChange: (input: IdLabelPair | undefined) => void;
+  handleAccountToChange: (input: IdLabelPair | undefined) => void;
+  handleCategoryChange: (input: IdLabelPair | undefined) => void;
+  handleEntityChange: (input: IdLabelPair | undefined) => void;
+  handleAmountChange: (input: number) => void;
+  handleTagsChange: (tags: string[]) => void;
+};
+
+const SplitTransactionForm = ({
+  isOpen,
+  state,
+  handleEssentialInputChange,
+  handleTransactionTypeChange,
+  handleAmountChange,
+  handleDescriptionChange,
+  handleAccountFromChange,
+  handleAccountToChange,
+  handleCategoryChange,
+  handleEntityChange,
+  handleTagsChange,
+}: SplitTransactionFormProps) => {
+  const { t } = useTranslation();
+  const [isEssentialVisible, setEssentialVisible] = useState(true);
+  const [isAccountFromRequired, setAccountFromRequired] = useState(true);
+  const [isAccountToRequired, setAccountToRequired] = useState(false);
+
+  useEffect(() => {
+    if (!state?.type) return;
+    const shouldAccountFromBeEnabled = state.type !== TransactionType.Income;
+    const shouldAccountToBeEnabled = state.type !== TransactionType.Expense;
+
+    setAccountFromRequired(shouldAccountFromBeEnabled);
+    setAccountToRequired(shouldAccountToBeEnabled);
+
+    if (state.type !== TransactionType.Expense) {
+      setEssentialVisible(false);
+    } else {
+      setEssentialVisible(true);
+    }
+  }, [state?.type]);
+
+  const onTransactionTypeSelected = (
+    _: React.MouseEvent<HTMLElement>,
+    newType: string | null,
+  ) => {
+    if (
+      newType !== null &&
+      Object.values(TransactionType).includes(newType as TransactionType)
+    ) {
+      handleTransactionTypeChange(newType as TransactionType);
+    }
+  };
+
+  return (
+    <Grid container spacing={2} xs={12} columns={{ xs: 12 }}>
+      <Grid md={4} xs={12}>
+        {/* Essential */}
+        <Grow in={isEssentialVisible}>
+          <FormControlLabel
+            control={<Checkbox icon={<StarBorder />} checkedIcon={<Star />} />}
+            checked={state?.isEssential == true}
+            label={t('transactions.essential')}
+            name="split_essential"
+            onChange={(_e, checked) => handleEssentialInputChange(checked)}
+          />
+        </Grow>
+      </Grid>
+      <Grid xs={12} md={8} display="flex" justifyContent="flex-end">
+        {/* Transaction type */}
+        <ToggleButtonGroup
+          value={state?.type ?? TransactionType.Expense}
+          exclusive
+          onChange={onTransactionTypeSelected}
+          aria-label={t('transactions.typeOfTrx')}
+        >
+          <ToggleButton
+            value={TransactionType.Expense}
+            aria-label={t('transactions.expense')}
+          >
+            {t('transactions.expense')}
+          </ToggleButton>
+          <ToggleButton
+            value={TransactionType.Transfer}
+            aria-label={t('transactions.transfer')}
+          >
+            {t('transactions.transfer')}
+          </ToggleButton>
+          <ToggleButton
+            value={TransactionType.Income}
+            aria-label={t('transactions.income')}
+          >
+            {t('transactions.income')}
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Grid>
+      {/* Value, date & description */}
+      <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
+        <Grid xs={12} md={3}>
+          <TextField
+            autoFocus
+            required={isOpen}
+            margin="dense"
+            id="split_amount"
+            name="split_amount"
+            value={state?.amount || ''}
+            onChange={(e) => handleAmountChange(Number(e.target.value))}
+            label={t('common.value')}
+            type="number"
+            fullWidth
+            variant="outlined"
+            inputProps={{
+              step: 0.01,
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Euro />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+
+        <Grid xs={12} md={9}>
+          <TextField
+            required={isOpen}
+            margin="dense"
+            id="split_description"
+            name="split_description"
+            value={state?.description}
+            onChange={(e) => handleDescriptionChange(e.target.value)}
+            label={t('common.description')}
+            type="text"
+            fullWidth
+            variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Description />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+      </Grid>
+      <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
+        {/* Origin & destination accounts */}
+        <Grid xs={12} md={6}>
+          <Autocomplete
+            id="split_account_from"
+            disabled={!isAccountFromRequired}
+            options={state?.accountOptions ?? []}
+            value={state?.accountFrom}
+            onChange={(_event, value) => {
+              handleAccountFromChange(value as IdLabelPair);
+            }}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                fullWidth
+                required={isAccountFromRequired}
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AccountCircle />
+                    </InputAdornment>
+                  ),
+                }}
+                label={t('transactions.originAccount')}
+              />
+            )}
+          />
+        </Grid>
+        <Grid xs={12} md={6}>
+          <Autocomplete
+            id="split_account_to"
+            disabled={!isAccountToRequired}
+            options={state?.accountOptions ?? []}
+            value={state?.accountTo}
+            onChange={(_event, value) => {
+              handleAccountToChange(value as IdLabelPair);
+            }}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                fullWidth
+                required={isAccountToRequired}
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AccountCircle />
+                    </InputAdornment>
+                  ),
+                }}
+                label={t('transactions.destinationAccount')}
+              />
+            )}
+          />
+        </Grid>
+        {/* Category & Entity */}
+        <Grid xs={12} md={6}>
+          <Autocomplete
+            id="split_category"
+            value={state?.category}
+            onChange={(_event, value) => {
+              handleCategoryChange(value as IdLabelPair);
+            }}
+            options={state?.categoryOptions ?? []}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                fullWidth
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FolderShared />
+                    </InputAdornment>
+                  ),
+                }}
+                label={t('transactions.category')}
+              />
+            )}
+          />
+        </Grid>
+        <Grid xs={12} md={6}>
+          <Autocomplete
+            id="split_entity"
+            value={state?.entity}
+            onChange={(_event, value) => {
+              handleEntityChange(value as IdLabelPair);
+            }}
+            options={state?.entityOptions ?? []}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                fullWidth
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Business />
+                    </InputAdornment>
+                  ),
+                }}
+                label={t('transactions.entity')}
+              />
+            )}
+          />
+        </Grid>
+      </Grid>
+      <Grid xs={12}>
+        <Autocomplete
+          multiple
+          id="split_tags"
+          options={state?.tagOptions ?? []}
+          freeSolo
+          value={state?.tags ?? []}
+          onChange={(_, value) => handleTagsChange(value)}
+          renderInput={(params: AutocompleteRenderInputParams) => (
+            <TextField
+              {...params}
+              label={t('tags.tags')}
+              placeholder={t('transactions.addAnotherTagPlaceholder')}
+            />
+          )}
+        />
+      </Grid>
+    </Grid>
   );
 };
 
