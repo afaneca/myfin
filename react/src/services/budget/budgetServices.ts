@@ -75,8 +75,16 @@ const getBudget = (budgetId: bigint) => {
   return axios.get<BudgetDetails>(`/budgets/${budgetId}`);
 };
 
+const updateBudgetStatus = (budgetId: bigint, isOpen: boolean) => {
+  return axios.put<string>(`/budgets/status`, {
+    budget_id: budgetId,
+    is_open: !isOpen,
+  });
+};
+
 export default {
   getBudgets,
   removeBudget,
   getBudget,
+  updateBudgetStatus,
 };

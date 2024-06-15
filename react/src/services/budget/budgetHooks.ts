@@ -38,6 +38,29 @@ export function useRemoveBudget() {
   });
 }
 
+export interface UpdateBudgetStatusParams {
+  budgetId: bigint;
+  isOpen: boolean;
+}
+
+export function useUpdateBudgetStatus() {
+  async function updateBudgetStatus({
+    budgetId,
+    isOpen,
+  }: UpdateBudgetStatusParams) {
+    const request = await BudgetServices.updateBudgetStatus(budgetId, isOpen);
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET],
+    });
+    return request;
+  }
+
+  return useMutation({
+    mutationFn: updateBudgetStatus,
+  });
+}
+
 export function useGetBudget(budgetId: bigint) {
   async function getBudget() {
     const data = await BudgetServices.getBudget(budgetId);
@@ -48,6 +71,6 @@ export function useGetBudget(budgetId: bigint) {
     queryKey: [QUERY_KEY_GET_BUDGET, budgetId],
     queryFn: getBudget,
     placeholderData: keepPreviousData,
-    enabled: false,
+    enabled: true,
   });
 }

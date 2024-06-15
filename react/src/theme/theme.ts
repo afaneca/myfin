@@ -17,6 +17,7 @@ const muiLightPalette = {
     dark: colors.blue[400],
     main: colors.blue[300],
     light: colors.blue[200],
+    contrastText: 'white',
   },
   secondary: {
     dark: colors.green[400],
@@ -44,6 +45,7 @@ const muiDarkPalette = {
     dark: colors.blue[300],
     main: colors.blue[200],
     light: colors.blue[100],
+    contrastText: '#1f2d3d',
   },
   secondary: {
     dark: colors.green[500],
@@ -80,6 +82,13 @@ export const generateGlobalTheme = (mode: PaletteMode): MyFinTheme => {
     // Use the combined shadows array
     components: {
       // component style overrides in here
+      /*MuiButton: {
+        styleOverrides: {
+          text: {
+            color: 'white',
+          },
+        },
+      },*/
     },
     // theme for nivo charts
     nivo: generateNivoThemeTheme(mode, palette),

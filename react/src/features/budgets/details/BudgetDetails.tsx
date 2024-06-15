@@ -26,16 +26,22 @@ import Button from '@mui/material/Button/Button';
 import {
   AddReaction,
   AddReactionOutlined,
+  CloudUpload,
   Description,
   Euro,
   FileCopy,
+  Lock,
+  LockOpen,
 } from '@mui/icons-material';
 import TextField from '@mui/material/TextField/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import IconButton from '@mui/material/IconButton';
 import { useParams } from 'react-router-dom';
-import { useGetBudget } from '../../../services/budget/budgetHooks.ts';
+import {
+  useGetBudget,
+  useUpdateBudgetStatus,
+} from '../../../services/budget/budgetHooks.ts';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
@@ -61,6 +67,7 @@ const BudgetDetails = () => {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const { id } = useParams();
   const getBudgetRequest = useGetBudget(BigInt(id ?? -1));
+  const updateBudgetStatusRequest = useUpdateBudgetStatus();
   const [monthYear, setMonthYear] = useState({
     month: dayjs().month(),
     year: dayjs().year(),
@@ -68,6 +75,7 @@ const BudgetDetails = () => {
   const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState('');
   const [isOpen, setOpen] = useState(false);
+  const [isNew, setNew] = useState(true);
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
 
   const orderCategoriesByDebitAmount = (
@@ -119,10 +127,62 @@ const BudgetDetails = () => {
   const debitCategories = useMemo(() => {
     return orderCategoriesByDebitAmount(categories, isOpen);
   }, [categories, isOpen]);
-
   const creditCategories = useMemo(() => {
     return orderCategoriesByCreditAmount(categories, isOpen);
   }, [categories, isOpen]);
+
+  const calculateBudgetBalances = (
+    categories?: BudgetCategory[],
+  ): {
+    plannedBalance: number;
+    currentBalance: number;
+    plannedIncome: number;
+    plannedExpenses: number;
+    currentIncome: number;
+    currentExpenses: number;
+  } => {
+    if (!categories)
+      return {
+        plannedBalance: 0,
+        currentBalance: 0,
+        plannedIncome: 0,
+        plannedExpenses: 0,
+        currentIncome: 0,
+        currentExpenses: 0,
+      };
+
+    return categories.reduce(
+      (acc, cur) => {
+        return {
+          plannedBalance:
+            acc.plannedBalance +
+            cur.planned_amount_credit -
+            cur.planned_amount_debit,
+          currentBalance:
+            acc.currentBalance +
+            cur.current_amount_credit -
+            cur.current_amount_debit,
+          plannedIncome: acc.plannedIncome + cur.planned_amount_credit,
+          plannedExpenses: acc.plannedExpenses + cur.planned_amount_debit,
+          currentIncome: acc.currentIncome + cur.current_amount_credit,
+          currentExpenses: acc.currentExpenses + cur.current_amount_debit,
+        };
+      },
+      {
+        plannedBalance: 0,
+        currentBalance: 0,
+        plannedIncome: 0,
+        plannedExpenses: 0,
+        currentIncome: 0,
+        currentExpenses: 0,
+      },
+    );
+  };
+
+  const calculatedBalances = useMemo(
+    () => calculateBudgetBalances(categories),
+    [categories],
+  );
 
   const handleEmojiAdded = (emojiText: string) => {
     setDescriptionValue((prevValue) => `${prevValue} ${emojiText} `);
@@ -132,28 +192,29 @@ const BudgetDetails = () => {
 
   // Fetch
   useEffect(() => {
+    setNew(!id);
     if (!id) return;
     getBudgetRequest.refetch();
   }, [id]);
 
   // Loading
   useEffect(() => {
-    if (getBudgetRequest.isLoading) {
+    if (getBudgetRequest.isFetching || updateBudgetStatusRequest.isPending) {
       loader.showLoading();
     } else {
       loader.hideLoading();
     }
-  }, [getBudgetRequest.isLoading]);
+  }, [getBudgetRequest.isFetching, updateBudgetStatusRequest.isPending]);
 
   // Error
   useEffect(() => {
-    if (getBudgetRequest.isError) {
+    if (getBudgetRequest.isError || updateBudgetStatusRequest.isError) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
     }
-  }, [getBudgetRequest.isError]);
+  }, [getBudgetRequest.isError, updateBudgetStatusRequest.isError]);
 
   // Data successfully loaded
   useEffect(() => {
@@ -291,6 +352,23 @@ const BudgetDetails = () => {
     );
   };
 
+  const renderTopSummaryLabelValue = (label: string, value: string) => {
+    return (
+      <>
+        <Typography color="white" variant="h6">
+          {label}
+        </Typography>
+        <Chip
+          label={value}
+          variant="filled"
+          size="medium"
+          sx={{ color: 'white' }}
+        />
+        {/*<Typography variant="h5">{value}</Typography>*/}
+      </>
+    );
+  };
+
   const renderCategoryTooltip = (
     category: BudgetCategory,
     isDebit: boolean,
@@ -384,7 +462,7 @@ const BudgetDetails = () => {
 
   function renderCategoryRow(category: BudgetCategory, isDebit: boolean) {
     return (
-      <Card variant="elevation" sx={{ width: '100%' }}>
+      <Card variant="elevation" sx={{ width: '100%', pt: 1, pb: 1 }}>
         <Grid container xs={12} spacing={2} p={2}>
           <Grid xs={12} md={4}>
             <Tooltip title={renderCategoryTooltip(category, isDebit)}>
@@ -572,6 +650,109 @@ const BudgetDetails = () => {
             </Box>
           )}
         </Grid>
+        <Grid xs={12}>
+          <Card
+            variant="elevation"
+            sx={{
+              width: '100%',
+              p: 5,
+              background: cssGradients[ColorGradient.Blue],
+            }}
+          >
+            <Grid
+              container
+              spacing={2}
+              display="flex"
+              justifyContent="space-between"
+              textAlign="center"
+            >
+              <Grid>
+                <Stack spacing={4}>
+                  <Stack>
+                    {renderTopSummaryLabelValue(
+                      t(
+                        isOpen
+                          ? 'budgetDetails.estimatedExpenses'
+                          : 'budgetDetails.actualExpenses',
+                      ),
+                      formatNumberAsCurrency(
+                        isOpen == true
+                          ? calculatedBalances.plannedExpenses
+                          : calculatedBalances.currentExpenses,
+                      ),
+                    )}
+                  </Stack>
+                  <Stack>
+                    {renderTopSummaryLabelValue(
+                      t('budgetDetails.initialBalance'),
+                      formatNumberAsCurrency(
+                        getBudgetRequest.data.initial_balance,
+                      ),
+                    )}
+                  </Stack>
+                </Stack>
+              </Grid>
+              <Grid>
+                <Stack spacing={4}>
+                  <Stack>
+                    {renderTopSummaryLabelValue(
+                      t(
+                        isOpen
+                          ? 'budgetDetails.estimatedBalance'
+                          : 'budgetDetails.actualBalance',
+                      ),
+                      formatNumberAsCurrency(
+                        isOpen
+                          ? calculatedBalances.plannedBalance
+                          : calculatedBalances.currentBalance,
+                      ),
+                    )}
+                  </Stack>
+                  <Stack>
+                    {renderTopSummaryLabelValue(
+                      t('budgetDetails.status'),
+                      t(
+                        isOpen
+                          ? 'budgetDetails.opened'
+                          : 'budgetDetails.closed',
+                      ),
+                    )}
+                  </Stack>
+                </Stack>
+              </Grid>
+              <Grid>
+                <Stack spacing={4}>
+                  <Stack>
+                    {renderTopSummaryLabelValue(
+                      t(
+                        isOpen
+                          ? 'budgetDetails.estimatedIncome'
+                          : 'budgetDetails.actualIncome',
+                      ),
+                      formatNumberAsCurrency(
+                        isOpen
+                          ? calculatedBalances.plannedIncome
+                          : calculatedBalances.currentIncome,
+                      ),
+                    )}
+                  </Stack>
+                  <Stack>
+                    {renderTopSummaryLabelValue(
+                      t('budgetDetails.finalBalance'),
+                      formatNumberAsCurrency(
+                        getBudgetRequest.data.initial_balance +
+                          (isOpen
+                            ? calculatedBalances.plannedBalance
+                            : calculatedBalances.currentBalance),
+                      ),
+                    )}
+                  </Stack>
+                </Stack>
+              </Grid>
+            </Grid>
+          </Card>
+        </Grid>
+        {/* Debit categories */}
         <Grid xs={12} md={6}>
           <Typography variant="h4">{t('common.debit')}</Typography>
           <List>
@@ -584,6 +765,7 @@ const BudgetDetails = () => {
             ))}
           </List>
         </Grid>
+        {/* Credit categories */}
         <Grid xs={12} md={6}>
           <Typography variant="h4">{t('common.credit')}</Typography>
           <List>
@@ -595,6 +777,62 @@ const BudgetDetails = () => {
               </React.Fragment>
             ))}
           </List>
+        </Grid>
+        <Grid
+          container
+          xs={12}
+          sx={{
+            color: 'gray',
+            position: 'sticky',
+            bottom: 0,
+            pt: 5,
+            pb: 5,
+            background: theme.palette.background.paper,
+            zIndex: 9,
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}
+        >
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<CloudUpload />}
+            >
+              {t(
+                isNew
+                  ? 'budgetDetails.addBudgetCTA'
+                  : 'budgetDetails.updateBudget',
+              )}
+            </Button>
+            {!isNew && (
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={isOpen ? <Lock /> : <LockOpen />}
+                onClick={() =>
+                  updateBudgetStatusRequest.mutate({
+                    budgetId: BigInt(id ?? -1),
+                    isOpen: isOpen,
+                  })
+                }
+              >
+                {t(
+                  isOpen
+                    ? 'budgetDetails.closeBudgetCTA'
+                    : 'budgetDetails.reopenBudget',
+                )}
+              </Button>
+            )}
+          </Stack>
         </Grid>
       </Grid>
     </Paper>
