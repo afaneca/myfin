@@ -28,7 +28,7 @@ const Profile = () => {
 
   return (
     <>
-      <Paper elevation={2} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+      <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <PageHeader
             title={t('profile.profileManagement')}

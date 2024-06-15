@@ -25,6 +25,7 @@
     "@types/yup": "^0.32.0",
     "axios": "^1.6.7",
     "dayjs": "^1.11.10",
+    "emoji-picker-react": "^4.10.0",
     "formik": "^2.4.5",
     "i18next": "^23.10.1",
     "i18next-browser-languagedetector": "^7.2.0",

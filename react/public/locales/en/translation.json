@@ -334,6 +334,8 @@
   },
   "budgetDetails": {
     "newBudget": "New Budget",
+    "budget": "Budget",
+    "strapLine": "Manage your budget here",
     "cloneAnotherBudget": "Clone another budget",
     "observationsPlaceholder": "Observations...",
     "estimatedExpenses": "Estimated Expenses",

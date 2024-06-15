@@ -1,4 +1,4 @@
-import { useTheme } from '@mui/material';
+import { Checkbox, FormGroup, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import React, { memo, useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
@@ -42,21 +42,27 @@ import Typography from '@mui/material/Typography/Typography';
 import Chip from '@mui/material/Chip/Chip';
 import IconButton from '@mui/material/IconButton';
 import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_BUDGET_DETAILS } from '../../../providers/RoutesProvider.tsx';
+import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
 
 const BudgetList = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const loader = useLoading();
   const snackbar = useSnackbar();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 15,
     page: 0,
   });
+  const [showOnlyOpen, setShowOnlyOpen] = useState(false);
   const getBudgetsRequest = useGetBudgets(
     paginationModel.page,
     paginationModel.pageSize,
     searchQuery,
+    showOnlyOpen ? 'O' : undefined,
   );
   const [actionableBudget, setActionableBudget] = useState<Budget | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
@@ -102,8 +108,8 @@ const BudgetList = () => {
     }
   };
 
-  const goToBudgetDetails = (budget: Budget) => {
-    // TODO
+  const goToBudgetDetails = (budgetId: bigint) => {
+    navigate(ROUTE_BUDGET_DETAILS.replace(':id', budgetId + ''));
   };
 
   const handleRemoveBudgetClick = (budget: Budget) => {
@@ -242,7 +248,7 @@ const BudgetList = () => {
           <IconButton
             aria-label={t('common.seeMore')}
             onClick={() => {
-              goToBudgetDetails(params.value);
+              goToBudgetDetails(params.value.budget_id);
             }}
           >
             <Visibility fontSize="medium" color="action" />
@@ -319,8 +325,20 @@ const BudgetList = () => {
             >
               {t('budgets.addBudget')}
             </Button>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    value={showOnlyOpen}
+                    onChange={(_, checked) => setShowOnlyOpen(checked)}
+                  />
+                }
+                label={t('budgets.onlyOpened')}
+              />
+            </FormGroup>
           </Grid>
         </Grid>
+
         <Grid
           sm={12}
           lg={4}
@@ -352,6 +370,7 @@ const BudgetList = () => {
             itemCount={getBudgetsRequest.data.filtered_count}
             paginationModel={paginationModel}
             setPaginationModel={setPaginationModel}
+            onRowClicked={(id) => goToBudgetDetails(id)}
           />
         </Grid>
       </Grid>

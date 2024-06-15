@@ -3,15 +3,21 @@ import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '../../data/react-query.ts';
 
 const QUERY_KEY_GET_BUDGETS = 'QUERY_KEY_GET_BUDGETS';
+const QUERY_KEY_GET_BUDGET = 'QUERY_KEY_GET_BUDGET';
 
-export function useGetBudgets(page: number, pageSize: number, query?: string) {
+export function useGetBudgets(
+  page: number,
+  pageSize: number,
+  query?: string,
+  status?: 'C' | 'O',
+) {
   async function getBudgets() {
-    const data = await BudgetServices.getBudgets(page, pageSize, query);
+    const data = await BudgetServices.getBudgets(page, pageSize, query, status);
     return data.data;
   }
 
   return useQuery({
-    queryKey: [QUERY_KEY_GET_BUDGETS, page, pageSize, query],
+    queryKey: [QUERY_KEY_GET_BUDGETS, page, pageSize, query, status],
     queryFn: getBudgets,
     placeholderData: keepPreviousData,
   });
@@ -29,5 +35,19 @@ export function useRemoveBudget() {
 
   return useMutation({
     mutationFn: removeBudget,
+  });
+}
+
+export function useGetBudget(budgetId: bigint) {
+  async function getBudget() {
+    const data = await BudgetServices.getBudget(budgetId);
+    return data.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_BUDGET, budgetId],
+    queryFn: getBudget,
+    placeholderData: keepPreviousData,
+    enabled: false,
   });
 }

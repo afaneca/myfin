@@ -48,7 +48,7 @@ const getTransactions = (page: number, page_size?: number, query?: string) => {
   });
 };
 
-export interface Category {
+export type Category = {
   users_user_id?: bigint;
   category_id?: bigint;
   name?: string;
@@ -57,13 +57,13 @@ export interface Category {
   description?: string;
   color_gradient?: null | string;
   exclude_from_budgets: boolean;
-}
+};
 
-export interface Entity {
+export type Entity = {
   entity_id: bigint;
   name: string;
   users_user_id: number;
-}
+};
 
 export type TransactionStep0Response = {
   accounts: Account[];
