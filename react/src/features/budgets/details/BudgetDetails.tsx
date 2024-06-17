@@ -578,61 +578,65 @@ const BudgetDetails = () => {
           />
         </Grid>
         <Grid xs={12} md={6} lgOffset={3}>
-          <TextField
-            inputRef={descriptionRef}
-            required
-            fullWidth
-            margin="none"
-            id="description"
-            name="description"
-            label={t('common.description')}
-            placeholder={t('common.description')}
-            value={descriptionValue}
-            onChange={(e) => setDescriptionValue(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Description />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Tooltip title={'Emojis'}>
-                    <IconButton
-                      aria-label={'Emojis'}
-                      onClick={() => setEmojiPickerOpen(!isEmojiPickerOpen)}
-                      edge="end"
-                    >
-                      {matchesSmScreen ? null : isEmojiPickerOpen ? (
-                        <AddReaction color="primary" />
-                      ) : (
-                        <AddReactionOutlined color="primary" />
-                      )}
-                    </IconButton>
-                  </Tooltip>
-                </InputAdornment>
-              ),
-            }}
-          />
-          {isEmojiPickerOpen && (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                position: 'absolute',
-                zIndex: 99999,
+          <Box sx={{ position: 'relative' }}>
+            <TextField
+              inputRef={descriptionRef}
+              required
+              fullWidth
+              margin="none"
+              id="description"
+              name="description"
+              label={t('common.description')}
+              placeholder={t('common.description')}
+              value={descriptionValue}
+              onChange={(e) => setDescriptionValue(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Description />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Tooltip title={'Emojis'}>
+                      <IconButton
+                        aria-label={'Emojis'}
+                        onClick={() => setEmojiPickerOpen(!isEmojiPickerOpen)}
+                        edge="end"
+                      >
+                        {matchesSmScreen ? null : isEmojiPickerOpen ? (
+                          <AddReaction color="primary" />
+                        ) : (
+                          <AddReactionOutlined color="primary" />
+                        )}
+                      </IconButton>
+                    </Tooltip>
+                  </InputAdornment>
+                ),
               }}
-            >
-              <Picker
-                data={data}
-                onEmojiSelect={(emoji: { native: string }) =>
-                  handleEmojiAdded(emoji.native)
-                }
-                theme={theme.palette.mode}
-                locale={i18next.resolvedLanguage == 'pt' ? 'pt' : 'en'}
-              />
-            </Box>
-          )}
+            />
+            {isEmojiPickerOpen && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: 10,
+                  right: 0,
+                  transform: 'translateY(100%)',
+                  zIndex: 2,
+                  maxHeight: '300px',
+                }}
+              >
+                <Picker
+                  data={data}
+                  onEmojiSelect={(emoji: { native: string }) =>
+                    handleEmojiAdded(emoji.native)
+                  }
+                  theme={theme.palette.mode}
+                  locale={i18next.resolvedLanguage == 'pt' ? 'pt' : 'en'}
+                />
+              </Box>
+            )}
+          </Box>
         </Grid>
         <Grid xs={12}>
           <Card
