@@ -17,7 +17,7 @@ const muiLightPalette = {
     dark: colors.blue[400],
     main: colors.blue[300],
     light: colors.blue[200],
-    contrastText: 'white',
+    contrastText: '#ffffff',
   },
   secondary: {
     dark: colors.green[400],

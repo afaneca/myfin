@@ -35,7 +35,6 @@ import {
 } from '@mui/icons-material';
 import TextField from '@mui/material/TextField/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import EmojiPicker, { Theme } from 'emoji-picker-react';
 import IconButton from '@mui/material/IconButton';
 import { useParams } from 'react-router-dom';
 import {
@@ -57,6 +56,9 @@ import { getMonthsFullName } from '../../../utils/dateUtils.ts';
 import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { ColorGradient } from '../../../consts';
 import Chip from '@mui/material/Chip/Chip';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
+import i18next from 'i18next';
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
@@ -617,35 +619,17 @@ const BudgetDetails = () => {
               sx={{
                 display: 'flex',
                 justifyContent: 'flex-end',
-                /*position: 'absolute',
-                right: 0,
-                marginRight: 4,
-                marginTop: -1,*/
+                position: 'absolute',
+                zIndex: 99999,
               }}
             >
-              <EmojiPicker
-                reactions={['•', '⋆', '-', '1f4bc', '1f9f0', '1f381']}
-                reactionsDefaultOpen={true}
-                open={!matchesSmScreen && isEmojiPickerOpen}
-                theme={theme.palette.mode === 'dark' ? Theme.DARK : Theme.LIGHT}
-                onEmojiClick={(emoji) => handleEmojiAdded(emoji.emoji)}
-                customEmojis={[
-                  {
-                    names: ['Dot', 'period'],
-                    imgUrl: '/res/emoji_dot.png',
-                    id: '•',
-                  },
-                  {
-                    names: ['Dash', 'dash'],
-                    imgUrl: '/res/emoji_dash.png',
-                    id: '-',
-                  },
-                  {
-                    names: ['Star', 'star'],
-                    imgUrl: '/res/emoji_star.png',
-                    id: '⋆',
-                  },
-                ]}
+              <Picker
+                data={data}
+                onEmojiSelect={(emoji: { native: string }) =>
+                  handleEmojiAdded(emoji.native)
+                }
+                theme={theme.palette.mode}
+                locale={i18next.resolvedLanguage == 'pt' ? 'pt' : 'en'}
               />
             </Box>
           )}
