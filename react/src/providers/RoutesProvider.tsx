@@ -13,6 +13,7 @@ export const ROUTE_PROFILE = '/profile';
 export const ROUTE_TRX = '/transactions';
 export const ROUTE_BUDGETS = '/budgets';
 export const ROUTE_BUDGET_DETAILS = '/budget/:id';
+export const ROUTE_BUDGET_NEW = '/budget/new';
 
 const RoutesProvider = () => {
   return (
@@ -26,6 +27,7 @@ const RoutesProvider = () => {
           <Route path={`${ROUTE_TRX}`} element={<Transactions />} />
           <Route path={`${ROUTE_BUDGETS}`} element={<BudgetList />} />
           <Route path={`${ROUTE_BUDGET_DETAILS}`} element={<BudgetDetails />} />
+          <Route path={`${ROUTE_BUDGET_NEW}`} element={<BudgetDetails />} />
           <Route path="*" element={<Navigate to="/auth" replace={true} />} />
         </Route>
       </Routes>

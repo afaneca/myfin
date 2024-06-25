@@ -3,7 +3,7 @@ import Box from '@mui/material/Box/Box';
 import PageHeader from '../../../components/PageHeader.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { DatePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import {
   addLeadingZero,
   formatNumberAsCurrency,
@@ -36,9 +36,12 @@ import {
 import TextField from '@mui/material/TextField/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
+  useCreateBudgetStep0,
+  useCreateBudgetStep1,
   useGetBudget,
+  useUpdateBudget,
   useUpdateBudgetStatus,
 } from '../../../services/budget/budgetHooks.ts';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
@@ -59,19 +62,24 @@ import Chip from '@mui/material/Chip/Chip';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import i18next from 'i18next';
+import { ROUTE_BUDGET_DETAILS } from '../../../providers/RoutesProvider.tsx';
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const loader = useLoading();
+  const navigate = useNavigate();
   const snackbar = useSnackbar();
   const matchesSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const { id } = useParams();
   const getBudgetRequest = useGetBudget(BigInt(id ?? -1));
+  const createBudgetStep0Request = useCreateBudgetStep0();
+  const createBudgetStep1Request = useCreateBudgetStep1();
   const updateBudgetStatusRequest = useUpdateBudgetStatus();
+  const updateBudgetRequest = useUpdateBudget();
   const [monthYear, setMonthYear] = useState({
-    month: dayjs().month(),
+    month: dayjs().month() + 1,
     year: dayjs().year(),
   });
   const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
@@ -79,6 +87,7 @@ const BudgetDetails = () => {
   const [isOpen, setOpen] = useState(false);
   const [isNew, setNew] = useState(true);
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
+  const [initialBalance, setInitialBalance] = useState(0);
 
   const orderCategoriesByDebitAmount = (
     categories: BudgetCategory[],
@@ -195,50 +204,156 @@ const BudgetDetails = () => {
   // Fetch
   useEffect(() => {
     setNew(!id);
-    if (!id) return;
-    getBudgetRequest.refetch();
+    if (!id) {
+      createBudgetStep0Request.refetch();
+    } else {
+      getBudgetRequest.refetch();
+    }
   }, [id]);
 
   // Loading
   useEffect(() => {
-    if (getBudgetRequest.isFetching || updateBudgetStatusRequest.isPending) {
+    if (
+      getBudgetRequest.isFetching ||
+      createBudgetStep0Request.isFetching ||
+      updateBudgetStatusRequest.isPending ||
+      updateBudgetRequest.isPending ||
+      createBudgetStep1Request.isPending
+    ) {
       loader.showLoading();
     } else {
       loader.hideLoading();
     }
-  }, [getBudgetRequest.isFetching, updateBudgetStatusRequest.isPending]);
+  }, [
+    getBudgetRequest.isFetching,
+    createBudgetStep0Request.isFetching,
+    updateBudgetStatusRequest.isPending,
+    updateBudgetRequest.isPending,
+    createBudgetStep1Request.isPending,
+  ]);
 
   // Error
   useEffect(() => {
-    if (getBudgetRequest.isError || updateBudgetStatusRequest.isError) {
+    if (
+      getBudgetRequest.isError ||
+      createBudgetStep0Request.isError ||
+      updateBudgetStatusRequest.isError ||
+      updateBudgetRequest.isError ||
+      createBudgetStep1Request.isError
+    ) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
     }
-  }, [getBudgetRequest.isError, updateBudgetStatusRequest.isError]);
+  }, [
+    getBudgetRequest.isError,
+    createBudgetStep0Request.isError,
+    updateBudgetStatusRequest.isError,
+    updateBudgetRequest.isError,
+    createBudgetStep1Request.isError,
+  ]);
 
   // Data successfully loaded
   useEffect(() => {
-    if (!getBudgetRequest.data) return;
-    // datepicker
-    setMonthYear({
-      month: getBudgetRequest.data.month,
-      year: getBudgetRequest.data.year,
-    });
-    // observations
-    setDescriptionValue(getBudgetRequest.data.observations);
+    if (getBudgetRequest.data) {
+      // datepicker
+      setMonthYear({
+        month: getBudgetRequest.data.month,
+        year: getBudgetRequest.data.year,
+      });
+      // observations
+      setDescriptionValue(getBudgetRequest.data.observations);
 
-    // categories
-    setCategories(getBudgetRequest.data.categories);
+      // open
+      setOpen(getBudgetRequest.data.is_open == 1);
 
-    // open
-    setOpen(getBudgetRequest.data.is_open == 1);
-  }, [getBudgetRequest.data]);
+      // initial balance
+      setInitialBalance(getBudgetRequest.data.initial_balance);
 
-  if (getBudgetRequest.isLoading || !getBudgetRequest.data) {
+      // categories
+      setCategories(getBudgetRequest.data.categories);
+    } else if (createBudgetStep0Request.data) {
+      // open
+      setOpen(true);
+
+      // initial balance
+      setInitialBalance(
+        parseFloat(createBudgetStep0Request.data.initial_balance) || 0,
+      );
+
+      // categories
+      setCategories(
+        createBudgetStep0Request.data.categories.map((category) => ({
+          ...category,
+          current_amount_credit: 0,
+          current_amount_debit: 0,
+          planned_amount_credit: 0,
+          planned_amount_debit: 0,
+        })),
+      );
+    }
+  }, [getBudgetRequest.data, createBudgetStep0Request.data]);
+
+  useEffect(() => {
+    if (createBudgetStep1Request.data) {
+      navigate(
+        ROUTE_BUDGET_DETAILS.replace(
+          ':id',
+          createBudgetStep1Request.data.budget_id + '',
+        ),
+      );
+    }
+  }, [createBudgetStep1Request.data]);
+
+  if (
+    (getBudgetRequest.isLoading || !getBudgetRequest.data) &&
+    (createBudgetStep0Request.isFetching || !createBudgetStep0Request.data)
+  ) {
     return null;
   }
+
+  const createBudget = () => {
+    const catValuesArr = categories.map((category) => {
+      const plannedDebit = category.planned_amount_debit;
+      const plannedCredit = category.planned_amount_credit;
+      return {
+        category_id: category.category_id + '',
+        planned_value_debit: plannedDebit + '',
+        planned_value_credit: plannedCredit + '',
+      };
+    });
+    createBudgetStep1Request.mutate({
+      month: monthYear.month,
+      year: monthYear.year,
+      observations: descriptionValue,
+      cat_values_arr: catValuesArr,
+    });
+  };
+
+  const updateBudget = () => {
+    const catValuesArr = categories.map((category) => {
+      const plannedDebit = category.planned_amount_debit;
+      const plannedCredit = category.planned_amount_credit;
+      return {
+        category_id: category.category_id + '',
+        planned_value_debit: plannedDebit + '',
+        planned_value_credit: plannedCredit + '',
+      };
+    });
+    updateBudgetRequest.mutate({
+      budget_id: parseFloat(id || '-1'),
+      month: monthYear.month,
+      year: monthYear.year,
+      observations: descriptionValue,
+      cat_values_arr: catValuesArr,
+    });
+  };
+
+  const handleMonthChange = (newDate: Dayjs | null) => {
+    if (newDate == null) return;
+    setMonthYear({ month: newDate.month() + 1, year: newDate.year() });
+  };
 
   const DebitBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,
@@ -480,6 +595,24 @@ const BudgetDetails = () => {
               disabled={!isOpen}
               id={`estimated_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
               name={`estimated_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value) || 0;
+                return setCategories(
+                  categories.map((c) =>
+                    c.category_id == category.category_id
+                      ? {
+                          ...c,
+                          planned_amount_debit: isDebit
+                            ? value
+                            : c.planned_amount_debit,
+                          planned_amount_credit: isDebit
+                            ? c.planned_amount_credit
+                            : value,
+                        }
+                      : c,
+                  ),
+                );
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -571,7 +704,7 @@ const BudgetDetails = () => {
           <DatePicker
             label={t('stats.month')}
             views={['month', 'year']}
-            /*onChange={(newDate) => handleMonthChange(newDate)}*/
+            onChange={(newDate) => handleMonthChange(newDate)}
             value={dayjs(
               `${monthYear.year}-${addLeadingZero(monthYear.month)}`,
             )}
@@ -673,9 +806,7 @@ const BudgetDetails = () => {
                   <Stack>
                     {renderTopSummaryLabelValue(
                       t('budgetDetails.initialBalance'),
-                      formatNumberAsCurrency(
-                        getBudgetRequest.data.initial_balance,
-                      ),
+                      formatNumberAsCurrency(initialBalance),
                     )}
                   </Stack>
                 </Stack>
@@ -728,7 +859,7 @@ const BudgetDetails = () => {
                     {renderTopSummaryLabelValue(
                       t('budgetDetails.finalBalance'),
                       formatNumberAsCurrency(
-                        getBudgetRequest.data.initial_balance +
+                        initialBalance +
                           (isOpen
                             ? calculatedBalances.plannedBalance
                             : calculatedBalances.currentBalance),
@@ -794,6 +925,7 @@ const BudgetDetails = () => {
               variant="contained"
               size="large"
               startIcon={<CloudUpload />}
+              onClick={() => (isNew ? createBudget() : updateBudget())}
             >
               {t(
                 isNew

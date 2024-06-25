@@ -82,9 +82,64 @@ const updateBudgetStatus = (budgetId: bigint, isOpen: boolean) => {
   });
 };
 
+export type UpdateBudgetCatValues = {
+  category_id: string;
+  planned_value_debit: string;
+  planned_value_credit: string;
+};
+
+export type UpdateBudgetRequest = {
+  budget_id: number;
+  month: number;
+  year: number;
+  observations: string;
+  cat_values_arr: UpdateBudgetCatValues[];
+};
+
+const updateBudget = (request: UpdateBudgetRequest) => {
+  return axios.put<string>(`/budgets/`, {
+    budget_id: request.budget_id,
+    month: request.month,
+    year: request.year,
+    observations: request.observations,
+    cat_values_arr: JSON.stringify(request.cat_values_arr),
+  });
+};
+
+export type CreateBudgetStepResponse = {
+  categories: BudgetCategory[];
+  initial_balance: string;
+};
+
+const createBudgetStep0 = () => {
+  return axios.post<CreateBudgetStepResponse>(`/budgets/step0`);
+};
+
+export type CreateBudgetRequest = {
+  month: number;
+  year: number;
+  observations: string;
+  cat_values_arr: UpdateBudgetCatValues[];
+};
+
+export type CreateBudgetResponse = {
+  budget_id: number;
+};
+const createBudgetStep1 = (request: CreateBudgetRequest) => {
+  return axios.post<CreateBudgetResponse>(`/budgets/step1`, {
+    month: request.month,
+    year: request.year,
+    observations: request.observations,
+    cat_values_arr: JSON.stringify(request.cat_values_arr),
+  });
+};
+
 export default {
   getBudgets,
   removeBudget,
   getBudget,
   updateBudgetStatus,
+  updateBudget,
+  createBudgetStep0,
+  createBudgetStep1,
 };

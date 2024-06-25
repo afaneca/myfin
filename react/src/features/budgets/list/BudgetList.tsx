@@ -43,7 +43,10 @@ import Chip from '@mui/material/Chip/Chip';
 import IconButton from '@mui/material/IconButton';
 import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
 import { useNavigate } from 'react-router-dom';
-import { ROUTE_BUDGET_DETAILS } from '../../../providers/RoutesProvider.tsx';
+import {
+  ROUTE_BUDGET_DETAILS,
+  ROUTE_BUDGET_NEW,
+} from '../../../providers/RoutesProvider.tsx';
 import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
 
 const BudgetList = () => {
@@ -110,6 +113,10 @@ const BudgetList = () => {
 
   const goToBudgetDetails = (budgetId: bigint) => {
     navigate(ROUTE_BUDGET_DETAILS.replace(':id', budgetId + ''));
+  };
+
+  const handleAddBudgetClick = () => {
+    navigate(ROUTE_BUDGET_NEW);
   };
 
   const handleRemoveBudgetClick = (budget: Budget) => {
@@ -255,7 +262,8 @@ const BudgetList = () => {
           </IconButton>
           <IconButton
             aria-label={t('common.delete')}
-            onClick={() => {
+            onClick={(event) => {
+              event.stopPropagation();
               handleRemoveBudgetClick(params.value);
             }}
           >
@@ -320,7 +328,7 @@ const BudgetList = () => {
               color="primary"
               startIcon={<AddCircleOutline />}
               onClick={() => {
-                /*handleAddTransactionClick();*/
+                handleAddBudgetClick();
               }}
             >
               {t('budgets.addBudget')}
