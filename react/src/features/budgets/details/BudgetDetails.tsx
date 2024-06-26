@@ -637,11 +637,14 @@ const BudgetDetails = () => {
               inputProps={{
                 step: 0.01,
               }}
-              value={
+              defaultValue={
                 isDebit
                   ? category.planned_amount_debit
                   : category.planned_amount_credit
               }
+              onFocus={(event) => {
+                event.target.select();
+              }}
             />
           </Grid>
           <Grid xs={12} md={4}>
@@ -665,7 +668,7 @@ const BudgetDetails = () => {
               inputProps={{
                 step: 0.01,
               }}
-              value={
+              defaultValue={
                 isDebit
                   ? category.current_amount_debit
                   : category.current_amount_credit
