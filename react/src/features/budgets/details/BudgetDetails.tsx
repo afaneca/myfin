@@ -182,10 +182,18 @@ const BudgetDetails = () => {
             acc.currentBalance +
             cur.current_amount_credit -
             cur.current_amount_debit,
-          plannedIncome: acc.plannedIncome + cur.planned_amount_credit,
-          plannedExpenses: acc.plannedExpenses + cur.planned_amount_debit,
-          currentIncome: acc.currentIncome + cur.current_amount_credit,
-          currentExpenses: acc.currentExpenses + cur.current_amount_debit,
+          plannedIncome:
+            acc.plannedIncome +
+            (cur.exclude_from_budgets ? 0 : cur.planned_amount_credit),
+          plannedExpenses:
+            acc.plannedExpenses +
+            (cur.exclude_from_budgets ? 0 : cur.planned_amount_debit),
+          currentIncome:
+            acc.currentIncome +
+            (cur.exclude_from_budgets ? 0 : cur.current_amount_credit),
+          currentExpenses:
+            acc.currentExpenses +
+            (cur.exclude_from_budgets ? 0 : cur.current_amount_debit),
         };
       },
       {
