@@ -713,6 +713,7 @@ const BudgetDetails = () => {
         <Button
           size="small"
           variant="contained"
+          disabled={!isOpen}
           startIcon={<FileCopy />}
           onClick={() => {}}
         >
