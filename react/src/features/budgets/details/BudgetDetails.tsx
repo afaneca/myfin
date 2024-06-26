@@ -8,7 +8,14 @@ import {
   addLeadingZero,
   formatNumberAsCurrency,
 } from '../../../utils/textUtils.ts';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { debounce } from 'lodash';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import CardActions from '@mui/material/CardActions';
 import Paper from '@mui/material/Paper/Paper';
 import {
@@ -88,6 +95,8 @@ const BudgetDetails = () => {
   const [isNew, setNew] = useState(true);
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const [initialBalance, setInitialBalance] = useState(0);
+  // Debounced category state update
+  const debouncedSetCategories = useCallback(debounce(setCategories, 300), []);
 
   const orderCategoriesByDebitAmount = (
     categories: BudgetCategory[],
@@ -272,7 +281,7 @@ const BudgetDetails = () => {
       setInitialBalance(getBudgetRequest.data.initial_balance);
 
       // categories
-      setCategories(getBudgetRequest.data.categories);
+      debouncedSetCategories(getBudgetRequest.data.categories);
     } else if (createBudgetStep0Request.data) {
       // open
       setOpen(true);
@@ -283,7 +292,7 @@ const BudgetDetails = () => {
       );
 
       // categories
-      setCategories(
+      debouncedSetCategories(
         createBudgetStep0Request.data.categories.map((category) => ({
           ...category,
           current_amount_credit: 0,
@@ -597,7 +606,7 @@ const BudgetDetails = () => {
               name={`estimated_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
               onChange={(e) => {
                 const value = parseFloat(e.target.value) || 0;
-                return setCategories(
+                return debouncedSetCategories(
                   categories.map((c) =>
                     c.category_id == category.category_id
                       ? {
