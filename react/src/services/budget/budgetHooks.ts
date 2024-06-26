@@ -75,7 +75,7 @@ export function useGetBudget(budgetId: bigint) {
     queryKey: [QUERY_KEY_GET_BUDGET, budgetId],
     queryFn: getBudget,
     placeholderData: keepPreviousData,
-    enabled: false,
+    enabled: budgetId != -1n,
   });
 }
 
