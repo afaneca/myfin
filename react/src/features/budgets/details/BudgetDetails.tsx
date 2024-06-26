@@ -893,7 +893,19 @@ const BudgetDetails = () => {
         </Grid>
         {/* Debit categories */}
         <Grid xs={12} md={6}>
-          <Typography variant="h4">{t('common.debit')}</Typography>
+          <Grid container>
+            <Grid xs={12} md={6}>
+              <Typography variant="h4">{t('common.debit')}</Typography>
+            </Grid>
+            <Grid xs={12} md={6} xsOffset="auto">
+              <Chip
+                label={`${t('budgetDetails.essentialExpenses')}: ${formatNumberAsCurrency(getBudgetRequest?.data?.debit_essential_trx_total || 0)}`}
+                variant="filled"
+                size="medium"
+                color="default"
+              />
+            </Grid>
+          </Grid>
           <List>
             {debitCategories.map((category) => (
               <React.Fragment key={category.category_id}>
