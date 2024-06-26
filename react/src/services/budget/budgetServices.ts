@@ -15,6 +15,8 @@ export type BudgetCategory = Category & {
   planned_amount_debit: number;
   current_amount_credit: number;
   current_amount_debit: number;
+  initial_planned_amount_debit?: number;
+  initial_planned_amount_credit?: number;
 };
 
 export type Budget = {

@@ -111,8 +111,8 @@ const BudgetDetails = () => {
       .sort((a, b) => {
         if (isOpen)
           return (
-            Number(b.planned_amount_debit + '') -
-            Number(a.planned_amount_debit + '')
+            Number(b.initial_planned_amount_debit + '') -
+            Number(a.initial_planned_amount_debit + '')
           );
         return (
           Number(b.current_amount_debit + '') -
@@ -134,8 +134,8 @@ const BudgetDetails = () => {
       .sort((a, b) => {
         if (isOpen)
           return (
-            Number(b.planned_amount_credit + '') -
-            Number(a.planned_amount_credit + '')
+            Number(b.initial_planned_amount_credit + '') -
+            Number(a.initial_planned_amount_credit + '')
           );
         return (
           Number(b.current_amount_credit + '') -

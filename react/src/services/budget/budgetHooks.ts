@@ -68,7 +68,18 @@ export function useUpdateBudgetStatus() {
 export function useGetBudget(budgetId: bigint) {
   async function getBudget() {
     const data = await BudgetServices.getBudget(budgetId);
-    return data.data;
+    return {
+      ...data.data,
+      categories: data.data.categories.map((category) => ({
+        ...category,
+        /**
+         * Cache the initial amounts, so that we can keep item order based off those and not the current amounts,
+         * to avoid the items changing order/location at runtime while the user changes input values.
+         */
+        initial_planned_amount_debit: category.planned_amount_debit,
+        initial_planned_amount_credit: category.planned_amount_credit,
+      })),
+    };
   }
 
   return useQuery({
