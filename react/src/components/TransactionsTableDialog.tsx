@@ -91,7 +91,12 @@ function TransactionsTableDialog(props: Props) {
   };
 
   return (
-    <Dialog open={props.isOpen} onClose={handleOnClose}>
+    <Dialog
+      open={props.isOpen}
+      onClose={handleOnClose}
+      fullWidth={true}
+      maxWidth="lg"
+    >
       <DialogTitle>{props.title}</DialogTitle>
       <DialogContent>
         <TableContainer component={Paper}>
