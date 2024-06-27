@@ -151,6 +151,21 @@ const autoCategorizeTrx = (request: AutoCategorizeTransactionRequest) => {
   return axios.post<RuleInstructions>(`/trxs/auto-cat-trx`, request);
 };
 
+export type TransactionsInMonthForCategoryRequest = {
+  month: number;
+  year: number;
+  cat_id: bigint;
+  type: TransactionType;
+};
+
+const getTransactionsForCategoryInMonth = (
+  request: TransactionsInMonthForCategoryRequest,
+) => {
+  return axios.get<Transaction[]>(`/trxs/inMonthAndCategory`, {
+    params: request,
+  });
+};
+
 export default {
   getTransactions,
   removeTransaction,
@@ -158,4 +173,5 @@ export default {
   addTransactionStep1,
   editTransaction,
   autoCategorizeTrx,
+  getTransactionsForCategoryInMonth,
 };

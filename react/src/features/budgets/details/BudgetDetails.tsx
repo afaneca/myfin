@@ -1,4 +1,4 @@
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box/Box';
 import PageHeader from '../../../components/PageHeader.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
@@ -70,6 +70,8 @@ import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import i18next from 'i18next';
 import { ROUTE_BUDGET_DETAILS } from '../../../providers/RoutesProvider.tsx';
+import { TransactionType } from '../../../services/trx/trxServices.ts';
+import TransactionsTableDialog from '../../../components/TransactionsTableDialog.tsx';
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
@@ -97,6 +99,11 @@ const BudgetDetails = () => {
   const [initialBalance, setInitialBalance] = useState(0);
   // Debounced category state update
   const debouncedSetCategories = useCallback(debounce(setCategories, 300), []);
+  const [actionableCategory, setActionableCategory] = useState<{
+    category: BudgetCategory;
+    isDebit: boolean;
+  } | null>(null);
+  const [isTrxTableDialogOpen, setTrxTableDialogOpen] = useState(false);
 
   const orderCategoriesByDebitAmount = (
     categories: BudgetCategory[],
@@ -329,6 +336,11 @@ const BudgetDetails = () => {
   ) {
     return null;
   }
+
+  const handleCategoryClick = (category: BudgetCategory, isDebit: boolean) => {
+    setActionableCategory({ category, isDebit });
+    setTrxTableDialogOpen(true);
+  };
 
   const createBudget = () => {
     const catValuesArr = categories.map((category) => {
@@ -603,6 +615,7 @@ const BudgetDetails = () => {
               <ListItemText
                 primary={category.name}
                 sx={{ cursor: 'pointer' }}
+                onClick={() => handleCategoryClick(category, isDebit)}
               />
             </Tooltip>
           </Grid>
@@ -705,6 +718,24 @@ const BudgetDetails = () => {
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+      {isTrxTableDialogOpen && (
+        <TransactionsTableDialog
+          title={t('budgetDetails.transactionsList')}
+          categoryId={actionableCategory?.category.category_id || -1n}
+          month={monthYear.month}
+          year={monthYear.year}
+          type={
+            actionableCategory?.isDebit
+              ? TransactionType.Expense
+              : TransactionType.Income
+          }
+          onClose={() => {
+            setTrxTableDialogOpen(false);
+            setActionableCategory(null);
+          }}
+          isOpen
+        />
+      )}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <PageHeader
           title={t('budgetDetails.budget')}
