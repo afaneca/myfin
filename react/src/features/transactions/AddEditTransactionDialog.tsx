@@ -63,7 +63,7 @@ interface Props {
   transaction: Transaction | null;
 }
 
-interface IdLabelPair {
+export interface IdLabelPair {
   id: bigint;
   label: string;
 }

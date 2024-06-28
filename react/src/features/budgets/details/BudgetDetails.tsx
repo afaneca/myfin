@@ -48,6 +48,7 @@ import {
   useCreateBudgetStep0,
   useCreateBudgetStep1,
   useGetBudget,
+  useGetBudgetToClone,
   useUpdateBudget,
   useUpdateBudgetStatus,
 } from '../../../services/budget/budgetHooks.ts';
@@ -72,6 +73,7 @@ import i18next from 'i18next';
 import { ROUTE_BUDGET_DETAILS } from '../../../providers/RoutesProvider.tsx';
 import { TransactionType } from '../../../services/trx/trxServices.ts';
 import TransactionsTableDialog from '../../../components/TransactionsTableDialog.tsx';
+import BudgetListSummaryDialog from './BudgetListSummaryDialog.tsx';
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
@@ -82,11 +84,13 @@ const BudgetDetails = () => {
   const matchesSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const { id } = useParams();
+  const [budgetToClone, setBudgetToClone] = useState<bigint | null>(null);
   const getBudgetRequest = useGetBudget(BigInt(id ?? -1));
   const createBudgetStep0Request = useCreateBudgetStep0();
   const createBudgetStep1Request = useCreateBudgetStep1();
   const updateBudgetStatusRequest = useUpdateBudgetStatus();
   const updateBudgetRequest = useUpdateBudget();
+  const getBudgetToCloneRequest = useGetBudgetToClone(budgetToClone);
   const [monthYear, setMonthYear] = useState({
     month: dayjs().month() + 1,
     year: dayjs().year(),
@@ -97,6 +101,7 @@ const BudgetDetails = () => {
   const [isNew, setNew] = useState(true);
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const [initialBalance, setInitialBalance] = useState(0);
+
   // Debounced category state update
   const debouncedSetCategories = useCallback(debounce(setCategories, 300), []);
   const [actionableCategory, setActionableCategory] = useState<{
@@ -104,7 +109,7 @@ const BudgetDetails = () => {
     isDebit: boolean;
   } | null>(null);
   const [isTrxTableDialogOpen, setTrxTableDialogOpen] = useState(false);
-
+  const [isCloneBudgetDialogOpen, setCloneBudgetDialogOpen] = useState(false);
   const orderCategoriesByDebitAmount = (
     categories: BudgetCategory[],
     isOpen: boolean,
@@ -242,7 +247,8 @@ const BudgetDetails = () => {
       createBudgetStep0Request.isFetching ||
       updateBudgetStatusRequest.isPending ||
       updateBudgetRequest.isPending ||
-      createBudgetStep1Request.isPending
+      createBudgetStep1Request.isPending ||
+      getBudgetToCloneRequest.isFetching
     ) {
       loader.showLoading();
     } else {
@@ -254,6 +260,7 @@ const BudgetDetails = () => {
     updateBudgetStatusRequest.isPending,
     updateBudgetRequest.isPending,
     createBudgetStep1Request.isPending,
+    getBudgetToCloneRequest.isFetching,
   ]);
 
   // Error
@@ -263,7 +270,8 @@ const BudgetDetails = () => {
       createBudgetStep0Request.isError ||
       updateBudgetStatusRequest.isError ||
       updateBudgetRequest.isError ||
-      createBudgetStep1Request.isError
+      createBudgetStep1Request.isError ||
+      getBudgetToCloneRequest.isError
     ) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
@@ -276,6 +284,7 @@ const BudgetDetails = () => {
     updateBudgetStatusRequest.isError,
     updateBudgetRequest.isError,
     createBudgetStep1Request.isError,
+    getBudgetToCloneRequest.isError,
   ]);
 
   // Data successfully loaded
@@ -319,6 +328,7 @@ const BudgetDetails = () => {
     }
   }, [getBudgetRequest.data, createBudgetStep0Request.data]);
 
+  // Create budget step 1 request success
   useEffect(() => {
     if (createBudgetStep1Request.data) {
       navigate(
@@ -330,12 +340,12 @@ const BudgetDetails = () => {
     }
   }, [createBudgetStep1Request.data]);
 
-  if (
-    (getBudgetRequest.isLoading || !getBudgetRequest.data) &&
-    (createBudgetStep0Request.isFetching || !createBudgetStep0Request.data)
-  ) {
-    return null;
-  }
+  // Get budget to clone request success
+  useEffect(() => {
+    if (!getBudgetToCloneRequest.data) return;
+    setDescriptionValue(getBudgetToCloneRequest.data.observations);
+    debouncedSetCategories(getBudgetToCloneRequest.data.categories);
+  }, [getBudgetToCloneRequest.data]);
 
   const handleCategoryClick = (category: BudgetCategory, isDebit: boolean) => {
     setActionableCategory({ category, isDebit });
@@ -382,6 +392,10 @@ const BudgetDetails = () => {
   const handleMonthChange = (newDate: Dayjs | null) => {
     if (newDate == null) return;
     setMonthYear({ month: newDate.month() + 1, year: newDate.year() });
+  };
+
+  const handleCloneBudgetClick = () => {
+    setCloneBudgetDialogOpen(true);
   };
 
   const DebitBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -658,7 +672,7 @@ const BudgetDetails = () => {
               inputProps={{
                 step: 0.01,
               }}
-              defaultValue={
+              value={
                 isDebit
                   ? category.planned_amount_debit
                   : category.planned_amount_credit
@@ -716,8 +730,28 @@ const BudgetDetails = () => {
     );
   }
 
+  const handleCloneBudgetSelected = (budgetId: bigint) => {
+    if (budgetId == -1n) return;
+    setCloneBudgetDialogOpen(false);
+    setBudgetToClone(budgetId);
+  };
+
+  if (
+    (getBudgetRequest.isLoading || !getBudgetRequest.data) &&
+    (createBudgetStep0Request.isFetching || !createBudgetStep0Request.data)
+  ) {
+    return null;
+  }
+
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+      {isCloneBudgetDialogOpen && (
+        <BudgetListSummaryDialog
+          isOpen
+          onClose={() => setCloneBudgetDialogOpen(false)}
+          onBudgetSelected={handleCloneBudgetSelected}
+        />
+      )}
       {isTrxTableDialogOpen && (
         <TransactionsTableDialog
           title={t('budgetDetails.transactionsList')}
@@ -746,7 +780,7 @@ const BudgetDetails = () => {
           variant="contained"
           disabled={!isOpen}
           startIcon={<FileCopy />}
-          onClick={() => {}}
+          onClick={handleCloneBudgetClick}
         >
           {t('budgetDetails.cloneAnotherBudget')}
         </Button>
@@ -976,19 +1010,19 @@ const BudgetDetails = () => {
             overflow: 'hidden',
           }}
         >
-          <Stack
-            direction="row"
-            spacing={2}
+          <Box
             sx={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              flexWrap: 'wrap',
             }}
           >
             <Button
               variant="contained"
               size="large"
               startIcon={<CloudUpload />}
+              sx={{ margin: 1 }}
               onClick={() => (isNew ? createBudget() : updateBudget())}
             >
               {t(
@@ -1016,7 +1050,7 @@ const BudgetDetails = () => {
                 )}
               </Button>
             )}
-          </Stack>
+          </Box>
         </Grid>
       </Grid>
     </Paper>

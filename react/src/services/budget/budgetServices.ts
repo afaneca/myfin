@@ -136,6 +136,16 @@ const createBudgetStep1 = (request: CreateBudgetRequest) => {
   });
 };
 
+export type BudgetListSummaryItem = {
+  month: number;
+  year: number;
+  budget_id: bigint;
+};
+
+const getBudgetListSummary = () => {
+  return axios.get<BudgetListSummaryItem[]>(`/budgets/list/summary`);
+};
+
 export default {
   getBudgets,
   removeBudget,
@@ -144,4 +154,5 @@ export default {
   updateBudget,
   createBudgetStep0,
   createBudgetStep1,
+  getBudgetListSummary,
 };

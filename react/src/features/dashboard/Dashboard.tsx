@@ -44,7 +44,7 @@ const Dashboard = () => {
   const snackbar = useSnackbar();
   const { t } = useTranslation();
   const [monthYear, setMonthYear] = useState({
-    month: dayjs().month(),
+    month: dayjs().month() + 1,
     year: dayjs().year(),
   });
   const monthIncomeExpensesDistributionData =
