@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import localStore from '../data/localStore.ts';
-import { createTheme } from '@mui/material';
+import { createTheme, PaletteMode } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
@@ -27,18 +27,23 @@ import { UserContextProvider } from './UserProvider.tsx';
 type SupportedLocales = keyof typeof locales;
 export const ColorModeContext = createContext({
   toggleColorMode: () => {},
+  setColorMode: (mode: PaletteMode) => {},
 });
 
 const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [mode, setMode] = useState<'light' | 'dark'>(localStore.getUiMode());
+  const [mode, setMode] = useState<PaletteMode>(localStore.getUiMode());
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
         setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
         localStore.toggleUiMode();
       },
+      setColorMode: (mode: PaletteMode) => {
+        setMode(mode);
+        localStore.setUiMode(mode);
+      },
     }),
-    [],
+    [mode],
   );
 
   const [locale, setLocale] = useState<SupportedLocales>('ptPT');
