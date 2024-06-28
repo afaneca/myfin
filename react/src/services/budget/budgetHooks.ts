@@ -150,7 +150,7 @@ export function useGetBudgetListSummary() {
 
 export function useGetBudgetToClone(budgetId: bigint | null) {
   async function getBudget() {
-    const data = await BudgetServices.getBudget(budgetId);
+    const data = await BudgetServices.getBudget(budgetId || -1n);
     return {
       ...data.data,
       categories: data.data.categories.map((category) => ({
