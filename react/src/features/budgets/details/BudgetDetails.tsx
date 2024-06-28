@@ -8,14 +8,7 @@ import {
   addLeadingZero,
   formatNumberAsCurrency,
 } from '../../../utils/textUtils.ts';
-import { debounce } from 'lodash';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
 import {
   Card,
@@ -93,9 +86,6 @@ const BudgetDetails = () => {
   const [isNew, setNew] = useState(true);
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const [initialBalance, setInitialBalance] = useState(0);
-
-  // Debounced category state update
-  const debouncedSetCategories = useCallback(debounce(setCategories, 300), []);
   const [actionableCategory, setActionableCategory] = useState<{
     category: BudgetCategory;
     isDebit: boolean;
@@ -297,7 +287,7 @@ const BudgetDetails = () => {
       setInitialBalance(getBudgetRequest.data.initial_balance);
 
       // categories
-      debouncedSetCategories(getBudgetRequest.data.categories);
+      setCategories(getBudgetRequest.data.categories);
     } else if (createBudgetStep0Request.data) {
       // open
       setOpen(true);
@@ -308,7 +298,7 @@ const BudgetDetails = () => {
       );
 
       // categories
-      debouncedSetCategories(
+      setCategories(
         createBudgetStep0Request.data.categories.map((category) => ({
           ...category,
           current_amount_credit: 0,
@@ -336,7 +326,7 @@ const BudgetDetails = () => {
   useEffect(() => {
     if (!getBudgetToCloneRequest.data) return;
     setDescriptionValue(getBudgetToCloneRequest.data.observations);
-    debouncedSetCategories(getBudgetToCloneRequest.data.categories);
+    setCategories(getBudgetToCloneRequest.data.categories);
   }, [getBudgetToCloneRequest.data]);
 
   const handleCategoryClick = (category: BudgetCategory, isDebit: boolean) => {
@@ -425,7 +415,7 @@ const BudgetDetails = () => {
     isDebit: boolean,
     value: number,
   ) {
-    debouncedSetCategories(
+    setCategories(
       categories.map((c) =>
         c.category_id == category.category_id
           ? {

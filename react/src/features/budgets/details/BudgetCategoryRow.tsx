@@ -11,7 +11,7 @@ import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import { Euro } from '@mui/icons-material';
 import CardActions from '@mui/material/CardActions';
 import Stack from '@mui/material/Stack/Stack';
-import React, { memo, useCallback } from 'react';
+import React, { memo } from 'react';
 import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
 import Container from '@mui/material/Container/Container';
 import Typography from '@mui/material/Typography/Typography';
@@ -23,7 +23,6 @@ import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { ColorGradient } from '../../../consts';
 import styled from '@mui/material/styles/styled';
 import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
-import { debounce } from 'lodash';
 
 type Props = {
   isOpen: boolean;
@@ -45,13 +44,6 @@ function BudgetCategoryRow({
   onInputChange,
 }: Props) {
   const { t } = useTranslation();
-
-  const debouncedOnInputChange = useCallback(
-    debounce((value: number) => {
-      onInputChange(value);
-    }, 300),
-    [onInputChange],
-  );
 
   const renderCategoryTooltip = (
     category: BudgetCategory,
@@ -278,7 +270,7 @@ function BudgetCategoryRow({
             name={`estimated_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
             onChange={(e) => {
               const value = parseFloat(e.target.value) || 0;
-              debouncedOnInputChange(value);
+              onInputChange(value);
             }}
             InputProps={{
               startAdornment: (
