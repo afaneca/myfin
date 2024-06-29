@@ -222,6 +222,7 @@ const Accounts = () => {
             selectionFollowsFocus
             value={selectedTab}
             onChange={handleTabChange}
+            variant="scrollable"
           >
             <Tab label={t('accounts.all')} />
             <Tab label={t('topBar.operatingFunds')} />
