@@ -25,10 +25,12 @@ import 'dayjs/locale/en.js';
 import { UserContextProvider } from './UserProvider.tsx';
 
 type SupportedLocales = keyof typeof locales;
-export const ColorModeContext = createContext({
-  toggleColorMode: () => {},
-  setColorMode: (mode: PaletteMode) => {},
-});
+
+interface ColorModeContextType {
+  toggleColorMode: () => void;
+  setColorMode: (mode: PaletteMode) => void;
+}
+export const ColorModeContext = createContext({} as ColorModeContextType);
 
 const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
   const [mode, setMode] = useState<PaletteMode>(localStore.getUiMode());

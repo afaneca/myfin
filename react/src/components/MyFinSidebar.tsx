@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import { NavLink } from 'react-router-dom';
 import {
+  AccountBalance,
+  BookmarksOutlined,
   DashboardOutlined,
-  FolderCopy,
   MenuOutlined,
   PaymentsOutlined,
 } from '@mui/icons-material';
 import { alpha, useMediaQuery, useTheme } from '@mui/material';
 import {
+  ROUTE_ACCOUNTS,
   ROUTE_BUDGETS,
   ROUTE_DASHBOARD,
   ROUTE_TRX,
@@ -79,12 +81,20 @@ const MyFinSidebar = () => {
             {t('sidebar.transactions')}
           </MenuItem>
           <MenuItem
-            icon={<FolderCopy />}
+            icon={<BookmarksOutlined />}
             component={<NavLink to={ROUTE_BUDGETS} />}
           >
             {' '}
             {t('sidebar.budgets')}
           </MenuItem>
+          <MenuItem
+            icon={<AccountBalance />}
+            component={<NavLink to={ROUTE_ACCOUNTS} />}
+          >
+            {' '}
+            {t('sidebar.accounts')}
+          </MenuItem>
+          {/*<Divider />*/}
         </Menu>
       </Sidebar>
     </div>

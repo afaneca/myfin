@@ -105,6 +105,7 @@ const MyFinTable = (props: Props) => {
             display: 'flex',
             alignItems: 'center',
           },
+          minHeight: 300,
         }}
         localeText={getLocaleTextForDataGrid()}
       />
@@ -139,7 +140,7 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
 const NoRows = () => {
   const { t } = useTranslation();
   return (
-    <StyledGridOverlay>
+    <StyledGridOverlay sx={{ m: 3 }}>
       <svg
         width="120"
         height="100"

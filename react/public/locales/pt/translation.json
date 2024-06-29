@@ -229,6 +229,7 @@
   },
   "accounts": {
     "accounts": "Contas",
+    "strapLine": "Tudo começa aqui",
     "addAccount": "Adicionar Conta",
     "debts": "Créditos",
     "investments": "Investimentos",
@@ -250,6 +251,7 @@
     "statusOfAccount": "Account status",
     "currentBalance": "Saldo atual",
     "excludeFromBudgets": "Excluir dos orçamentos",
+    "all": "Todas",
     "cheac": "Conta à ordem",
     "savac": "Conta poupança",
     "invac": "Investimento",

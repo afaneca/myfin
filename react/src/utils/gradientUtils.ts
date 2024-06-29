@@ -4,7 +4,7 @@ export function createCssGradientObject(
   color1: string,
   color2: string,
   angle: string = '90deg',
-) {
+): string {
   return `linear-gradient(${angle}, ${color1}, ${color2})`;
 }
 

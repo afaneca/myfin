@@ -229,6 +229,7 @@
   },
   "accounts": {
     "accounts": "Accounts",
+    "strapLine": "It all starts here",
     "addAccount": "Add Account",
     "debts": "Debts",
     "investments": "Investments",
@@ -250,6 +251,7 @@
     "statusOfAccount": "Account status",
     "currentBalance": "Current balance",
     "excludeFromBudgets": "Exclude from budgets",
+    "all": "All",
     "cheac": "Current account",
     "savac": "Savings account",
     "invac": "Investment",
