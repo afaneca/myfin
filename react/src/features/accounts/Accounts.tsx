@@ -148,7 +148,9 @@ const Accounts = () => {
       width: 200,
       editable: false,
       sortable: false,
-      renderCell: (params) => <p>{formatStringAsCurrency(params.value)}</p>,
+      renderCell: (params) => (
+        <Chip variant="outlined" label={formatStringAsCurrency(params.value)} />
+      ),
     },
     {
       field: 'status',
