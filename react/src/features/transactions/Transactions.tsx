@@ -396,7 +396,7 @@ const Transactions = () => {
         >
           {' '}
           <TextField
-            id="outlined-basic"
+            id="search"
             label={t('common.search')}
             variant="outlined"
             InputProps={{

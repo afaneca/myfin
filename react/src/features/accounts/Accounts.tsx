@@ -13,7 +13,7 @@ import {
   useGetAccounts,
   useRemoveAccount,
 } from '../../services/account/accountHooks.ts';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Account,
   AccountStatus,
@@ -23,7 +23,7 @@ import MyFinTable from '../../components/MyFinTable.tsx';
 import { GridColDef } from '@mui/x-data-grid';
 import { formatStringAsCurrency } from '../../utils/textUtils.ts';
 import IconButton from '@mui/material/IconButton';
-import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
+import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
 import Stack from '@mui/material/Stack/Stack';
 import { cssGradients } from '../../utils/gradientUtils.ts';
 import Chip from '@mui/material/Chip/Chip';
@@ -31,6 +31,9 @@ import Button from '@mui/material/Button/Button';
 import { ColorGradient } from '../../consts';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import AddEditAccountDialog from './AddEditAccountDialog.tsx';
+import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import TextField from '@mui/material/TextField/TextField';
+import { debounce } from 'lodash';
 
 const Accounts = () => {
   const theme = useTheme();
@@ -44,19 +47,30 @@ const Accounts = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [filter, setFilter] = useState<AccountType[] | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [actionableAccount, setActionableAccount] = useState<Account | null>(
     null,
   );
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isAddEditAccountDialogOpen, setAddEditDialogOpen] = useState(false);
 
+  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
+
   const filteredAccounts = useMemo(() => {
-    if (filter == null)
-      return accounts.sort((a, b) => a.status.localeCompare(b.status));
-    return accounts
-      .filter((acc) => filter.includes(acc.type))
-      .sort((a, b) => a.status.localeCompare(b.status));
-  }, [filter, accounts]);
+    let filteredList = accounts;
+
+    if (filter != null || searchQuery != null) {
+      const lowerCaseQuery = searchQuery?.toLowerCase() || '';
+      filteredList = accounts.filter((acc) => {
+        const matchesFilter = !filter || filter.includes(acc.type);
+        const matchesSearchQuery =
+          !searchQuery || acc.name.toLowerCase().includes(lowerCaseQuery);
+        return matchesFilter && matchesSearchQuery;
+      });
+    }
+
+    return filteredList.sort((a, b) => a.status.localeCompare(b.status));
+  }, [filter, searchQuery, accounts]);
 
   // Loading
   useEffect(() => {
@@ -238,6 +252,13 @@ const Accounts = () => {
     setSelectedTab(newValue);
   };
 
+  const handleSearchChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      debouncedSearchQuery(event.target.value);
+    },
+    [debouncedSearchQuery],
+  );
+
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
       {isAddEditAccountDialogOpen && (
@@ -280,7 +301,7 @@ const Accounts = () => {
         {t('accounts.addAccount')}
       </Button>
       <Grid container spacing={2}>
-        <Grid xs={12}>
+        <Grid xs={12} md={8}>
           <Tabs
             selectionFollowsFocus
             value={selectedTab}
@@ -293,6 +314,28 @@ const Accounts = () => {
             <Tab label={t('accounts.investments')} />
             <Tab label={t('accounts.others')} />
           </Tabs>
+        </Grid>
+        <Grid
+          xs={12}
+          md={4}
+          xsOffset="auto"
+          sx={{ display: 'flex', justifyContent: 'flex-end' }}
+        >
+          <TextField
+            id="search"
+            label={t('common.search')}
+            variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              handleSearchChange(event);
+            }}
+          />
         </Grid>
         <Grid xs={12}>
           <MyFinTable
