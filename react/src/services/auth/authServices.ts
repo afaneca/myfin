@@ -1,12 +1,17 @@
 import { axios } from '../../data/axios.ts';
 
+export enum AccountStatus {
+  Active = 'Ativa',
+  Inactive = 'Inativa',
+}
+
 export type Account = {
   account_id: bigint;
   name: string;
   type: AccountType;
   description: string;
   exclude_from_budgets: boolean;
-  status: string;
+  status: AccountStatus;
   color_gradient: string;
   balance: number;
 };

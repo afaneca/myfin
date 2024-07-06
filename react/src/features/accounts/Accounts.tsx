@@ -14,7 +14,11 @@ import {
   useRemoveAccount,
 } from '../../services/account/accountHooks.ts';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Account, AccountType } from '../../services/auth/authServices.ts';
+import {
+  Account,
+  AccountStatus,
+  AccountType,
+} from '../../services/auth/authServices.ts';
 import MyFinTable from '../../components/MyFinTable.tsx';
 import { GridColDef } from '@mui/x-data-grid';
 import { formatStringAsCurrency } from '../../utils/textUtils.ts';
@@ -26,6 +30,7 @@ import Chip from '@mui/material/Chip/Chip';
 import Button from '@mui/material/Button/Button';
 import { ColorGradient } from '../../consts';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
+import AddEditAccountDialog from './AddEditAccountDialog.tsx';
 
 const Accounts = () => {
   const theme = useTheme();
@@ -43,6 +48,7 @@ const Accounts = () => {
     null,
   );
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
+  const [isAddEditAccountDialogOpen, setAddEditDialogOpen] = useState(false);
 
   const filteredAccounts = useMemo(() => {
     if (filter == null)
@@ -106,10 +112,15 @@ const Accounts = () => {
 
   // Reset actionableAccount
   useEffect(() => {
-    if (isRemoveDialogOpen == false) {
+    if (isRemoveDialogOpen == false && isAddEditAccountDialogOpen == false) {
       setActionableAccount(null);
     }
-  }, [isRemoveDialogOpen]);
+  }, [isRemoveDialogOpen, isAddEditAccountDialogOpen]);
+
+  const handleEditButtonClick = (account: Account) => {
+    setActionableAccount(account);
+    setAddEditDialogOpen(true);
+  };
 
   const rows = filteredAccounts.map((account: Account) => ({
     id: account.account_id,
@@ -179,7 +190,11 @@ const Accounts = () => {
         <Chip
           label={params.value}
           variant="outlined"
-          color={params.value.startsWith('Ativa') ? 'success' : 'warning'}
+          color={
+            params.value.startsWith(AccountStatus.Active)
+              ? 'success'
+              : 'warning'
+          }
         />
       ),
     },
@@ -194,7 +209,7 @@ const Accounts = () => {
           <IconButton
             aria-label={t('common.edit')}
             onClick={() => {
-              // TODO
+              handleEditButtonClick(params.value);
             }}
           >
             <Edit fontSize="medium" color="action" />
@@ -225,6 +240,15 @@ const Accounts = () => {
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+      {isAddEditAccountDialogOpen && (
+        <AddEditAccountDialog
+          isOpen={isAddEditAccountDialogOpen}
+          onClose={() => setAddEditDialogOpen(false)}
+          onPositiveClick={() => setAddEditDialogOpen(false)}
+          onNegativeClick={() => setAddEditDialogOpen(false)}
+          account={actionableAccount}
+        />
+      )}
       {isRemoveDialogOpen && (
         <GenericConfirmationDialog
           isOpen={isRemoveDialogOpen}
@@ -250,7 +274,7 @@ const Accounts = () => {
         sx={{ mb: 2 }}
         startIcon={<AddCircleOutline />}
         onClick={() => {
-          // TODO
+          setAddEditDialogOpen(true);
         }}
       >
         {t('accounts.addAccount')}
@@ -278,6 +302,11 @@ const Accounts = () => {
             itemCount={filteredAccounts.length}
             paginationModel={{ pageSize: 100, page: 0 }}
             setPaginationModel={() => {}}
+            onRowClicked={(id) => {
+              const account = accounts.find((acc) => acc.account_id == id);
+              if (!account) return;
+              handleEditButtonClick(account);
+            }}
           />
         </Grid>
       </Grid>

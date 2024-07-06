@@ -1,5 +1,5 @@
 // Theming
-export const enum ColorGradient {
+export enum ColorGradient {
   Red = 'red-gradient',
   Blue = 'blue-gradient',
   Green = 'green-gradient',
