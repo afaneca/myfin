@@ -7,6 +7,7 @@ import Transactions from '../features/transactions/Transactions.tsx';
 import BudgetList from '../features/budgets/list/BudgetList.tsx';
 import BudgetDetails from '../features/budgets/details/BudgetDetails.tsx';
 import Accounts from '../features/accounts/Accounts.tsx';
+import Categories from '../features/categories/Categories.tsx';
 
 export const ROUTE_AUTH = '/auth';
 export const ROUTE_DASHBOARD = '/dashboard';
@@ -16,6 +17,7 @@ export const ROUTE_BUDGETS = '/budgets';
 export const ROUTE_BUDGET_DETAILS = '/budget/:id';
 export const ROUTE_BUDGET_NEW = '/budget/new';
 export const ROUTE_ACCOUNTS = '/accounts';
+export const ROUTE_CATEGORIES = '/categories';
 
 const RoutesProvider = () => {
   return (
@@ -31,6 +33,7 @@ const RoutesProvider = () => {
           <Route path={`${ROUTE_BUDGET_DETAILS}`} element={<BudgetDetails />} />
           <Route path={`${ROUTE_BUDGET_NEW}`} element={<BudgetDetails />} />
           <Route path={`${ROUTE_ACCOUNTS}`} element={<Accounts />} />
+          <Route path={`${ROUTE_CATEGORIES}`} element={<Categories />} />
           <Route path="*" element={<Navigate to="/auth" replace={true} />} />
         </Route>
       </Routes>

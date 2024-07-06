@@ -230,7 +230,8 @@ const Accounts = () => {
           </IconButton>
           <IconButton
             aria-label={t('common.delete')}
-            onClick={() => {
+            onClick={(event) => {
+              event.stopPropagation();
               setActionableAccount(params.value);
               setRemoveDialogOpen(true);
             }}

@@ -1,5 +1,5 @@
 import { axios } from '../../data/axios.ts';
-import { Category } from '../trx/trxServices.ts';
+import { Category } from '../category/categoryServices.ts';
 
 export type BudgetCategory = Category & {
   avg_12_months_credit: number;

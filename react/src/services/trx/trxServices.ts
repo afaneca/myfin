@@ -1,6 +1,6 @@
 import { axios } from '../../data/axios.ts';
-import { Status } from '../stats/statServices.ts';
 import { Account } from '../auth/authServices.ts';
+import { Category } from '../category/categoryServices.ts';
 
 export type TransactionsPageResponse = {
   filtered_count: number;
@@ -46,17 +46,6 @@ const getTransactions = (page: number, page_size?: number, query?: string) => {
       query,
     },
   });
-};
-
-export type Category = {
-  users_user_id?: bigint;
-  category_id?: bigint;
-  name?: string;
-  status?: Status;
-  type?: string;
-  description?: string;
-  color_gradient?: null | string;
-  exclude_from_budgets: boolean;
 };
 
 export type Entity = {

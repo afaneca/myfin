@@ -152,7 +152,12 @@ const AddEditAccountDialog = (props: Props) => {
     selectedStatus: string;
     onChange: (event: React.MouseEvent<HTMLElement>, value: string) => void;
   }) => (
-    <ToggleButtonGroup exclusive value={selectedStatus} onChange={onChange}>
+    <ToggleButtonGroup
+      exclusive
+      value={selectedStatus}
+      onChange={onChange}
+      color="primary"
+    >
       <ToggleButton value={AccountStatus.Active}>
         <Stack direction="row" spacing={1}>
           <PlayArrow />

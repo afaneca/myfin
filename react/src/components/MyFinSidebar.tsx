@@ -5,6 +5,7 @@ import {
   AccountBalance,
   BookmarksOutlined,
   DashboardOutlined,
+  FolderShared,
   MenuOutlined,
   PaymentsOutlined,
 } from '@mui/icons-material';
@@ -12,6 +13,7 @@ import { alpha, useMediaQuery, useTheme } from '@mui/material';
 import {
   ROUTE_ACCOUNTS,
   ROUTE_BUDGETS,
+  ROUTE_CATEGORIES,
   ROUTE_DASHBOARD,
   ROUTE_TRX,
 } from '../providers/RoutesProvider';
@@ -93,6 +95,13 @@ const MyFinSidebar = () => {
           >
             {' '}
             {t('sidebar.accounts')}
+          </MenuItem>
+          <MenuItem
+            icon={<FolderShared />}
+            component={<NavLink to={ROUTE_CATEGORIES} />}
+          >
+            {' '}
+            {t('sidebar.categories')}
           </MenuItem>
           {/*<Divider />*/}
         </Menu>

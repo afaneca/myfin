@@ -57,7 +57,7 @@ function BudgetCategoryRow({
               <em>{category.description || '-'}</em>
             </strong>
           </Typography>
-          {category.exclude_from_budgets == true && (
+          {category.exclude_from_budgets == 1 && (
             <Chip
               label={t('categories.excludedFromBudgets')}
               sx={{ mt: 1, display: 'flex' }}
