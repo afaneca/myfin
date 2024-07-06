@@ -581,7 +581,6 @@ const AddEditTransactionDialog = (props: Props) => {
             </Grid>
             <Grid xs={12} md={6}>
               <TextField
-                required
                 margin="dense"
                 id="description"
                 name="description"
@@ -1021,8 +1020,9 @@ const SplitTransactionForm = ({
             renderInput={(params) => (
               <TextField
                 {...params}
+                name="split_account_from"
                 fullWidth
-                required={isAccountFromRequired}
+                required={isOpen && isAccountFromRequired}
                 InputProps={{
                   ...params.InputProps,
                   startAdornment: (
@@ -1049,8 +1049,9 @@ const SplitTransactionForm = ({
             renderInput={(params) => (
               <TextField
                 {...params}
+                name="split_account_to"
                 fullWidth
-                required={isAccountToRequired}
+                required={isOpen && isAccountToRequired}
                 InputProps={{
                   ...params.InputProps,
                   startAdornment: (
