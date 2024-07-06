@@ -9,7 +9,10 @@ import Paper from '@mui/material/Paper/Paper';
 import Box from '@mui/material/Box/Box';
 import PageHeader from '../../components/PageHeader.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import { useGetAccounts } from '../../services/account/accountHooks.ts';
+import {
+  useGetAccounts,
+  useRemoveAccount,
+} from '../../services/account/accountHooks.ts';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Account, AccountType } from '../../services/auth/authServices.ts';
 import MyFinTable from '../../components/MyFinTable.tsx';
@@ -22,6 +25,7 @@ import { cssGradients } from '../../utils/gradientUtils.ts';
 import Chip from '@mui/material/Chip/Chip';
 import Button from '@mui/material/Button/Button';
 import { ColorGradient } from '../../consts';
+import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 
 const Accounts = () => {
   const theme = useTheme();
@@ -30,10 +34,15 @@ const Accounts = () => {
   const { t } = useTranslation();
 
   const getAccountsRequest = useGetAccounts();
+  const removeAccountRequest = useRemoveAccount();
 
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [filter, setFilter] = useState<AccountType[] | null>(null);
+  const [actionableAccount, setActionableAccount] = useState<Account | null>(
+    null,
+  );
+  const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
 
   const filteredAccounts = useMemo(() => {
     if (filter == null)
@@ -45,22 +54,22 @@ const Accounts = () => {
 
   // Loading
   useEffect(() => {
-    if (getAccountsRequest.isFetching) {
+    if (getAccountsRequest.isFetching || removeAccountRequest.isPending) {
       loader.showLoading();
     } else {
       loader.hideLoading();
     }
-  }, [getAccountsRequest.isFetching]);
+  }, [getAccountsRequest.isFetching, removeAccountRequest.isPending]);
 
   // Error
   useEffect(() => {
-    if (getAccountsRequest.isError) {
+    if (getAccountsRequest.isError || removeAccountRequest.isError) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
     }
-  }, [getAccountsRequest.isError]);
+  }, [getAccountsRequest.isError, removeAccountRequest.isError]);
 
   // Success
   useEffect(() => {
@@ -68,6 +77,7 @@ const Accounts = () => {
     setAccounts(getAccountsRequest.data);
   }, [getAccountsRequest.data]);
 
+  // Tab filtering
   useEffect(() => {
     switch (selectedTab) {
       case 0:
@@ -93,6 +103,13 @@ const Accounts = () => {
         break;
     }
   }, [selectedTab]);
+
+  // Reset actionableAccount
+  useEffect(() => {
+    if (isRemoveDialogOpen == false) {
+      setActionableAccount(null);
+    }
+  }, [isRemoveDialogOpen]);
 
   const rows = filteredAccounts.map((account: Account) => ({
     id: account.account_id,
@@ -172,7 +189,7 @@ const Accounts = () => {
       minWidth: 100,
       editable: false,
       sortable: false,
-      renderCell: () => (
+      renderCell: (params) => (
         <Stack direction="row" gap={0}>
           <IconButton
             aria-label={t('common.edit')}
@@ -185,7 +202,8 @@ const Accounts = () => {
           <IconButton
             aria-label={t('common.delete')}
             onClick={() => {
-              // TODO
+              setActionableAccount(params.value);
+              setRemoveDialogOpen(true);
             }}
           >
             <Delete fontSize="medium" color="action" />
@@ -195,12 +213,31 @@ const Accounts = () => {
     },
   ];
 
+  const removeAccount = () => {
+    if (!actionableAccount) return;
+    removeAccountRequest.mutate(actionableAccount.account_id);
+    setRemoveDialogOpen(false);
+  };
+
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+      {isRemoveDialogOpen && (
+        <GenericConfirmationDialog
+          isOpen={isRemoveDialogOpen}
+          onClose={() => setRemoveDialogOpen(false)}
+          onPositiveClick={() => removeAccount()}
+          onNegativeClick={() => setRemoveDialogOpen(false)}
+          titleText={t('accounts.deleteAccountModalTitle', {
+            name: actionableAccount?.name,
+          })}
+          descriptionText={t('accounts.deleteAccountModalSubtitle')}
+          positiveText={t('common.delete')}
+        />
+      )}
       <Box display="flex" justifyContent="space-between" flexDirection="column">
         <PageHeader
           title={t('accounts.accounts')}

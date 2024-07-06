@@ -5,6 +5,11 @@ const getAccounts = () => {
   return axios.get<Account[]>(`/accounts`);
 };
 
+const removeAccount = (id: bigint) => {
+  return axios.delete<string>(`/accounts`, { data: { account_id: id } });
+};
+
 export default {
   getAccounts,
+  removeAccount,
 };

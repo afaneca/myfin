@@ -261,7 +261,7 @@
     "othac": "Other",
     "editAccountModalTitle": "Edit account <strong>{{name}}</strong>",
     "accountSuccessfullyUpdated": "Account successfully updated!",
-    "deleteAccountModalTitle": "Delete account <strong>{{name}}</strong>",
+    "deleteAccountModalTitle": "Delete account {{name}}",
     "deleteAccountModalSubtitle": "Are you sure you want to delete this account?",
     "deleteAccountModalAlert": "This action is irreversible!",
     "accountSuccessfullyDeleted": "Account successfully deleted!"
