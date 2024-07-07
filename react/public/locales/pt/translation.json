@@ -288,6 +288,7 @@
   },
   "entities": {
     "entities": "Entidades",
+    "strapLine": "Faça a gestão da sua lista de entidades",
     "addEntityCTA": "Adicionar entidade",
     "name": "Nome",
     "editEntityModalTitle": "Editar entidade <strong>{{name}}</strong>",
@@ -490,13 +491,14 @@
   },
   "tags": {
     "tags": "Tags",
+    "strapLine": "Faça a gestão da sua lista de tags",
     "tag": "Tag",
     "addTagCTA": "Adicionar Tag",
     "name": "Nome",
     "description": "Descrição",
     "addTagModalTitle": "Adicionar nova tag",
     "tagSuccessfullyAdded": "Tag adicionada com sucesso!",
-    "deleteTagModalTitle": "Remover tag <strong>#{{id}}</strong>?",
+    "deleteTagModalTitle": "Remover tag #{{id}}?",
     "deleteTagModalSubtitle": "Tem a certeza de que pretende remover esta tag?",
     "deleteTagModalAlert": "Esta ação é irreversível!",
     "tagSuccessfullyDeleted": "Tag removida com sucesso!",

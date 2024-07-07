@@ -33,8 +33,8 @@ export enum TransactionType {
 }
 
 export type Tag = {
-  tag_id: number;
-  users_user_id: number;
+  tag_id: bigint;
+  users_user_id: bigint;
   name: string;
   description?: string;
 };

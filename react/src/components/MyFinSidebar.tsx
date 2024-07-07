@@ -7,6 +7,7 @@ import {
   Business,
   DashboardOutlined,
   FolderShared,
+  LocalOffer,
   MenuOutlined,
   PaymentsOutlined,
 } from '@mui/icons-material';
@@ -17,6 +18,7 @@ import {
   ROUTE_CATEGORIES,
   ROUTE_DASHBOARD,
   ROUTE_ENTITIES,
+  ROUTE_TAGS,
   ROUTE_TRX,
 } from '../providers/RoutesProvider';
 import { useTranslation } from 'react-i18next';
@@ -111,6 +113,13 @@ const MyFinSidebar = () => {
           >
             {' '}
             {t('sidebar.entities')}
+          </MenuItem>
+          <MenuItem
+            icon={<LocalOffer />}
+            component={<NavLink to={ROUTE_TAGS} />}
+          >
+            {' '}
+            {t('sidebar.tags')}
           </MenuItem>
           {/*<Divider />*/}
         </Menu>
