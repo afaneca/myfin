@@ -16,6 +16,7 @@ import {
   AutocompleteRenderInputParams,
   Checkbox,
   Collapse,
+  Divider,
   Grow,
   ToggleButton,
   ToggleButtonGroup,
@@ -54,6 +55,7 @@ import {
 import { convertDateStringToUnixTimestamp } from '../../utils/dateUtils.ts';
 import { inferTrxType } from '../../utils/transactionUtils.ts';
 import IconButton from '@mui/material/IconButton';
+import Chip from '@mui/material/Chip/Chip';
 
 interface Props {
   isOpen: boolean;
@@ -808,7 +810,7 @@ const AddEditTransactionDialog = (props: Props) => {
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ pr: 3 }}>
         {isEditForm && (
           <Button
             variant="text"
@@ -914,229 +916,236 @@ const SplitTransactionForm = ({
   };
 
   return (
-    <Grid container spacing={2} xs={12} columns={{ xs: 12 }}>
-      <Grid md={4} xs={12}>
-        {/* Essential */}
-        <Grow in={isEssentialVisible}>
-          <FormControlLabel
-            control={<Checkbox icon={<StarBorder />} checkedIcon={<Star />} />}
-            checked={state?.isEssential == true}
-            label={t('transactions.essential')}
-            name="split_essential"
-            onChange={(_e, checked) => handleEssentialInputChange(checked)}
-          />
-        </Grow>
-      </Grid>
-      <Grid xs={12} md={8} display="flex" justifyContent="flex-end">
-        {/* Transaction type */}
-        <ToggleButtonGroup
-          value={state?.type ?? TransactionType.Expense}
-          exclusive
-          onChange={onTransactionTypeSelected}
-          aria-label={t('transactions.typeOfTrx')}
-        >
-          <ToggleButton
-            value={TransactionType.Expense}
-            aria-label={t('transactions.expense')}
-          >
-            {t('transactions.expense')}
-          </ToggleButton>
-          <ToggleButton
-            value={TransactionType.Transfer}
-            aria-label={t('transactions.transfer')}
-          >
-            {t('transactions.transfer')}
-          </ToggleButton>
-          <ToggleButton
-            value={TransactionType.Income}
-            aria-label={t('transactions.income')}
-          >
-            {t('transactions.income')}
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Grid>
-      {/* Value, date & description */}
-      <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
-        <Grid xs={12} md={3}>
-          <TextField
-            autoFocus
-            required={isOpen}
-            margin="dense"
-            id="split_amount"
-            name="split_amount"
-            value={state?.amount || ''}
-            onChange={(e) => handleAmountChange(Number(e.target.value))}
-            label={t('common.value')}
-            type="number"
-            fullWidth
-            variant="outlined"
-            inputProps={{
-              step: 0.01,
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Euro />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-
-        <Grid xs={12} md={9}>
-          <TextField
-            required={isOpen}
-            margin="dense"
-            id="split_description"
-            name="split_description"
-            value={state?.description ?? ''}
-            onChange={(e) => handleDescriptionChange(e.target.value)}
-            label={t('common.description')}
-            type="text"
-            fullWidth
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Description />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-      </Grid>
-      <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
-        {/* Origin & destination accounts */}
-        <Grid xs={12} md={6}>
-          <Autocomplete
-            id="split_account_from"
-            disabled={!isAccountFromRequired}
-            options={state?.accountOptions ?? []}
-            value={state?.accountFrom ?? null}
-            onChange={(_event, value) => {
-              handleAccountFromChange(value as IdLabelPair);
-            }}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                name="split_account_from"
-                fullWidth
-                required={isOpen && isAccountFromRequired}
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AccountCircle />
-                    </InputAdornment>
-                  ),
-                }}
-                label={t('transactions.originAccount')}
-              />
-            )}
-          />
-        </Grid>
-        <Grid xs={12} md={6}>
-          <Autocomplete
-            id="split_account_to"
-            disabled={!isAccountToRequired}
-            options={state?.accountOptions ?? []}
-            value={state?.accountTo ?? null}
-            onChange={(_event, value) => {
-              handleAccountToChange(value as IdLabelPair);
-            }}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                name="split_account_to"
-                fullWidth
-                required={isOpen && isAccountToRequired}
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AccountCircle />
-                    </InputAdornment>
-                  ),
-                }}
-                label={t('transactions.destinationAccount')}
-              />
-            )}
-          />
-        </Grid>
-        {/* Category & Entity */}
-        <Grid xs={12} md={6}>
-          <Autocomplete
-            id="split_category"
-            value={state?.category ?? null}
-            onChange={(_event, value) => {
-              handleCategoryChange(value as IdLabelPair);
-            }}
-            options={state?.categoryOptions ?? []}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                fullWidth
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <FolderShared />
-                    </InputAdornment>
-                  ),
-                }}
-                label={t('transactions.category')}
-              />
-            )}
-          />
-        </Grid>
-        <Grid xs={12} md={6}>
-          <Autocomplete
-            id="split_entity"
-            value={state?.entity ?? null}
-            onChange={(_event, value) => {
-              handleEntityChange(value as IdLabelPair);
-            }}
-            options={state?.entityOptions ?? []}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                fullWidth
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Business />
-                    </InputAdornment>
-                  ),
-                }}
-                label={t('transactions.entity')}
-              />
-            )}
-          />
-        </Grid>
-      </Grid>
-      <Grid xs={12}>
-        <Autocomplete
-          multiple
-          id="split_tags"
-          options={state?.tagOptions ?? []}
-          freeSolo
-          value={state?.tags ?? []}
-          onChange={(_, value) => handleTagsChange(value)}
-          renderInput={(params: AutocompleteRenderInputParams) => (
-            <TextField
-              {...params}
-              label={t('tags.tags')}
-              placeholder={t('transactions.addAnotherTagPlaceholder')}
+    <>
+      <Divider sx={{ mb: 5 }}>
+        <Chip label={t('transactions.splitTransaction')} size="small" />
+      </Divider>
+      <Grid container spacing={0} rowSpacing={2} xs={12} columns={{ xs: 12 }}>
+        <Grid md={4} xs={12}>
+          {/* Essential */}
+          <Grow in={isEssentialVisible}>
+            <FormControlLabel
+              control={
+                <Checkbox icon={<StarBorder />} checkedIcon={<Star />} />
+              }
+              checked={state?.isEssential == true}
+              label={t('transactions.essential')}
+              name="split_essential"
+              onChange={(_e, checked) => handleEssentialInputChange(checked)}
             />
-          )}
-        />
+          </Grow>
+        </Grid>
+        <Grid xs={12} md={8} display="flex" justifyContent="flex-end">
+          {/* Transaction type */}
+          <ToggleButtonGroup
+            value={state?.type ?? TransactionType.Expense}
+            exclusive
+            onChange={onTransactionTypeSelected}
+            aria-label={t('transactions.typeOfTrx')}
+          >
+            <ToggleButton
+              value={TransactionType.Expense}
+              aria-label={t('transactions.expense')}
+            >
+              {t('transactions.expense')}
+            </ToggleButton>
+            <ToggleButton
+              value={TransactionType.Transfer}
+              aria-label={t('transactions.transfer')}
+            >
+              {t('transactions.transfer')}
+            </ToggleButton>
+            <ToggleButton
+              value={TransactionType.Income}
+              aria-label={t('transactions.income')}
+            >
+              {t('transactions.income')}
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Grid>
+        {/* Value, date & description */}
+        <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
+          <Grid xs={12} md={3}>
+            <TextField
+              autoFocus
+              required={isOpen}
+              margin="dense"
+              id="split_amount"
+              name="split_amount"
+              value={state?.amount || ''}
+              onChange={(e) => handleAmountChange(Number(e.target.value))}
+              label={t('common.value')}
+              type="number"
+              fullWidth
+              variant="outlined"
+              inputProps={{
+                step: 0.01,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Euro />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+
+          <Grid xs={12} md={9}>
+            <TextField
+              required={isOpen}
+              margin="dense"
+              id="split_description"
+              name="split_description"
+              value={state?.description ?? ''}
+              onChange={(e) => handleDescriptionChange(e.target.value)}
+              label={t('common.description')}
+              type="text"
+              fullWidth
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Description />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
+          {/* Origin & destination accounts */}
+          <Grid xs={12} md={6}>
+            <Autocomplete
+              id="split_account_from"
+              disabled={!isAccountFromRequired}
+              options={state?.accountOptions ?? []}
+              value={state?.accountFrom ?? null}
+              onChange={(_event, value) => {
+                handleAccountFromChange(value as IdLabelPair);
+              }}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  name="split_account_from"
+                  fullWidth
+                  required={isOpen && isAccountFromRequired}
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    ),
+                  }}
+                  label={t('transactions.originAccount')}
+                />
+              )}
+            />
+          </Grid>
+          <Grid xs={12} md={6}>
+            <Autocomplete
+              id="split_account_to"
+              disabled={!isAccountToRequired}
+              options={state?.accountOptions ?? []}
+              value={state?.accountTo ?? null}
+              onChange={(_event, value) => {
+                handleAccountToChange(value as IdLabelPair);
+              }}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  name="split_account_to"
+                  fullWidth
+                  required={isOpen && isAccountToRequired}
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    ),
+                  }}
+                  label={t('transactions.destinationAccount')}
+                />
+              )}
+            />
+          </Grid>
+          {/* Category & Entity */}
+          <Grid xs={12} md={6}>
+            <Autocomplete
+              id="split_category"
+              value={state?.category ?? null}
+              onChange={(_event, value) => {
+                handleCategoryChange(value as IdLabelPair);
+              }}
+              options={state?.categoryOptions ?? []}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <FolderShared />
+                      </InputAdornment>
+                    ),
+                  }}
+                  label={t('transactions.category')}
+                />
+              )}
+            />
+          </Grid>
+          <Grid xs={12} md={6}>
+            <Autocomplete
+              id="split_entity"
+              value={state?.entity ?? null}
+              onChange={(_event, value) => {
+                handleEntityChange(value as IdLabelPair);
+              }}
+              options={state?.entityOptions ?? []}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Business />
+                      </InputAdornment>
+                    ),
+                  }}
+                  label={t('transactions.entity')}
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+        <Grid xs={12}>
+          <Autocomplete
+            multiple
+            id="split_tags"
+            options={state?.tagOptions ?? []}
+            freeSolo
+            value={state?.tags ?? []}
+            onChange={(_, value) => handleTagsChange(value)}
+            renderInput={(params: AutocompleteRenderInputParams) => (
+              <TextField
+                {...params}
+                label={t('tags.tags')}
+                placeholder={t('transactions.addAnotherTagPlaceholder')}
+              />
+            )}
+          />
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };
 

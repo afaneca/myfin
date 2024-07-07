@@ -24,6 +24,7 @@ import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
 import {
   AcUnit,
   Description,
+  Folder,
   PlayArrow,
   RemoveCircle,
   RemoveCircleOutline,
@@ -238,21 +239,21 @@ const AddEditCategoryDialog = (props: Props) => {
         </Grid>
       </DialogTitle>
       <DialogContent>
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={12} md={10}>
+        <Grid container xs={12} spacing={0}>
+          <Grid xs={12} md={10} pr={2} pb={1}>
             <TextField
               margin="dense"
               id="name"
               name="name"
               value={nameValue || ''}
               onChange={(e) => setNameValue(e.target.value)}
-              label={t('common.description')}
+              label={t('categories.name')}
               fullWidth
               variant="outlined"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Description />
+                    <Folder />
                   </InputAdornment>
                 ),
               }}
@@ -282,7 +283,7 @@ const AddEditCategoryDialog = (props: Props) => {
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ pr: 3 }}>
         <Button
           variant="outlined"
           startIcon={<Undo />}

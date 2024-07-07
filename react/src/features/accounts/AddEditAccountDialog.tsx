@@ -323,7 +323,7 @@ const AddEditAccountDialog = (props: Props) => {
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ pr: 3 }}>
         <Button
           variant="outlined"
           startIcon={<Undo />}

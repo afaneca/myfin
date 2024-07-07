@@ -6,168 +6,112 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
 import {
-  useGetCategories,
-  useRemoveCategory,
-} from '../../services/category/CategoryHooks.tsx';
+  useGetEntities,
+  useRemoveEntity,
+} from '../../services/entity/entityHooks.ts';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Category,
-  CategoryStatus,
-} from '../../services/category/categoryServices.ts';
 import { debounce } from 'lodash';
+import { Entity } from '../../services/trx/trxServices.ts';
 import { GridColDef } from '@mui/x-data-grid';
-import { cssGradients } from '../../utils/gradientUtils.ts';
-import { ColorGradient } from '../../consts';
-import Chip from '@mui/material/Chip/Chip';
 import Stack from '@mui/material/Stack/Stack';
 import IconButton from '@mui/material/IconButton';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
+import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import Box from '@mui/material/Box/Box';
 import PageHeader from '../../components/PageHeader.tsx';
+import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import Button from '@mui/material/Button/Button';
 import TextField from '@mui/material/TextField/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
-import AddEditCategoryDialog from '../../services/category/AddEditCategoryDialog.tsx';
+import AddEditEntityDialog from './AddEditEntityDialog.tsx';
 import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
 
-const Categories = () => {
+const Entities = () => {
   const theme = useTheme();
   const loader = useLoading();
   const snackbar = useSnackbar();
   const { t } = useTranslation();
 
-  const getCategoriesRequest = useGetCategories();
-  const removeCategoryRequest = useRemoveCategory();
+  const getEntitiesRequest = useGetEntities();
+  const removeEntityRequest = useRemoveEntity();
 
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [entities, setEntities] = useState<Entity[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [actionableCategory, setActionableCategory] = useState<Category | null>(
-    null,
-  );
+  const [actionableEntity, setActionableEntity] = useState<Entity | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isAddEditDialogOpen, setAddEditDialogOpen] = useState(false);
   const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
 
-  const filteredCategories = useMemo(() => {
-    let filteredList = categories;
+  const filteredEntities = useMemo(() => {
+    let filteredList = entities;
 
     if (searchQuery != null) {
       const lowerCaseQuery = searchQuery?.toLowerCase() || '';
-      filteredList = categories.filter(
+      filteredList = entities.filter(
         (cat) =>
           !searchQuery || cat.name.toLowerCase().includes(lowerCaseQuery),
       );
     }
 
-    return filteredList.sort((a, b) => a.status.localeCompare(b.status));
-  }, [searchQuery, categories]);
+    return filteredList;
+  }, [searchQuery, entities]);
 
   // Loading
   useEffect(() => {
-    if (getCategoriesRequest.isFetching || removeCategoryRequest.isPending) {
+    if (getEntitiesRequest.isFetching || removeEntityRequest.isPending) {
       loader.showLoading();
     } else {
       loader.hideLoading();
     }
-  }, [getCategoriesRequest.isFetching || removeCategoryRequest.isPending]);
+  }, [getEntitiesRequest.isFetching || removeEntityRequest.isPending]);
 
   // Error
   useEffect(() => {
-    if (getCategoriesRequest.isError || removeCategoryRequest.isError) {
+    if (getEntitiesRequest.isError || removeEntityRequest.isError) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
     }
-  }, [getCategoriesRequest.isError, removeCategoryRequest.isError]);
+  }, [getEntitiesRequest.isError, removeEntityRequest.isError]);
 
   // Success
   useEffect(() => {
-    if (!getCategoriesRequest.data) return;
-    setCategories(getCategoriesRequest.data);
-  }, [getCategoriesRequest.data]);
+    if (!getEntitiesRequest.data) return;
+    setEntities(getEntitiesRequest.data);
+  }, [getEntitiesRequest.data]);
 
-  // Reset actionableCategory
+  // Reset actionableEntity
   useEffect(() => {
     if (isRemoveDialogOpen == false && isAddEditDialogOpen == false) {
-      setActionableCategory(null);
+      setActionableEntity(null);
     }
   }, [isRemoveDialogOpen, isAddEditDialogOpen]);
 
-  const handleEditButtonClick = (category: Category) => {
-    setActionableCategory(category);
+  const handleEditButtonClick = (entity: Entity) => {
+    setActionableEntity(entity);
     setAddEditDialogOpen(true);
   };
 
   const rows = useMemo(
     () =>
-      filteredCategories.map((category: Category) => ({
-        id: category.category_id,
-        color: category.color_gradient,
-        name: category.name,
-        description: category.description,
-        status: category.status,
-        actions: category,
+      filteredEntities.map((entity: Entity) => ({
+        id: entity.entity_id,
+        name: entity.name,
+        actions: entity,
       })),
-    [filteredCategories],
+    [filteredEntities],
   );
 
   const columns: GridColDef[] = [
     {
-      field: 'color',
-      headerName: t('categories.color'),
-      minWidth: 40,
-      editable: false,
-      sortable: false,
-      renderCell: (params) => (
-        <div
-          style={{
-            margin: 10,
-            background: cssGradients[params.value as ColorGradient] ?? '',
-            width: 30,
-            height: 30,
-            borderRadius: 20,
-          }}
-        ></div>
-      ),
-    },
-    {
       field: 'name',
-      headerName: t('categories.name'),
-      flex: 1.5,
+      headerName: t('entities.name'),
       minWidth: 200,
+      flex: 1,
       editable: false,
       sortable: false,
       renderCell: (params) => <p>{params.value}</p>,
-    },
-    {
-      field: 'description',
-      headerName: t('common.description'),
-      flex: 5,
-      minWidth: 300,
-      editable: false,
-      sortable: false,
-      renderCell: (params) => <p>{params.value}</p>,
-    },
-    {
-      field: 'status',
-      headerName: t('categories.status'),
-      minWidth: 100,
-      editable: false,
-      sortable: false,
-      renderCell: (params) => (
-        <Chip
-          label={params.value}
-          variant="outlined"
-          color={
-            params.value.startsWith(CategoryStatus.Active)
-              ? 'success'
-              : 'warning'
-          }
-        />
-      ),
     },
     {
       field: 'actions',
@@ -189,7 +133,7 @@ const Categories = () => {
             aria-label={t('common.delete')}
             onClick={(event) => {
               event.stopPropagation();
-              setActionableCategory(params.value);
+              setActionableEntity(params.value);
               setRemoveDialogOpen(true);
             }}
           >
@@ -200,9 +144,9 @@ const Categories = () => {
     },
   ];
 
-  const removeCategory = () => {
-    if (!actionableCategory) return;
-    removeCategoryRequest.mutate(actionableCategory.category_id);
+  const removeEntity = () => {
+    if (!actionableEntity) return;
+    removeEntityRequest.mutate(actionableEntity.entity_id);
     setRemoveDialogOpen(false);
   };
 
@@ -216,31 +160,31 @@ const Categories = () => {
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
       {isAddEditDialogOpen && (
-        <AddEditCategoryDialog
+        <AddEditEntityDialog
           isOpen={isAddEditDialogOpen}
           onClose={() => setAddEditDialogOpen(false)}
           onPositiveClick={() => setAddEditDialogOpen(false)}
           onNegativeClick={() => setAddEditDialogOpen(false)}
-          category={actionableCategory}
+          entity={actionableEntity}
         />
       )}
       {isRemoveDialogOpen && (
         <GenericConfirmationDialog
           isOpen={isRemoveDialogOpen}
           onClose={() => setRemoveDialogOpen(false)}
-          onPositiveClick={() => removeCategory()}
+          onPositiveClick={() => removeEntity()}
           onNegativeClick={() => setRemoveDialogOpen(false)}
-          titleText={t('categories.deleteCategoryModalTitle', {
-            name: actionableCategory?.name,
+          titleText={t('entities.deleteEntityModalTitle', {
+            name: actionableEntity?.name,
           })}
-          descriptionText={t('categories.deleteCategoryModalSubtitle')}
+          descriptionText={t('entities.deleteEntityModalSubtitle')}
           positiveText={t('common.delete')}
         />
       )}
       <Box display="flex" justifyContent="space-between" flexDirection="column">
         <PageHeader
-          title={t('categories.categories')}
-          subtitle={t('categories.strapLine')}
+          title={t('entities.entities')}
+          subtitle={t('entities.strapLine')}
         />
       </Box>
       <Grid container spacing={2}>
@@ -254,7 +198,7 @@ const Categories = () => {
               setAddEditDialogOpen(true);
             }}
           >
-            {t('categories.addCategoryCTA')}
+            {t('entities.addEntityCTA')}
           </Button>
         </Grid>
         <Grid
@@ -281,14 +225,14 @@ const Categories = () => {
         </Grid>
         <Grid xs={12}>
           <MyFinStaticTable
-            isRefetching={getCategoriesRequest.isRefetching}
+            isRefetching={getEntitiesRequest.isRefetching}
             rows={rows}
             columns={columns}
             paginationModel={{ pageSize: 20 }}
             onRowClicked={(id) => {
-              const category = categories.find((cat) => cat.category_id == id);
-              if (!category) return;
-              handleEditButtonClick(category);
+              const entity = entities.find((ent) => ent.entity_id == id);
+              if (!entity) return;
+              handleEditButtonClick(entity);
             }}
           />
         </Grid>
@@ -297,4 +241,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default Entities;

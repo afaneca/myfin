@@ -21,7 +21,7 @@ type Props = {
   onRowClicked?: (id: bigint) => void;
 };
 
-const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+export const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   border: 0,
   '& .highlighted-row': {
     background: 'linear-gradient(to top, #0083B0, #00B4DB)',
@@ -137,7 +137,7 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
   },
 }));
 
-const NoRows = () => {
+export const NoRows = () => {
   const { t } = useTranslation();
   return (
     <StyledGridOverlay sx={{ m: 3 }}>

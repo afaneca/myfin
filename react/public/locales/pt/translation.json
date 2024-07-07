@@ -291,7 +291,7 @@
     "addEntityCTA": "Adicionar entidade",
     "name": "Nome",
     "editEntityModalTitle": "Editar entidade <strong>{{name}}</strong>",
-    "deleteEntityModalTitle": "Remover entidade <strong>{{name}}</strong>",
+    "deleteEntityModalTitle": "Remover entidade {{name}}",
     "deleteEntityModalSubtitle": "Tem a certeza de que pretende remover esta entidade?",
     "deleteEntityModalAlert": "Esta ação é irreversível!",
     "addEntityModalTitle": "Adicionar nova entidade",

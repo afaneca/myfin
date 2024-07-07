@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import {
   AccountBalance,
   BookmarksOutlined,
+  Business,
   DashboardOutlined,
   FolderShared,
   MenuOutlined,
@@ -15,6 +16,7 @@ import {
   ROUTE_BUDGETS,
   ROUTE_CATEGORIES,
   ROUTE_DASHBOARD,
+  ROUTE_ENTITIES,
   ROUTE_TRX,
 } from '../providers/RoutesProvider';
 import { useTranslation } from 'react-i18next';
@@ -102,6 +104,13 @@ const MyFinSidebar = () => {
           >
             {' '}
             {t('sidebar.categories')}
+          </MenuItem>
+          <MenuItem
+            icon={<Business />}
+            component={<NavLink to={ROUTE_ENTITIES} />}
+          >
+            {' '}
+            {t('sidebar.entities')}
           </MenuItem>
           {/*<Divider />*/}
         </Menu>
