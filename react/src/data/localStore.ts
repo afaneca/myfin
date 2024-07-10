@@ -5,6 +5,17 @@ const storagePrefix = 'myfin';
 const sessionDataTag = 'sessionData';
 const userAccountsTag = 'accounts';
 const uiModeTag = 'uiMode';
+const lastTrxTag = 'lastTrxTag';
+
+export type CachedTransaction = {
+  account_from_id?: bigint;
+  account_to_id?: bigint;
+  amount: number;
+  category_id?: bigint;
+  date_timestamp?: number;
+  entity_id?: bigint;
+  is_essential: 0 | 1;
+};
 
 const localStore = {
   getSessionData: (): UserSession => {
@@ -54,6 +65,17 @@ const localStore = {
   toggleUiMode: () => {
     const prevMode = localStore.getUiMode();
     localStore.setUiMode(prevMode === 'light' ? 'dark' : 'light');
+  },
+  getLastCachedTrx: (): CachedTransaction | null => {
+    return JSON.parse(
+      window.localStorage.getItem(`${storagePrefix}.${lastTrxTag}`) as string,
+    );
+  },
+  setLastCachedTrx: (trx: CachedTransaction) => {
+    window.localStorage.setItem(
+      `${storagePrefix}.${lastTrxTag}`,
+      JSON.stringify(trx),
+    );
   },
 };
 

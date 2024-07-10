@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import localStore from '../data/localStore.ts';
+import localStore, { CachedTransaction } from '../data/localStore.ts';
 import { Account, UserSession } from '../services/auth/authServices.ts';
 
 export const useUserData = () => {
@@ -9,8 +9,10 @@ export const useUserData = () => {
 interface UserContextType {
   userSessionData: UserSession | null;
   userAccounts: Account[] | null;
+  lastCachedTrx: CachedTransaction | null;
   updateUserSessionData: (newSessionData: UserSession) => void;
   updateUserAccounts: (newAccounts: Account[]) => void;
+  updateLastCachedTrx: (newTrx: CachedTransaction) => void;
   clearSessionData: () => void;
 }
 
@@ -28,6 +30,10 @@ export const UserContextProvider = ({
   );
   const [userAccounts, setUserAccounts] = useState<Account[] | null>(null);
 
+  const [lastCachedTrx, setLastCachedTrx] = useState<CachedTransaction | null>(
+    null,
+  );
+
   // Retrieve data
   useEffect(() => {
     if (!userSessionData) {
@@ -37,6 +43,11 @@ export const UserContextProvider = ({
     if (!userAccounts) {
       const storedAccounts = localStore.getUserAccounts();
       setUserAccounts(storedAccounts);
+    }
+
+    if (!lastCachedTrx) {
+      const cachedTrx = localStore.getLastCachedTrx();
+      setLastCachedTrx(cachedTrx);
     }
   }, []);
 
@@ -51,6 +62,11 @@ export const UserContextProvider = ({
     localStore.setUserAccounts(newAccounts);
   };
 
+  const updateLastCachedTrx = (newTrx: CachedTransaction) => {
+    setLastCachedTrx(newTrx);
+    localStore.setLastCachedTrx(newTrx);
+  };
+
   const clearSessionData = () => {
     setUserAccounts([]);
     setUserSessionData(null);
@@ -62,8 +78,10 @@ export const UserContextProvider = ({
       value={{
         userSessionData,
         userAccounts,
+        lastCachedTrx,
         updateUserSessionData,
         updateUserAccounts,
+        updateLastCachedTrx,
         clearSessionData,
       }}
     >

@@ -1,6 +1,7 @@
 import { axios } from '../../data/axios.ts';
 import { Account } from '../auth/authServices.ts';
 import { Category } from '../category/categoryServices.ts';
+import { CachedTransaction } from '../../data/localStore.ts';
 
 export type TransactionsPageResponse = {
   filtered_count: number;
@@ -59,6 +60,7 @@ export type TransactionStep0Response = {
   categories: Category[];
   entities: Entity[];
   tags: Tag[];
+  cachedTrx?: CachedTransaction;
 };
 
 const addTransactionStep0 = () => {

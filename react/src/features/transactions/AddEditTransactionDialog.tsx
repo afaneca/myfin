@@ -53,9 +53,13 @@ import {
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import { convertDateStringToUnixTimestamp } from '../../utils/dateUtils.ts';
-import { inferTrxType } from '../../utils/transactionUtils.ts';
+import {
+  inferTrxType,
+  inferTrxTypeByAttributes,
+} from '../../utils/transactionUtils.ts';
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip/Chip';
+import { Account } from '../../services/auth/authServices.ts';
 
 interface Props {
   isOpen: boolean;
@@ -244,12 +248,16 @@ const AddEditTransactionDialog = (props: Props) => {
     }
   }, [transactionType]);
 
+  const transformUserAccountsIntoIdLabelPair = (userAccounts: Account[]) => {
+    return userAccounts.map((acc) => ({
+      id: acc.account_id,
+      label: acc.name,
+    }));
+  };
+
   useEffect(() => {
     if (userAccounts) {
-      const accounts = userAccounts.map((acc) => ({
-        id: acc.account_id,
-        label: acc.name,
-      }));
+      const accounts = transformUserAccountsIntoIdLabelPair(userAccounts);
       setAccountOptionsValue(accounts);
       setSplitTransactionFormState((prevState) => ({
         ...prevState,
@@ -288,6 +296,32 @@ const AddEditTransactionDialog = (props: Props) => {
       ...prevState,
       tagOptions: tags,
     }));
+
+    const accounts = transformUserAccountsIntoIdLabelPair(userAccounts || []);
+
+    const cachedTrx = addTransactionStep0Request.data.cachedTrx;
+    if (cachedTrx) {
+      setAmountValue(cachedTrx.amount);
+      setTransactionType(
+        inferTrxTypeByAttributes(
+          cachedTrx.account_from_id,
+          cachedTrx.account_to_id,
+        ),
+      );
+      setAccountFromValue(
+        accounts?.find((acc) => acc.id === cachedTrx.account_from_id) || null,
+      );
+      setAccountToValue(
+        accounts?.find((acc) => acc.id === cachedTrx.account_to_id) || null,
+      );
+      setCategoryValue(
+        categories.find((category) => category.id === cachedTrx.category_id) ||
+          null,
+      );
+      setEntityValue(
+        entities.find((entity) => entity.id === cachedTrx.entity_id) || null,
+      );
+    }
   }, [addTransactionStep0Request.isSuccess]);
 
   useEffect(() => {

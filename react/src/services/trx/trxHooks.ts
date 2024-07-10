@@ -6,6 +6,7 @@ import TrxServices, {
   EditTransactionRequest,
   TransactionsInMonthForCategoryRequest,
 } from './trxServices.ts';
+import { useUserData } from '../../providers/UserProvider.tsx';
 
 const QUERY_KEY_GET_TRANSACTIONS = 'QUERY_KEY_GET_TRANSACTIONS';
 const QUERY_KEY_ADD_TRANSACTION_STEP0 = 'QUERY_KEY_ADD_TRANSACTION_STEP0';
@@ -48,9 +49,16 @@ export function useRemoveTransaction() {
 }
 
 export function useAddTransactionStep0() {
+  const userData = useUserData();
+
+  function getLastCachedTrx() {
+    return userData.lastCachedTrx;
+  }
+
   async function addTransactionStep0() {
     const data = await TrxServices.addTransactionStep0();
-    return data.data;
+    const lastCachedTrx = getLastCachedTrx();
+    return { ...data.data, cachedTrx: lastCachedTrx };
   }
 
   return useQuery({
@@ -61,7 +69,22 @@ export function useAddTransactionStep0() {
 }
 
 export function useAddTransactionStep1() {
+  const { updateLastCachedTrx } = useUserData();
+
+  function updateLastCachedTransaction(trx: AddTransactionRequest) {
+    updateLastCachedTrx({
+      amount: trx.amount,
+      account_from_id: trx.account_from_id,
+      account_to_id: trx.account_to_id,
+      is_essential: +trx.is_essential as 0 | 1,
+      date_timestamp: trx.date_timestamp,
+      category_id: trx.category_id,
+      entity_id: trx.entity_id,
+    });
+  }
+
   async function addTransaction(trx: AddTransactionRequest) {
+    updateLastCachedTransaction(trx);
     const request = await TrxServices.addTransactionStep1(trx);
 
     void queryClient.invalidateQueries({
