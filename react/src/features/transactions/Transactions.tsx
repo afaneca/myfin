@@ -49,12 +49,15 @@ import GenericConfirmationDialog from '../../components/GenericConfirmationDialo
 import AddEditTransactionDialog from './AddEditTransactionDialog.tsx';
 import IconButton from '@mui/material/IconButton';
 import { inferTrxType } from '../../utils/transactionUtils.ts';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_IMPORT_TRX } from '../../providers/RoutesProvider.tsx';
 
 const Transactions = () => {
   const theme = useTheme();
   const loader = useLoading();
   const snackbar = useSnackbar();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 50,
     page: 0,
@@ -113,7 +116,7 @@ const Transactions = () => {
   };
 
   const handleImportTransactionsClick = () => {
-    // TODO
+    navigate(ROUTE_IMPORT_TRX);
   };
 
   const handleAddTransactionClick = () => {

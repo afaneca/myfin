@@ -10,6 +10,7 @@ import Accounts from '../features/accounts/Accounts.tsx';
 import Categories from '../features/categories/Categories.tsx';
 import Entities from '../features/entities/Entities.tsx';
 import Tags from '../features/tags/Tags.tsx';
+import ImportTransactions from '../features/transactions/import/ImportTransactions.tsx';
 
 export const ROUTE_AUTH = '/auth';
 export const ROUTE_DASHBOARD = '/dashboard';
@@ -22,6 +23,7 @@ export const ROUTE_ACCOUNTS = '/accounts';
 export const ROUTE_CATEGORIES = '/categories';
 export const ROUTE_ENTITIES = '/entities';
 export const ROUTE_TAGS = '/tags';
+export const ROUTE_IMPORT_TRX = '/transactions/import';
 
 const RoutesProvider = () => {
   return (
@@ -40,6 +42,10 @@ const RoutesProvider = () => {
           <Route path={`${ROUTE_CATEGORIES}`} element={<Categories />} />
           <Route path={`${ROUTE_ENTITIES}`} element={<Entities />} />
           <Route path={`${ROUTE_TAGS}`} element={<Tags />} />
+          <Route
+            path={`${ROUTE_IMPORT_TRX}`}
+            element={<ImportTransactions />}
+          />
           <Route path="*" element={<Navigate to="/auth" replace={true} />} />
         </Route>
       </Routes>

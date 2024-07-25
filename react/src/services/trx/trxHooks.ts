@@ -4,12 +4,19 @@ import TrxServices, {
   AddTransactionRequest,
   AutoCategorizeTransactionRequest,
   EditTransactionRequest,
+  ImportTransactionsStep1Request,
   TransactionsInMonthForCategoryRequest,
 } from './trxServices.ts';
 import { useUserData } from '../../providers/UserProvider.tsx';
 
 const QUERY_KEY_GET_TRANSACTIONS = 'QUERY_KEY_GET_TRANSACTIONS';
 const QUERY_KEY_ADD_TRANSACTION_STEP0 = 'QUERY_KEY_ADD_TRANSACTION_STEP0';
+const QUERY_KEY_IMPORT_TRANSACTIONS_STEP0 =
+  'QUERY_KEY_IMPORT_TRANSACTIONS_STEP0';
+const QUERY_KEY_IMPORT_TRANSACTIONS_STEP1 =
+  'QUERY_KEY_IMPORT_TRANSACTIONS_STEP1';
+  const QUERY_KEY_IMPORT_TRANSACTIONS_STEP2 =
+  'QUERY_KEY_IMPORT_TRANSACTIONS_STEP2';
 const MUTATION_KEY_AUTO_CATEGORIZE_TRANSACTION = [
   'MUTATION_KEY_AUTO_CATEGORIZE_TRANSACTION',
 ];
@@ -138,5 +145,45 @@ export function useGetTransactionsForCategoryInMonth(
   return useQuery({
     queryKey: [QUERY_KEY_GET_TRX_FOR_CATEGORY_IN_MONTH],
     queryFn: getTransactionsForCategory,
+  });
+}
+
+export function useImportTransactionsStep0() {
+  async function importTransactionsStep0() {
+    const data = await TrxServices.importTransactionsStep0();
+    return data.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_IMPORT_TRANSACTIONS_STEP0],
+    queryFn: importTransactionsStep0,
+  });
+}
+
+export function useImportTransactionsStep1() {
+  async function importTransactionsStep1(
+    request: ImportTransactionsStep1Request,
+  ) {
+    const data = await TrxServices.importTransactionsStep1(request);
+    return data.data;
+  }
+
+  return useMutation({
+    mutationKey: [QUERY_KEY_IMPORT_TRANSACTIONS_STEP1],
+    mutationFn: importTransactionsStep1,
+  });
+}
+
+export function useImportTransactionsStep2() {
+  async function importTransactionsStep2(
+    list: AddTransactionRequest[]
+  ) {
+    const data = await TrxServices.importTransactionsStep2(list);
+    return data.data;
+  }
+
+  return useMutation({
+    mutationKey: [QUERY_KEY_IMPORT_TRANSACTIONS_STEP2],
+    mutationFn: importTransactionsStep2,
   });
 }

@@ -203,7 +203,6 @@
     "importFromCsv": "Import de .csv",
     "importFromClipboard": "Importar do clipboard",
     "continueImport": "Continuar importação",
-    "importNotes": "Selecione uma coluna para cada campo: <strong>Data</strong>, <strong>Descrição</strong>, <strong>Montante</strong> (e/ou <strong>Tipo</strong>/<strong>Crédito</strong>/<strong>Débito</strong>).",
     "clipboardPermissionMessage": "Para poder continuar a importação, tem que aceitar a permissão de leitura do clipboard!",
     "pleaseDoNotSelectDuplicatedFields": "Por favor, não selecione campos duplicados!",
     "pleaseSelectAnAccountToAssociateWithTrx": "Por favor, selecione uma conta para associar às transações",
@@ -216,6 +215,19 @@
     "generated_split_invest_trx_observations": "Taxas/impostos para transação de {{units}} {{ticker}}",
     "addATagPlaceholder": "Adicione uma tag",
     "addAnotherTagPlaceholder": "Adicione outra tag"
+  },
+  "importTransactions": {
+    "importTransactions": "Importar Transações",
+    "strapLine": "Importe as suas transações em 3 passos",
+    "step0Label": "Importar do clipboard",
+    "step1Label": "Atribuir colunas",
+    "step2Label": "Ajustes finais",
+    "step3Label": "Feito!",
+    "step0Title": "Copie as suas transações para o clipboard",
+    "step0Text": "Aceda aos seus extratos bancários ou à aplicação de homebanking, selecione todas as transações desejadas, clique com o botão direito do rato e escolha 'copiar'. Em seguida, clique no botão abaixo para continuar com a importação.",
+    "step1Text": "Defina a conta para a qual quer realizar a importação e escolha uma coluna para cada campo: <strong>Data</strong>, <strong>Descrição</strong>, <strong>Montante</strong> (e/ou <strong>Tipo</strong>/<strong>Crédito</strong>/<strong>Débito</strong>).",
+    "step2Text": "Verifique e faça os ajustes finais às transações antes de as adicionar à conta.",
+    "step3Text": "{{count}} novas transações foram importadas com sucesso para a conta {{accountName}}. Bom trabalho!"
   },
   "login": {
     "fillAllFields": "Não deixe campos em branco",

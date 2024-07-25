@@ -203,7 +203,6 @@
     "importFromCsv": "Import from .csv",
     "importFromClipboard": "Import from clipboard",
     "continueImport": "Continue",
-    "importNotes": "Select one column for each field: <strong>Date</strong>, <strong>Description</strong>, <strong>Amount</strong> (and/or <strong>Type</strong>/<strong>Credit</strong>/<strong>Debit</strong>).",
     "clipboardPermissionMessage": "To be able to complete this task, you need to accept the clipboard reading permission prompt!",
     "pleaseDoNotSelectDuplicatedFields": "Please, do not select duplicated fields!",
     "pleaseSelectAnAccountToAssociateWithTrx": "Please, select an account to associate with the transactions",
@@ -216,6 +215,20 @@
     "generated_split_invest_trx_observations": "Fees/taxes for {{units}} {{ticker}} transaction",
     "addATagPlaceholder": "Add a tag",
     "addAnotherTagPlaceholder": "Add another tag"
+  },
+  "importTransactions": {
+    "importTransactions": "Import Transactions",
+    "strapLine": "Import your transactions in 3 steps",
+    "step0Label": "Import from clipboard",
+    "step1Label": "Assign columns",
+    "step2Label": "Final adjustments",
+    "step3Label": "Done!",
+    "step0Title": "Copy your transaction data to the clipboard",
+    "step0Text": "Access your bank statements or home banking app, select all the desired transactions, right-click and choose 'copy'. Then, click the button below to proceed with the import.",
+    "step1Text": "Choose the account you want to import to and select one column for each field: <strong>Date</strong>, <strong>Description</strong>, <strong>Amount</strong> (and/or <strong>Type</strong>/<strong>Credit</strong>/<strong>Debit</strong>).",
+    "step2Text": "Review and make final adjustments to the transactions before adding them to the account.",
+    "step3Text": "{{count}} new transactions have successfully been imported into {{accountName}}. Good job!"
+
   },
   "login": {
     "fillAllFields": "Fill all fields and try again.",

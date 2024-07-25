@@ -157,6 +157,40 @@ const getTransactionsForCategoryInMonth = (
   });
 };
 
+const importTransactionsStep0 = () => {
+  return axios.post<Account[]>('/trxs/import/step0');
+};
+
+export type ImportTransactionsStep1Request = {
+  account_id: bigint;
+  trx_list: ExportedTransactionItem[];
+};
+export type ExportedTransactionItem = {
+  date: number;
+  description: string;
+  amount: number;
+  type: TransactionType;
+};
+export type ImportTransactionsStep1Response = {
+  accounts: Account[];
+  categories: Category[];
+  entities: Entity[];
+  fillData: RuleInstructions[];
+};
+
+const importTransactionsStep1 = (request: ImportTransactionsStep1Request) => {
+  return axios.post<ImportTransactionsStep1Response>('/trxs/import/step1', {
+    account_id: request.account_id,
+    trx_list: JSON.stringify(request.trx_list),
+  });
+};
+
+const importTransactionsStep2 = (list: AddTransactionRequest[]) => {
+  return axios.post<ImportTransactionsStep1Response>('/trxs/import/step2', {
+    trx_list: JSON.stringify(list),
+  });
+};
+
 export default {
   getTransactions,
   removeTransaction,
@@ -165,4 +199,7 @@ export default {
   editTransaction,
   autoCategorizeTrx,
   getTransactionsForCategoryInMonth,
+  importTransactionsStep0,
+  importTransactionsStep1,
+  importTransactionsStep2,
 };

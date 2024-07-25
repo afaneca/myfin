@@ -21,7 +21,7 @@ import TextField from '@mui/material/TextField/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import { debounce } from 'lodash';
 import MyFinTable from '../../components/MyFinTable.tsx';
-import AddEditTagDialog from '../entities/AddEditTagDialog.tsx';
+import AddEditTagDialog from './AddEditTagDialog.tsx';
 
 const Tags = () => {
   const theme = useTheme();

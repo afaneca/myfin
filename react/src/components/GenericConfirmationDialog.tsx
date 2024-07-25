@@ -10,6 +10,7 @@ interface Props {
   descriptionText: string;
   positiveText: string;
   negativeText?: string;
+  alert?: string;
 }
 
 const GenericConfirmationDialog = (props: Props) => {
@@ -22,6 +23,7 @@ const GenericConfirmationDialog = (props: Props) => {
       onNegativeClick={props.onNegativeClick}
       title={props.titleText}
       description={props.descriptionText}
+      alert={props.alert || t('transactions.deleteTransactionModalAlert')}
       positiveText={props.positiveText}
       negativeText={props.negativeText ?? t('common.cancel')}
     />

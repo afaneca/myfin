@@ -19,7 +19,6 @@ import {
   AccountStatus,
   AccountType,
 } from '../../services/auth/authServices.ts';
-import MyFinTable from '../../components/MyFinTable.tsx';
 import { GridColDef } from '@mui/x-data-grid';
 import { formatStringAsCurrency } from '../../utils/textUtils.ts';
 import IconButton from '@mui/material/IconButton';
@@ -34,6 +33,7 @@ import AddEditAccountDialog from './AddEditAccountDialog.tsx';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import TextField from '@mui/material/TextField/TextField';
 import { debounce } from 'lodash';
+import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
 
 const Accounts = () => {
   const theme = useTheme();
@@ -339,13 +339,11 @@ const Accounts = () => {
           />
         </Grid>
         <Grid xs={12}>
-          <MyFinTable
+          <MyFinStaticTable
             isRefetching={getAccountsRequest.isRefetching}
             rows={rows}
             columns={columns}
-            itemCount={filteredAccounts.length}
-            paginationModel={{ pageSize: 100, page: 0 }}
-            setPaginationModel={() => {}}
+            paginationModel={{ pageSize: 100 }}
             onRowClicked={(id) => {
               const account = accounts.find((acc) => acc.account_id == id);
               if (!account) return;

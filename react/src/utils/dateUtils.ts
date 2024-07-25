@@ -1,5 +1,5 @@
 import i18n from '../i18n';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
@@ -107,6 +107,18 @@ export const convertUnixTimestampToDateString = (
   format: string = 'DD/MM/YYYY',
 ) => {
   return dayjs.unix(unixTs).utc().format(format);
+};
+
+export const convertUnixTimestampToDayJs = (
+  unixTs: number,
+) => {
+  return dayjs.unix(unixTs).utc();
+};
+
+export const convertDayJsToUnixTimestamp = (
+  dayJs: Dayjs,
+) => {
+  return dayJs.unix();
 };
 
 export const getCurrentYear = () => {
