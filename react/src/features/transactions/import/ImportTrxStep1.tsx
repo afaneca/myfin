@@ -88,6 +88,7 @@ const ImportTrxStep1 = (props: Props) => {
     AMOUNT: [
       'amount',
       'montante',
+      'montante',
       'valor',
       'montante (eur)',
       'montante(eur)',
@@ -295,9 +296,9 @@ const ImportTrxStep1 = (props: Props) => {
     rows.forEach((row) => {
       const columns = row.split('\t');
       const amountAndTypeInferred = inferTrxAmountAndType(columns);
-      const date = columns[getColumnNumberForMapping(FIELD_MAPPING.DATE) || -1];
+      const date = columns[getColumnNumberForMapping(FIELD_MAPPING.DATE) ?? -1];
       const description =
-        columns[getColumnNumberForMapping(FIELD_MAPPING.DESCRIPTION) || -1];
+        columns[getColumnNumberForMapping(FIELD_MAPPING.DESCRIPTION) ?? -1];
       const amount = amountAndTypeInferred.amount;
       const type = amountAndTypeInferred.type;
       if (checkIfFieldsAreFilled([date, description, amount + '', type])) {
