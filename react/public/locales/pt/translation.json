@@ -336,9 +336,9 @@
     "fromAccountToAssign": "Conta origem a atribuir",
     "toAccountToAssign": "Conta destino a atribuir",
     "yes": "Sim",
-    "no": "No",
+    "no": "Não",
     "essential": "Essencial",
-    "deleteRuleModalTitle": "Remover regra <strong>{{id}}</strong>?",
+    "deleteRuleModalTitle": "Remover regra {{id}}?",
     "deleteRuleModalSubtitle": "Tem a certeza de que pretende remover esta regra?",
     "deleteRuleModalAlert": "Esta ação é irreversível!"
   },

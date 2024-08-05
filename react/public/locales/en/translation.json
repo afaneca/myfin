@@ -339,7 +339,7 @@
     "yes": "Yes",
     "no": "No",
     "essential": "Essential",
-    "deleteRuleModalTitle": "Delete rule <strong>{{id}}</strong>?",
+    "deleteRuleModalTitle": "Delete rule {{id}}?",
     "deleteRuleModalSubtitle": "Are you sure you want to delete this rule?",
     "deleteRuleModalAlert": "This action is irreversible!"
   },

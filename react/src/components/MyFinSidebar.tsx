@@ -10,6 +10,7 @@ import {
   LocalOffer,
   MenuOutlined,
   PaymentsOutlined,
+  TipsAndUpdates,
 } from '@mui/icons-material';
 import { alpha, useMediaQuery, useTheme } from '@mui/material';
 import {
@@ -18,6 +19,7 @@ import {
   ROUTE_CATEGORIES,
   ROUTE_DASHBOARD,
   ROUTE_ENTITIES,
+  ROUTE_RULES,
   ROUTE_TAGS,
   ROUTE_TRX,
 } from '../providers/RoutesProvider';
@@ -120,6 +122,13 @@ const MyFinSidebar = () => {
           >
             {' '}
             {t('sidebar.tags')}
+          </MenuItem>
+          <MenuItem
+            icon={<TipsAndUpdates />}
+            component={<NavLink to={ROUTE_RULES} />}
+          >
+            {' '}
+            {t('sidebar.rules')}
           </MenuItem>
           {/*<Divider />*/}
         </Menu>
