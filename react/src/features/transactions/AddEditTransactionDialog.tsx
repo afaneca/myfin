@@ -301,7 +301,7 @@ const AddEditTransactionDialog = (props: Props) => {
 
     const cachedTrx = addTransactionStep0Request.data.cachedTrx;
     if (cachedTrx && !isEditForm) {
-      setAmountValue(cachedTrx.amount);
+      /*setAmountValue(cachedTrx.amount);*/
       setTransactionType(
         inferTrxTypeByAttributes(
           cachedTrx.account_from_id,
