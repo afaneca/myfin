@@ -26,16 +26,13 @@ const ImportTrxStep0 = (props: Props) => {
 
       if (permissionStatus.state === 'granted') {
         const text = await navigator.clipboard.readText();
-        //console.log('Clipboard content:', text);
         props.onNext(text);
-        //setSnackbarMessage('Copied from clipboard successfully');
       } else if (permissionStatus.state === 'prompt') {
         // Request permission
         try {
           const text = await navigator.clipboard.readText();
           props.onNext(text);
         } catch (error) {
-          //setSnackbarMessage('Permission denied');
           snackbar.showSnackbar(
             t('transactions.clipboardPermissionMessage'),
             AlertSeverity.WARNING,

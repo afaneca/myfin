@@ -15,7 +15,7 @@ const QUERY_KEY_IMPORT_TRANSACTIONS_STEP0 =
   'QUERY_KEY_IMPORT_TRANSACTIONS_STEP0';
 const QUERY_KEY_IMPORT_TRANSACTIONS_STEP1 =
   'QUERY_KEY_IMPORT_TRANSACTIONS_STEP1';
-  const QUERY_KEY_IMPORT_TRANSACTIONS_STEP2 =
+const QUERY_KEY_IMPORT_TRANSACTIONS_STEP2 =
   'QUERY_KEY_IMPORT_TRANSACTIONS_STEP2';
 const MUTATION_KEY_AUTO_CATEGORIZE_TRANSACTION = [
   'MUTATION_KEY_AUTO_CATEGORIZE_TRANSACTION',
@@ -175,9 +175,7 @@ export function useImportTransactionsStep1() {
 }
 
 export function useImportTransactionsStep2() {
-  async function importTransactionsStep2(
-    list: AddTransactionRequest[]
-  ) {
+  async function importTransactionsStep2(list: AddTransactionRequest[]) {
     const data = await TrxServices.importTransactionsStep2(list);
     return data.data;
   }

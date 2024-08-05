@@ -300,7 +300,7 @@ const AddEditTransactionDialog = (props: Props) => {
     const accounts = transformUserAccountsIntoIdLabelPair(userAccounts || []);
 
     const cachedTrx = addTransactionStep0Request.data.cachedTrx;
-    if (cachedTrx && !isEditForm) {
+    if (cachedTrx != null && !isEditForm) {
       /*setAmountValue(cachedTrx.amount);*/
       setTransactionType(
         inferTrxTypeByAttributes(
@@ -322,7 +322,7 @@ const AddEditTransactionDialog = (props: Props) => {
         entities.find((entity) => entity.id === cachedTrx.entity_id) || null,
       );
     }
-  }, [addTransactionStep0Request.isSuccess]);
+  }, [addTransactionStep0Request.data]);
 
   useEffect(() => {
     if (
