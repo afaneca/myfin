@@ -16,7 +16,6 @@ import IconButton from '@mui/material/IconButton';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
 import { GridColDef } from '@mui/x-data-grid';
 import { Paper, useTheme } from '@mui/material';
-import AddEditEntityDialog from '../entities/AddEditEntityDialog.tsx';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import Box from '@mui/material/Box/Box';
 import PageHeader from '../../components/PageHeader.tsx';
