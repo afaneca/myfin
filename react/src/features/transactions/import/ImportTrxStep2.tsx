@@ -140,8 +140,9 @@ const ImportTrxStep2 = (props: Props) => {
 
   const newAccountBalance: number = useMemo(() => {
     const initialBalance =
-      props.data.accounts.find(() => props.data.selectedAccountId)?.balance ||
-      0;
+      props.data.accounts.find(
+        (acc) => acc.account_id == props.data.selectedAccountId,
+      )?.balance || 0;
     return transactions.reduce((acc, row) => {
       let amount = row.value;
       if (row.accountFrom?.id == props.data.selectedAccountId) {
