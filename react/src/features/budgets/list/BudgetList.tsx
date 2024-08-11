@@ -1,6 +1,6 @@
 import { Checkbox, FormGroup, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
 import Box from '@mui/material/Box/Box';
 import PageHeader from '../../../components/PageHeader.tsx';
@@ -47,6 +47,7 @@ import {
   ROUTE_BUDGET_DETAILS,
   ROUTE_BUDGET_NEW,
 } from '../../../providers/RoutesProvider.tsx';
+import { debounce } from 'lodash';
 import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
 
 const BudgetList = () => {
@@ -69,6 +70,8 @@ const BudgetList = () => {
   );
   const [actionableBudget, setActionableBudget] = useState<Budget | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
+  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
+  
   const removeBudgetRequest = useRemoveBudget();
 
   // Loading
@@ -366,7 +369,7 @@ const BudgetList = () => {
               ),
             }}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setSearchQuery(event.target.value);
+              debouncedSearchQuery(event.target.value);
             }}
           />
         </Grid>
