@@ -19,7 +19,7 @@ import {
   Transaction,
   TransactionType,
 } from '../../services/trx/trxServices.ts';
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import {
   AddCircleOutline,
   ArrowBack,
@@ -50,6 +50,7 @@ import AddEditTransactionDialog from './AddEditTransactionDialog.tsx';
 import IconButton from '@mui/material/IconButton';
 import { inferTrxType } from '../../utils/transactionUtils.ts';
 import { useNavigate } from 'react-router-dom';
+import { debounce } from 'lodash';
 import { ROUTE_IMPORT_TRX } from '../../providers/RoutesProvider.tsx';
 
 const Transactions = () => {
@@ -59,7 +60,7 @@ const Transactions = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 50,
+    pageSize: 20,
     page: 0,
   });
   const [actionableTransaction, setActionableTransaction] =
@@ -73,6 +74,7 @@ const Transactions = () => {
     searchQuery,
   );
   const removeTransactionRequest = useRemoveTransaction();
+  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
 
   // Show loading indicator when isLoading is true
   useEffect(() => {
@@ -410,7 +412,7 @@ const Transactions = () => {
               ),
             }}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setSearchQuery(event.target.value);
+              debouncedSearchQuery(event.target.value);
             }}
           />
         </Grid>
