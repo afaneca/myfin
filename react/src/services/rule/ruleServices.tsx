@@ -3,7 +3,7 @@ import { Account } from '../auth/authServices.ts';
 import { Entity } from '../trx/trxServices.ts';
 import { Category } from '../category/categoryServices.ts';
 
-export enum RuleMatchingType {
+export enum RuleMatchingOperatorType {
   Ignore = 'IG',
   Equals = 'EQ',
   NotEquals = 'NEQ',
@@ -18,7 +18,7 @@ export type Rule = {
   assign_category_id?: bigint;
   assign_entity_id?: bigint;
   assign_is_essential?: number;
-  assign_type?: number;
+  assign_type?: string;
   matcher_account_from_id_operator?: string;
   matcher_account_from_id_value?: bigint;
   matcher_account_to_id_operator?: string;
@@ -50,7 +50,18 @@ const removeRule = (id: bigint) => {
 };
 
 const editRule = (request: Rule) => {
-  return axios.put(`/entities`, request);
+  // Remove null values from request
+  const cleanedRequest = Object.fromEntries(
+    Object.entries({
+      ...request,
+      matcher_amount_value: String(request.matcher_amount_value),
+      assign_essential: request.assign_is_essential,
+      users_user_id: undefined,
+      assign_is_essential: undefined,
+    }).filter(([_, value]) => value !== null),
+  );
+
+  return axios.put(`/rules`, cleanedRequest);
 };
 
 export default {

@@ -315,9 +315,11 @@
   },
   "rules": {
     "rules": "Auto-categorization rules",
-    "addRule": "Add Rule",
-    "conditions": "Conditions",
+    "strapLine": "Automate the categorization of your transactions",
+    "addRule": "Add Rule","conditions": "Conditions",
+    "conditionsDescription": "The conditions that will trigger this rule",
     "result": "Result",
+    "resultDescription": "The values to assign when the rule is triggered",
     "fromAccount": "From Account",
     "toAccount": "To Account",
     "assignCategory": "Assign Category",
@@ -341,7 +343,8 @@
     "essential": "Essential",
     "deleteRuleModalTitle": "Delete rule {{id}}?",
     "deleteRuleModalSubtitle": "Are you sure you want to delete this rule?",
-    "deleteRuleModalAlert": "This action is irreversible!"
+    "deleteRuleModalAlert": "This action is irreversible!",
+    "operator": "Operator"
   },
   "budgets": {
     "budgets": "Budgets",

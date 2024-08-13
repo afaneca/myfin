@@ -30,7 +30,7 @@
     "tableInfoFiltered": "(filtrado de um total de _MAX_ registos)",
     "tablePaginateNext": "Página Seguinte",
     "tablePaginatePrevious": "Página Anterior",
-    "ignore": "Ignore",
+    "ignore": "Ignorar",
     "credit": "Crédito",
     "debit": "Débito",
     "type": "Tipo",
@@ -314,9 +314,12 @@
   },
   "rules": {
     "rules": "Regras para Auto-Categorização",
+    "strapLine": "Automatize a categorização das suas transações",
     "addRule": "Adicionar regra",
     "conditions": "Condições",
+    "conditionsDescription": "As condições que acionarão esta regra",
     "result": "Resultado",
+    "resultDescription": "Os valores a atribuir quando a regra for acionada",
     "fromAccount": "Conta Origem",
     "toAccount": "Conta Destino",
     "assignCategory": "Atribuir Categoria",
@@ -340,7 +343,8 @@
     "essential": "Essencial",
     "deleteRuleModalTitle": "Remover regra {{id}}?",
     "deleteRuleModalSubtitle": "Tem a certeza de que pretende remover esta regra?",
-    "deleteRuleModalAlert": "Esta ação é irreversível!"
+    "deleteRuleModalAlert": "Esta ação é irreversível!",
+    "operator": "Operador"
   },
   "budgets": {
     "budgets": "Orçamentos",

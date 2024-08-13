@@ -6,10 +6,13 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useGetRules, useRemoveRule } from '../../services/rule/ruleHooks.tsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Rule, RuleMatchingType } from '../../services/rule/ruleServices.tsx';
+import {
+  Rule,
+  RuleMatchingOperatorType,
+} from '../../services/rule/ruleServices.tsx';
 import { debounce } from 'lodash';
 import { Account } from '../../services/auth/authServices.ts';
-import { Entity } from '../../services/trx/trxServices.ts';
+import { Entity, TransactionType } from '../../services/trx/trxServices.ts';
 import { Category } from '../../services/category/categoryServices.ts';
 import Stack from '@mui/material/Stack/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -24,6 +27,7 @@ import Button from '@mui/material/Button/Button';
 import TextField from '@mui/material/TextField/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
+import AddEditRuleDialog from './AddEditRuleDialog.tsx';
 
 const Rules = () => {
   const theme = useTheme();
@@ -46,6 +50,17 @@ const Rules = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [entities, setEntities] = useState<Entity[]>([]);
 
+  const getTransactionTypeLocalizedText = (transactionType: string): string => {
+    switch (transactionType) {
+      case TransactionType.Expense:
+        return t('transactions.expense');
+      case TransactionType.Income:
+        return t('transactions.income');
+      default:
+        return t('transactions.transfer');
+    }
+  };
+
   const filteredRules = useMemo(() => {
     let filteredList = rules;
 
@@ -54,7 +69,39 @@ const Rules = () => {
       filteredList = rules.filter(
         (rule) =>
           !searchQuery ||
-          JSON.stringify(rule).toLowerCase().includes(lowerCaseQuery),
+          JSON.stringify(rule).toLowerCase().includes(lowerCaseQuery) ||
+          accounts
+            .find((acc) => acc.account_id == rule.matcher_account_from_id_value)
+            ?.name.toLowerCase()
+            .includes(lowerCaseQuery) ||
+          accounts
+            .find((acc) => acc.account_id == rule.matcher_account_to_id_value)
+            ?.name.toLowerCase()
+            .includes(lowerCaseQuery) ||
+          accounts
+            .find((acc) => acc.account_id == rule.assign_account_from_id)
+            ?.name.toLowerCase()
+            .includes(lowerCaseQuery) ||
+          accounts
+            .find((acc) => acc.account_id == rule.assign_account_to_id)
+            ?.name.toLowerCase()
+            .includes(lowerCaseQuery) ||
+          categories
+            .find((cat) => cat.category_id == rule.assign_category_id)
+            ?.name.toLowerCase()
+            .includes(lowerCaseQuery) ||
+          entities
+            .find((ent) => ent.entity_id == rule.assign_entity_id)
+            ?.name.toLowerCase()
+            .includes(lowerCaseQuery) ||
+          (rule.matcher_type_value &&
+            getTransactionTypeLocalizedText(rule.matcher_type_value)
+              .toLowerCase()
+              .includes(lowerCaseQuery)) ||
+          (rule.assign_type &&
+            getTransactionTypeLocalizedText(rule.assign_type)
+              .toLowerCase()
+              .includes(lowerCaseQuery)),
       );
     }
 
@@ -143,16 +190,16 @@ const Rules = () => {
 
   const getMatchingTypeLocalizedText = (
     matchingType: string,
-  ): RuleMatchingType => {
+  ): RuleMatchingOperatorType => {
     switch (matchingType) {
-      case RuleMatchingType.Equals:
+      case RuleMatchingOperatorType.Equals:
         return t('rules.equals');
-      case RuleMatchingType.NotEquals:
+      case RuleMatchingOperatorType.NotEquals:
         return t('rules.notEquals');
-      case RuleMatchingType.Contains:
+      case RuleMatchingOperatorType.Contains:
         return t('rules.contains');
-      case RuleMatchingType.NotContains:
-        return t('rules.notContains');
+      case RuleMatchingOperatorType.NotContains:
+        return t('rules.doesNotContain');
       default:
         return t('rules.ignore');
     }
@@ -193,7 +240,8 @@ const Rules = () => {
       sortable: false,
       renderCell: (params) => (
         <Stack gap={1} sx={{ mt: 1, mb: 1 }} direction="column">
-          {params.value.accountFromOperator != RuleMatchingType.Ignore && (
+          {params.value.accountFromOperator !=
+            RuleMatchingOperatorType.Ignore && (
             <ConditionCell
               conditionLabel={t('rules.fromAccount')}
               matchingTypeValue={getMatchingTypeLocalizedText(
@@ -202,7 +250,8 @@ const Rules = () => {
               conditionValue={params.value.accountFromValue}
             />
           )}
-          {params.value.accountToOperator != RuleMatchingType.Ignore && (
+          {params.value.accountToOperator !=
+            RuleMatchingOperatorType.Ignore && (
             <ConditionCell
               conditionLabel={t('rules.toAccount')}
               matchingTypeValue={getMatchingTypeLocalizedText(
@@ -211,7 +260,7 @@ const Rules = () => {
               conditionValue={params.value.accountToValue}
             />
           )}
-          {params.value.amountOperator != RuleMatchingType.Ignore && (
+          {params.value.amountOperator != RuleMatchingOperatorType.Ignore && (
             <ConditionCell
               conditionLabel={t('common.amount')}
               matchingTypeValue={getMatchingTypeLocalizedText(
@@ -220,7 +269,8 @@ const Rules = () => {
               conditionValue={params.value.amountValue}
             />
           )}
-          {params.value.descriptionOperator != RuleMatchingType.Ignore && (
+          {params.value.descriptionOperator !=
+            RuleMatchingOperatorType.Ignore && (
             <ConditionCell
               conditionLabel={t('common.description')}
               matchingTypeValue={getMatchingTypeLocalizedText(
@@ -229,13 +279,15 @@ const Rules = () => {
               conditionValue={params.value.descriptionValue}
             />
           )}
-          {params.value.typeOperator != RuleMatchingType.Ignore && (
+          {params.value.typeOperator != RuleMatchingOperatorType.Ignore && (
             <ConditionCell
               conditionLabel={t('common.type')}
               matchingTypeValue={getMatchingTypeLocalizedText(
                 params.value.typeOperator,
               )}
-              conditionValue={params.value.typeValue}
+              conditionValue={getTransactionTypeLocalizedText(
+                params.value.typeValue,
+              )}
             />
           )}
         </Stack>
@@ -336,15 +388,18 @@ const Rules = () => {
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
-      {/*{isAddEditDialogOpen && (
-        <AddEditEntityDialog
+      {isAddEditDialogOpen && (
+        <AddEditRuleDialog
           isOpen={isAddEditDialogOpen}
           onClose={() => setAddEditDialogOpen(false)}
           onPositiveClick={() => setAddEditDialogOpen(false)}
           onNegativeClick={() => setAddEditDialogOpen(false)}
-          entity={act}
+          rule={actionableRule}
+          accounts={accounts}
+          categories={categories}
+          entities={entities}
         />
-      )}*/}
+      )}
       {isRemoveDialogOpen && (
         <GenericConfirmationDialog
           isOpen={isRemoveDialogOpen}
@@ -360,10 +415,7 @@ const Rules = () => {
         />
       )}
       <Box display="flex" justifyContent="space-between" flexDirection="column">
-        <PageHeader
-          title={t('entities.entities')}
-          subtitle={t('entities.strapLine')}
-        />
+        <PageHeader title={t('rules.rules')} subtitle={t('rules.strapLine')} />
       </Box>
       <Grid container spacing={2}>
         <Grid xs={12} md={8}>
@@ -376,7 +428,7 @@ const Rules = () => {
               setAddEditDialogOpen(true);
             }}
           >
-            {t('entities.addEntityCTA')}
+            {t('rules.addRule')}
           </Button>
         </Grid>
         <Grid

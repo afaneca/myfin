@@ -69,10 +69,10 @@ interface Props {
   transaction: Transaction | null;
 }
 
-export interface IdLabelPair {
+export type IdLabelPair = {
   id: bigint;
   label: string;
-}
+};
 
 const AddEditTransactionDialog = (props: Props) => {
   const isEditForm = props.transaction !== null;
