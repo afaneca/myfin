@@ -57,7 +57,8 @@
     "budgets": "Orçamentos",
     "investments": "Investimentos",
     "statistics": "Estatísticas",
-    "tags": "Tags"
+    "tags": "Tags",
+    "meta": "Meta"
   },
   "topBar": {
     "operatingFunds": "Fundo de Maneio",

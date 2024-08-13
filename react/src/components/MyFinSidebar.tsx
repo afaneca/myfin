@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
+import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { NavLink } from 'react-router-dom';
 import {
-  AccountBalance,
+  AccountBalanceWalletOutlined,
   BookmarksOutlined,
-  Business,
+  BusinessOutlined,
   DashboardOutlined,
-  FolderShared,
-  LocalOffer,
+  DisplaySettingsOutlined,
+  FolderSharedOutlined,
+  LocalOfferOutlined,
   MenuOutlined,
   PaymentsOutlined,
-  TipsAndUpdates,
+  TipsAndUpdatesOutlined,
 } from '@mui/icons-material';
 import { alpha, useMediaQuery, useTheme } from '@mui/material';
 import {
@@ -47,11 +48,18 @@ const MyFinSidebar = () => {
             button: {
               // the active class will be added automatically by react router
               // so we can use it to style the active menu item
+              backgroundColor: theme.palette.background.paper,
               [`&.active`]: {
                 backgroundColor: theme.palette.background.default,
               },
               '&:hover': {
                 backgroundColor: alpha(theme.palette.background.default, 0.3),
+              },
+            },
+            subMenuContent: {
+              backgroundColor: 'inherit',
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.background.default, 1.0),
               },
             },
           }}
@@ -96,40 +104,42 @@ const MyFinSidebar = () => {
             {t('sidebar.budgets')}
           </MenuItem>
           <MenuItem
-            icon={<AccountBalance />}
+            icon={<AccountBalanceWalletOutlined />}
             component={<NavLink to={ROUTE_ACCOUNTS} />}
           >
             {' '}
             {t('sidebar.accounts')}
           </MenuItem>
-          <MenuItem
-            icon={<FolderShared />}
-            component={<NavLink to={ROUTE_CATEGORIES} />}
-          >
-            {' '}
-            {t('sidebar.categories')}
-          </MenuItem>
-          <MenuItem
-            icon={<Business />}
-            component={<NavLink to={ROUTE_ENTITIES} />}
-          >
-            {' '}
-            {t('sidebar.entities')}
-          </MenuItem>
-          <MenuItem
-            icon={<LocalOffer />}
-            component={<NavLink to={ROUTE_TAGS} />}
-          >
-            {' '}
-            {t('sidebar.tags')}
-          </MenuItem>
-          <MenuItem
-            icon={<TipsAndUpdates />}
-            component={<NavLink to={ROUTE_RULES} />}
-          >
-            {' '}
-            {t('sidebar.rules')}
-          </MenuItem>
+          <SubMenu label={t('sidebar.meta')} icon={<DisplaySettingsOutlined />}>
+            <MenuItem
+              icon={<FolderSharedOutlined />}
+              component={<NavLink to={ROUTE_CATEGORIES} />}
+            >
+              {' '}
+              {t('sidebar.categories')}
+            </MenuItem>
+            <MenuItem
+              icon={<BusinessOutlined />}
+              component={<NavLink to={ROUTE_ENTITIES} />}
+            >
+              {' '}
+              {t('sidebar.entities')}
+            </MenuItem>
+            <MenuItem
+              icon={<LocalOfferOutlined />}
+              component={<NavLink to={ROUTE_TAGS} />}
+            >
+              {' '}
+              {t('sidebar.tags')}
+            </MenuItem>
+            <MenuItem
+              icon={<TipsAndUpdatesOutlined />}
+              component={<NavLink to={ROUTE_RULES} />}
+            >
+              {' '}
+              {t('sidebar.rules')}
+            </MenuItem>
+          </SubMenu>
           {/*<Divider />*/}
         </Menu>
       </Sidebar>
