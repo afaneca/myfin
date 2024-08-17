@@ -236,6 +236,7 @@ const Rules = () => {
       field: 'conditions',
       headerName: t('rules.conditions'),
       flex: 1,
+      minWidth: 200,
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -297,6 +298,7 @@ const Rules = () => {
       field: 'result',
       headerName: t('rules.result'),
       flex: 1,
+      minWidth: 200,
       editable: false,
       sortable: false,
       renderCell: (params) => (
