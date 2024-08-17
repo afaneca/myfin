@@ -1,6 +1,6 @@
 import { SxProps, Theme, useMediaQuery, useTheme } from '@mui/material';
 import Stack from '@mui/material/Stack/Stack';
-import { ResponsivePie } from '@nivo/pie';
+import { PieSvgProps, ResponsivePie, DefaultRawDatum } from '@nivo/pie';
 import {
   generateDefsForGradients,
   generateFillArrayForGradients,
@@ -18,9 +18,10 @@ export interface ChartDataItem {
 interface Props {
   data: ChartDataItem[];
   sx?: SxProps<Theme> | undefined;
+  customPieProps?: Partial<PieSvgProps<DefaultRawDatum>>;
 }
 
-const DashboardPieChart = ({ data, sx }: Props) => {
+const DashboardPieChart = ({ data, sx, customPieProps }: Props) => {
   const theme = useTheme();
   const matchesMdScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -90,6 +91,7 @@ const DashboardPieChart = ({ data, sx }: Props) => {
           </Paper>
         )}
         theme={theme.nivo}
+        {...customPieProps}
       />
     </Stack>
   );

@@ -409,6 +409,7 @@
   },
   "investments": {
     "investments": "Investments",
+    "strapLine": "Faça a gestão dos seus investimentos",
     "summary": "Summary",
     "assets": "Assets",
     "transactions": "Transactions",

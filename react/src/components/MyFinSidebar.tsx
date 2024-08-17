@@ -7,6 +7,7 @@ import {
   BusinessOutlined,
   DashboardOutlined,
   DisplaySettingsOutlined,
+  DonutLargeOutlined,
   FolderSharedOutlined,
   LocalOfferOutlined,
   MenuOutlined,
@@ -20,6 +21,7 @@ import {
   ROUTE_CATEGORIES,
   ROUTE_DASHBOARD,
   ROUTE_ENTITIES,
+  ROUTE_INVEST,
   ROUTE_RULES,
   ROUTE_TAGS,
   ROUTE_TRX,
@@ -109,6 +111,13 @@ const MyFinSidebar = () => {
           >
             {' '}
             {t('sidebar.accounts')}
+          </MenuItem>
+          <MenuItem
+            icon={<DonutLargeOutlined />}
+            component={<NavLink to={ROUTE_INVEST} />}
+          >
+            {' '}
+            {t('sidebar.investments')}
           </MenuItem>
           <SubMenu label={t('sidebar.meta')} icon={<DisplaySettingsOutlined />}>
             <MenuItem

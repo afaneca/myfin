@@ -12,6 +12,7 @@ import Entities from '../features/entities/Entities.tsx';
 import Tags from '../features/tags/Tags.tsx';
 import ImportTransactions from '../features/transactions/import/ImportTransactions.tsx';
 import Rules from '../features/rules/Rules.tsx';
+import Invest, { InvestTab } from '../features/invest/Invest.tsx';
 
 export const ROUTE_AUTH = '/auth';
 export const ROUTE_DASHBOARD = '/dashboard';
@@ -26,6 +27,8 @@ export const ROUTE_ENTITIES = '/entities';
 export const ROUTE_TAGS = '/tags';
 export const ROUTE_IMPORT_TRX = '/transactions/import';
 export const ROUTE_RULES = '/rules';
+export const ROUTE_INVEST = '/invest';
+export const ROUTE_INVEST_DASHBOARD = '/invest/dashboard';
 
 const RoutesProvider = () => {
   return (
@@ -49,6 +52,14 @@ const RoutesProvider = () => {
             element={<ImportTransactions />}
           />
           <Route path={`${ROUTE_RULES}`} element={<Rules />} />
+          <Route
+            path={`${ROUTE_INVEST}`}
+            element={<Invest defaultTab={InvestTab.Summary} />}
+          />
+          <Route
+            path={`${ROUTE_INVEST_DASHBOARD}`}
+            element={<Invest defaultTab={InvestTab.Summary} />}
+          />
           <Route path="*" element={<Navigate to="/auth" replace={true} />} />
         </Route>
       </Routes>
