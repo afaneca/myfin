@@ -71,7 +71,7 @@ const BudgetList = () => {
   const [actionableBudget, setActionableBudget] = useState<Budget | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
-  
+
   const removeBudgetRequest = useRemoveBudget();
 
   // Loading
@@ -340,7 +340,7 @@ const BudgetList = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    value={showOnlyOpen}
+                    checked={showOnlyOpen}
                     onChange={(_, checked) => setShowOnlyOpen(checked)}
                   />
                 }

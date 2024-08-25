@@ -65,6 +65,16 @@ const getInvestStats = () => {
   return axios.get<GetInvestStatsResponse>(`/invest/assets/stats`);
 };
 
+const getAssets = () => {
+  return axios.get<InvestAsset[]>(`/invest/assets`);
+};
+
+const removeAsset = (assetId: bigint) => {
+  return axios.delete<string>(`invest/assets/${assetId}`);
+};
+
 export default {
   getInvestStats,
+  getAssets,
+  removeAsset,
 };

@@ -6,6 +6,7 @@ import PageHeader from '../../components/PageHeader.tsx';
 import { useTranslation } from 'react-i18next';
 import Paper from '@mui/material/Paper/Paper';
 import InvestDashboard from './InvestDashboard.tsx';
+import InvestAssets from './InvestAssets.tsx';
 
 export enum InvestTab {
   Summary = 0,
@@ -28,9 +29,9 @@ const Invest = ({ defaultTab }: { defaultTab: InvestTab }) => {
     switch (selectedTab) {
       case InvestTab.Summary:
         return <InvestDashboard />;
-      /*case InvestTab.Assets:
-        return <InvestDashboard />;
-      case InvestTab.Transactions:
+      case InvestTab.Assets:
+        return <InvestAssets />;
+      /*case InvestTab.Transactions:
         return <InvestDashboard />;
       case InvestTab.Reports:
         return <InvestDashboard />;*/
