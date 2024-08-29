@@ -634,6 +634,31 @@ const AddEditRuleDialog = (props: Props) => {
                   )}
                 />
               </Grid>
+              {/* Essential */}
+              <Grid xs={12}>
+                <TextField
+                  select
+                  fullWidth
+                  margin="dense"
+                  id="essential-result"
+                  name="essential-result"
+                  value={rule?.assign_is_essential || 0}
+                  required
+                  onChange={(event) =>
+                    updateRule({
+                      assign_is_essential: parseInt(event.target.value),
+                    })
+                  }
+                  label={t('transactions.essential')}
+                >
+                  <MenuItem key={0} value={0}>
+                    {t('rules.no')}
+                  </MenuItem>
+                  <MenuItem key={1} value={1}>
+                    {t('rules.yes')}
+                  </MenuItem>
+                </TextField>
+              </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>
