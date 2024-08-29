@@ -226,7 +226,7 @@ const ImportTrxStep2 = (props: Props) => {
       }
       updateTransactionRef.current.timeout = window.setTimeout(() => {
         updateTransactionRef.current(id, updates);
-      }, 500) as unknown as number;
+      }, 300) as unknown as number;
     },
     [],
   );
@@ -465,6 +465,8 @@ const ImportTrxStep2 = (props: Props) => {
     setConfirmationDialogOpen(false);
     importTrxStep2Request.mutate(
       filteredTransactions.map((trx) => ({
+        category_id: trx.category?.id,
+        entity_id: trx.entity?.id,
         amount: trx.value,
         date_timestamp: trx.date,
         description: trx.description,
