@@ -143,14 +143,14 @@ const ImportTrxStep2 = (props: Props) => {
       props.data.accounts.find(
         (acc) => acc.account_id == props.data.selectedAccountId,
       )?.balance || 0;
-    return transactions.reduce((acc, row) => {
+    return filteredTransactions.reduce((acc, row) => {
       let amount = row.value;
       if (row.accountFrom?.id == props.data.selectedAccountId) {
         amount *= -1;
       }
       return acc + amount;
     }, initialBalance);
-  }, [props.data.selectedAccountId, props.data.accounts, transactions]);
+  }, [props.data.selectedAccountId, props.data.accounts, filteredTransactions]);
 
   useEffect(() => {
     if (importTrxStep2Request.isPending) {
