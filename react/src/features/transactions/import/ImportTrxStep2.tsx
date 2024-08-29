@@ -226,7 +226,7 @@ const ImportTrxStep2 = (props: Props) => {
       }
       updateTransactionRef.current.timeout = window.setTimeout(() => {
         updateTransactionRef.current(id, updates);
-      }, 300) as unknown as number;
+      }, 700) as unknown as number;
     },
     [],
   );
