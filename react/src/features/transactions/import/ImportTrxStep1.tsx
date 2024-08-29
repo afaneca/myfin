@@ -334,15 +334,15 @@ const ImportTrxStep1 = (props: Props) => {
       amount = convertStringToFloat(row[amountColumn].replace(/ /g, ''));
       type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
     } else if (creditColumn && !typeColumn) {
-      amount = convertStringToFloat(row[creditColumn]);
+      amount = convertStringToFloat(row[creditColumn] ?? '');
       type = TransactionType.Income;
     }
 
     if (!amount && debitColumn && !typeColumn) {
-      amount = convertStringToFloat(row[debitColumn]);
+      amount = convertStringToFloat(row[debitColumn] ?? '');
       type = TransactionType.Expense;
     } else if (!amount && amountColumn && typeColumn) {
-      amount = convertStringToFloat(row[amountColumn]);
+      amount = convertStringToFloat(row[amountColumn] ?? '');
       switch (row[typeColumn]) {
         case FIELD_MAPPING.DEBIT:
           type = TransactionType.Expense;
