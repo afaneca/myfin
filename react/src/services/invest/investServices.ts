@@ -73,8 +73,15 @@ const removeAsset = (assetId: bigint) => {
   return axios.delete<string>(`invest/assets/${assetId}`);
 };
 
+const updateAssetValue = (assetId: bigint, newValue: number) => {
+  return axios.put<string>(`invest/assets/${assetId}/value`, {
+    new_value: newValue,
+  });
+};
+
 export default {
   getInvestStats,
   getAssets,
   removeAsset,
+  updateAssetValue,
 };

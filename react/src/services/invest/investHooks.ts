@@ -46,3 +46,24 @@ export function useRemoveAsset() {
     mutationFn: removeAsset,
   });
 }
+
+export function useUpdateAssetValue() {
+  async function updateAssetValue(request: {
+    assetId: bigint;
+    newValue: number;
+  }) {
+    const result = await InvestServices.updateAssetValue(
+      request.assetId,
+      request.newValue,
+    );
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_ASSETS],
+    });
+    return result;
+  }
+
+  return useMutation({
+    mutationFn: updateAssetValue,
+  });
+}

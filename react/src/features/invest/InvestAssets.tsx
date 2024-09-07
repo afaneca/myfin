@@ -35,6 +35,7 @@ import Stack from '@mui/material/Stack/Stack';
 import Typography from '@mui/material/Typography/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
+import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
 
 type UiState = {
   assets?: InvestAsset[];
@@ -44,6 +45,7 @@ type UiState = {
   actionableAsset?: InvestAsset;
   isEditDialogOpen: boolean;
   isRemoveDialogOpen: boolean;
+  isUpdateAssetValueDialogOpen: boolean;
 };
 
 const enum StateActionType {
@@ -55,6 +57,7 @@ const enum StateActionType {
   RemoveClick,
   DialogDismissed,
   DialogConfirmationClick,
+  DialogUpdateAssetValueClick,
 }
 
 type StateAction =
@@ -68,7 +71,8 @@ type StateAction =
   | { type: StateActionType.AddClick }
   | { type: StateActionType.EditClick; payload: InvestAsset }
   | { type: StateActionType.RemoveClick; payload: InvestAsset }
-  | { type: StateActionType.DialogConfirmationClick };
+  | { type: StateActionType.DialogConfirmationClick }
+  | { type: StateActionType.DialogUpdateAssetValueClick; payload: InvestAsset };
 
 const createInitialState = (): UiState => {
   return {
@@ -76,6 +80,7 @@ const createInitialState = (): UiState => {
     showInactive: false,
     isEditDialogOpen: false,
     isRemoveDialogOpen: false,
+    isUpdateAssetValueDialogOpen: false,
   };
 };
 
@@ -128,6 +133,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         isRemoveDialogOpen: false,
         isEditDialogOpen: false,
+        isUpdateAssetValueDialogOpen: false,
         actionableAsset: undefined,
       };
     case StateActionType.DialogConfirmationClick:
@@ -135,13 +141,23 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         isEditDialogOpen: true,
         isRemoveDialogOpen: false,
+        isUpdateAssetValueDialogOpen: false,
         actionableAsset: undefined,
+      };
+    case StateActionType.DialogUpdateAssetValueClick:
+      return {
+        ...prevState,
+        isEditDialogOpen: false,
+        isRemoveDialogOpen: false,
+        isUpdateAssetValueDialogOpen: true,
+        actionableAsset: action.payload,
       };
     case StateActionType.RemoveClick:
       return {
         ...prevState,
         isEditDialogOpen: false,
         isRemoveDialogOpen: true,
+        isUpdateAssetValueDialogOpen: false,
         actionableAsset: action.payload,
       };
     case StateActionType.AddClick:
@@ -149,6 +165,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         isEditDialogOpen: false,
         isRemoveDialogOpen: false,
+        isUpdateAssetValueDialogOpen: false,
         actionableAsset: undefined,
       };
     case StateActionType.EditClick:
@@ -156,6 +173,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         isEditDialogOpen: false,
         isRemoveDialogOpen: false,
+        isUpdateAssetValueDialogOpen: false,
         actionableAsset: action.payload,
       };
   }
@@ -211,7 +229,7 @@ const InvestAssets = () => {
           pricePerUnit: asset.price_per_unit,
         },
         feesTaxes: asset.fees_taxes,
-        currentValue: asset.current_value,
+        currentValue: asset,
         currentRoi: {
           absolute: asset.absolute_roi_value,
           percentage: asset.relative_roi_percentage,
@@ -293,10 +311,20 @@ const InvestAssets = () => {
       sortable: false,
       renderCell: (params) => (
         <p>
-          {formatNumberAsCurrency(params.value)}
+          {formatNumberAsCurrency(params.value.current_value)}
           {
             <Tooltip title={t('investments.updateValue')}>
-              <IconButton size="small" color="primary">
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  dispatch({
+                    type: StateActionType.DialogUpdateAssetValueClick,
+                    payload: params.value,
+                  });
+                }}
+              >
                 <MonetizationOn />
               </IconButton>
             </Tooltip>
@@ -378,6 +406,16 @@ const InvestAssets = () => {
   if (!state) return null;
   return (
     <Grid container spacing={2} xs={12}>
+      {state.isUpdateAssetValueDialogOpen && (
+        <UpdateAssetValueDialog
+          isOpen={true}
+          onSuccess={() => dispatch({ type: StateActionType.DialogDismissed })}
+          onCanceled={() => dispatch({ type: StateActionType.DialogDismissed })}
+          assetId={state.actionableAsset?.asset_id || -1n}
+          currentValue={state.actionableAsset?.current_value || 0}
+          assetName={state.actionableAsset?.name || ''}
+        />
+      )}
       {state.isRemoveDialogOpen && (
         <GenericConfirmationDialog
           isOpen={true}

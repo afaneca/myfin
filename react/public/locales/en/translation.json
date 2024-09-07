@@ -466,7 +466,8 @@
     "assetClass": "Asset Class",
     "feesAndTaxes": "Fees & taxes",
     "showInactives": "Show Inactives",
-    "updateValue": "Update Value"
+    "updateValue": "Update Value",
+    "updateValueSuccess": "Value successfully updated!"
   },
   "stats": {
     "stats": "Stats",

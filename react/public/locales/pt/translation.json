@@ -466,7 +466,8 @@
     "assetClass": "Classe de Ativos",
     "feesAndTaxes": "Taxas e impostos",
     "showInactives": "Mostrar Inativos",
-    "updateValue": "Atualizar Valor"
+    "updateValue": "Atualizar Valor",
+    "updateValueSuccess": "Valor atualizado com sucesso!"
   },
   "stats": {
     "stats": "Estatísticas",
