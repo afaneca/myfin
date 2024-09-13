@@ -79,9 +79,35 @@ const updateAssetValue = (assetId: bigint, newValue: number) => {
   });
 };
 
+export type AddAssetRequest = {
+  name: string;
+  type: AssetType;
+  ticker: string;
+  broker: string;
+};
+
+const addAsset = (request: AddAssetRequest) => {
+  return axios.post<string>(`invest/assets`, request);
+};
+
+export type EditAssetRequest = AddAssetRequest & {
+  asset_id: bigint;
+};
+
+const editAsset = (request: EditAssetRequest) => {
+  return axios.put<string>(`invest/assets/${request.asset_id}`, {
+    name: request.name,
+    type: request.type,
+    ticker: request.ticker,
+    broker: request.broker,
+  });
+};
+
 export default {
   getInvestStats,
   getAssets,
   removeAsset,
   updateAssetValue,
+  addAsset,
+  editAsset,
 };

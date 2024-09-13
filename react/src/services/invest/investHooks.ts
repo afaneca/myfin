@@ -1,6 +1,6 @@
-import investServices from './investServices.ts';
+import investServices, { EditAssetRequest } from './investServices.ts';
+import InvestServices, { AddAssetRequest } from './investServices.ts';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import InvestServices from './investServices.ts';
 import { queryClient } from '../../data/react-query.ts';
 
 const QUERY_KEY_GET_INVEST_STATS = 'QUERY_KEY_GET_INVEST_STATS';
@@ -65,5 +65,35 @@ export function useUpdateAssetValue() {
 
   return useMutation({
     mutationFn: updateAssetValue,
+  });
+}
+
+export function useAddAsset() {
+  async function addAsset(request: AddAssetRequest) {
+    const result = await investServices.addAsset(request);
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_ASSETS],
+    });
+    return result;
+  }
+
+  return useMutation({
+    mutationFn: addAsset,
+  });
+}
+
+export function useEditAsset() {
+  async function editAsset(request: EditAssetRequest) {
+    const result = await investServices.editAsset(request);
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_ASSETS],
+    });
+    return result;
+  }
+
+  return useMutation({
+    mutationFn: editAsset,
   });
 }

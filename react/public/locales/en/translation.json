@@ -467,7 +467,9 @@
     "feesAndTaxes": "Fees & taxes",
     "showInactives": "Show Inactives",
     "updateValue": "Update Value",
-    "updateValueSuccess": "Value successfully updated!"
+    "updateValueSuccess": "Value successfully updated!",
+    "addNewAssetModalTitle": "Add new asset",
+    "editAssetModalTitle": "Edit asset {{name}}"
   },
   "stats": {
     "stats": "Stats",

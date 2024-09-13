@@ -145,7 +145,7 @@ const UpdateAssetValueDialog = (props: Props) => {
   return (
     <Dialog
       fullWidth
-      maxWidth="md"
+      maxWidth="sm"
       open={props.isOpen}
       onClose={props.onCanceled}
       PaperProps={{

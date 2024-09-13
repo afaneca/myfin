@@ -467,7 +467,9 @@
     "feesAndTaxes": "Taxas e impostos",
     "showInactives": "Mostrar Inativos",
     "updateValue": "Atualizar Valor",
-    "updateValueSuccess": "Valor atualizado com sucesso!"
+    "updateValueSuccess": "Valor atualizado com sucesso!",
+    "addNewAssetModalTitle": "Adicionar novo ativo",
+    "editAssetModalTitle": "Editar ativo {{name}}"
   },
   "stats": {
     "stats": "Estatísticas",

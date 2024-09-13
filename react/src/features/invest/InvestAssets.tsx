@@ -36,6 +36,7 @@ import Typography from '@mui/material/Typography/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
+import AddEditInvestAssetDialog from './AddEditInvestAssetDialog.tsx';
 
 type UiState = {
   assets?: InvestAsset[];
@@ -163,7 +164,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
     case StateActionType.AddClick:
       return {
         ...prevState,
-        isEditDialogOpen: false,
+        isEditDialogOpen: true,
         isRemoveDialogOpen: false,
         isUpdateAssetValueDialogOpen: false,
         actionableAsset: undefined,
@@ -171,7 +172,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
     case StateActionType.EditClick:
       return {
         ...prevState,
-        isEditDialogOpen: false,
+        isEditDialogOpen: true,
         isRemoveDialogOpen: false,
         isUpdateAssetValueDialogOpen: false,
         actionableAsset: action.payload,
@@ -406,6 +407,17 @@ const InvestAssets = () => {
   if (!state) return null;
   return (
     <Grid container spacing={2} xs={12}>
+      {state.isEditDialogOpen && (
+        <AddEditInvestAssetDialog
+          isOpen={true}
+          onClose={() => dispatch({ type: StateActionType.DialogDismissed })}
+          onSuccess={() => dispatch({ type: StateActionType.DialogDismissed })}
+          onNegativeClick={() =>
+            dispatch({ type: StateActionType.DialogDismissed })
+          }
+          asset={state.actionableAsset}
+        />
+      )}
       {state.isUpdateAssetValueDialogOpen && (
         <UpdateAssetValueDialog
           isOpen={true}
