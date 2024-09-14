@@ -5,6 +5,7 @@ import { queryClient } from '../../data/react-query.ts';
 
 const QUERY_KEY_GET_INVEST_STATS = 'QUERY_KEY_GET_INVEST_STATS';
 const QUERY_KEY_GET_ASSETS = 'QUERY_KEY_GET_ASSETS';
+const QUERY_KEY_GET_INVEST_TRX = 'QUERY_KEY_GET_INVEST_TRX';
 
 export function useGetInvestStats() {
   async function getInvestStats() {
@@ -95,5 +96,22 @@ export function useEditAsset() {
 
   return useMutation({
     mutationFn: editAsset,
+  });
+}
+
+export function useGetInvestTransactions(
+  page: number,
+  pageSize: number,
+  query?: string,
+) {
+  async function getTransactions() {
+    const data = await InvestServices.getTransactions(page, pageSize, query);
+    return data.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_INVEST_TRX, page, pageSize, query],
+    queryFn: getTransactions,
+    placeholderData: keepPreviousData,
   });
 }

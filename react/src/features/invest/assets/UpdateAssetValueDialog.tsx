@@ -1,14 +1,14 @@
-import { useLoading } from '../../providers/LoadingProvider.tsx';
+import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
   useSnackbar,
-} from '../../providers/SnackbarProvider.tsx';
+} from '../../../providers/SnackbarProvider.tsx';
 import { Trans, useTranslation } from 'react-i18next';
 import React, { useEffect, useReducer } from 'react';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import Button from '@mui/material/Button/Button';
 import { Euro, Send, Undo } from '@mui/icons-material';
-import { useUpdateAssetValue } from '../../services/invest/investHooks.ts';
+import { useUpdateAssetValue } from '../../../services/invest/investHooks.ts';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent/DialogContent';

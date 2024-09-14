@@ -103,6 +103,44 @@ const editAsset = (request: EditAssetRequest) => {
   });
 };
 
+export enum InvestTransactionType {
+  Buy = 'B',
+  Sell = 'S',
+}
+
+export type InvestTransaction = {
+  transaction_id: bigint;
+  asset_id: bigint;
+  asset_type: AssetType;
+  broker: string;
+  date_timestamp: number;
+  fees_taxes: number;
+  name: string;
+  note: string;
+  ticker: string;
+  total_price: number;
+  trx_type: InvestTransactionType;
+  units: number;
+};
+
+export type InvestTransactionsPageResponse = {
+  filtered_count: number;
+  total_count: number;
+  results: Array<InvestTransaction>;
+};
+
+const getTransactions = (page: number, page_size?: number, query?: string) => {
+  return axios.get<InvestTransactionsPageResponse>(
+    `/invest/trx/filteredByPage/${page}`,
+    {
+      params: {
+        page_size,
+        query,
+      },
+    },
+  );
+};
+
 export default {
   getInvestStats,
   getAssets,
@@ -110,4 +148,5 @@ export default {
   updateAssetValue,
   addAsset,
   editAsset,
+  getTransactions,
 };

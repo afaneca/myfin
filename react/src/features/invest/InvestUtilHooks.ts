@@ -1,5 +1,27 @@
 import { useTranslation } from 'react-i18next';
-import { AssetType } from '../../services/invest/investServices.ts';
+import {
+  AssetType,
+  InvestTransactionType,
+} from '../../services/invest/investServices.ts';
+
+export function useGetLocalizedInvestTransactionType() {
+  const { t } = useTranslation();
+
+  function invoke(key: InvestTransactionType): string {
+    switch (key) {
+      case InvestTransactionType.Buy:
+        return t('investments.buy');
+      case InvestTransactionType.Sell:
+        return t('investments.sell');
+      default:
+        return '';
+    }
+  }
+
+  return {
+    invoke,
+  };
+}
 
 export function useGetLocalizedAssetType() {
   const { t } = useTranslation();

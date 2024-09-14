@@ -1,23 +1,23 @@
-import { useLoading } from '../../providers/LoadingProvider.tsx';
+import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
   useSnackbar,
-} from '../../providers/SnackbarProvider.tsx';
+} from '../../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
 import {
   useGetAssets,
   useRemoveAsset,
-} from '../../services/invest/investHooks.ts';
+} from '../../../services/invest/investHooks.ts';
 import React, { useEffect, useMemo, useReducer } from 'react';
-import { InvestAsset } from '../../services/invest/investServices.ts';
+import { InvestAsset } from '../../../services/invest/investServices.ts';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { GridColDef } from '@mui/x-data-grid';
-import { useGetLocalizedAssetType } from './InvestHooks.ts';
-import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
+import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
+import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
 import {
   formatNumberAsCurrency,
   formatNumberAsPercentage,
-} from '../../utils/textUtils.ts';
+} from '../../../utils/textUtils.ts';
 import Button from '@mui/material/Button/Button';
 import {
   AddCircleOutline,
@@ -34,7 +34,7 @@ import Chip from '@mui/material/Chip/Chip';
 import Stack from '@mui/material/Stack/Stack';
 import Typography from '@mui/material/Typography/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
-import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
+import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
 import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
 import AddEditInvestAssetDialog from './AddEditInvestAssetDialog.tsx';
 
