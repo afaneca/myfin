@@ -35,13 +35,15 @@ import {
 import Chip from '@mui/material/Chip/Chip';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import IconButton from '@mui/material/IconButton';
+import { useRemoveTransaction } from '../../../services/trx/trxHooks.ts';
+import AddEditInvestTransactionDialog from './AddEditInvestTransactionDialog.tsx';
 
 type UiState = {
   isLoading: boolean;
   paginationModel: { pageSize: number; page: number };
   searchQuery: string;
   page?: InvestTransactionsPageResponse;
-  actionableTransaction?: InvestTransaction | null;
+  actionableTransaction?: InvestTransaction;
   isAddEditDialogOpen: boolean;
   isRemoveDialogOpen: boolean;
 };
@@ -159,6 +161,7 @@ const InvestTransactions = () => {
     state.paginationModel.pageSize,
     state.searchQuery,
   );
+  const removeTransactionRequest = useRemoveTransaction();
 
   // Loading
   useEffect(() => {
@@ -171,14 +174,14 @@ const InvestTransactions = () => {
 
   // Error
   useEffect(() => {
-    if (getTransactionsRequest.isError) {
+    if (getTransactionsRequest.isError || removeTransactionRequest.isError) {
       dispatch({ type: StateActionType.RequestError });
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
     }
-  }, [getTransactionsRequest.isError]);
+  }, [getTransactionsRequest.isError, removeTransactionRequest.isError]);
 
   // Success
   useEffect(() => {
@@ -234,6 +237,7 @@ const InvestTransactions = () => {
       field: 'date',
       headerName: t('common.date'),
       minWidth: 100,
+      align: 'center',
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -277,7 +281,7 @@ const InvestTransactions = () => {
     {
       field: 'asset',
       headerName: t('investments.asset'),
-      minWidth: 250,
+      minWidth: 300,
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -312,7 +316,7 @@ const InvestTransactions = () => {
     {
       field: 'value',
       headerName: t('common.value'),
-      minWidth: 150,
+      minWidth: 250,
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -374,6 +378,14 @@ const InvestTransactions = () => {
 
   return (
     <Grid container spacing={2}>
+      {state.isAddEditDialogOpen && (
+        <AddEditInvestTransactionDialog
+          isOpen={true}
+          onClose={() => dispatch({ type: StateActionType.DialogDismissed })}
+          onSuccess={() => dispatch({ type: StateActionType.DialogDismissed })}
+          trx={state.actionableTransaction}
+        />
+      )}
       <Grid sm={8} xs={12} container spacing={2}>
         <Grid>
           <Button
@@ -381,7 +393,7 @@ const InvestTransactions = () => {
             color="primary"
             startIcon={<AddCircleOutline />}
             onClick={() => {
-              //handleAddTransactionClick();
+              dispatch({ type: StateActionType.AddClick });
             }}
           >
             {t('transactions.addTransactionCTA')}
