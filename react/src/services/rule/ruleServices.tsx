@@ -42,7 +42,18 @@ const getRules = () => {
 };
 
 const addRule = (request: Partial<Rule>) => {
-  return axios.post(`/rules`, request);
+  // Remove null values from request
+  const cleanedRequest = Object.fromEntries(
+    Object.entries({
+      ...request,
+      matcher_amount_value: String(request.matcher_amount_value),
+      assign_essential: request.assign_is_essential,
+      users_user_id: undefined,
+      assign_is_essential: undefined,
+    }).filter(([_, value]) => value !== null),
+  );
+
+  return axios.post(`/rules`, cleanedRequest);
 };
 
 const removeRule = (id: bigint) => {
