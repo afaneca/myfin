@@ -4,11 +4,15 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import Button from '@mui/material/Button/Button';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
 import {
+  InvestAsset,
   InvestTransaction,
   InvestTransactionsPageResponse,
   InvestTransactionType,
 } from '../../../services/invest/investServices.ts';
-import { useGetInvestTransactions } from '../../../services/invest/investHooks.ts';
+import {
+  useGetInvestTransactions,
+  useRemoveInvestTransaction,
+} from '../../../services/invest/investHooks.ts';
 import TextField from '@mui/material/TextField/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import MyFinTable from '../../../components/MyFinTable.tsx';
@@ -35,8 +39,9 @@ import {
 import Chip from '@mui/material/Chip/Chip';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import IconButton from '@mui/material/IconButton';
-import { useRemoveTransaction } from '../../../services/trx/trxHooks.ts';
 import AddEditInvestTransactionDialog from './AddEditInvestTransactionDialog.tsx';
+import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
+import UpdateAssetValueDialog from '../assets/UpdateAssetValueDialog.tsx';
 
 type UiState = {
   isLoading: boolean;
@@ -44,8 +49,10 @@ type UiState = {
   searchQuery: string;
   page?: InvestTransactionsPageResponse;
   actionableTransaction?: InvestTransaction;
+  actionableAsset?: InvestAsset;
   isAddEditDialogOpen: boolean;
   isRemoveDialogOpen: boolean;
+  isUpdateAssetValueDialogOpen: boolean;
 };
 
 const enum StateActionType {
@@ -58,6 +65,7 @@ const enum StateActionType {
   EditClick,
   RemoveClick,
   DialogDismissed,
+  DialogSuccess,
 }
 
 type StateAction =
@@ -72,6 +80,7 @@ type StateAction =
   | { type: StateActionType.EditClick; payload: InvestTransaction }
   | { type: StateActionType.RemoveClick; payload: InvestTransaction }
   | { type: StateActionType.DialogDismissed }
+  | { type: StateActionType.DialogSuccess; payload: InvestAsset }
   | {
       type: StateActionType.PaginationModelChanged;
       payload: { pageSize: number; page: number };
@@ -84,6 +93,7 @@ const createInitialState = (): UiState => {
     searchQuery: '',
     isAddEditDialogOpen: false,
     isRemoveDialogOpen: false,
+    isUpdateAssetValueDialogOpen: false,
   };
 };
 
@@ -134,7 +144,17 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         isAddEditDialogOpen: false,
         isRemoveDialogOpen: false,
+        isUpdateAssetValueDialogOpen: false,
         actionableTransaction: undefined,
+        actionableAsset: undefined,
+      };
+    case StateActionType.DialogSuccess:
+      return {
+        ...prevState,
+        isAddEditDialogOpen: false,
+        isRemoveDialogOpen: false,
+        isUpdateAssetValueDialogOpen: true,
+        actionableAsset: action.payload,
       };
     case StateActionType.AddClick:
       return {
@@ -142,6 +162,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         isAddEditDialogOpen: true,
         isRemoveDialogOpen: false,
         actionableTransaction: undefined,
+        actionableAsset: undefined,
       };
   }
 };
@@ -161,7 +182,7 @@ const InvestTransactions = () => {
     state.paginationModel.pageSize,
     state.searchQuery,
   );
-  const removeTransactionRequest = useRemoveTransaction();
+  const removeTransactionRequest = useRemoveInvestTransaction();
 
   // Loading
   useEffect(() => {
@@ -378,12 +399,45 @@ const InvestTransactions = () => {
 
   return (
     <Grid container spacing={2}>
+      {state.isUpdateAssetValueDialogOpen && (
+        <UpdateAssetValueDialog
+          isOpen={true}
+          onSuccess={() => dispatch({ type: StateActionType.DialogDismissed })}
+          onCanceled={() => dispatch({ type: StateActionType.DialogDismissed })}
+          assetId={state.actionableAsset?.asset_id || -1n}
+          currentValue={state.actionableAsset?.current_value || 0}
+          assetName={state.actionableAsset?.name || ''}
+        />
+      )}
       {state.isAddEditDialogOpen && (
         <AddEditInvestTransactionDialog
           isOpen={true}
           onClose={() => dispatch({ type: StateActionType.DialogDismissed })}
-          onSuccess={() => dispatch({ type: StateActionType.DialogDismissed })}
+          onSuccess={(asset) =>
+            dispatch({ type: StateActionType.DialogSuccess, payload: asset })
+          }
           trx={state.actionableTransaction}
+        />
+      )}
+      {state.isRemoveDialogOpen && (
+        <GenericConfirmationDialog
+          isOpen={true}
+          onClose={() => dispatch({ type: StateActionType.DialogDismissed })}
+          onPositiveClick={() => {
+            removeTransactionRequest.mutate(
+              state.actionableTransaction?.transaction_id || -1n,
+            );
+            dispatch({ type: StateActionType.DialogDismissed });
+          }}
+          onNegativeClick={() =>
+            dispatch({ type: StateActionType.DialogDismissed })
+          }
+          titleText={t('investments.deleteTrxModalTitle', {
+            id: state.actionableTransaction?.transaction_id,
+          })}
+          descriptionText={t('investments.deleteTrxModalSubtitle')}
+          alert={t('investments.deleteTrxModalAlert')}
+          positiveText={t('common.delete')}
         />
       )}
       <Grid sm={8} xs={12} container spacing={2}>

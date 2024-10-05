@@ -1,11 +1,17 @@
-import investServices, { EditAssetRequest } from './investServices.ts';
-import InvestServices, { AddAssetRequest } from './investServices.ts';
+import investServices from './investServices.ts';
+import InvestServices, {
+  AddAssetRequest,
+  AddInvestTransactionRequest,
+  EditAssetRequest,
+  EditInvestTransactionRequest,
+} from './investServices.ts';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '../../data/react-query.ts';
 
 const QUERY_KEY_GET_INVEST_STATS = 'QUERY_KEY_GET_INVEST_STATS';
 const QUERY_KEY_GET_ASSETS = 'QUERY_KEY_GET_ASSETS';
 const QUERY_KEY_GET_INVEST_TRX = 'QUERY_KEY_GET_INVEST_TRX';
+const QUERY_KEY_GET_ASSETS_SUMMARY = 'QUERY_KEY_GET_ASSETS_SUMMARY';
 
 export function useGetInvestStats() {
   async function getInvestStats() {
@@ -112,6 +118,70 @@ export function useGetInvestTransactions(
   return useQuery({
     queryKey: [QUERY_KEY_GET_INVEST_TRX, page, pageSize, query],
     queryFn: getTransactions,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useAddInvestTransaction() {
+  async function addTransaction(request: AddInvestTransactionRequest) {
+    const result = await investServices.addTransaction(request);
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_INVEST_TRX],
+    });
+    return result;
+  }
+
+  return useMutation({
+    mutationFn: addTransaction,
+  });
+}
+
+export function useEditInvestTransaction() {
+  async function editTransaction(args: {
+    trxId: bigint;
+    request: EditInvestTransactionRequest;
+  }) {
+    const result = await investServices.editTransaction(
+      args.trxId,
+      args.request,
+    );
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_INVEST_TRX],
+    });
+    return result;
+  }
+
+  return useMutation({
+    mutationFn: editTransaction,
+  });
+}
+
+export function useRemoveInvestTransaction() {
+  async function removeTransaction(trxId: bigint) {
+    const result = await investServices.removeTransaction(trxId);
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_INVEST_TRX],
+    });
+    return result;
+  }
+
+  return useMutation({
+    mutationFn: removeTransaction,
+  });
+}
+
+export function useGetAssetsSummary() {
+  async function getAssetsSummary() {
+    const data = await InvestServices.getAssetsSummary();
+    return data.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_ASSETS_SUMMARY],
+    queryFn: getAssetsSummary,
     placeholderData: keepPreviousData,
   });
 }

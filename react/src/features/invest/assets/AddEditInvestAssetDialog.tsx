@@ -159,7 +159,9 @@ const AddEditInvestAssetDialog = (props: Props) => {
     dispatch({
       type: StateActionType.RequestSuccess,
     });
-    props.onSuccess();
+    setTimeout(() => {
+      props.onSuccess();
+    }, 0);
   }, [addAssetRequest.data, editAssetRequest.data]);
 
   return (

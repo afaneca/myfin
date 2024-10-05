@@ -212,7 +212,7 @@
     "newBalanceForAccountValue": "Novo saldo da conta {{account}}: {{value}}",
     "import": "Importar",
     "transactionsSuccessfullyImported": "Transações importadas com sucesso!",
-    "deductFeesFromTransaction": "Descontas taxas/impostos da transação",
+    "deductFeesFromTransaction": "Descontar taxas/impostos da transação",
     "generated_split_invest_trx_observations": "Taxas/impostos para transação de {{units}} {{ticker}}",
     "addATagPlaceholder": "Adicione uma tag",
     "addAnotherTagPlaceholder": "Adicione outra tag"
@@ -444,7 +444,7 @@
     "perUnitPrice": "{{price}} p/ unidade",
     "observations": "Observações",
     "asset": "Ativo",
-    "deleteTrxModalTitle": "Remover transação <strong>{{id}}</strong>?",
+    "deleteTrxModalTitle": "Remover transação {{id}}?",
     "deleteTrxModalSubtitle": "Tem a certeza de que pretende remover esta transação?",
     "deleteTrxModalAlert": "Esta ação é irreversível!",
     "addNewTransaction": "Adicionar nova transação",

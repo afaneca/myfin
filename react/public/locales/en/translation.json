@@ -444,7 +444,7 @@
     "perUnitPrice": "{{price}} p/ unit",
     "observations": "Observations",
     "asset": "Asset",
-    "deleteTrxModalTitle": "Delete transaction <strong>#{{id}}</strong>?",
+    "deleteTrxModalTitle": "Delete transaction #{{id}}?",
     "deleteTrxModalSubtitle": "Are you sure you want to delete this transaction?",
     "deleteTrxModalAlert": "This action is irreversible!",
     "addNewTransaction": "Add new transaction",

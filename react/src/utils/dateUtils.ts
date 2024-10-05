@@ -109,15 +109,12 @@ export const convertUnixTimestampToDateString = (
   return dayjs.unix(unixTs).utc().format(format);
 };
 
-export const convertUnixTimestampToDayJs = (
-  unixTs: number,
-) => {
+export const convertUnixTimestampToDayJs = (unixTs: number | undefined) => {
+  if (!unixTs) return dayjs();
   return dayjs.unix(unixTs).utc();
 };
 
-export const convertDayJsToUnixTimestamp = (
-  dayJs: Dayjs,
-) => {
+export const convertDayJsToUnixTimestamp = (dayJs: Dayjs) => {
   return dayJs.unix();
 };
 

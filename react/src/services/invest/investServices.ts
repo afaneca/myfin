@@ -141,6 +141,57 @@ const getTransactions = (page: number, page_size?: number, query?: string) => {
   );
 };
 
+export type AddInvestTransactionRequest = {
+  date_timestamp: number;
+  note?: string;
+  total_price: number;
+  units: number;
+  fees: number;
+  asset_id: bigint;
+  type: InvestTransactionType;
+  is_split: boolean;
+  split_total_price?: number;
+  split_units?: number;
+  split_note?: string;
+  split_type?: InvestTransactionType;
+};
+
+const addTransaction = (request: AddInvestTransactionRequest) => {
+  return axios.post<string>(`/invest/trx`, request);
+};
+
+export type EditInvestTransactionRequest = {
+  date_timestamp: number;
+  note?: string;
+  total_price: number;
+  units: number;
+  fees: number;
+  asset_id: bigint;
+  type: InvestTransactionType;
+};
+
+const editTransaction = (
+  trxId: bigint,
+  request: EditInvestTransactionRequest,
+) => {
+  return axios.put<string>(`/invest/trx/${trxId}`, request);
+};
+
+const removeTransaction = (trxId: bigint) => {
+  return axios.delete<string>(`/invest/trx/${trxId}`);
+};
+
+export type AssetSummary = {
+  asset_id: bigint;
+  name: string;
+  ticker: string;
+  type: AssetType;
+};
+
+const getAssetsSummary = () => {
+  return axios.get<AssetSummary[]>(`/invest/assets/summary`);
+};
+
 export default {
   getInvestStats,
   getAssets,
@@ -149,4 +200,8 @@ export default {
   addAsset,
   editAsset,
   getTransactions,
+  addTransaction,
+  editTransaction,
+  removeTransaction,
+  getAssetsSummary,
 };
