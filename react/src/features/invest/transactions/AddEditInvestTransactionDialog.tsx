@@ -212,7 +212,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
     case StateActionType.SplitTypeUpdated:
       return {
         ...prevState,
-        typeInput: action.payload,
+        splitTypeInput: action.payload,
       };
     case StateActionType.SubmitClick:
       return {
