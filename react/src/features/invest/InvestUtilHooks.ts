@@ -3,6 +3,7 @@ import {
   AssetType,
   InvestTransactionType,
 } from '../../services/invest/investServices.ts';
+import { ColorGradient } from '../../consts';
 
 export function useGetLocalizedInvestTransactionType() {
   const { t } = useTranslation();
@@ -46,6 +47,35 @@ export function useGetLocalizedAssetType() {
         return t('investments.p2pLoans');
       default:
         return '';
+    }
+  }
+
+  return {
+    invoke,
+  };
+}
+
+export function useGetGradientColorForAssetType() {
+  function invoke(key: AssetType): ColorGradient {
+    switch (key) {
+      case AssetType.Etf:
+        return ColorGradient.BlueColor;
+      case AssetType.Crypto:
+        return ColorGradient.OrangeColor;
+      case AssetType.InvestmentFunds:
+        return ColorGradient.TealColor;
+      case AssetType.Ppr:
+        return ColorGradient.PinkColor;
+      case AssetType.FixedIncome:
+        return ColorGradient.PaleColor;
+      case AssetType.Stocks:
+        return ColorGradient.CoralColor;
+      case AssetType.IndexFunds:
+        return ColorGradient.AquaColor;
+      case AssetType.P2pLoans:
+        return ColorGradient.GreenColor;
+      default:
+        return ColorGradient.None;
     }
   }
 

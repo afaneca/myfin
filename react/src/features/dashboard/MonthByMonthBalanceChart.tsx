@@ -96,6 +96,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
           borderRadius={theme.shape.borderRadius}
           enableGridY={false}
           defs={generateDefsForGradients()}
+          // @ts-expect-error could assume different structural identities
           fill={generateFillArrayForGradients()}
           theme={theme.nivo}
           tooltip={(item) => (

@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { Box, Card, CardContent } from '@mui/material';
+import { Box, Card, CardContent, useMediaQuery, useTheme } from '@mui/material';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
@@ -27,6 +27,7 @@ import EmptyView from '../../components/EmptyView.tsx';
 import { TFunction } from 'i18next';
 import { ColorGradient } from '../../consts';
 import Stack from '@mui/material/Stack/Stack';
+import { useGetGradientColorForAssetType } from './InvestUtilHooks.ts';
 
 type UiState = {
   currentValue: number;
@@ -46,7 +47,9 @@ const enum StateActionType {
 
 type StateAction = {
   type: StateActionType.DataLoaded;
-  payload: GetInvestStatsResponse & { t: TFunction<'translation', undefined> };
+  payload: GetInvestStatsResponse & {
+    t: TFunction<'translation', undefined>;
+  } & { getGradientColorForAssetType: (assetType: AssetType) => ColorGradient };
 };
 
 const createInitialState = (): UiState => {
@@ -196,12 +199,8 @@ const getLocalizedTextForAssetType = (
 const reduceState = (prevState: UiState, action: StateAction): UiState => {
   switch (action.type) {
     case StateActionType.DataLoaded: {
-      const randomizedGradients = Object.values(ColorGradient)
-        .map((value) => ({ value, sort: Math.random() }))
-        .sort((a, b) => a.sort - b.sort)
-        .map(({ value }) => value);
       const chartData = action.payload.current_value_distribution.map(
-        (item, index) => {
+        (item) => {
           const [key, value] = Object.entries(item)[0];
 
           return {
@@ -209,7 +208,9 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
               action.payload.t,
               key as AssetType,
             ),
-            color: randomizedGradients[index],
+            color: action.payload.getGradientColorForAssetType(
+              key as AssetType,
+            ),
             value: value,
           };
         },
@@ -249,8 +250,11 @@ const InvestDashboard = () => {
   const loader = useLoading();
   const snackbar = useSnackbar();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const matchesLgScreen = useMediaQuery(theme.breakpoints.down('lg'));
 
   const getInvestStatsRequest = useGetInvestStats();
+  const getGradientColorForAssetClass = useGetGradientColorForAssetType();
 
   const [state, dispatch] = useReducer(reduceState, t, createInitialState);
 
@@ -278,7 +282,13 @@ const InvestDashboard = () => {
     if (!getInvestStatsRequest.data) return;
     dispatch({
       type: StateActionType.DataLoaded,
-      payload: { ...getInvestStatsRequest.data, t },
+      payload: {
+        ...getInvestStatsRequest.data,
+        t,
+        ...{
+          getGradientColorForAssetType: getGradientColorForAssetClass.invoke,
+        },
+      },
     });
   }, [getInvestStatsRequest.data]);
 
@@ -292,11 +302,12 @@ const InvestDashboard = () => {
           state.assetDistributionPieChartData.length > 0 ? (
             <DashboardPieChart
               data={state.assetDistributionPieChartData}
+              linkLabelTruncateLimit={10}
               customPieProps={{
                 /*arcLabel: 'id',*/
-                enableArcLabels: true,
-                enableArcLinkLabels: false,
-                /*margin: { top: 10, right: 20, bottom: 10, left: 20 },*/
+                enableArcLabels: false,
+                enableArcLinkLabels: !matchesLgScreen,
+                margin: { top: 50, right: 120, bottom: 50, left: 120 },
                 valueFormat: (value) => formatNumberAsPercentage(value),
               }}
             />

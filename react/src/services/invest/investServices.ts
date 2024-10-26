@@ -11,7 +11,7 @@ export enum AssetType {
   Stocks = 'stock',
 }
 
-type YearlyRoi = {
+export type YearlyRoi = {
   fees_taxes: number;
   invested_in_year_amount: number;
   roi_amount: number;
@@ -19,7 +19,7 @@ type YearlyRoi = {
   value_total_amount: number;
 };
 
-type MonthlySnapshot = {
+export type MonthlySnapshot = {
   asset_broker: string;
   asset_id: bigint;
   asset_name: string;
@@ -49,7 +49,7 @@ export type InvestAsset = {
 };
 
 export type GetInvestStatsResponse = {
-  combined_roi_by_year: Record<number, YearlyRoi>;
+  combined_roi_by_year: { [year: string]: YearlyRoi };
   current_value_distribution: Array<Record<AssetType, number>>;
   current_year_roi_percentage: number;
   current_year_roi_value: number;

@@ -1,8 +1,9 @@
 import { PaletteOptions } from '@mui/material/styles/createPalette';
 import { LinearGradientDef, Theme as NivoTheme } from '@nivo/core';
 import { ColorGradient } from '../consts';
+import { cssGradients } from './gradientUtils.ts';
 
-export function generateNivoThemeTheme(
+export function generateNivoTheme(
   _mode: 'light' | 'dark',
   palette: PaletteOptions,
 ): NivoTheme {
@@ -18,6 +19,12 @@ export function generateNivoThemeTheme(
         background: '#ffffff',
         color: '#333333',
         fontSize: 12,
+      },
+    },
+    grid: {
+      line: {
+        stroke: palette.background?.default,
+        strokeWidth: 0.2,
       },
     },
   };
@@ -130,14 +137,67 @@ export const nivoGradients = {
     { offset: 0, color: '#C9D6FF' },
     { offset: 45, color: '#E2E2E2' },
   ]),
+  [ColorGradient.BlueColor]: createNivoGradientObject(ColorGradient.BlueColor, [
+    { offset: 0, color: cssGradients[ColorGradient.BlueColor] },
+    { offset: 45, color: cssGradients[ColorGradient.BlueColor] },
+  ]),
+  [ColorGradient.TealColor]: createNivoGradientObject(ColorGradient.TealColor, [
+    { offset: 0, color: cssGradients[ColorGradient.TealColor] },
+    { offset: 45, color: cssGradients[ColorGradient.TealColor] },
+  ]),
+  [ColorGradient.CoralColor]: createNivoGradientObject(
+    ColorGradient.CoralColor,
+    [
+      { offset: 0, color: cssGradients[ColorGradient.CoralColor] },
+      { offset: 45, color: cssGradients[ColorGradient.CoralColor] },
+    ],
+  ),
+  [ColorGradient.YellowColor]: createNivoGradientObject(
+    ColorGradient.YellowColor,
+    [
+      { offset: 0, color: cssGradients[ColorGradient.YellowColor] },
+      { offset: 45, color: cssGradients[ColorGradient.YellowColor] },
+    ],
+  ),
+  [ColorGradient.OrangeColor]: createNivoGradientObject(
+    ColorGradient.OrangeColor,
+    [
+      { offset: 0, color: cssGradients[ColorGradient.OrangeColor] },
+      { offset: 45, color: cssGradients[ColorGradient.OrangeColor] },
+    ],
+  ),
+  [ColorGradient.AquaColor]: createNivoGradientObject(ColorGradient.AquaColor, [
+    { offset: 0, color: cssGradients[ColorGradient.AquaColor] },
+    { offset: 45, color: cssGradients[ColorGradient.AquaColor] },
+  ]),
+  [ColorGradient.PaleColor]: createNivoGradientObject(ColorGradient.PaleColor, [
+    { offset: 0, color: cssGradients[ColorGradient.PaleColor] },
+    { offset: 45, color: cssGradients[ColorGradient.PaleColor] },
+  ]),
+  [ColorGradient.GreenColor]: createNivoGradientObject(
+    ColorGradient.GreenColor,
+    [
+      { offset: 0, color: cssGradients[ColorGradient.GreenColor] },
+      { offset: 45, color: cssGradients[ColorGradient.GreenColor] },
+    ],
+  ),
+  [ColorGradient.PinkColor]: createNivoGradientObject(ColorGradient.PinkColor, [
+    { offset: 0, color: cssGradients[ColorGradient.PinkColor] },
+    { offset: 45, color: cssGradients[ColorGradient.PinkColor] },
+  ]),
 };
 
 export const generateDefsForGradients = () => {
   return Object.values(nivoGradients);
 };
 
+const getRandomColorGradient = (): string => {
+  const gradients = Object.values(ColorGradient);
+  return gradients[Math.floor(Math.random() * gradients.length)];
+};
+
 export const generateFillArrayForGradients = (
-  defaultMatchId = ColorGradient.Decent,
+  defaultMatchId = getRandomColorGradient,
 ) => {
   return [
     ...Object.keys(nivoGradients).map((gradientId) => ({
@@ -150,7 +210,7 @@ export const generateFillArrayForGradients = (
     {
       // catch-all
       match: () => true,
-      id: defaultMatchId,
+      id: defaultMatchId as () => string,
     },
   ];
 };

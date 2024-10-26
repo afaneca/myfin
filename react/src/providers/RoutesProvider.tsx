@@ -29,6 +29,9 @@ export const ROUTE_IMPORT_TRX = '/transactions/import';
 export const ROUTE_RULES = '/rules';
 export const ROUTE_INVEST = '/invest';
 export const ROUTE_INVEST_DASHBOARD = '/invest/dashboard';
+export const ROUTE_INVEST_ASSETS = '/invest/assets';
+export const ROUTE_INVEST_TRANSACTIONS = '/invest/transactions';
+export const ROUTE_INVEST_STATS = '/invest/stats';
 
 const RoutesProvider = () => {
   return (
@@ -59,6 +62,18 @@ const RoutesProvider = () => {
           <Route
             path={`${ROUTE_INVEST_DASHBOARD}`}
             element={<Invest defaultTab={InvestTab.Summary} />}
+          />
+          <Route
+            path={`${ROUTE_INVEST_ASSETS}`}
+            element={<Invest defaultTab={InvestTab.Assets} />}
+          />
+          <Route
+            path={`${ROUTE_INVEST_TRANSACTIONS}`}
+            element={<Invest defaultTab={InvestTab.Transactions} />}
+          />
+          <Route
+            path={`${ROUTE_INVEST_STATS}`}
+            element={<Invest defaultTab={InvestTab.Reports} />}
           />
           <Route path="*" element={<Navigate to="/auth" replace={true} />} />
         </Route>

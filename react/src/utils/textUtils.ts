@@ -20,6 +20,7 @@ export const formatNumberAsPercentage = (
   value: number,
   forceLeadingSign: boolean = false,
 ) => {
+  if (!value) return '';
   return `${forceLeadingSign && value > 0 ? '+' : ''}${value.toFixed(2)}%`;
 };
 

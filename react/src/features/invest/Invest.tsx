@@ -1,6 +1,6 @@
 import { Tab, Tabs, useTheme } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box/Box';
 import PageHeader from '../../components/PageHeader.tsx';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,14 @@ import Paper from '@mui/material/Paper/Paper';
 import InvestDashboard from './InvestDashboard.tsx';
 import InvestAssets from './assets/InvestAssets.tsx';
 import InvestTransactions from './transactions/InvestTransactions.tsx';
+import InvestStats from './stats/InvestStats.tsx';
+import {
+  ROUTE_INVEST_ASSETS,
+  ROUTE_INVEST_DASHBOARD,
+  ROUTE_INVEST_STATS,
+  ROUTE_INVEST_TRANSACTIONS,
+} from '../../providers/RoutesProvider.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export enum InvestTab {
   Summary = 0,
@@ -19,12 +27,31 @@ export enum InvestTab {
 const Invest = ({ defaultTab }: { defaultTab: InvestTab }) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [selectedTab, setSelectedTab] = useState<InvestTab>(defaultTab || 0);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };
+
+  useEffect(() => {
+    switch (selectedTab) {
+      case InvestTab.Assets:
+        navigate(ROUTE_INVEST_ASSETS);
+        break;
+      case InvestTab.Transactions:
+        navigate(ROUTE_INVEST_TRANSACTIONS);
+        break;
+      case InvestTab.Reports:
+        navigate(ROUTE_INVEST_STATS);
+        break;
+      case InvestTab.Summary:
+      default:
+        navigate(ROUTE_INVEST_DASHBOARD);
+        break;
+    }
+  }, [selectedTab]);
 
   const renderTabContent = () => {
     switch (selectedTab) {
@@ -34,9 +61,8 @@ const Invest = ({ defaultTab }: { defaultTab: InvestTab }) => {
         return <InvestAssets />;
       case InvestTab.Transactions:
         return <InvestTransactions />;
-      /*
       case InvestTab.Reports:
-        return <InvestDashboard />;*/
+        return <InvestStats />;
       default:
         return null;
     }

@@ -7,7 +7,6 @@ export function createCssGradientObject(
 ): string {
   return `linear-gradient(${angle}, ${color1}, ${color2})`;
 }
-
 export const cssGradients = {
   [ColorGradient.Red]: createCssGradientObject('#ff5252', '#f48fb1', '45deg'),
   [ColorGradient.Blue]: createCssGradientObject('#0288d1', '#26c6da', '45deg'),
@@ -83,4 +82,14 @@ export const cssGradients = {
   ),
   [ColorGradient.Dusk]: createCssGradientObject('#2c3e50', '#bdc3c7', '45deg'),
   [ColorGradient.Dull]: createCssGradientObject('#C9D6FF', '#E2E2E2', '45deg'),
+  [ColorGradient.BlueColor]: '#a6cee3',
+  [ColorGradient.GreenColor]: '#7fc97f',
+  [ColorGradient.TealColor]: '#61cdbb',
+  [ColorGradient.CoralColor]: '#f47560',
+  [ColorGradient.YellowColor]: '#f1e15b',
+  [ColorGradient.OrangeColor]: '#e8a838',
+  [ColorGradient.AquaColor]: '#97e3d5',
+  [ColorGradient.PaleColor]: '#e8c1a0',
+  [ColorGradient.PinkColor]: '#bc80bd',
+  [ColorGradient.None]: 'transparent',
 };

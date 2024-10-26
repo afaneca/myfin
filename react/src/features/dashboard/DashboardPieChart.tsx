@@ -13,21 +13,28 @@ export interface ChartDataItem {
   id: string;
   color: string;
   value: number;
+  altValue?: string;
 }
 
 interface Props {
   data: ChartDataItem[];
   sx?: SxProps<Theme> | undefined;
   customPieProps?: Partial<PieSvgProps<DefaultRawDatum>>;
+  linkLabelTruncateLimit?: number;
 }
 
-const DashboardPieChart = ({ data, sx, customPieProps }: Props) => {
+const DashboardPieChart = ({
+  data,
+  sx,
+  customPieProps,
+  linkLabelTruncateLimit,
+}: Props) => {
   const theme = useTheme();
   const matchesMdScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const truncateFromMiddle = (
     fullStr = '',
-    strLen: number = 20,
+    strLen: number = linkLabelTruncateLimit ?? 20,
     middleStr = '...',
   ) => {
     if (fullStr.length <= strLen) return fullStr;
@@ -41,6 +48,11 @@ const DashboardPieChart = ({ data, sx, customPieProps }: Props) => {
       fullStr.substring(fullStr.length - backChars)
     );
   };
+
+  interface CustomDatum extends DefaultRawDatum {
+    altValue?: string; // add any other custom fields here
+  }
+
   return (
     <Stack
       sx={{
@@ -52,7 +64,7 @@ const DashboardPieChart = ({ data, sx, customPieProps }: Props) => {
         ...sx,
       }}
     >
-      <ResponsivePie
+      <ResponsivePie<CustomDatum>
         data={data}
         margin={
           matchesMdScreen
@@ -76,6 +88,7 @@ const DashboardPieChart = ({ data, sx, customPieProps }: Props) => {
         }}
         valueFormat={(value) => formatNumberAsCurrency(value)}
         defs={generateDefsForGradients()}
+        // @ts-expect-error could assume different structural identities
         fill={generateFillArrayForGradients()}
         arcLinkLabel={(e) => truncateFromMiddle(e.id + '')}
         tooltip={(item) => (
@@ -87,7 +100,8 @@ const DashboardPieChart = ({ data, sx, customPieProps }: Props) => {
               p: theme.spacing(1),
             }}
           >
-            {item.datum.label}: <strong>{item.datum.formattedValue}</strong>
+            {item.datum.label}: <strong>{item.datum.formattedValue}</strong>{' '}
+            {item.datum.data.altValue && `(${item.datum.data.altValue})`}
           </Paper>
         )}
         theme={theme.nivo}

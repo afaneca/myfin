@@ -72,6 +72,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
         arcLabel={'id'}
         valueFormat={(value) => formatNumberAsCurrency(value)}
         defs={generateDefsForGradients()}
+        // @ts-expect-error could assume different structural identities
         fill={generateFillArrayForGradients()}
         theme={theme.nivo}
         tooltip={(item) => (
