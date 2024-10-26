@@ -90,6 +90,7 @@ export const cssGradients = {
   [ColorGradient.OrangeColor]: '#e8a838',
   [ColorGradient.AquaColor]: '#97e3d5',
   [ColorGradient.PaleColor]: '#e8c1a0',
+  [ColorGradient.BrownColor]: '#9c755f',
   [ColorGradient.PinkColor]: '#bc80bd',
   [ColorGradient.None]: 'transparent',
 };

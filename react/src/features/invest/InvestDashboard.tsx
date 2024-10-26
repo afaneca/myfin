@@ -307,7 +307,9 @@ const InvestDashboard = () => {
                 /*arcLabel: 'id',*/
                 enableArcLabels: false,
                 enableArcLinkLabels: !matchesLgScreen,
-                margin: { top: 50, right: 120, bottom: 50, left: 120 },
+                margin: matchesLgScreen
+                  ? { top: 10, right: 10, bottom: 10, left: 10 }
+                  : { top: 50, right: 120, bottom: 50, left: 120 },
                 valueFormat: (value) => formatNumberAsPercentage(value),
               }}
             />

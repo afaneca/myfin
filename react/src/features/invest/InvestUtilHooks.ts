@@ -67,7 +67,7 @@ export function useGetGradientColorForAssetType() {
       case AssetType.Ppr:
         return ColorGradient.PinkColor;
       case AssetType.FixedIncome:
-        return ColorGradient.PaleColor;
+        return ColorGradient.BrownColor;
       case AssetType.Stocks:
         return ColorGradient.CoralColor;
       case AssetType.IndexFunds:

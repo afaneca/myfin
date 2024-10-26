@@ -35,7 +35,7 @@ const CombinedRoiByYearList = (props: Props) => {
           id: item.year,
           year: item.year,
           investedValue: item.invested_in_year_amount,
-          feesTaxes: item.fees_taxes,
+          feesAndTaxes: item.fees_taxes,
           currentValue: item.value_total_amount,
           globalRoi: {
             percentage: item.roi_percentage,
