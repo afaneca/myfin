@@ -13,6 +13,7 @@ import Tags from '../features/tags/Tags.tsx';
 import ImportTransactions from '../features/transactions/import/ImportTransactions.tsx';
 import Rules from '../features/rules/Rules.tsx';
 import Invest, { InvestTab } from '../features/invest/Invest.tsx';
+import Stats, { StatTab } from '../features/stats/Stats.tsx';
 
 export const ROUTE_AUTH = '/auth';
 export const ROUTE_DASHBOARD = '/dashboard';
@@ -32,6 +33,12 @@ export const ROUTE_INVEST_DASHBOARD = '/invest/dashboard';
 export const ROUTE_INVEST_ASSETS = '/invest/assets';
 export const ROUTE_INVEST_TRANSACTIONS = '/invest/transactions';
 export const ROUTE_INVEST_STATS = '/invest/stats';
+export const ROUTE_STATS = '/stats';
+export const ROUTE_STATS_PATRIMONY_EVO = '/stats/patrimony';
+export const ROUTE_STATS_PROJECTIONS = '/stats/projections';
+export const ROUTE_STATS_EXPENSES = '/stats/expenses';
+export const ROUTE_STATS_INCOME = '/stats/income';
+export const ROUTE_STATS_YEAR_BY_YEAR = '/stats/year-by-year';
 
 const RoutesProvider = () => {
   return (
@@ -55,10 +62,7 @@ const RoutesProvider = () => {
             element={<ImportTransactions />}
           />
           <Route path={`${ROUTE_RULES}`} element={<Rules />} />
-          <Route
-            path={`${ROUTE_INVEST}`}
-            element={<Invest defaultTab={InvestTab.Summary} />}
-          />
+          <Route path={`${ROUTE_INVEST}`} element={<Invest />} />
           <Route
             path={`${ROUTE_INVEST_DASHBOARD}`}
             element={<Invest defaultTab={InvestTab.Summary} />}
@@ -74,6 +78,27 @@ const RoutesProvider = () => {
           <Route
             path={`${ROUTE_INVEST_STATS}`}
             element={<Invest defaultTab={InvestTab.Reports} />}
+          />
+          <Route path={`${ROUTE_STATS}`} element={<Stats />} />
+          <Route
+            path={`${ROUTE_STATS_PATRIMONY_EVO}`}
+            element={<Stats defaultTab={StatTab.PatrimonyEvolution} />}
+          />
+          <Route
+            path={`${ROUTE_STATS_PROJECTIONS}`}
+            element={<Stats defaultTab={StatTab.Projections} />}
+          />
+          <Route
+            path={`${ROUTE_STATS_EXPENSES}`}
+            element={<Stats defaultTab={StatTab.Expenses} />}
+          />
+          <Route
+            path={`${ROUTE_STATS_INCOME}`}
+            element={<Stats defaultTab={StatTab.Income} />}
+          />
+          <Route
+            path={`${ROUTE_STATS_YEAR_BY_YEAR}`}
+            element={<Stats defaultTab={StatTab.YearByYear} />}
           />
           <Route path="*" element={<Navigate to="/auth" replace={true} />} />
         </Route>

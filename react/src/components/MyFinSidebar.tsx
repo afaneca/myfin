@@ -9,6 +9,7 @@ import {
   DisplaySettingsOutlined,
   DonutLargeOutlined,
   FolderSharedOutlined,
+  InsertChartOutlined,
   LocalOfferOutlined,
   MenuOutlined,
   PaymentsOutlined,
@@ -23,6 +24,7 @@ import {
   ROUTE_ENTITIES,
   ROUTE_INVEST,
   ROUTE_RULES,
+  ROUTE_STATS,
   ROUTE_TAGS,
   ROUTE_TRX,
 } from '../providers/RoutesProvider';
@@ -149,6 +151,13 @@ const MyFinSidebar = () => {
               {t('sidebar.rules')}
             </MenuItem>
           </SubMenu>
+          <MenuItem
+            icon={<InsertChartOutlined />}
+            component={<NavLink to={ROUTE_STATS} />}
+          >
+            {' '}
+            {t('sidebar.statistics')}
+          </MenuItem>
           {/*<Divider />*/}
         </Menu>
       </Sidebar>

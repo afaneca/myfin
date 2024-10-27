@@ -473,6 +473,7 @@
   },
   "stats": {
     "stats": "Stats",
+    "strapLine": "Look into the past and future here",
     "netWorthEvolution": "Net Worth Evolution",
     "projections": "Projections",
     "expensesEvolution": "Expenses Evolution",
@@ -508,7 +509,8 @@
     "netWorthEvolutionProjection": "Net Worth Evolution Projection",
     "projectedBalanceAssetsPlusDebt": "Projected Balance (Assets + Debt)",
     "year": "Year",
-    "tags": "Tags"
+    "tags": "Tags",
+    "allAccounts": "All accounts"
   },
   "tags": {
     "tags": "Tags",

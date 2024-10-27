@@ -1,17 +1,11 @@
 import { MonthlySnapshot } from '../../../services/invest/investServices.ts';
-import { useMediaQuery, useTheme } from '@mui/material';
-import { ResponsiveLine } from '@nivo/line';
-import Paper from '@mui/material/Paper/Paper';
-import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
+import MyFinLineChart from '../../../components/MyFinLineChart.tsx';
 
 type Props = {
   data: MonthlySnapshot[];
 };
 
 const PortfolioEvolutionChart = (props: Props) => {
-  const theme = useTheme();
-  const matchesMdScreen = useMediaQuery(theme.breakpoints.down('md'));
-
   type ChartData = {
     [monthYear: string]: {
       monthYear: string;
@@ -50,7 +44,6 @@ const PortfolioEvolutionChart = (props: Props) => {
     current: entry.currentValue,
   }));
 
-  /*                                  */
   const monthlyData = [
     {
       id: 'current_value',
@@ -61,60 +54,7 @@ const PortfolioEvolutionChart = (props: Props) => {
     },
   ];
 
-  return (
-    <ResponsiveLine
-      data={monthlyData}
-      margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
-      xScale={{ type: 'point' }}
-      yScale={{
-        type: 'linear',
-        min: 'auto',
-        max: 'auto',
-        stacked: true,
-        reverse: false,
-      }}
-      yFormat=" >-.2f"
-      axisTop={null}
-      axisRight={null}
-      axisLeft={!matchesMdScreen ? {} : null}
-      axisBottom={
-        !matchesMdScreen
-          ? {
-              tickSize: 2,
-              tickPadding: 3,
-              tickRotation: -55,
-              legendPosition: 'middle',
-              truncateTickAt: 40,
-            }
-          : null
-      }
-      pointSize={5}
-      enableArea={true}
-      areaOpacity={0.1}
-      pointColor={{ theme: 'background' }}
-      pointBorderWidth={2}
-      pointBorderColor={{ from: 'serieColor' }}
-      pointLabel="data.yFormatted"
-      pointLabelYOffset={-12}
-      enableTouchCrosshair={true}
-      useMesh={true}
-      colors={() => theme.palette.primary.main}
-      tooltip={(item) => (
-        <Paper
-          sx={{
-            fontSize: '12px',
-            background: 'white',
-            color: 'black',
-            p: theme.spacing(1),
-          }}
-        >
-          {String(item.point.data.x)}:{' '}
-          <strong>{formatNumberAsCurrency(Number(item.point.data.y))}</strong>
-        </Paper>
-      )}
-      theme={theme.nivo}
-    />
-  );
+  return <MyFinLineChart chartData={monthlyData} />;
 };
 
 export default PortfolioEvolutionChart;

@@ -24,7 +24,7 @@ export enum InvestTab {
   Reports = 3,
 }
 
-const Invest = ({ defaultTab }: { defaultTab: InvestTab }) => {
+const Invest = ({ defaultTab }: { defaultTab?: InvestTab }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();

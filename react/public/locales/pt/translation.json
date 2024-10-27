@@ -473,6 +473,7 @@
   },
   "stats": {
     "stats": "Estatísticas",
+    "strapLine": "Veja o passado e futuro aqui",
     "netWorthEvolution": "Evolução do património",
     "projections": "Projeções",
     "expensesEvolution": "Evolução da despesa",
@@ -508,7 +509,8 @@
     "netWorthEvolutionProjection": "Projeção de Evolução do Património",
     "projectedBalanceAssetsPlusDebt": "Balanço Projetado (Ativos + Passivos)",
     "year": "Ano",
-    "tags": "Tags"
+    "tags": "Tags",
+    "allAccounts": "Todas as contas"
   },
   "tags": {
     "tags": "Tags",

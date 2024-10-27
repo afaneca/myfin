@@ -56,7 +56,29 @@ const getMonthByMonthData = (limit: number) => {
   });
 };
 
+type GetBalanceSnapshotsResponseItem = {
+  account_snapshots: AccountSnapshot[];
+  month: number;
+  year: number;
+};
+
+export type AccountSnapshot = {
+  account_id: bigint;
+  balance: number;
+};
+
+export type NamedAccountSnapshot = AccountSnapshot & {
+  name: string;
+};
+
+const getBalanceSnapshots = () => {
+  return axios.get<GetBalanceSnapshotsResponseItem[]>(
+    `/accounts/stats/balance-snapshots`,
+  );
+};
+
 export default {
   getMonthExpensesIncomeDistributionData,
   getMonthByMonthData,
+  getBalanceSnapshots,
 };
