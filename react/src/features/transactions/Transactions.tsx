@@ -285,7 +285,8 @@ const Transactions = () => {
           </IconButton>
           <IconButton
             aria-label={t('common.delete')}
-            onClick={() => {
+            onClick={(event) => {
+              event.stopPropagation();
               handleRemoveTransactionClick(params.value);
             }}
           >
@@ -424,6 +425,14 @@ const Transactions = () => {
             itemCount={getTransactionsRequest.data.filtered_count}
             paginationModel={paginationModel}
             setPaginationModel={setPaginationModel}
+            onRowClicked={(id) => {
+              const trx = getTransactionsRequest.data.results.find(
+                (trx) => trx.transaction_id == id,
+              );
+              if (trx) {
+                handleEditTransactionClick(trx);
+              }
+            }}
           />
         </Grid>
       </Grid>

@@ -139,7 +139,7 @@ const PatrimonyEvolutionStats = () => {
 
   return (
     <Grid container spacing={2} xs={12}>
-      <Grid xs={4}>
+      <Grid xs={12}>
         <Autocomplete
           fullWidth
           id="account-from-condition"

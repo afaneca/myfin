@@ -50,6 +50,7 @@ import Button from '@mui/material/Button/Button';
 import DialogActions from '@mui/material/DialogActions/DialogActions';
 import Chip from '@mui/material/Chip/Chip';
 import { TFunction } from 'i18next';
+import { NumericFormat } from 'react-number-format';
 
 type UiState = {
   isLoading: boolean;
@@ -405,23 +406,29 @@ const AddEditInvestTransactionDialog = (props: Props) => {
         <Grid container spacing={2} rowSpacing={2}>
           {/* Value */}
           <Grid xs={12} md={2}>
-            <TextField
-              autoFocus
-              required
-              margin="dense"
-              id="value"
-              name="value"
+            <NumericFormat
               value={state.valueInput ?? ''}
-              onChange={(e) =>
+              onValueChange={(values) => {
+                const { floatValue } = values;
                 dispatch({
                   type: StateActionType.ValueUpdated,
-                  payload: Number(e.target.value),
-                })
-              }
+                  payload: floatValue ?? 0,
+                });
+              }}
+              customInput={TextField}
               label={t('common.value')}
-              type="number"
               fullWidth
+              required
+              autoFocus
+              onFocus={(event) => {
+                event.target.select();
+              }}
               variant="outlined"
+              margin="dense"
+              decimalScale={2}
+              fixedDecimalScale
+              thousandSeparator
+              /*prefix="€"*/
               inputProps={{
                 step: 0.01,
               }}
@@ -555,23 +562,28 @@ const AddEditInvestTransactionDialog = (props: Props) => {
           </Grid>
           {/* Fees & taxes */}
           <Grid xs={12} md={3}>
-            <TextField
-              autoFocus
-              required
-              margin="dense"
-              id="feesTaxes"
-              name="feesTaxes"
+            <NumericFormat
               value={state.feesTaxesInput || '0'}
-              onChange={(e) =>
+              onValueChange={(values) => {
+                const { floatValue } = values;
                 dispatch({
                   type: StateActionType.FeesTaxesUpdated,
-                  payload: Number(e.target.value),
-                })
-              }
+                  payload: floatValue ?? 0,
+                });
+              }}
+              customInput={TextField}
               label={t('investments.feesAndTaxes')}
-              type="number"
               fullWidth
+              required
+              autoFocus
+              onFocus={(event) => {
+                event.target.select();
+              }}
               variant="outlined"
+              margin="dense"
+              decimalScale={2}
+              fixedDecimalScale
+              thousandSeparator
               inputProps={{
                 step: 0.01,
               }}

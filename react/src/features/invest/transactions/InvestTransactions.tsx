@@ -485,6 +485,17 @@ const InvestTransactions = () => {
           itemCount={state.page?.filtered_count ?? 0}
           paginationModel={state.paginationModel}
           setPaginationModel={handlePaginationModelChange}
+          onRowClicked={(id) => {
+            const trx = state?.page?.results.find(
+              (trx) => trx.transaction_id == id,
+            );
+            if (trx) {
+              dispatch({
+                type: StateActionType.EditClick,
+                payload: trx,
+              });
+            }
+          }}
         />
       </Grid>
     </Grid>

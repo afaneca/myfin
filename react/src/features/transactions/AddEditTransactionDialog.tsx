@@ -60,6 +60,7 @@ import {
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip/Chip';
 import { Account } from '../../services/auth/authServices.ts';
+import { NumericFormat } from 'react-number-format';
 
 interface Props {
   isOpen: boolean;
@@ -468,7 +469,7 @@ const AddEditTransactionDialog = (props: Props) => {
           if (isEditForm) {
             editTransactionRequest.mutate({
               transaction_id: props.transaction?.transaction_id ?? -1n,
-              new_amount: formJson.amount as number,
+              new_amount: amountValue as number,
               new_type: transactionType ?? TransactionType.Expense,
               new_description: formJson.description,
               new_account_from_id:
@@ -497,7 +498,7 @@ const AddEditTransactionDialog = (props: Props) => {
             });
           } else {
             addTransactionStep1Request.mutate({
-              amount: formJson.amount as number,
+              amount: amountValue as number,
               type: transactionType ?? TransactionType.Expense,
               description: formJson.description,
               account_from_id: accountFrom?.id,
@@ -571,18 +572,26 @@ const AddEditTransactionDialog = (props: Props) => {
           {/* Value, date & description */}
           <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
             <Grid xs={12} md={3}>
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="amount"
-                name="amount"
-                value={amountValue || ''}
-                onChange={(e) => setAmountValue(Number(e.target.value))}
+              <NumericFormat
+                value={amountValue}
+                onValueChange={(values) => {
+                  const { floatValue } = values;
+                  setAmountValue(floatValue || 0);
+                }}
+                customInput={TextField}
                 label={t('common.value')}
-                type="number"
                 fullWidth
+                required
+                autoFocus
+                onFocus={(event) => {
+                  event.target.select();
+                }}
                 variant="outlined"
+                margin="dense"
+                decimalScale={2}
+                fixedDecimalScale
+                thousandSeparator
+                /*prefix="€"*/
                 inputProps={{
                   step: 0.01,
                 }}

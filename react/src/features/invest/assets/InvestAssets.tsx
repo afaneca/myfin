@@ -14,10 +14,7 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { GridColDef } from '@mui/x-data-grid';
 import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
-import {
-  formatNumberAsCurrency,
-  formatNumberAsPercentage,
-} from '../../../utils/textUtils.ts';
+import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import Button from '@mui/material/Button/Button';
 import {
   AddCircleOutline,
@@ -30,13 +27,13 @@ import TextField from '@mui/material/TextField/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { Box, Checkbox, FormGroup, Tooltip, useTheme } from '@mui/material';
-import Chip from '@mui/material/Chip/Chip';
 import Stack from '@mui/material/Stack/Stack';
 import Typography from '@mui/material/Typography/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
 import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
 import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
 import AddEditInvestAssetDialog from './AddEditInvestAssetDialog.tsx';
+import PercentageChip from '../../../components/PercentageChip.tsx';
 
 type UiState = {
   assets?: InvestAsset[];
@@ -226,7 +223,7 @@ const InvestAssets = () => {
         name: { name: asset.name, broker: asset.broker, type: asset.type },
         units: { qty: asset.units, ticker: asset.ticker },
         investedValue: {
-          invested: asset.invested_value,
+          invested: asset.currently_invested_value,
           pricePerUnit: asset.price_per_unit,
         },
         feesTaxes: asset.fees_taxes,
@@ -348,23 +345,7 @@ const InvestAssets = () => {
           }}
         >
           {formatNumberAsCurrency(params.value.absolute)} <br />
-          <Chip
-            sx={{ mt: 0.2 }}
-            variant="outlined"
-            size="small"
-            color={
-              !Number.isFinite(params.value.percentage)
-                ? 'default'
-                : params.value.percentage < 0
-                  ? 'warning'
-                  : 'success'
-            }
-            label={
-              !Number.isFinite(params.value.percentage)
-                ? '-%'
-                : formatNumberAsPercentage(params.value.percentage, true)
-            }
-          />
+          <PercentageChip percentage={params.value.percentage} />
         </Box>
       ),
     },
