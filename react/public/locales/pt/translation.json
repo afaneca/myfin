@@ -510,7 +510,8 @@
     "projectedBalanceAssetsPlusDebt": "Balanço Projetado (Ativos + Passivos)",
     "year": "Ano",
     "tags": "Tags",
-    "allAccounts": "Todas as contas"
+    "allAccounts": "Todas as contas",
+    "ignoreDebt": "Ignorar passivo"
   },
   "tags": {
     "tags": "Tags",

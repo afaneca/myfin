@@ -510,7 +510,8 @@
     "projectedBalanceAssetsPlusDebt": "Projected Balance (Assets + Debt)",
     "year": "Year",
     "tags": "Tags",
-    "allAccounts": "All accounts"
+    "allAccounts": "All accounts",
+    "ignoreDebt": "Ignore debt"
   },
   "tags": {
     "tags": "Tags",

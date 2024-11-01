@@ -14,6 +14,7 @@ import Box from '@mui/material/Box/Box';
 import PageHeader from '../../components/PageHeader.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import PatrimonyEvolutionStats from './patrimony/PatrimonyEvolutionStats.tsx';
+import ProjectionsStats from './projections/ProjectionsStats.tsx';
 
 export enum StatTab {
   PatrimonyEvolution = 0,
@@ -57,20 +58,20 @@ const Stats = ({ defaultTab }: { defaultTab?: StatTab }) => {
 
   const renderTabContent = () => {
     switch (selectedTab) {
-      /*case StatTab.Projections:
-        navigate(ROUTE_STATS_PROJECTIONS);
-        break;
+      /*
       case StatTab.Expenses:
-        navigate(ROUTE_STATS_EXPENSES);
+        return <PatrimonyEvolutionStats />;
         break;
       case StatTab.Income:
-        navigate(ROUTE_STATS_INCOME);
+        return <PatrimonyEvolutionStats />;
         break;
       case StatTab.YearByYear:
-        navigate(ROUTE_STATS_YEAR_BY_YEAR);
+        return <PatrimonyEvolutionStats />;
         break;*/
       case StatTab.PatrimonyEvolution:
         return <PatrimonyEvolutionStats />;
+      case StatTab.Projections:
+        return <ProjectionsStats />;
       default:
         return null;
     }

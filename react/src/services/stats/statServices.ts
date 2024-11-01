@@ -1,4 +1,5 @@
 import { axios } from '../../data/axios.ts';
+import { AccountType } from '../auth/authServices.ts';
 
 export interface CategoryWithCalculatedAmounts {
   users_user_id?: number;
@@ -77,8 +78,39 @@ const getBalanceSnapshots = () => {
   );
 };
 
+export type AccountProjection = {
+  account_id: bigint;
+  type: AccountType;
+  balance: number;
+};
+
+export type BudgetProjections = {
+  budget_id: 108;
+  initial_balance?: number;
+  is_open: boolean;
+  month: number;
+  observations: string;
+  planned_balance: number;
+  planned_final_balance: number;
+  planned_initial_balance: number;
+  users_user_id: bigint;
+  year: number;
+};
+
+export type GetProjectionStatsResponse = {
+  accountsFromPreviousMonth: AccountProjection[];
+  budgets: BudgetProjections[];
+};
+
+const getProjectionStats = () => {
+  return axios.get<GetProjectionStatsResponse>(
+    `stats/stats/monthly-patrimony-projections`,
+  );
+};
+
 export default {
   getMonthExpensesIncomeDistributionData,
   getMonthByMonthData,
   getBalanceSnapshots,
+  getProjectionStats,
 };
