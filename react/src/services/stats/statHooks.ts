@@ -12,6 +12,19 @@ const QUERY_KEY_GET_MONTH_BY_MONTH_EXPENSES_INCOME_DIST =
 const QUERY_KEY_GET_MONTH_BY_MONTH_DATA = 'QUERY_KEY_GET_MONTH_BY_MONTH_DATA';
 const QUERY_KEY_GET_BALANCE_SNAPSHOTS = 'QUERY_KEY_GET_BALANCE_SNAPSHOTS';
 const QUERY_KEY_GET_PROJECTION_STATS = 'QUERY_KEY_GET_PROJECTION_STATS';
+const QUERY_KEY_GET_CATEGORIES_ENTITIES_TAGS =
+  'QUERY_KEY_GET_CATEGORIES_ENTITIES_TAGS';
+const QUERY_KEY_GET_CATEGORY_EXPENSES_EVOLUTION =
+  'QUERY_KEY_GET_CATEGORY_EXPENSES_EVOLUTION';
+const QUERY_KEY_GET_ENTITY_EXPENSES_EVOLUTION =
+  'QUERY_KEY_GET_ENTITY_EXPENSES_EVOLUTION';
+const QUERY_KEY_GET_TAG_EXPENSES_EVOLUTION =
+  'QUERY_KEY_GET_TAG_EXPENSES_EVOLUTION';
+const QUERY_KEY_GET_CATEGORY_INCOME_EVOLUTION =
+  'QUERY_KEY_GET_CATEGORY_INCOME_EVOLUTION';
+const QUERY_KEY_GET_ENTITY_INCOME_EVOLUTION =
+  'QUERY_KEY_GET_ENTITY_INCOME_EVOLUTION';
+const QUERY_KEY_GET_TAG_INCOME_EVOLUTION = 'QUERY_KEY_GET_TAG_INCOME_EVOLUTION';
 
 export function useGetMonthExpensesIncomeDistributionData(
   month: number,
@@ -114,7 +127,7 @@ export function useGetProjectionStats() {
         0,
       ) ?? 0;
 
-    let initialInvestBalance =
+    const initialInvestBalance =
       response.data.accountsFromPreviousMonth?.reduce(
         (result, current: AccountProjection) => {
           if (current.type == AccountType.Investing) {
@@ -151,5 +164,96 @@ export function useGetProjectionStats() {
   return useQuery({
     queryKey: [QUERY_KEY_GET_PROJECTION_STATS],
     queryFn: getProjectionStats,
+  });
+}
+
+export function useGetCategoriesEntitiesTags() {
+  async function getCategoryExpensesEvolution() {
+    const response = await statServices.getCategoriesEntitiesTags();
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_CATEGORIES_ENTITIES_TAGS],
+    queryFn: getCategoryExpensesEvolution,
+  });
+}
+
+export function useGetCategoryExpensesEvolution(categoryId: bigint | null) {
+  async function getCategoryExpensesEvolution() {
+    if (!categoryId) return null;
+    const response =
+      await statServices.getCategoryExpensesEvolution(categoryId);
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_CATEGORY_EXPENSES_EVOLUTION, categoryId],
+    queryFn: getCategoryExpensesEvolution,
+  });
+}
+
+export function useGetEntityExpensesEvolution(entityId: bigint | null) {
+  async function getEntityExpensesEvolution() {
+    if (!entityId) return null;
+    const response = await statServices.getEntityExpensesEvolution(entityId);
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_ENTITY_EXPENSES_EVOLUTION, entityId],
+    queryFn: getEntityExpensesEvolution,
+  });
+}
+
+export function useGetTagExpensesEvolution(tagId: bigint | null) {
+  async function getTagExpensesEvolution() {
+    if (!tagId) return null;
+    const response = await statServices.getTagExpensesEvolution(tagId);
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_TAG_EXPENSES_EVOLUTION, tagId],
+    queryFn: getTagExpensesEvolution,
+  });
+}
+
+export function useGetCategoryIncomeEvolution(categoryId: bigint | null) {
+  async function getCategoryIncomeEvolution() {
+    if (!categoryId) return null;
+    const response = await statServices.getCategoryIncomeEvolution(categoryId);
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_CATEGORY_INCOME_EVOLUTION, categoryId],
+    queryFn: getCategoryIncomeEvolution,
+  });
+}
+
+export function useGetEntityIncomeEvolution(entityId: bigint | null) {
+  async function getEntityIncomeEvolution() {
+    if (!entityId) return null;
+    const response = await statServices.getEntityIncomeEvolution(entityId);
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_ENTITY_INCOME_EVOLUTION, entityId],
+    queryFn: getEntityIncomeEvolution,
+  });
+}
+
+export function useGetTagIncomeEvolution(tagId: bigint | null) {
+  async function getTagIncomeEvolution() {
+    if (!tagId) return null;
+    const response = await statServices.getTagIncomeEvolution(tagId);
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_TAG_INCOME_EVOLUTION, tagId],
+    queryFn: getTagIncomeEvolution,
   });
 }

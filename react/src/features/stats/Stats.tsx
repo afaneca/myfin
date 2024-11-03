@@ -15,6 +15,9 @@ import PageHeader from '../../components/PageHeader.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import PatrimonyEvolutionStats from './patrimony/PatrimonyEvolutionStats.tsx';
 import ProjectionsStats from './projections/ProjectionsStats.tsx';
+import ExpensesIncomeStats, {
+  TrxType,
+} from './expensesIncome/ExpensesIncomeStats.tsx';
 
 export enum StatTab {
   PatrimonyEvolution = 0,
@@ -59,19 +62,16 @@ const Stats = ({ defaultTab }: { defaultTab?: StatTab }) => {
   const renderTabContent = () => {
     switch (selectedTab) {
       /*
-      case StatTab.Expenses:
-        return <PatrimonyEvolutionStats />;
-        break;
-      case StatTab.Income:
-        return <PatrimonyEvolutionStats />;
-        break;
       case StatTab.YearByYear:
-        return <PatrimonyEvolutionStats />;
-        break;*/
+        return <PatrimonyEvolutionStats />;*/
       case StatTab.PatrimonyEvolution:
         return <PatrimonyEvolutionStats />;
       case StatTab.Projections:
         return <ProjectionsStats />;
+      case StatTab.Expenses:
+        return <ExpensesIncomeStats trxType={TrxType.Expenses} />;
+      case StatTab.Income:
+        return <ExpensesIncomeStats trxType={TrxType.Income} />;
       default:
         return null;
     }

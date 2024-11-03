@@ -1,5 +1,7 @@
 import { axios } from '../../data/axios.ts';
 import { AccountType } from '../auth/authServices.ts';
+import { Category } from '../category/categoryServices.ts';
+import { Entity, Tag } from '../trx/trxServices.ts';
 
 export interface CategoryWithCalculatedAmounts {
   users_user_id?: number;
@@ -108,9 +110,70 @@ const getProjectionStats = () => {
   );
 };
 
+export type GetCategoriesEntitiesTagsResponse = {
+  categories: Category[];
+  entities: Entity[];
+  tags: Tag[];
+};
+
+const getCategoriesEntitiesTags = () => {
+  return axios.get<GetCategoriesEntitiesTagsResponse>(
+    `user/categoriesEntitiesTags`,
+  );
+};
+
+export type CategoryExpensesIncomeEvolutionItem = {
+  month: number;
+  year: number;
+  value: number;
+};
+
+const getCategoryExpensesEvolution = (categoryId: bigint) => {
+  return axios.get<CategoryExpensesIncomeEvolutionItem[]>(
+    `stats/category-expenses-evolution?cat_id=${categoryId}`,
+  );
+};
+
+const getEntityExpensesEvolution = (entityId: bigint) => {
+  return axios.get<CategoryExpensesIncomeEvolutionItem[]>(
+    `stats/category-expenses-evolution?ent_id=${entityId}`,
+  );
+};
+
+const getTagExpensesEvolution = (tagId: bigint) => {
+  return axios.get<CategoryExpensesIncomeEvolutionItem[]>(
+    `stats/category-expenses-evolution?tag_id=${tagId}`,
+  );
+};
+
+const getCategoryIncomeEvolution = (categoryId: bigint) => {
+  return axios.get<CategoryExpensesIncomeEvolutionItem[]>(
+    `stats/category-income-evolution?cat_id=${categoryId}`,
+  );
+};
+
+const getEntityIncomeEvolution = (entityId: bigint) => {
+  return axios.get<CategoryExpensesIncomeEvolutionItem[]>(
+    `stats/category-income-evolution?ent_id=${entityId}`,
+  );
+};
+
+const getTagIncomeEvolution = (tagId: bigint) => {
+  return axios.get<CategoryExpensesIncomeEvolutionItem[]>(
+    `stats/category-income-evolution?tag_id=${tagId}`,
+  );
+};
+
 export default {
   getMonthExpensesIncomeDistributionData,
   getMonthByMonthData,
   getBalanceSnapshots,
   getProjectionStats,
+  getCategoriesEntitiesTags,
+  getCategoryExpensesEvolution,
+  getEntityExpensesEvolution,
+  getTagExpensesEvolution,
+  getCategoryIncomeEvolution,
+  getEntityIncomeEvolution,
+  getTagIncomeEvolution,
 };

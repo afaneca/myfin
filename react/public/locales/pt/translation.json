@@ -511,7 +511,8 @@
     "year": "Ano",
     "tags": "Tags",
     "allAccounts": "Todas as contas",
-    "ignoreDebt": "Ignorar passivo"
+    "ignoreDebt": "Ignorar passivo",
+    "period": "Período"
   },
   "tags": {
     "tags": "Tags",
