@@ -461,7 +461,6 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               }}
               customInput={TextField}
               label={t('investments.units')}
-              type="number"
               fullWidth
               variant="outlined"
               decimalScale={10}
