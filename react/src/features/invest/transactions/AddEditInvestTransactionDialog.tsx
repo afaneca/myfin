@@ -443,23 +443,30 @@ const AddEditInvestTransactionDialog = (props: Props) => {
           </Grid>
           {/* Units */}
           <Grid xs={12} md={3}>
-            <TextField
-              autoFocus
+            <NumericFormat
               required
               margin="dense"
               id="units"
               name="units"
-              value={state.unitsInput || ''}
-              onChange={(e) =>
+              value={state.unitsInput ?? ''}
+              onValueChange={(values) => {
+                const { floatValue } = values;
                 dispatch({
                   type: StateActionType.UnitsUpdated,
-                  payload: Number(e.target.value),
-                })
-              }
+                  payload: floatValue ?? 0,
+                });
+              }}
+              onFocus={(event) => {
+                event.target.select();
+              }}
+              customInput={TextField}
               label={t('investments.units')}
               type="number"
               fullWidth
               variant="outlined"
+              decimalScale={10}
+              fixedDecimalScale
+              thousandSeparator
               inputProps={{
                 step: 0.01,
               }}
