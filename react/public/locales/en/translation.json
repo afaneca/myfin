@@ -512,7 +512,9 @@
     "tags": "Tags",
     "allAccounts": "All accounts",
     "ignoreDebt": "Ignore debt",
-    "period": "Period"
+    "period": "Period",
+    "otherExpenses": "Other expenses",
+    "otherIncome": "Other income"
   },
   "tags": {
     "tags": "Tags",

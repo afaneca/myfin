@@ -164,6 +164,41 @@ const getTagIncomeEvolution = (tagId: bigint) => {
   );
 };
 
+export type CategoryYearByYearDataItem = {
+  category_id: bigint;
+  category_yearly_expense: number;
+  category_yearly_income: number;
+  name: string;
+};
+
+export type EntityYearByYearDataItem = {
+  entity_id: bigint;
+  entity_yearly_expense: number;
+  entity_yearly_income: number;
+  name: string;
+};
+
+export type TagYearByYearDataItem = {
+  tag_id: bigint;
+  tag_yearly_expense: number;
+  tag_yearly_income: number;
+  name: string;
+  description: string;
+};
+
+export type YearByYearStatsResponse = {
+  categories: CategoryYearByYearDataItem[];
+  entities: EntityYearByYearDataItem[];
+  tags: TagYearByYearDataItem[];
+  year_of_first_trx: number;
+};
+
+const getYearByYearStats = (year: number) => {
+  return axios.get<YearByYearStatsResponse>(
+    `/stats/year-by-year-income-expense-distribution?year=${year}`,
+  );
+};
+
 export default {
   getMonthExpensesIncomeDistributionData,
   getMonthByMonthData,
@@ -176,4 +211,5 @@ export default {
   getCategoryIncomeEvolution,
   getEntityIncomeEvolution,
   getTagIncomeEvolution,
+  getYearByYearStats,
 };

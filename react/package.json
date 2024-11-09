@@ -23,6 +23,7 @@
     "@nivo/core": "^0.85.1",
     "@nivo/line": "^0.85.1",
     "@nivo/pie": "^0.85.1",
+    "@nivo/sankey": "^0.87.0",
     "@tanstack/react-query": "^5.20.2",
     "@tanstack/react-query-devtools": "^5.20.5",
     "@types/yup": "^0.32.0",

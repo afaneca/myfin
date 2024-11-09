@@ -512,7 +512,9 @@
     "tags": "Tags",
     "allAccounts": "Todas as contas",
     "ignoreDebt": "Ignorar passivo",
-    "period": "Período"
+    "period": "Período",
+    "otherExpenses": "Outras despesas",
+    "otherIncome": "Outras receitas"
   },
   "tags": {
     "tags": "Tags",

@@ -18,6 +18,7 @@ import ProjectionsStats from './projections/ProjectionsStats.tsx';
 import ExpensesIncomeStats, {
   TrxType,
 } from './expensesIncome/ExpensesIncomeStats.tsx';
+import YearByYearStats from './yearByYear/YearByYearStats.tsx';
 
 export enum StatTab {
   PatrimonyEvolution = 0,
@@ -61,9 +62,6 @@ const Stats = ({ defaultTab }: { defaultTab?: StatTab }) => {
 
   const renderTabContent = () => {
     switch (selectedTab) {
-      /*
-      case StatTab.YearByYear:
-        return <PatrimonyEvolutionStats />;*/
       case StatTab.PatrimonyEvolution:
         return <PatrimonyEvolutionStats />;
       case StatTab.Projections:
@@ -72,6 +70,8 @@ const Stats = ({ defaultTab }: { defaultTab?: StatTab }) => {
         return <ExpensesIncomeStats trxType={TrxType.Expenses} />;
       case StatTab.Income:
         return <ExpensesIncomeStats trxType={TrxType.Income} />;
+      case StatTab.YearByYear:
+        return <YearByYearStats />;
       default:
         return null;
     }

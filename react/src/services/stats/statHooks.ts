@@ -25,6 +25,7 @@ const QUERY_KEY_GET_CATEGORY_INCOME_EVOLUTION =
 const QUERY_KEY_GET_ENTITY_INCOME_EVOLUTION =
   'QUERY_KEY_GET_ENTITY_INCOME_EVOLUTION';
 const QUERY_KEY_GET_TAG_INCOME_EVOLUTION = 'QUERY_KEY_GET_TAG_INCOME_EVOLUTION';
+const QUERY_KEY_GET_YEAR_BY_YEAR_DATA = 'QUERY_KEY_GET_YEAR_BY_YEAR_DATA';
 
 export function useGetMonthExpensesIncomeDistributionData(
   month: number,
@@ -255,5 +256,17 @@ export function useGetTagIncomeEvolution(tagId: bigint | null) {
   return useQuery({
     queryKey: [QUERY_KEY_GET_TAG_INCOME_EVOLUTION, tagId],
     queryFn: getTagIncomeEvolution,
+  });
+}
+
+export function useGetYearByYearData(year: number) {
+  async function getYearByYearData() {
+    const response = await statServices.getYearByYearStats(year);
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_YEAR_BY_YEAR_DATA, year],
+    queryFn: getYearByYearData,
   });
 }
