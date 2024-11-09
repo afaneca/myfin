@@ -39,9 +39,19 @@ const editAccount = (request: EditAccountRequest) => {
   return axios.put('/accounts', { current_balance: 0, ...request });
 };
 
+const recalculateAllBalances = () => {
+  return axios.get('/accounts/recalculate-balance/all');
+};
+
+const autoPopulateWithDemoData = () => {
+  return axios.post('/users/demo');
+};
+
 export default {
   getAccounts,
   removeAccount,
   addAccount,
   editAccount,
+  recalculateAllBalances,
+  autoPopulateWithDemoData,
 };

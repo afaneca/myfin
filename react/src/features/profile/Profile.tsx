@@ -22,6 +22,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { ColorModeContext } from '../../providers/MyFinThemeProvider.tsx';
 import UserStatList from './UserStatList.tsx';
+import Utilities from './Utilities.tsx';
 
 const Profile = () => {
   const theme = useTheme();
@@ -174,7 +175,9 @@ const Profile = () => {
                 </Grid>
               </Grid>
             </AccordionSummary>
-            <AccordionDetails>...</AccordionDetails>
+            <AccordionDetails>
+              <Utilities />
+            </AccordionDetails>
           </Accordion>
           {/* Stats for nerds */}
           <Accordion sx={{ width: '100%', maxWidth: '700px' }}>

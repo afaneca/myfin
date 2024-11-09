@@ -64,3 +64,25 @@ export function useEditAccount() {
     mutationFn: editAccount,
   });
 }
+
+export function useRecalculateAllBalances() {
+  async function recalculateAllBalances() {
+    const data = await AccountServices.recalculateAllBalances();
+    return data.data;
+  }
+
+  return useMutation({
+    mutationFn: recalculateAllBalances,
+  });
+}
+
+export function useAutoPopulateWithDemoData() {
+  async function autoPopulateWithDemoData() {
+    const data = await AccountServices.autoPopulateWithDemoData();
+    return data.data;
+  }
+
+  return useMutation({
+    mutationFn: autoPopulateWithDemoData,
+  });
+}
