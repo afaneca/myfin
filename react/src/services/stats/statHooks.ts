@@ -26,6 +26,7 @@ const QUERY_KEY_GET_ENTITY_INCOME_EVOLUTION =
   'QUERY_KEY_GET_ENTITY_INCOME_EVOLUTION';
 const QUERY_KEY_GET_TAG_INCOME_EVOLUTION = 'QUERY_KEY_GET_TAG_INCOME_EVOLUTION';
 const QUERY_KEY_GET_YEAR_BY_YEAR_DATA = 'QUERY_KEY_GET_YEAR_BY_YEAR_DATA';
+const QUERY_KEY_GET_USER_STATS = 'QUERY_KEY_GET_USER_STATS';
 
 export function useGetMonthExpensesIncomeDistributionData(
   month: number,
@@ -268,5 +269,17 @@ export function useGetYearByYearData(year: number) {
   return useQuery({
     queryKey: [QUERY_KEY_GET_YEAR_BY_YEAR_DATA, year],
     queryFn: getYearByYearData,
+  });
+}
+
+export function useGetUserStats() {
+  async function getUserStats() {
+    const response = await statServices.getUserStats();
+    return response.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_USER_STATS],
+    queryFn: getUserStats,
   });
 }

@@ -21,6 +21,7 @@ import Typography from '@mui/material/Typography/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { ColorModeContext } from '../../providers/MyFinThemeProvider.tsx';
+import UserStatList from './UserStatList.tsx';
 
 const Profile = () => {
   const theme = useTheme();
@@ -193,7 +194,9 @@ const Profile = () => {
                 </Grid>
               </Grid>
             </AccordionSummary>
-            <AccordionDetails>...</AccordionDetails>
+            <AccordionDetails>
+              <UserStatList />
+            </AccordionDetails>
           </Accordion>
         </Stack>
       </Paper>

@@ -199,6 +199,20 @@ const getYearByYearStats = (year: number) => {
   );
 };
 
+export type UserStatsResponse = {
+  nr_of_accounts: number;
+  nr_of_budgets: number;
+  nr_of_categories: number;
+  nr_of_entities: number;
+  nr_of_rules: number;
+  nr_of_tags: number;
+  nr_of_trx: number;
+};
+
+const getUserStats = () => {
+  return axios.get<UserStatsResponse>(`/stats/userStats`);
+};
+
 export default {
   getMonthExpensesIncomeDistributionData,
   getMonthByMonthData,
@@ -212,4 +226,5 @@ export default {
   getEntityIncomeEvolution,
   getTagIncomeEvolution,
   getYearByYearStats,
+  getUserStats,
 };
