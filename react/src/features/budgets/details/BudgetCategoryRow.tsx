@@ -23,6 +23,7 @@ import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { ColorGradient } from '../../../consts';
 import styled from '@mui/material/styles/styled';
 import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
+import { NumericFormat } from 'react-number-format';
 
 type Props = {
   isOpen: boolean;
@@ -263,14 +264,14 @@ function BudgetCategoryRow({
           </Tooltip>
         </Grid>
         <Grid xs={12} md={4}>
-          <TextField
+          <NumericFormat
             required
             disabled={!isOpen}
             id={`estimated_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
             name={`estimated_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
-            onChange={(e) => {
-              const value = parseFloat(e.target.value) || 0;
-              onInputChange(value);
+            onValueChange={(values) => {
+              const { floatValue } = values;
+              onInputChange(floatValue ?? 0);
             }}
             InputProps={{
               startAdornment: (
@@ -280,10 +281,13 @@ function BudgetCategoryRow({
               ),
             }}
             margin="none"
-            type="number"
+            customInput={TextField}
             label={t('budgetDetails.estimated')}
             fullWidth
             variant="outlined"
+            decimalScale={2}
+            fixedDecimalScale
+            thousandSeparator
             inputProps={{
               step: 0.01,
             }}
@@ -298,7 +302,7 @@ function BudgetCategoryRow({
           />
         </Grid>
         <Grid xs={12} md={4}>
-          <TextField
+          <NumericFormat
             required
             disabled
             id={`current_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
@@ -311,10 +315,13 @@ function BudgetCategoryRow({
               ),
             }}
             margin="none"
-            type="number"
+            customInput={TextField}
             label={t('budgetDetails.current')}
             fullWidth
             variant="outlined"
+            decimalScale={2}
+            fixedDecimalScale
+            thousandSeparator
             inputProps={{
               step: 0.01,
             }}

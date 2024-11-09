@@ -190,7 +190,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
           {
             units: prevState.unitsInput,
             ticker: prevState.assets?.find(
-              (asset) => asset.asset_id == prevState.assetInput?.id ?? -1,
+              (asset) => asset.asset_id == prevState.assetInput?.id,
             )?.ticker,
           },
         ),
