@@ -23,6 +23,7 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { ColorModeContext } from '../../providers/MyFinThemeProvider.tsx';
 import UserStatList from './UserStatList.tsx';
 import Utilities from './Utilities.tsx';
+import ChangePasswordForm from './ChangePasswordForm.tsx';
 
 const Profile = () => {
   const theme = useTheme();
@@ -155,7 +156,9 @@ const Profile = () => {
                 </Grid>
               </Grid>
             </AccordionSummary>
-            <AccordionDetails>...</AccordionDetails>
+            <AccordionDetails>
+              <ChangePasswordForm />
+            </AccordionDetails>
           </Accordion>
           {/* Utilities */}
           <Accordion sx={{ width: '100%', maxWidth: '700px' }}>

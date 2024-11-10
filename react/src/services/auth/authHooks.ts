@@ -49,3 +49,18 @@ export function useAuthStatus(checkServer: boolean = true) {
   });
   return { isAuthenticated: query.isSuccess ? query.data : null, ...query };
 }
+
+export function useChangePassword() {
+  async function changePassword(data: {
+    currentPassword: string;
+    newPassword1: string;
+    newPassword2: string;
+  }) {
+    const resp = await AuthServices.changePassword(data);
+    return resp.data;
+  }
+
+  return useMutation({
+    mutationFn: changePassword,
+  });
+}

@@ -57,8 +57,21 @@ const validateSession = async (): Promise<boolean> => {
   return resp.data == '1';
 };
 
+const changePassword = (data: {
+  currentPassword: string;
+  newPassword1: string;
+  newPassword2: string;
+}) => {
+  return axios.put('/users/changePW', {
+    current_password: data.currentPassword,
+    new_password: data.newPassword1,
+    new_password2: data.newPassword2,
+  });
+};
+
 export default {
   attemptLogin,
   register,
   validateSession,
+  changePassword,
 };
