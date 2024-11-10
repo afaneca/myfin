@@ -8,29 +8,11 @@ import {
   addLeadingZero,
   formatNumberAsCurrency,
 } from '../../../utils/textUtils.ts';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
-import {
-  Card,
-  List,
-  ListItem,
-  Tooltip,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
+import { Card, List, ListItem, useTheme } from '@mui/material';
 import Button from '@mui/material/Button/Button';
-import {
-  AddReaction,
-  AddReactionOutlined,
-  CloudUpload,
-  Description,
-  FileCopy,
-  Lock,
-  LockOpen,
-} from '@mui/icons-material';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import IconButton from '@mui/material/IconButton';
+import { CloudUpload, FileCopy, Lock, LockOpen } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   useCreateBudgetStep0,
@@ -51,14 +33,12 @@ import Stack from '@mui/material/Stack/Stack';
 import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { ColorGradient } from '../../../consts';
 import Chip from '@mui/material/Chip/Chip';
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
-import i18next from 'i18next';
 import { ROUTE_BUDGET_DETAILS } from '../../../providers/RoutesProvider.tsx';
 import { TransactionType } from '../../../services/trx/trxServices.ts';
 import TransactionsTableDialog from '../../../components/TransactionsTableDialog.tsx';
 import BudgetListSummaryDialog from './BudgetListSummaryDialog.tsx';
 import BudgetCategoryRow from './BudgetCategoryRow.tsx';
+import BudgetDescription from './BudgetDescription.tsx';
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
@@ -66,8 +46,6 @@ const BudgetDetails = () => {
   const loader = useLoading();
   const navigate = useNavigate();
   const snackbar = useSnackbar();
-  const matchesSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const { id } = useParams();
   const [budgetToClone, setBudgetToClone] = useState<bigint | null>(null);
   const getBudgetRequest = useGetBudget(BigInt(id ?? -1));
@@ -80,7 +58,6 @@ const BudgetDetails = () => {
     month: dayjs().month() + 1,
     year: dayjs().year(),
   });
-  const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState('');
   const [isOpen, setOpen] = useState(false);
   const [isNew, setNew] = useState(true);
@@ -205,12 +182,6 @@ const BudgetDetails = () => {
     () => calculateBudgetBalances(categories),
     [categories],
   );
-
-  const handleEmojiAdded = (emojiText: string) => {
-    setDescriptionValue((prevValue) => `${prevValue} ${emojiText} `);
-    descriptionRef?.current?.focus();
-    setEmojiPickerOpen(false);
-  };
 
   // Fetch
   useEffect(() => {
@@ -482,65 +453,10 @@ const BudgetDetails = () => {
           />
         </Grid>
         <Grid xs={12} md={6} lgOffset={3}>
-          <Box sx={{ position: 'relative' }}>
-            <TextField
-              inputRef={descriptionRef}
-              required
-              fullWidth
-              margin="none"
-              id="description"
-              name="description"
-              label={t('common.description')}
-              placeholder={t('common.description')}
-              value={descriptionValue}
-              onChange={(e) => setDescriptionValue(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Description />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip title={'Emojis'}>
-                      <IconButton
-                        aria-label={'Emojis'}
-                        onClick={() => setEmojiPickerOpen(!isEmojiPickerOpen)}
-                        edge="end"
-                      >
-                        {matchesSmScreen ? null : isEmojiPickerOpen ? (
-                          <AddReaction color="primary" />
-                        ) : (
-                          <AddReactionOutlined color="primary" />
-                        )}
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {isEmojiPickerOpen && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bottom: 10,
-                  right: 0,
-                  transform: 'translateY(100%)',
-                  zIndex: 2,
-                  maxHeight: '300px',
-                }}
-              >
-                <Picker
-                  data={data}
-                  onEmojiSelect={(emoji: { native: string }) =>
-                    handleEmojiAdded(emoji.native)
-                  }
-                  theme={theme.palette.mode}
-                  locale={i18next.resolvedLanguage == 'pt' ? 'pt' : 'en'}
-                />
-              </Box>
-            )}
-          </Box>
+          <BudgetDescription
+            text={descriptionValue}
+            onTextChange={setDescriptionValue}
+          />
         </Grid>
         <Grid xs={12}>
           <Card
