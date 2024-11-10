@@ -10,7 +10,7 @@ import {
 } from '../../../utils/textUtils.ts';
 import React, { useEffect, useMemo, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
-import { Card, List, ListItem, useTheme } from '@mui/material';
+import { List, ListItem, useTheme } from '@mui/material';
 import Button from '@mui/material/Button/Button';
 import { CloudUpload, FileCopy, Lock, LockOpen } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -29,9 +29,6 @@ import {
 } from '../../../providers/SnackbarProvider.tsx';
 import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
 import Typography from '@mui/material/Typography/Typography';
-import Stack from '@mui/material/Stack/Stack';
-import { cssGradients } from '../../../utils/gradientUtils.ts';
-import { ColorGradient } from '../../../consts';
 import Chip from '@mui/material/Chip/Chip';
 import { ROUTE_BUDGET_DETAILS } from '../../../providers/RoutesProvider.tsx';
 import { TransactionType } from '../../../services/trx/trxServices.ts';
@@ -39,6 +36,7 @@ import TransactionsTableDialog from '../../../components/TransactionsTableDialog
 import BudgetListSummaryDialog from './BudgetListSummaryDialog.tsx';
 import BudgetCategoryRow from './BudgetCategoryRow.tsx';
 import BudgetDescription from './BudgetDescription.tsx';
+import BudgetSummaryBoard from './BudgetSummaryBoard.tsx';
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
@@ -351,23 +349,6 @@ const BudgetDetails = () => {
     setCloneBudgetDialogOpen(true);
   };
 
-  const renderTopSummaryLabelValue = (label: string, value: string) => {
-    return (
-      <>
-        <Typography color="white" variant="h6">
-          {label}
-        </Typography>
-        <Chip
-          label={value}
-          variant="filled"
-          size="medium"
-          sx={{ color: 'white' }}
-        />
-        {/*<Typography variant="h5">{value}</Typography>*/}
-      </>
-    );
-  };
-
   const handleCloneBudgetSelected = (budgetId: bigint) => {
     if (budgetId == -1n) return;
     setCloneBudgetDialogOpen(false);
@@ -459,104 +440,11 @@ const BudgetDetails = () => {
           />
         </Grid>
         <Grid xs={12}>
-          <Card
-            variant="elevation"
-            sx={{
-              width: '100%',
-              p: 5,
-              background: cssGradients[ColorGradient.Blue],
-            }}
-          >
-            <Grid
-              container
-              spacing={2}
-              display="flex"
-              justifyContent="space-between"
-              textAlign="center"
-            >
-              <Grid>
-                <Stack spacing={4}>
-                  <Stack>
-                    {renderTopSummaryLabelValue(
-                      t(
-                        isOpen
-                          ? 'budgetDetails.estimatedExpenses'
-                          : 'budgetDetails.actualExpenses',
-                      ),
-                      formatNumberAsCurrency(
-                        isOpen == true
-                          ? calculatedBalances.plannedExpenses
-                          : calculatedBalances.currentExpenses,
-                      ),
-                    )}
-                  </Stack>
-                  <Stack>
-                    {renderTopSummaryLabelValue(
-                      t('budgetDetails.initialBalance'),
-                      formatNumberAsCurrency(initialBalance),
-                    )}
-                  </Stack>
-                </Stack>
-              </Grid>
-              <Grid>
-                <Stack spacing={4}>
-                  <Stack>
-                    {renderTopSummaryLabelValue(
-                      t(
-                        isOpen
-                          ? 'budgetDetails.estimatedBalance'
-                          : 'budgetDetails.actualBalance',
-                      ),
-                      formatNumberAsCurrency(
-                        isOpen
-                          ? calculatedBalances.plannedBalance
-                          : calculatedBalances.currentBalance,
-                      ),
-                    )}
-                  </Stack>
-                  <Stack>
-                    {renderTopSummaryLabelValue(
-                      t('budgetDetails.status'),
-                      t(
-                        isOpen
-                          ? 'budgetDetails.opened'
-                          : 'budgetDetails.closed',
-                      ),
-                    )}
-                  </Stack>
-                </Stack>
-              </Grid>
-              <Grid>
-                <Stack spacing={4}>
-                  <Stack>
-                    {renderTopSummaryLabelValue(
-                      t(
-                        isOpen
-                          ? 'budgetDetails.estimatedIncome'
-                          : 'budgetDetails.actualIncome',
-                      ),
-                      formatNumberAsCurrency(
-                        isOpen
-                          ? calculatedBalances.plannedIncome
-                          : calculatedBalances.currentIncome,
-                      ),
-                    )}
-                  </Stack>
-                  <Stack>
-                    {renderTopSummaryLabelValue(
-                      t('budgetDetails.finalBalance'),
-                      formatNumberAsCurrency(
-                        initialBalance +
-                          (isOpen
-                            ? calculatedBalances.plannedBalance
-                            : calculatedBalances.currentBalance),
-                      ),
-                    )}
-                  </Stack>
-                </Stack>
-              </Grid>
-            </Grid>
-          </Card>
+          <BudgetSummaryBoard
+            calculatedBalances={calculatedBalances}
+            isOpen={isOpen}
+            initialBalance={initialBalance}
+          />
         </Grid>
         {/* Debit categories */}
         <Grid xs={12} md={6}>
@@ -593,7 +481,7 @@ const BudgetDetails = () => {
             ))}
           </List>
         </Grid>
-        {/* Credit categories */}
+        {/*Credit categories*/}
         <Grid xs={12} md={6}>
           <Typography variant="h4">{t('common.credit')}</Typography>
           <List>
