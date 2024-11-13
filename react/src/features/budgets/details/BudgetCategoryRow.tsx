@@ -1,29 +1,29 @@
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import { memo, useCallback, useMemo } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { styled } from '@mui/material/styles';
 import {
   Card,
+  CardActions,
+  Chip,
   Divider,
+  InputAdornment,
+  LinearProgress,
   linearProgressClasses,
   ListItemText,
+  Stack,
+  TextField,
   Tooltip,
+  Typography,
 } from '@mui/material';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import { Euro } from '@mui/icons-material';
-import CardActions from '@mui/material/CardActions';
-import Stack from '@mui/material/Stack/Stack';
-import React, { memo } from 'react';
+import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
-import Container from '@mui/material/Container/Container';
-import Typography from '@mui/material/Typography/Typography';
-import Chip from '@mui/material/Chip/Chip';
+import { ColorGradient } from '../../../consts';
 import { getMonthsFullName } from '../../../utils/dateUtils.ts';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
-import { Trans, useTranslation } from 'react-i18next';
-import { cssGradients } from '../../../utils/gradientUtils.ts';
-import { ColorGradient } from '../../../consts';
-import styled from '@mui/material/styles/styled';
-import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
-import { NumericFormat } from 'react-number-format';
+import Container from '@mui/material/Container/Container';
+import Grid from '@mui/material/Unstable_Grid2/Grid2';
 
 type Props = {
   isOpen: boolean;
@@ -35,178 +35,181 @@ type Props = {
   onInputChange: (input: number) => void;
 };
 
-function BudgetCategoryRow({
-  isOpen,
-  isDebit,
-  month,
-  year,
-  category,
-  onCategoryClick,
-  onInputChange,
-}: Props) {
-  const { t } = useTranslation();
+interface TooltipContentProps {
+  category: BudgetCategory;
+  isDebit: boolean;
+  t: (key: string) => string;
+  month: number;
+  year: number;
+}
 
-  const renderCategoryTooltip = (
-    category: BudgetCategory,
-    isDebit: boolean,
-  ) => {
-    return (
-      <React.Fragment>
-        <Container>
-          <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
-            <strong>
-              <em>{category.description || '-'}</em>
-            </strong>
+// Separate Tooltip Content for memoization
+const TooltipContent = memo(
+  ({ category, isDebit, t, month, year }: TooltipContentProps) => (
+    <>
+      <Container>
+        <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+          <strong>
+            <em>{category.description || '-'}</em>
+          </strong>
+        </Typography>
+        {category.exclude_from_budgets === 1 && (
+          <Chip
+            label={t('categories.excludedFromBudgets')}
+            sx={{ mt: 1, display: 'flex' }}
+          />
+        )}
+      </Container>
+      <Divider sx={{ m: 2 }} />
+      <Grid container xs={12} spacing={2}>
+        <Grid xs={6}>
+          <Typography variant="caption">
+            {getMonthsFullName(month)} {year - 1}
           </Typography>
-          {category.exclude_from_budgets == 1 && (
-            <Chip
-              label={t('categories.excludedFromBudgets')}
-              sx={{ mt: 1, display: 'flex' }}
-            />
-          )}
-        </Container>
-        <Divider sx={{ m: 2 }} />
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={6}>
-            <Typography variant="caption">
-              {getMonthsFullName(month)} {year - 1}
-            </Typography>
-          </Grid>
-          <Grid xs={6} sx={{ textAlign: 'right' }}>
-            <Chip
-              label={formatNumberAsCurrency(
-                isDebit
-                  ? category.avg_same_month_previous_year_debit
-                  : category.avg_same_month_previous_year_credit,
-              )}
-            />
-          </Grid>
         </Grid>
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={6}>
-            <Typography variant="caption">
-              {t('budgetDetails.previousMonth')}
-            </Typography>
-          </Grid>
-          <Grid xs={6} sx={{ textAlign: 'right' }}>
-            <Chip
-              label={formatNumberAsCurrency(
-                isDebit
-                  ? category.avg_previous_month_debit
-                  : category.avg_previous_month_credit,
-              )}
-            />
-          </Grid>
+        <Grid xs={6} sx={{ textAlign: 'right' }}>
+          <Chip
+            label={formatNumberAsCurrency(
+              isDebit
+                ? category.avg_same_month_previous_year_debit
+                : category.avg_same_month_previous_year_credit,
+            )}
+          />
         </Grid>
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={6}>
-            <Typography variant="caption">
-              {t('budgetDetails.12MonthAvg')}
-            </Typography>
-          </Grid>
-          <Grid xs={6} sx={{ textAlign: 'right' }}>
-            <Chip
-              label={formatNumberAsCurrency(
-                isDebit
-                  ? category.avg_12_months_debit
-                  : category.avg_12_months_credit,
-              )}
-            />
-          </Grid>
+      </Grid>
+      <Grid container xs={12} spacing={2}>
+        <Grid xs={6}>
+          <Typography variant="caption">
+            {t('budgetDetails.previousMonth')}
+          </Typography>
         </Grid>
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={6}>
-            <Typography variant="caption">
-              {t('budgetDetails.globalAverage')}
-            </Typography>
-          </Grid>
-          <Grid xs={6} sx={{ textAlign: 'right' }}>
-            <Chip
-              label={formatNumberAsCurrency(
-                isDebit
-                  ? category.avg_lifetime_debit
-                  : category.avg_lifetime_credit,
-              )}
-            />
-          </Grid>
+        <Grid xs={6} sx={{ textAlign: 'right' }}>
+          <Chip
+            label={formatNumberAsCurrency(
+              isDebit
+                ? category.avg_previous_month_debit
+                : category.avg_previous_month_credit,
+            )}
+          />
         </Grid>
-        <Card variant="elevation" sx={{ width: '100%', mt: 2 }}>
-          <center>{buildTooltipBottomCard(category, isDebit)}</center>
-        </Card>
-      </React.Fragment>
-    );
-  };
+      </Grid>
+      <Grid container xs={12} spacing={2}>
+        <Grid xs={6}>
+          <Typography variant="caption">
+            {t('budgetDetails.12MonthAvg')}
+          </Typography>
+        </Grid>
+        <Grid xs={6} sx={{ textAlign: 'right' }}>
+          <Chip
+            label={formatNumberAsCurrency(
+              isDebit
+                ? category.avg_12_months_debit
+                : category.avg_12_months_credit,
+            )}
+          />
+        </Grid>
+      </Grid>
+      <Grid container xs={12} spacing={2}>
+        <Grid xs={6}>
+          <Typography variant="caption">
+            {t('budgetDetails.globalAverage')}
+          </Typography>
+        </Grid>
+        <Grid xs={6} sx={{ textAlign: 'right' }}>
+          <Chip
+            label={formatNumberAsCurrency(
+              isDebit
+                ? category.avg_lifetime_debit
+                : category.avg_lifetime_credit,
+            )}
+          />
+        </Grid>
+      </Grid>
+      <Card variant="elevation" sx={{ width: '100%', mt: 2 }}>
+        <center>
+          <TooltipBottomCard category={category} isDebit={isDebit} />
+        </center>
+      </Card>
+    </>
+  ),
+);
+TooltipContent.displayName = 'TooltipContent';
 
-  const buildTooltipBottomCard = (
-    category: BudgetCategory,
-    isDebit: boolean,
-  ) => {
-    let diff = 0;
-    let textKey = '';
-    if (isDebit) {
-      diff =
-        Number(category.current_amount_debit + '') -
-        Number(category.planned_amount_debit + '');
-      switch (true) {
-        case diff > 0:
-          textKey = 'budgetDetails.catRemainderDebitOver';
-          break;
-        case diff < 0:
-          textKey = 'budgetDetails.catRemainderDebitUnder';
-          break;
-        default:
-          textKey = t('budgetDetails.catRemainderDebitEqual', {
-            amount: formatNumberAsCurrency(diff),
-          });
-          break;
-      }
-    } else {
-      diff =
-        Number(category.current_amount_credit + '') -
-        Number(category.planned_amount_credit + '');
-      switch (true) {
-        case diff > 0:
-          textKey = 'budgetDetails.catRemainderCreditOver';
-          break;
-        case diff < 0:
-          textKey = 'budgetDetails.catRemainderCreditUnder';
-          break;
-        default:
-          textKey = 'budgetDetails.catRemainderCreditEqual';
-          break;
-      }
-    }
-
-    let background = '';
+const TooltipBottomCard = ({
+  category,
+  isDebit,
+}: {
+  category: BudgetCategory;
+  isDebit: boolean;
+}) => {
+  const { t } = useTranslation();
+  let diff = 0;
+  let textKey = '';
+  if (isDebit) {
+    diff =
+      Number(category.current_amount_debit + '') -
+      Number(category.planned_amount_debit + '');
     switch (true) {
-      case isDebit && diff < 0:
-      case !isDebit && diff > 0:
-        background = cssGradients[ColorGradient.Green];
+      case diff > 0:
+        textKey = 'budgetDetails.catRemainderDebitOver';
         break;
-      case isDebit && diff > 0:
-      case !isDebit && diff < 0:
-        background = cssGradients[ColorGradient.Red];
+      case diff < 0:
+        textKey = 'budgetDetails.catRemainderDebitUnder';
         break;
       default:
-        background = cssGradients[ColorGradient.Orange];
+        textKey = t('budgetDetails.catRemainderDebitEqual', {
+          amount: formatNumberAsCurrency(diff),
+        });
         break;
     }
+  } else {
+    diff =
+      Number(category.current_amount_credit + '') -
+      Number(category.planned_amount_credit + '');
+    switch (true) {
+      case diff > 0:
+        textKey = 'budgetDetails.catRemainderCreditOver';
+        break;
+      case diff < 0:
+        textKey = 'budgetDetails.catRemainderCreditUnder';
+        break;
+      default:
+        textKey = 'budgetDetails.catRemainderCreditEqual';
+        break;
+    }
+  }
 
-    return (
-      <Container sx={{ p: 2, background: background }}>
-        <Typography variant="body2">
-          <Trans
-            i18nKey={textKey}
-            values={{
-              amount: formatNumberAsCurrency(Math.abs(diff)),
-            }}
-          />
-        </Typography>
-      </Container>
-    );
-  };
+  let background = '';
+  switch (true) {
+    case isDebit && diff < 0:
+    case !isDebit && diff > 0:
+      background = cssGradients[ColorGradient.Green];
+      break;
+    case isDebit && diff > 0:
+    case !isDebit && diff < 0:
+      background = cssGradients[ColorGradient.Red];
+      break;
+    default:
+      background = cssGradients[ColorGradient.Orange];
+      break;
+  }
 
-  const DebitBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  return (
+    <Container sx={{ p: 2, background: background }}>
+      <Typography variant="body2">
+        <Trans
+          i18nKey={textKey}
+          values={{
+            amount: formatNumberAsCurrency(Math.abs(diff)),
+          }}
+        />
+      </Typography>
+    </Container>
+  );
+};
+
+const DebitBorderLinearProgress = memo(
+  styled(LinearProgress)(({ theme }) => ({
     height: 10,
     borderRadius: 5,
     [`&.${linearProgressClasses.colorPrimary}`]: {
@@ -217,9 +220,11 @@ function BudgetCategoryRow({
       borderRadius: 5,
       background: cssGradients[ColorGradient.Red],
     },
-  }));
+  })),
+);
 
-  const CreditBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+const CreditBorderLinearProgress = memo(
+  styled(LinearProgress)(({ theme }) => ({
     height: 10,
     borderRadius: 5,
     [`&.${linearProgressClasses.colorPrimary}`]: {
@@ -230,36 +235,73 @@ function BudgetCategoryRow({
       borderRadius: 5,
       background: cssGradients[ColorGradient.Green],
     },
-  }));
+  })),
+);
 
-  function getCurrentCategoryValuePercentage(
-    category: BudgetCategory,
-    isDebit: boolean,
-  ): number {
-    if (isDebit)
-      return Math.min(
-        Math.ceil(
-          (category.current_amount_debit * 100) / category.planned_amount_debit,
-        ),
-        100,
-      );
+function getCurrentCategoryValuePercentage(
+  category: BudgetCategory,
+  isDebit: boolean,
+) {
+  if (isDebit)
     return Math.min(
       Math.ceil(
-        (category.current_amount_credit * 100) / category.planned_amount_credit,
+        (category.current_amount_debit * 100) / category.planned_amount_debit,
       ),
       100,
     );
-  }
+  return Math.min(
+    Math.ceil(
+      (category.current_amount_credit * 100) / category.planned_amount_credit,
+    ),
+    100,
+  );
+}
+
+const BudgetCategoryRow = memo(function BudgetCategoryRow({
+  isOpen,
+  isDebit,
+  month,
+  year,
+  category,
+  onCategoryClick,
+  onInputChange,
+}: Props) {
+  const { t } = useTranslation();
+
+  const renderCategoryTooltip = useMemo(
+    () => (
+      <TooltipContent
+        category={category}
+        isDebit={isDebit}
+        month={month}
+        year={year}
+        t={t}
+      />
+    ),
+    [category, isDebit, month, year],
+  );
+
+  const handleCategoryClick = useCallback(() => {
+    onCategoryClick(category, isDebit);
+  }, [category, isDebit, onCategoryClick]);
+
+  const handleInputChange = useCallback(
+    (values: NumberFormatValues) => {
+      const { floatValue } = values;
+      onInputChange(floatValue ?? 0);
+    },
+    [onInputChange],
+  );
 
   return (
     <Card variant="elevation" sx={{ width: '100%', pt: 1, pb: 1 }}>
       <Grid container xs={12} spacing={2} p={2}>
         <Grid xs={12} md={4}>
-          <Tooltip title={renderCategoryTooltip(category, isDebit)}>
+          <Tooltip title={renderCategoryTooltip}>
             <ListItemText
               primary={category.name}
               sx={{ cursor: 'pointer' }}
-              onClick={() => onCategoryClick(category, isDebit)}
+              onClick={handleCategoryClick}
             />
           </Tooltip>
         </Grid>
@@ -267,12 +309,7 @@ function BudgetCategoryRow({
           <NumericFormat
             required
             disabled={!isOpen}
-            id={`estimated_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
-            name={`estimated_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
-            onValueChange={(values) => {
-              const { floatValue } = values;
-              onInputChange(floatValue ?? 0);
-            }}
+            onValueChange={handleInputChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -288,9 +325,6 @@ function BudgetCategoryRow({
             decimalScale={2}
             fixedDecimalScale
             thousandSeparator
-            inputProps={{
-              step: 0.01,
-            }}
             value={
               isDebit
                 ? category.planned_amount_debit
@@ -305,8 +339,6 @@ function BudgetCategoryRow({
           <NumericFormat
             required
             disabled
-            id={`current_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
-            name={`current_${isDebit ? 'debit' : 'credit'}${category.category_id}`}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -322,9 +354,6 @@ function BudgetCategoryRow({
             decimalScale={2}
             fixedDecimalScale
             thousandSeparator
-            inputProps={{
-              step: 0.01,
-            }}
             defaultValue={
               isDebit
                 ? category.current_amount_debit
@@ -350,6 +379,6 @@ function BudgetCategoryRow({
       </CardActions>
     </Card>
   );
-}
+});
 
-export default memo(BudgetCategoryRow);
+export default BudgetCategoryRow;

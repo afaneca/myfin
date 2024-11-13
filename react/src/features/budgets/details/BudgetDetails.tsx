@@ -37,6 +37,7 @@ import BudgetListSummaryDialog from './BudgetListSummaryDialog.tsx';
 import BudgetCategoryRow from './BudgetCategoryRow.tsx';
 import BudgetDescription from './BudgetDescription.tsx';
 import BudgetSummaryBoard from './BudgetSummaryBoard.tsx';
+import { debounce } from 'lodash';
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
@@ -60,6 +61,7 @@ const BudgetDetails = () => {
   const [isOpen, setOpen] = useState(false);
   const [isNew, setNew] = useState(true);
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
+  const debouncedCategories = useMemo(() => debounce(setCategories, 300), []);
   const [initialBalance, setInitialBalance] = useState(0);
   const [actionableCategory, setActionableCategory] = useState<{
     category: BudgetCategory;
@@ -367,7 +369,7 @@ const BudgetDetails = () => {
     isDebit: boolean,
     value: number,
   ) {
-    setCategories(
+    debouncedCategories(
       categories.map((c) =>
         c.category_id == category.category_id
           ? {
