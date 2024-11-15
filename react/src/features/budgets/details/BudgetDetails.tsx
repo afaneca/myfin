@@ -7,7 +7,7 @@ import {
   addLeadingZero,
   formatNumberAsCurrency,
 } from '../../../utils/textUtils.ts';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
 import { Box, List, ListItem, useTheme } from '@mui/material';
 import Button from '@mui/material/Button/Button';
@@ -34,9 +34,9 @@ import { TransactionType } from '../../../services/trx/trxServices.ts';
 import TransactionsTableDialog from '../../../components/TransactionsTableDialog.tsx';
 import BudgetListSummaryDialog from './BudgetListSummaryDialog.tsx';
 import BudgetCategoryRow from './BudgetCategoryRow.tsx';
-import BudgetDescription from './BudgetDescription.tsx';
 import BudgetSummaryBoard from './BudgetSummaryBoard.tsx';
 import { debounce } from 'lodash';
+import BudgetDescription from './BudgetDescription.tsx';
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
@@ -56,7 +56,7 @@ const BudgetDetails = () => {
     month: dayjs().month() + 1,
     year: dayjs().year(),
   });
-  const [descriptionValue, setDescriptionValue] = useState('');
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const [isOpen, setOpen] = useState(false);
   const [isNew, setNew] = useState(true);
@@ -90,6 +90,16 @@ const BudgetDetails = () => {
           Number(a.current_amount_debit + '')
         );
       });
+  };
+
+  const getDescriptionValue = () => {
+    return descriptionRef.current?.value ?? '';
+  };
+
+  const setDescriptionValue = (text: string) => {
+    if (descriptionRef.current != null) {
+      descriptionRef.current.value = text;
+    }
   };
 
   const orderCategoriesByCreditAmount = (
@@ -318,7 +328,7 @@ const BudgetDetails = () => {
     createBudgetStep1Request.mutate({
       month: monthYear.month,
       year: monthYear.year,
-      observations: descriptionValue,
+      observations: getDescriptionValue(),
       cat_values_arr: catValuesArr,
     });
   };
@@ -337,7 +347,7 @@ const BudgetDetails = () => {
       budget_id: parseFloat(id || '-1'),
       month: monthYear.month,
       year: monthYear.year,
-      observations: descriptionValue,
+      observations: getDescriptionValue(),
       cat_values_arr: catValuesArr,
     });
   };
@@ -362,10 +372,6 @@ const BudgetDetails = () => {
     (createBudgetStep0Request.isFetching || !createBudgetStep0Request.data)
   ) {
     return null;
-  }
-
-  function handleOnDescriptionChange(newDescription: string) {
-    setDescriptionValue(newDescription);
   }
 
   function onCategoryPlannedAmountChange(
@@ -440,10 +446,7 @@ const BudgetDetails = () => {
           />
         </Grid>
         <Grid xs={12} md={6} lgOffset={3}>
-          <BudgetDescription
-            text={descriptionValue}
-            onTextChange={(value) => handleOnDescriptionChange(value)}
-          />
+          <BudgetDescription ref={descriptionRef} />
         </Grid>
         <Grid xs={12}>
           <BudgetSummaryBoard

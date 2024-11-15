@@ -1,6 +1,6 @@
 import { Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useRef, useState } from 'react';
+import { forwardRef, MutableRefObject, Ref, useState } from 'react';
 import TextField from '@mui/material/TextField/TextField';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import {
@@ -14,29 +14,37 @@ import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import i18next from 'i18next';
 
-type Props = {
-  text: string;
-  onTextChange: (text: string) => void;
-};
-
-const BudgetDescription = (props: Props) => {
+const BudgetDescription = forwardRef(({}, ref: Ref<HTMLTextAreaElement>) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const matchesSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   const handleEmojiAdded = (emojiText: string) => {
-    props.onTextChange(`${props.text} ${emojiText} `);
-    descriptionRef?.current?.focus();
-    setEmojiPickerOpen(false);
+    // add the emoji text at the current caret position
+    const input = (ref as MutableRefObject<HTMLTextAreaElement>)?.current;
+    if (input) {
+      input.focus();
+      const start = input.selectionStart || 0;
+      const end = input.selectionEnd || 0;
+
+      // Insert the emoji text at the caret position
+      input.value =
+        input.value.substring(0, start) +
+        emojiText +
+        input.value.substring(end);
+
+      // Set the caret position right after the inserted emoji
+      input.selectionStart = input.selectionEnd = start + emojiText.length;
+      setEmojiPickerOpen(false);
+    }
   };
 
   return (
     <Box sx={{ position: 'relative' }}>
       <TextField
-        inputRef={descriptionRef}
+        inputRef={ref}
         required
         fullWidth
         margin="none"
@@ -44,8 +52,6 @@ const BudgetDescription = (props: Props) => {
         name="description"
         label={t('common.description')}
         placeholder={t('common.description')}
-        value={props.text}
-        onChange={(e) => props.onTextChange(e.target.value)}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -94,6 +100,7 @@ const BudgetDescription = (props: Props) => {
       )}
     </Box>
   );
-};
+});
+BudgetDescription.displayName = 'BudgetDescription';
 
 export default BudgetDescription;
