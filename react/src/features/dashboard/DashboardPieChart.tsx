@@ -8,6 +8,7 @@ import {
 
 import Paper from '@mui/material/Paper/Paper';
 import { formatNumberAsCurrency } from '../../utils/textUtils.ts';
+import EmptyView from '../../components/EmptyView.tsx';
 
 export interface ChartDataItem {
   id: string;
@@ -64,49 +65,53 @@ const DashboardPieChart = ({
         ...sx,
       }}
     >
-      <ResponsivePie<CustomDatum>
-        data={data}
-        margin={
-          matchesMdScreen
-            ? { top: 20, right: 20, bottom: 20, left: 20 }
-            : { top: 60, right: 60, bottom: 60, left: 60 }
-        }
-        animate={true}
-        innerRadius={0.5}
-        padAngle={0.7}
-        cornerRadius={3}
-        activeOuterRadiusOffset={8}
-        borderWidth={0}
-        arcLinkLabelsSkipAngle={10}
-        arcLinkLabelsThickness={2}
-        enableArcLinkLabels={!matchesMdScreen}
-        enableArcLabels={matchesMdScreen}
-        arcLabelsSkipAngle={10}
-        arcLabelsTextColor={{
-          from: 'color',
-          modifiers: [['darker', 4]],
-        }}
-        valueFormat={(value) => formatNumberAsCurrency(value)}
-        defs={generateDefsForGradients()}
-        // @ts-expect-error could assume different structural identities
-        fill={generateFillArrayForGradients()}
-        arcLinkLabel={(e) => truncateFromMiddle(e.id + '')}
-        tooltip={(item) => (
-          <Paper
-            sx={{
-              fontSize: '12px',
-              background: 'white',
-              color: 'black',
-              p: theme.spacing(1),
-            }}
-          >
-            {item.datum.label}: <strong>{item.datum.formattedValue}</strong>{' '}
-            {item.datum.data.altValue && `(${item.datum.data.altValue})`}
-          </Paper>
-        )}
-        theme={theme.nivo}
-        {...customPieProps}
-      />
+      {data && data.length > 0 ? (
+        <ResponsivePie<CustomDatum>
+          data={data}
+          margin={
+            matchesMdScreen
+              ? { top: 20, right: 20, bottom: 20, left: 20 }
+              : { top: 60, right: 60, bottom: 60, left: 60 }
+          }
+          animate={true}
+          innerRadius={0.5}
+          padAngle={0.7}
+          cornerRadius={3}
+          activeOuterRadiusOffset={8}
+          borderWidth={0}
+          arcLinkLabelsSkipAngle={10}
+          arcLinkLabelsThickness={2}
+          enableArcLinkLabels={!matchesMdScreen}
+          enableArcLabels={matchesMdScreen}
+          arcLabelsSkipAngle={10}
+          arcLabelsTextColor={{
+            from: 'color',
+            modifiers: [['darker', 4]],
+          }}
+          valueFormat={(value) => formatNumberAsCurrency(value)}
+          defs={generateDefsForGradients()}
+          // @ts-expect-error could assume different structural identities
+          fill={generateFillArrayForGradients()}
+          arcLinkLabel={(e) => truncateFromMiddle(e.id + '')}
+          tooltip={(item) => (
+            <Paper
+              sx={{
+                fontSize: '12px',
+                background: 'white',
+                color: 'black',
+                p: theme.spacing(1),
+              }}
+            >
+              {item.datum.label}: <strong>{item.datum.formattedValue}</strong>{' '}
+              {item.datum.data.altValue && `(${item.datum.data.altValue})`}
+            </Paper>
+          )}
+          theme={theme.nivo}
+          {...customPieProps}
+        />
+      ) : (
+        <EmptyView />
+      )}
     </Stack>
   );
 };

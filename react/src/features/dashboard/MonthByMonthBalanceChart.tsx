@@ -42,8 +42,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
     if (!showEmptyView) {
       const transformedData = data.map((item) => ({
         ...item,
-        color:
-          item.balance < 0 ? ColorGradient.LightGray : ColorGradient.LightGreen,
+        color: item.balance < 0 ? ColorGradient.Dull : ColorGradient.LightGreen,
       }));
       return setChartData(transformedData);
     }

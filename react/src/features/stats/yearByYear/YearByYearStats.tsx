@@ -23,6 +23,7 @@ import MyFinSankeyDiagram, {
   SankeyNode,
 } from '../../../components/MyFinSankeyDiagram.tsx';
 import i18n from 'i18next';
+import { useLoading } from '../../../providers/LoadingProvider.tsx';
 
 type UiState = {
   isLoading: boolean;
@@ -175,9 +176,16 @@ const generateYearList = (minYear: number) => {
 const YearByYearStats = () => {
   const snackbar = useSnackbar();
   const { t } = useTranslation();
+  const loader = useLoading();
 
   const [state, dispatch] = useReducer(reduceState, null, createInitialState);
   const getYearByYearStatsRequest = useGetYearByYearData(state.selectedYear);
+
+  // Loading
+  useEffect(() => {
+    if (state.isLoading) loader.showLoading();
+    else loader.hideLoading();
+  }, [state.isLoading]);
 
   // Error
   useEffect(() => {

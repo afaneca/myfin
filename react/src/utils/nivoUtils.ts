@@ -192,6 +192,10 @@ export const nivoGradients = {
       { offset: 45, color: cssGradients[ColorGradient.BrownColor] },
     ],
   ),
+  [ColorGradient.RedColor]: createNivoGradientObject(ColorGradient.RedColor, [
+    { offset: 0, color: cssGradients[ColorGradient.RedColor] },
+    { offset: 45, color: cssGradients[ColorGradient.RedColor] },
+  ]),
 };
 
 export const generateDefsForGradients = () => {

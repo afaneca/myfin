@@ -32,5 +32,6 @@ export enum ColorGradient {
   PaleColor = 'pale-color',
   PinkColor = 'pink-color',
   BrownColor = 'brown-color',
+  RedColor = 'red-color',
   None = '',
 }

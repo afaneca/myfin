@@ -29,12 +29,11 @@ const MonthlyOverviewChart = ({ data }: Props) => {
   const [chartData, setChartData] = useState<InternalChartDataItem[]>([]);
 
   const getColorGradientForCurrentAmount = (
-    item: ChartDataItem,
+    currentAmount: number,
+    remainingAmount: number,
   ): ColorGradient => {
-    const current = item.value;
-    const remaining =
-      chartData.findLast((item) => item.type == '1')?.value ?? 0;
-    const percentage = (current / (current + remaining)) * 100;
+    const percentage =
+      (currentAmount / (currentAmount + remainingAmount)) * 100;
     if (percentage < 75) return ColorGradient.LightGreen;
     else if (percentage < 90) return ColorGradient.Orange;
 
@@ -46,8 +45,11 @@ const MonthlyOverviewChart = ({ data }: Props) => {
       ...item,
       color:
         item.type == '1'
-          ? ColorGradient.LightGray
-          : getColorGradientForCurrentAmount(item),
+          ? ColorGradient.Dull
+          : getColorGradientForCurrentAmount(
+              item.value,
+              data.findLast((di) => di.type == '1')?.value ?? 0,
+            ),
     }));
     return setChartData(transformedData);
   }, [data]);

@@ -92,5 +92,6 @@ export const cssGradients = {
   [ColorGradient.PaleColor]: '#e8c1a0',
   [ColorGradient.BrownColor]: '#9c755f',
   [ColorGradient.PinkColor]: '#bc80bd',
+  [ColorGradient.RedColor]: '#ff596f',
   [ColorGradient.None]: 'transparent',
 };
