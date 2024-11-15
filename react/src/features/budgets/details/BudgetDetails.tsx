@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import Box from '@mui/material/Box/Box';
 import PageHeader from '../../../components/PageHeader.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { DatePicker } from '@mui/x-date-pickers';
@@ -10,7 +9,7 @@ import {
 } from '../../../utils/textUtils.ts';
 import React, { useEffect, useMemo, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
-import { List, ListItem, useTheme } from '@mui/material';
+import { Box, List, ListItem, useTheme } from '@mui/material';
 import Button from '@mui/material/Button/Button';
 import { CloudUpload, FileCopy, Lock, LockOpen } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -58,6 +57,7 @@ const BudgetDetails = () => {
     year: dayjs().year(),
   });
   const [descriptionValue, setDescriptionValue] = useState('');
+
   const [isOpen, setOpen] = useState(false);
   const [isNew, setNew] = useState(true);
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
@@ -364,6 +364,10 @@ const BudgetDetails = () => {
     return null;
   }
 
+  function handleOnDescriptionChange(newDescription: string) {
+    setDescriptionValue(newDescription);
+  }
+
   function onCategoryPlannedAmountChange(
     category: BudgetCategory,
     isDebit: boolean,
@@ -438,7 +442,7 @@ const BudgetDetails = () => {
         <Grid xs={12} md={6} lgOffset={3}>
           <BudgetDescription
             text={descriptionValue}
-            onTextChange={setDescriptionValue}
+            onTextChange={(value) => handleOnDescriptionChange(value)}
           />
         </Grid>
         <Grid xs={12}>

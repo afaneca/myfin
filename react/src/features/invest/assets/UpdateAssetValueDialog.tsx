@@ -15,6 +15,7 @@ import DialogContent from '@mui/material/DialogContent/DialogContent';
 import TextField from '@mui/material/TextField/TextField';
 import DialogActions from '@mui/material/DialogActions/DialogActions';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import { NumericFormat } from 'react-number-format';
 
 type UiState = {
   isLoading: boolean;
@@ -169,23 +170,29 @@ const UpdateAssetValueDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent>
         <Grid xs={12} md={3}>
-          <TextField
-            autoFocus
+          <NumericFormat
             required
+            fullWidth
             margin="dense"
             id="amount"
             name="amount"
-            value={state.value || ''}
-            onChange={(e) =>
+            customInput={TextField}
+            onValueChange={(values) => {
+              const { floatValue } = values;
               dispatch({
                 type: StateActionType.AmountUpdated,
-                payload: Number(e.target.value),
-              })
-            }
-            label={t('common.value')}
-            type="number"
-            fullWidth
+                payload: Number(floatValue),
+              });
+            }}
             variant="outlined"
+            decimalScale={2}
+            fixedDecimalScale
+            thousandSeparator
+            value={state.value || ''}
+            label={t('common.value')}
+            onFocus={(event) => {
+              event.target.select();
+            }}
             inputProps={{
               step: 0.01,
             }}
