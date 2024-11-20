@@ -64,3 +64,18 @@ export function useChangePassword() {
     mutationFn: changePassword,
   });
 }
+
+export function useRegister() {
+  async function register(data: {
+    email: string;
+    username: string;
+    password: string;
+  }) {
+    const resp = await AuthServices.register(data);
+    return resp;
+  }
+
+  return useMutation({
+    mutationFn: register,
+  });
+}
