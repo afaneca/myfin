@@ -14,9 +14,9 @@ declare module '@mui/material/styles' {
 const muiLightPalette = {
   // palette values for light mode
   primary: {
-    dark: colors.blue[400],
-    main: colors.blue[300],
-    light: colors.blue[200],
+    dark: colors.blue[500],
+    main: colors.blue[400],
+    light: colors.blue[300],
     contrastText: '#ffffff',
   },
   secondary: {
@@ -78,7 +78,7 @@ export const generateGlobalTheme = (mode: PaletteMode): MyFinTheme => {
 
   return {
     palette: { mode, ...palette },
-    shape: { borderRadius: 2 },
+    shape: { borderRadius: 7 },
     // Use the combined shadows array
     components: {
       // component style overrides in here

@@ -34,6 +34,7 @@ import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import TextField from '@mui/material/TextField/TextField';
 import { debounce } from 'lodash';
 import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
+import Typography from '@mui/material/Typography/Typography';
 
 const Accounts = () => {
   const theme = useTheme();
@@ -139,8 +140,7 @@ const Accounts = () => {
   const rows = filteredAccounts.map((account: Account) => ({
     id: account.account_id,
     color: account.color_gradient,
-    name: account.name,
-    type: account.type,
+    name: { name: account.name, status: account.status, type: account.type },
     balance: account.balance,
     status: account.status,
     actions: account,
@@ -172,17 +172,25 @@ const Accounts = () => {
       minWidth: 100,
       editable: false,
       sortable: false,
-      renderCell: (params) => <p>{params.value}</p>,
-    },
-    {
-      field: 'type',
-      headerName: t('accounts.type'),
-      width: 200,
-      editable: false,
-      sortable: false,
-      renderCell: (params) => (
-        <p>{t(`accounts.${params.value.toLowerCase()}`)}</p>
-      ),
+      renderCell: (params) => {
+        const isActive = params.value.status.startsWith(AccountStatus.Active);
+        return (
+          <Stack mt={isActive ? 3 : 1} mb={isActive ? 3 : 1}>
+            <Typography
+              variant="body1"
+              color={theme.palette.text.primary}
+              sx={{ fontWeight: isActive ? 'bold' : 'normal' }}
+            >
+              {params.value.name}
+            </Typography>
+            <Typography variant="caption" color={theme.palette.text.secondary}>
+              {t(`accounts.${params.value.type.toLowerCase()}`)}
+            </Typography>
+          </Stack>
+
+          /*<p>{params.value}</p>*/
+        );
+      },
     },
     {
       field: 'balance',

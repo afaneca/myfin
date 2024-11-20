@@ -13,7 +13,7 @@ const DataCard = ({
 
   return (
     <Box
-      borderRadius={theme.shape.borderRadius}
+      borderRadius={1}
       sx={{
         ...{ p: theme.spacing(2), background: theme.palette.background.paper },
         ...sx,

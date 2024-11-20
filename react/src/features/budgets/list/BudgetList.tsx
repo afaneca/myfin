@@ -18,6 +18,7 @@ import {
 import { Budget } from '../../../services/budget/budgetServices.ts';
 import {
   AddCircleOutline,
+  ArrowOutward,
   Delete,
   Lock,
   LockOpen,
@@ -108,7 +109,7 @@ const BudgetList = () => {
       case percentage > 0:
         return 'success';
       case percentage < 0:
-        return 'error';
+        return 'warning';
       default:
         return 'default';
     }
@@ -220,6 +221,16 @@ const BudgetList = () => {
                 params.value.changePercentage,
                 true,
               )}
+              icon={
+                params.value.changePercentage === 0 ||
+                !Number.isFinite(params.value.changePercentage) ? (
+                  <></>
+                ) : params.value.changePercentage < 0 ? (
+                  <ArrowOutward sx={{ transform: 'rotate(90deg)' }} />
+                ) : (
+                  <ArrowOutward sx={{ transform: 'rotate(0deg)' }} />
+                )
+              }
             />
           </Stack>
         </Stack>

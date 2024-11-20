@@ -123,7 +123,10 @@ const AssetRoiList = (props: Props) => {
           }}
         >
           {formatNumberAsCurrency(params.value.absolute)} <br />
-          <PercentageChip percentage={params.value.percentage} />
+          <PercentageChip
+            percentage={params.value.percentage}
+            sx={{ '& .MuiChip-label': { fontSize: '0.9em' } }}
+          />
         </Box>
       ),
     },

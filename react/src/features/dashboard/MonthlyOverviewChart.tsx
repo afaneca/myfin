@@ -9,6 +9,7 @@ import {
 import Paper from '@mui/material/Paper/Paper';
 import { useEffect, useState } from 'react';
 import { ColorGradient } from '../../consts';
+import EmptyView from '../../components/EmptyView.tsx';
 
 export interface ChartDataItem {
   id: string;
@@ -56,40 +57,44 @@ const MonthlyOverviewChart = ({ data }: Props) => {
 
   return (
     <Stack height={200}>
-      <ResponsivePie
-        data={chartData}
-        margin={{ top: 20, right: 10, bottom: 20, left: 10 }}
-        startAngle={-90}
-        endAngle={90}
-        innerRadius={0.5}
-        padAngle={0.7}
-        cornerRadius={3}
-        arcLabelsTextColor={{
-          from: 'color',
-          modifiers: [['darker', 4]],
-        }}
-        activeOuterRadiusOffset={8}
-        borderWidth={0}
-        enableArcLinkLabels={false}
-        arcLabel={'id'}
-        valueFormat={(value) => formatNumberAsCurrency(value)}
-        defs={generateDefsForGradients()}
-        // @ts-expect-error could assume different structural identities
-        fill={generateFillArrayForGradients()}
-        theme={theme.nivo}
-        tooltip={(item) => (
-          <Paper
-            sx={{
-              fontSize: '12px',
-              background: 'white',
-              color: 'black',
-              p: theme.spacing(1),
-            }}
-          >
-            {item.datum.label}: <strong>{item.datum.formattedValue}</strong>
-          </Paper>
-        )}
-      />
+      {data && data.length > 0 ? (
+        <ResponsivePie
+          data={chartData}
+          margin={{ top: 20, right: 10, bottom: 20, left: 10 }}
+          startAngle={-90}
+          endAngle={90}
+          innerRadius={0.5}
+          padAngle={0.7}
+          cornerRadius={3}
+          arcLabelsTextColor={{
+            from: 'color',
+            modifiers: [['darker', 4]],
+          }}
+          activeOuterRadiusOffset={8}
+          borderWidth={0}
+          enableArcLinkLabels={false}
+          arcLabel={'id'}
+          valueFormat={(value) => formatNumberAsCurrency(value)}
+          defs={generateDefsForGradients()}
+          // @ts-expect-error could assume different structural identities
+          fill={generateFillArrayForGradients()}
+          theme={theme.nivo}
+          tooltip={(item) => (
+            <Paper
+              sx={{
+                fontSize: '12px',
+                background: 'white',
+                color: 'black',
+                p: theme.spacing(1),
+              }}
+            >
+              {item.datum.label}: <strong>{item.datum.formattedValue}</strong>
+            </Paper>
+          )}
+        />
+      ) : (
+        <EmptyView />
+      )}
     </Stack>
   );
 };

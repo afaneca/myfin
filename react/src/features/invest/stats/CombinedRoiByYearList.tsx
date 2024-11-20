@@ -4,12 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
-import {
-  formatNumberAsCurrency,
-  formatNumberAsPercentage,
-} from '../../../utils/textUtils.ts';
+import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import Typography from '@mui/material/Typography/Typography';
-import Chip from '@mui/material/Chip/Chip';
+import PercentageChip from '../../../components/PercentageChip.tsx';
 
 export type CombinedRoiByYearData = {
   year: number;
@@ -106,22 +103,9 @@ const CombinedRoiByYearList = (props: Props) => {
           }}
         >
           {formatNumberAsCurrency(params.value.absolute)} <br />
-          <Chip
-            sx={{ mt: 0.2 }}
-            variant="outlined"
-            size="small"
-            color={
-              !Number.isFinite(params.value.percentage)
-                ? 'default'
-                : params.value.percentage < 0
-                  ? 'warning'
-                  : 'success'
-            }
-            label={
-              !Number.isFinite(params.value.percentage)
-                ? '-%'
-                : formatNumberAsPercentage(params.value.percentage, true)
-            }
+          <PercentageChip
+            percentage={params.value.percentage}
+            sx={{ mt: 0.2, '& .MuiChip-label': { fontSize: '0.9em' } }}
           />
         </Box>
       ),

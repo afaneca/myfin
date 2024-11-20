@@ -28,6 +28,7 @@ import { TFunction } from 'i18next';
 import { ColorGradient } from '../../consts';
 import Stack from '@mui/material/Stack/Stack';
 import { useGetGradientColorForAssetType } from './InvestUtilHooks.ts';
+import PercentageChip from '../../components/PercentageChip.tsx';
 
 type UiState = {
   currentValue: number;
@@ -35,8 +36,10 @@ type UiState = {
   currentValueFormatted: string;
   currentYearRoiValueFormatted: string;
   currentYearRoiPercentageFormatted: string;
+  currentYearRoiPercentageValue: number;
   globalRoiValueFormatted: string;
   globalRoiPercentageFormatted: string;
+  globalRoiPercentageValue: number;
   assetDistributionPieChartData?: ChartDataItem[];
   topPerformingAssets?: InvestAsset[];
 } | null;
@@ -126,7 +129,7 @@ const TopPerformerCard = (props: {
 const SummaryCard = (props: {
   title: string;
   absoluteValue: string;
-  percentageValue?: string;
+  percentageValue?: number;
 }) => {
   return (
     <Card sx={{ height: 120 }}>
@@ -154,13 +157,8 @@ const SummaryCard = (props: {
             {props.absoluteValue}
           </Typography>
           {props.percentageValue && (
-            <Chip
-              size="small"
-              variant="outlined"
-              label={props.percentageValue}
-              color={
-                props.percentageValue.startsWith('-') ? 'warning' : 'success'
-              }
+            <PercentageChip
+              percentage={Number(props.percentageValue)}
               sx={{ mt: 1, alignSelf: 'center' }}
             />
           )}
@@ -232,6 +230,8 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
           action.payload.current_year_roi_percentage,
           true,
         ),
+        currentYearRoiPercentageValue:
+          action.payload.current_year_roi_percentage,
         globalRoiValueFormatted: formatNumberAsCurrency(
           action.payload.global_roi_value,
         ),
@@ -239,6 +239,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
           action.payload.global_roi_percentage,
           true,
         ),
+        globalRoiPercentageValue: action.payload.global_roi_percentage,
         assetDistributionPieChartData: chartData,
         topPerformingAssets: action.payload.top_performing_assets,
       };
@@ -361,14 +362,14 @@ const InvestDashboard = () => {
           <SummaryCard
             title={`ROI ${getCurrentYear()}`}
             absoluteValue={state.currentYearRoiValueFormatted}
-            percentageValue={state.currentYearRoiPercentageFormatted}
+            percentageValue={state.currentYearRoiPercentageValue}
           />
         </Grid>
         <Grid xs={12} sm={3}>
           <SummaryCard
             title={t('investments.globalROI')}
             absoluteValue={state.globalRoiValueFormatted}
-            percentageValue={state.globalRoiPercentageFormatted}
+            percentageValue={state.globalRoiPercentageValue}
           />
         </Grid>
       </Grid>

@@ -345,7 +345,13 @@ const InvestAssets = () => {
           }}
         >
           {formatNumberAsCurrency(params.value.absolute)} <br />
-          <PercentageChip percentage={params.value.percentage} />
+          <PercentageChip
+            percentage={params.value.percentage}
+            hideIcon
+            sx={{
+              '& .MuiChip-label': { fontSize: '0.9em' },
+            }}
+          />
         </Box>
       ),
     },
