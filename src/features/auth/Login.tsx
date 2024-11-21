@@ -50,7 +50,8 @@ const Login = () => {
       .string()
       .email()
       .when('showEmail', (showEmail, schema) => {
-        if (showEmail) return schema.required(t('login.fillAllFields'));
+        if (showEmail[0] == true)
+          return schema.required(t('login.fillAllFields'));
         return schema;
       }),
   });
@@ -195,7 +196,10 @@ const Login = () => {
                     variant="outlined"
                     color="primary"
                     fullWidth
-                    onClick={() => setIsLogin(!isLogin)} // Toggle isLogin state
+                    onClick={() => {
+                      props.values.showEmail = !props.values.showEmail;
+                      setIsLogin(!isLogin);
+                    }}
                     style={{ marginTop: '16px' }}
                   >
                     {isLogin
