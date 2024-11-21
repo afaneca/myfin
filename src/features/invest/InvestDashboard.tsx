@@ -68,9 +68,18 @@ const TopPerformerCard = (props: {
   value: number;
 }) => {
   const { t } = useTranslation();
+  const cardStyle = {
+    borderRadius:
+      props.index === 1
+        ? '7px 7px 0 0'
+        : props.index === 3
+          ? '0 0 7px 7px'
+          : '0',
+  };
 
   return (
     <Card
+      style={cardStyle}
       variant={props.isExpanded ? 'elevation' : 'outlined'}
       sx={{
         ':hover': {
@@ -80,6 +89,7 @@ const TopPerformerCard = (props: {
     >
       <CardContent>
         <Box
+          borderRadius={0}
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
