@@ -68,12 +68,14 @@ const TopPerformerCard = (props: {
   value: number;
 }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const borderRadius = theme.shape.borderRadius;
   const cardStyle = {
     borderRadius:
       props.index === 1
-        ? '7px 7px 0 0'
+        ? `${borderRadius}px ${borderRadius}px 0 0`
         : props.index === 3
-          ? '0 0 7px 7px'
+          ? `0 0 ${borderRadius}px ${borderRadius}px`
           : '0',
   };
 
