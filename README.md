@@ -2,7 +2,7 @@
 
 📟 ***The API project is available [here](https://github.com/aFaneca/myfin-api/).*** 📟
 
-📱 ***The android mobile app project is available [here](https://github.com/aFaneca/myfin-android/).*** 📱
+📱 ***The android mobile app project lives [here](https://github.com/aFaneca/myfin-android/).*** 📱
 
 #  🏦📈💳 MyFin - Personal Finances Platform 
 
@@ -32,12 +32,13 @@ it can be useful for you as well.
   <img src="/screenshots/4.PNG" alt="MyFin" width="400">
   <img src="/screenshots/13.PNG" alt="MyFin" width="400">
   <img src="/screenshots/14.PNG" alt="MyFin" width="400">
+  <img src="/screenshots/15.PNG" alt="MyFin" width="400">
   <img src="/screenshots/16.PNG" alt="MyFin" width="400">
   <img src="/screenshots/17.PNG" alt="MyFin" width="400">
   <img src="/screenshots/18.PNG" alt="MyFin" width="400">
   <img src="/screenshots/19.PNG" alt="MyFin" width="400">
   <img src="/screenshots/20.PNG" alt="MyFin" width="400">
-  <img src="/screenshots/15.PNG" alt="MyFin" width="400">
+
 </p>
 
 ## ✨ Features
@@ -83,11 +84,4 @@ this project and make it your own or add something to it, you're more than welco
 
 ## Web
 
-- [MaterializeCSS](https://materializecss.com)
-- [Simple MonthPicker](https://github.com/VincentCharpentier/Simple-MonthPicker)
-- [DataTables](https://datatables.net/)
-- [Chart.js](https://www.chartjs.org/)
-- [CSSLoader](https://www.npmjs.com/package/css-loader)
-- [Moment.js](https://momentjs.com/)
-- [i18next](https://github.com/i18next/jquery-i18next)
-- [Emoji Picker Element](https://github.com/nolanlawson/emoji-picker-element)
+This app was built with React, using Typescript. You can check the full list of dependencies [here](/package.json).

@@ -1,0 +1,1 @@
+export const MYFIN_BASE_API_URL = import.meta.env.VITE_MYFIN_BASE_API_URL
