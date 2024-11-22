@@ -18,6 +18,7 @@ import {
   useRecalculateAllBalances,
 } from '../../services/account/accountHooks.ts';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
+import { useLogout } from '../../services/auth/authHooks.ts';
 
 type UiState = {
   isLoading: boolean;
@@ -85,6 +86,7 @@ const Utilities = () => {
 
   const recalculateAllBalancesRequest = useRecalculateAllBalances();
   const autoPopulateWithDemoData = useAutoPopulateWithDemoData();
+  const logout = useLogout();
 
   // Loading
   useEffect(() => {
@@ -127,6 +129,7 @@ const Utilities = () => {
         t('common.taskSuccessfullyCompleted'),
         AlertSeverity.SUCCESS,
       );
+      logout();
     }
   }, [autoPopulateWithDemoData.data]);
 
