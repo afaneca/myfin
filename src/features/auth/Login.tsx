@@ -11,7 +11,10 @@ import {
   useLogin,
   useRegister,
 } from '../../services/auth/authHooks.ts';
-import { ROUTE_DASHBOARD } from '../../providers/RoutesProvider.tsx';
+import {
+  ROUTE_DASHBOARD,
+  ROUTE_RECOVER_PASSWORD,
+} from '../../providers/RoutesProvider.tsx';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -157,7 +160,7 @@ const Login = () => {
                   <TextField
                     id="username"
                     name="username"
-                    label="Username"
+                    label={t('login.username')}
                     margin="normal"
                     fullWidth
                     value={props.values.username}
@@ -206,6 +209,19 @@ const Login = () => {
                       ? t('login.signUp')
                       : t('login.alreadyRegisteredQuestion')}
                   </Button>
+                  {!props.values.showEmail && (
+                    <Button
+                      variant="text"
+                      color="primary"
+                      fullWidth
+                      onClick={() => {
+                        navigate(ROUTE_RECOVER_PASSWORD);
+                      }}
+                      style={{ marginTop: '16px' }}
+                    >
+                      {t('login.forgotYourPassword')}
+                    </Button>
+                  )}
                 </Form>
               );
             }}

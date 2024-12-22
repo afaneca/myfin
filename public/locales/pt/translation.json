@@ -240,7 +240,15 @@
     "signUp": "Criar conta",
     "alreadyRegisteredQuestion": "Já registado?",
     "signIn": "Entrar",
-    "addUserDisabledError": "A criação de utilizadores está desativada nas definições da API"
+    "addUserDisabledError": "A criação de utilizadores está desativada nas definições da API",
+    "forgotYourPassword": "Esqueceu-se da password?",
+    "accountRecovery": "Recuperação de conta",
+    "accountRecoveryStrapline": "Recupere acessso à sua conta se se esquece da sua password",
+    "checkYourEmailForOtp": "Verifique no seu email o código OTP que lhe enviámos",
+    "otpCode": "Código OTP",
+    "sendOtp": "Enviar OTP",
+    "username": "Nome de utilizador",
+    "setNewPassword": "Defina uma nova password"
   },
   "accounts": {
     "accounts": "Contas",

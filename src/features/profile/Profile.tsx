@@ -24,6 +24,7 @@ import { ColorModeContext } from '../../providers/MyFinThemeProvider.tsx';
 import UserStatList from './UserStatList.tsx';
 import Utilities from './Utilities.tsx';
 import ChangePasswordForm from './ChangePasswordForm.tsx';
+import { useUserData } from '../../providers/UserProvider.tsx';
 
 const Profile = () => {
   const theme = useTheme();
@@ -33,6 +34,7 @@ const Profile = () => {
   const [currentTheme, setTheme] = useState<PaletteMode>(
     theme.palette.mode || 'dark',
   );
+  const { partiallyUpdateUserSessionData } = useUserData();
 
   useEffect(() => {
     colorMode.setColorMode(currentTheme);
@@ -40,6 +42,7 @@ const Profile = () => {
 
   useEffect(() => {
     i18next.changeLanguage(language);
+    partiallyUpdateUserSessionData({ language });
   }, [language]);
 
   function handleLanguageChange(event: React.ChangeEvent<HTMLInputElement>) {

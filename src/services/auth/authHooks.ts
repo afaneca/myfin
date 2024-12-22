@@ -2,6 +2,7 @@ import { queryClient } from '../../data/react-query.ts';
 import AuthServices from './authServices.ts';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useUserData } from '../../providers/UserProvider.tsx';
+import i18next from 'i18next';
 
 const QUERY_KEY_SESSION_VALIDITY = 'session_validity';
 
@@ -24,7 +25,8 @@ export function useLogin() {
   async function login(data: { username: string; password: string }) {
     const resp = await AuthServices.attemptLogin(data);
     const { accounts, ...sessionData } = resp.data;
-    updateUserSessionData(sessionData);
+    const language = i18next.resolvedLanguage;
+    updateUserSessionData({ ...sessionData, language });
     updateUserAccounts(accounts);
     return resp;
   }
@@ -72,6 +74,33 @@ export function useRegister() {
     password: string;
   }) {
     const resp = await AuthServices.register(data);
+    return resp;
+  }
+
+  return useMutation({
+    mutationFn: register,
+  });
+}
+
+export function useSendRecoveryOtp() {
+  async function register(username: string) {
+    const resp = await AuthServices.sendRecoveryOtp(username);
+    return resp;
+  }
+
+  return useMutation({
+    mutationFn: register,
+  });
+}
+
+export function useSetRecoveryNewPassword() {
+  async function register(data: {
+    username: string;
+    otp: string;
+    new_password1: string;
+    new_password2: string;
+  }) {
+    const resp = await AuthServices.setRecoveryNewPassword(data);
     return resp;
   }
 
