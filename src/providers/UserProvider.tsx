@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import localStore, { CachedTransaction } from '../data/localStore.ts';
 import { Account, UserSession } from '../services/auth/authServices.ts';
 
@@ -11,6 +11,9 @@ interface UserContextType {
   userAccounts: Account[] | null;
   lastCachedTrx: CachedTransaction | null;
   updateUserSessionData: (newSessionData: UserSession) => void;
+  partiallyUpdateUserSessionData: (
+    partialSessionData: Partial<UserSession>,
+  ) => void;
   updateUserAccounts: (newAccounts: Account[]) => void;
   updateLastCachedTrx: (newTrx: CachedTransaction) => void;
   clearSessionData: () => void;
@@ -57,6 +60,14 @@ export const UserContextProvider = ({
     localStore.setSessionData(newSessionData);
   };
 
+  const partiallyUpdateUserSessionData = (
+    partialSessionData: Partial<UserSession>,
+  ) => {
+    if (userSessionData) {
+      updateUserSessionData({ ...userSessionData, ...partialSessionData });
+    }
+  };
+
   const updateUserAccounts = (newAccounts: Account[]) => {
     setUserAccounts(newAccounts);
     localStore.setUserAccounts(newAccounts);
@@ -80,6 +91,7 @@ export const UserContextProvider = ({
         userAccounts,
         lastCachedTrx,
         updateUserSessionData,
+        partiallyUpdateUserSessionData,
         updateUserAccounts,
         updateLastCachedTrx,
         clearSessionData,

@@ -1,6 +1,7 @@
 import Axios, { InternalAxiosRequestConfig } from 'axios';
 import { MYFIN_BASE_API_URL } from '../config';
 import localStore from './localStore.ts';
+import i18next from 'i18next';
 
 function authRequestInterceptor(
   config: InternalAxiosRequestConfig,
@@ -12,6 +13,8 @@ function authRequestInterceptor(
   }
 
   config.headers.Accept = 'application/json';
+  config.headers['Accept-Language'] =
+    sessionData.language ?? i18next.resolvedLanguage;
   config.headers['Cache-Control'] = 'no-cache';
   config.headers['Pragma'] = 'no-cache';
   config.headers['Expires'] = '0';

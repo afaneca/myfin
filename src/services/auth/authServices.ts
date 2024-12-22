@@ -32,6 +32,7 @@ export type UserSession = {
   email: string;
   sessionkey: string;
   last_update_timestamp: number;
+  language: string;
 };
 
 export type AttemptLoginDto = {
@@ -69,9 +70,24 @@ const changePassword = (data: {
   });
 };
 
+const sendRecoveryOtp = (username: string) => {
+  return axios.post('/auth/recovery/sendOtp', { username });
+};
+
+const setRecoveryNewPassword = (data: {
+  username: string;
+  otp: string;
+  new_password1: string;
+  new_password2: string;
+}) => {
+  return axios.post('/auth/recovery/setNewPassword', data);
+};
+
 export default {
   attemptLogin,
   register,
   validateSession,
   changePassword,
+  sendRecoveryOtp,
+  setRecoveryNewPassword,
 };

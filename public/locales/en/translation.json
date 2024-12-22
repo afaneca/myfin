@@ -241,7 +241,15 @@
     "signUp": "Sign Up",
     "alreadyRegisteredQuestion": "Already registered?",
     "signIn": "Sign In",
-    "addUserDisabledError": "Sign ups are disabled in the API settings"
+    "addUserDisabledError": "Sign ups are disabled in the API settings",
+    "forgotYourPassword": "Forgot your password?",
+    "accountRecovery": "Account recovery",
+    "accountRecoveryStrapline": "Recover access to your account if you've forgotten your password",
+    "checkYourEmailForOtp": "Check your email for the OTP code we've sent you",
+    "otpCode": "OTP Code",
+    "sendOtp": "Send OTP",
+    "username": "Username",
+    "setNewPassword": "Set a new password"
   },
   "accounts": {
     "accounts": "Accounts",

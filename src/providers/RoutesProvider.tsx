@@ -14,8 +14,10 @@ import ImportTransactions from '../features/transactions/import/ImportTransactio
 import Rules from '../features/rules/Rules.tsx';
 import Invest, { InvestTab } from '../features/invest/Invest.tsx';
 import Stats, { StatTab } from '../features/stats/Stats.tsx';
+import RecoverPassword from '../features/auth/RecoverPassword.tsx';
 
 export const ROUTE_AUTH = '/auth';
+export const ROUTE_RECOVER_PASSWORD = '/recover-password';
 export const ROUTE_DASHBOARD = '/dashboard';
 export const ROUTE_PROFILE = '/profile';
 export const ROUTE_TRX = '/transactions';
@@ -45,6 +47,10 @@ const RoutesProvider = () => {
     <HashRouter>
       <Routes>
         <Route path={`${ROUTE_AUTH}`} element={<Login />} />
+        <Route
+          path={`${ROUTE_RECOVER_PASSWORD}`}
+          element={<RecoverPassword />}
+        />
         <Route element={<PrivateRoute />}>
           {/* Private authenticated routes */}
           <Route path={`${ROUTE_DASHBOARD}`} element={<Dashboard />} />
