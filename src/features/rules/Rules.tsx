@@ -188,9 +188,7 @@ const Rules = () => {
     [filteredRules, accounts, categories, entities],
   );
 
-  const getMatchingTypeLocalizedText = (
-    matchingType: string,
-  ): RuleMatchingOperatorType => {
+  const getMatchingTypeLocalizedText = (matchingType: string): string => {
     switch (matchingType) {
       case RuleMatchingOperatorType.Equals:
         return t('rules.equals');
