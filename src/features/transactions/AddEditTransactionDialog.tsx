@@ -792,7 +792,12 @@ const AddEditTransactionDialog = (props: Props) => {
           <Grid xs={12} marginTop={4}>
             <Collapse in={isSplitTransactionFormOpen}>
               <SplitTransactionForm
-                state={splitTransactionFormState ?? {}}
+                state={{
+                  ...splitTransactionFormState,
+                  accountFrom: accountFromValue,
+                  accountTo: accountToValue,
+                  type: transactionType,
+                }}
                 handleEssentialInputChange={(checked) =>
                   setSplitTransactionFormState((prevState) => ({
                     ...prevState,
@@ -886,9 +891,9 @@ const AddEditTransactionDialog = (props: Props) => {
 type SplitTransactionFormState = {
   amount?: number;
   description?: string;
-  type?: TransactionType;
-  accountFrom?: IdLabelPair;
-  accountTo?: IdLabelPair;
+  type?: TransactionType | null;
+  accountFrom?: IdLabelPair | null;
+  accountTo?: IdLabelPair | null;
   category?: IdLabelPair;
   entity?: IdLabelPair;
   isEssential?: boolean;
