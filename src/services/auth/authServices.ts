@@ -53,6 +53,11 @@ const register = (data: RegisterDto): Promise<string> => {
   return axios.post('/users', data);
 };
 
+export type ValidateSessionDto = {
+  isAuthenticated: boolean;
+  needsSetup: boolean;
+};
+
 const validateSession = async (): Promise<boolean> => {
   const resp = await axios.post('/validity');
   return resp.data == '1';
@@ -83,6 +88,14 @@ const setRecoveryNewPassword = (data: {
   return axios.post('/auth/recovery/setNewPassword', data);
 };
 
+const initSetup = (data: {
+  username: string;
+  email: string;
+  password: string;
+}) => {
+  return axios.post('/setup/init', data);
+};
+
 export default {
   attemptLogin,
   register,
@@ -90,4 +103,5 @@ export default {
   changePassword,
   sendRecoveryOtp,
   setRecoveryNewPassword,
+  initSetup,
 };

@@ -14,6 +14,7 @@ import {
 import {
   ROUTE_DASHBOARD,
   ROUTE_RECOVER_PASSWORD,
+  ROUTE_SETUP,
 } from '../../providers/RoutesProvider.tsx';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -100,13 +101,23 @@ const Login = () => {
   }, [authStatus.isAuthenticated]);
 
   useEffect(() => {
+    if (authStatus.needsSetup) {
+      navigate(ROUTE_SETUP);
+    }
+  }, [authStatus.needsSetup]);
+
+  useEffect(() => {
     // Show loading indicator when isLoading is true
-    if (loginRequest.isPending || registerRequest.isPending) {
+    if (
+      loginRequest.isPending ||
+      registerRequest.isPending ||
+      authStatus.isPending
+    ) {
       loader.showLoading();
     } else {
       loader.hideLoading();
     }
-  }, [loginRequest.isPending, registerRequest.isPending]);
+  }, [loginRequest.isPending, registerRequest.isPending, authStatus.isPending]);
 
   return (
     <div>

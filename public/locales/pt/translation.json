@@ -45,7 +45,10 @@
     "confirm": "Confirmar",
     "resetFilters": "Limpar filtros",
     "yes": "Sim",
-    "no": "Não"
+    "no": "Não",
+    "theme": "Tema",
+    "language": "Linguagem",
+    "next": "Seguinte"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -541,5 +544,19 @@
     "tagSuccessfullyDeleted": "Tag removida com sucesso!",
     "editTagModalTitle": "Editar tag",
     "tagSuccessfullyUpdated": "Tag atualizada com sucesso!"
+  },
+  "setup": {
+    "welcome": "Bem-vindo ao MyFin!",
+    "welcomeStrapline": "Está preparado para assumir o controlo sobre o seu futuro financeiro?",
+    "step0Label": "Bem-vindo",
+    "step1Label": "Identidade",
+    "step2Label": "Credenciais",
+    "step3Label": "Feito",
+    "step0Description": "Antes de começar, vamos discutir as suas preferências...",
+    "step1Description": "Conte-me um pouco sobre si...",
+    "step1UsernameHelperText": "Vai precisar dele para aceder à sua conta mais tarde",
+    "step1EmailConfirmationLabel": "Email (Confirmação)",
+    "step2PasswordConfirmationLabel": "Password (Confirmação)",
+    "step3Description": "Está feito! Agora está preparado para aceder à sua conta pela primeira vez. Vamos a isso?"
   }
 }
