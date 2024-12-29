@@ -15,6 +15,7 @@ import Rules from '../features/rules/Rules.tsx';
 import Invest, { InvestTab } from '../features/invest/Invest.tsx';
 import Stats, { StatTab } from '../features/stats/Stats.tsx';
 import RecoverPassword from '../features/auth/RecoverPassword.tsx';
+import Setup from '../features/setup/Setup.tsx';
 
 export const ROUTE_AUTH = '/auth';
 export const ROUTE_RECOVER_PASSWORD = '/recover-password';
@@ -41,6 +42,7 @@ export const ROUTE_STATS_PROJECTIONS = '/stats/projections';
 export const ROUTE_STATS_EXPENSES = '/stats/expenses';
 export const ROUTE_STATS_INCOME = '/stats/income';
 export const ROUTE_STATS_YEAR_BY_YEAR = '/stats/year-by-year';
+export const ROUTE_SETUP = '/setup';
 
 const RoutesProvider = () => {
   return (
@@ -51,6 +53,7 @@ const RoutesProvider = () => {
           path={`${ROUTE_RECOVER_PASSWORD}`}
           element={<RecoverPassword />}
         />
+        <Route path={`${ROUTE_SETUP}`} element={<Setup />} />
         <Route element={<PrivateRoute />}>
           {/* Private authenticated routes */}
           <Route path={`${ROUTE_DASHBOARD}`} element={<Dashboard />} />

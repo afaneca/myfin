@@ -3,6 +3,7 @@ import AuthServices from './authServices.ts';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useUserData } from '../../providers/UserProvider.tsx';
 import i18next from 'i18next';
+import { AxiosError } from 'axios';
 
 const QUERY_KEY_SESSION_VALIDITY = 'session_validity';
 
@@ -49,7 +50,15 @@ export function useAuthStatus(checkServer: boolean = true) {
     queryKey: [QUERY_KEY_SESSION_VALIDITY],
     queryFn: checkIsAuthenticated,
   });
-  return { isAuthenticated: query.isSuccess ? query.data : null, ...query };
+
+  const needsSetup =
+    query.isError && (query.error as AxiosError)?.response?.status === 404;
+
+  return {
+    isAuthenticated: query.isSuccess ? query.data : null,
+    needsSetup,
+    ...query,
+  };
 }
 
 export function useChangePassword() {
@@ -106,5 +115,20 @@ export function useSetRecoveryNewPassword() {
 
   return useMutation({
     mutationFn: register,
+  });
+}
+
+export function useInitSetup() {
+  async function initSetup(data: {
+    username: string;
+    email: string;
+    password: string;
+  }) {
+    const resp = await AuthServices.initSetup(data);
+    return resp;
+  }
+
+  return useMutation({
+    mutationFn: initSetup,
   });
 }
