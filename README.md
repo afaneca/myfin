@@ -10,6 +10,8 @@
   - [Features](#-features)
   - [Roadmap](#%EF%B8%8F-roadmap)
 - [Getting Started](#-getting-started)
+  - [Demo account - try it for yourself!](#demo-account---try-it-for-yourself)
+  - [Initial setup](#initial-setup)
 - [Contributing](#%EF%B8%8F-contributing)
 - [Dependencies](#-dependencies)
 
@@ -71,7 +73,14 @@ Here's some of the features currently in development or planned for the near fut
 - & much more...
 
 # 🔰 Getting Started
+## Demo account - try it for yourself!
+Before fully committing to it, you can give MyFin a try by using the demo account I've made available [here](https://myfin.afaneca.com).
+````
+Username: demo
+Password: demo
+````
 
+## Initial setup
 [Here](https://github.com/aFaneca/myfin/wiki/Project-Setup#initial-setup) you can find the full documentation on the
 first steps to get started.
 
