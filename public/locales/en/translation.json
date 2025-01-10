@@ -291,7 +291,8 @@
     "deleteAccountModalTitle": "Delete account {{name}}",
     "deleteAccountModalSubtitle": "Are you sure you want to delete this account?",
     "deleteAccountModalAlert": "This action is irreversible!",
-    "accountSuccessfullyDeleted": "Account successfully deleted!"
+    "accountSuccessfullyDeleted": "Account successfully deleted!",
+    "excludeFromBudgetsTooltip": "All transfer transactions that have this specific account marked as the recipient will be treated as an expense when it comes to budget calculations and analysis. As a generic rule of thumb, you should toggle this attribute on for all your credit cards and loan accounts."
   },
   "categories": {
     "categories": "Category",
@@ -311,7 +312,8 @@
     "inactive": "Inactive",
     "categorySuccessfullyAdded": "Category successfully added!",
     "editCategoryModalTitle": "Edit category",
-    "categorySuccessfullyUpdated": "Category successfully updated!"
+    "categorySuccessfullyUpdated": "Category successfully updated!",
+    "excludeFromBudgetsTooltip": "Exclude all transactions associated with this category from budget calculations"
   },
   "entities": {
     "entities": "Entities",

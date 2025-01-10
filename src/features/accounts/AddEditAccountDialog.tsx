@@ -19,6 +19,7 @@ import {
   MenuItem,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import {
@@ -223,19 +224,26 @@ const AddEditAccountDialog = (props: Props) => {
                 }}
               />
               {/* Exclude from budgets */}
-              <FormControlLabel
-                sx={{ width: 'fit-content' }}
-                control={
-                  <Checkbox
-                    icon={<RemoveCircleOutline />}
-                    checkedIcon={<RemoveCircle />}
-                  />
-                }
-                checked={excludeFromBudgetsValue}
-                label={t('accounts.excludeFromBudgets')}
-                name="exclude_from_budgets"
-                onChange={(_e, checked) => setExcludeFromBudgetsValue(checked)}
-              />
+              <Tooltip
+                title={t('accounts.excludeFromBudgetsTooltip')}
+                placement="right"
+              >
+                <FormControlLabel
+                  sx={{ width: 'fit-content' }}
+                  control={
+                    <Checkbox
+                      icon={<RemoveCircleOutline />}
+                      checkedIcon={<RemoveCircle />}
+                    />
+                  }
+                  checked={excludeFromBudgetsValue}
+                  label={t('accounts.excludeFromBudgets')}
+                  name="exclude_from_budgets"
+                  onChange={(_e, checked) =>
+                    setExcludeFromBudgetsValue(checked)
+                  }
+                />
+              </Tooltip>
             </Stack>
           </Grid>
           <Grid

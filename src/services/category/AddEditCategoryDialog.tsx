@@ -14,6 +14,7 @@ import {
   MenuItem,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { cssGradients } from '../../utils/gradientUtils.ts';
@@ -209,19 +210,26 @@ const AddEditCategoryDialog = (props: Props) => {
                 }
               />
               {/* Exclude from budgets */}
-              <FormControlLabel
-                sx={{ width: 'fit-content' }}
-                control={
-                  <Checkbox
-                    icon={<RemoveCircleOutline />}
-                    checkedIcon={<RemoveCircle />}
-                  />
-                }
-                checked={excludeFromBudgetsValue}
-                label={t('common.excludeFromBudgets')}
-                name="exclude_from_budgets"
-                onChange={(_e, checked) => setExcludeFromBudgetsValue(checked)}
-              />
+              <Tooltip
+                title={t('categories.excludeFromBudgetsTooltip')}
+                placement="right"
+              >
+                <FormControlLabel
+                  sx={{ width: 'fit-content' }}
+                  control={
+                    <Checkbox
+                      icon={<RemoveCircleOutline />}
+                      checkedIcon={<RemoveCircle />}
+                    />
+                  }
+                  checked={excludeFromBudgetsValue}
+                  label={t('common.excludeFromBudgets')}
+                  name="exclude_from_budgets"
+                  onChange={(_e, checked) =>
+                    setExcludeFromBudgetsValue(checked)
+                  }
+                />
+              </Tooltip>
             </Stack>
           </Grid>
           <Grid
