@@ -249,6 +249,15 @@ const AddEditTransactionDialog = (props: Props) => {
     }
   }, [transactionType]);
 
+  useEffect(() => {
+    setSplitTransactionFormState((prevState) => ({
+      ...prevState,
+      type: prevState?.type ?? transactionType,
+      accountFrom: prevState?.accountFrom ?? accountFromValue,
+      accountTo: prevState?.accountTo ?? accountToValue,
+    }));
+  }, [transactionType, accountFromValue, accountToValue]);
+
   const transformUserAccountsIntoIdLabelPair = (userAccounts: Account[]) => {
     return userAccounts.map((acc) => ({
       id: acc.account_id,
@@ -792,12 +801,7 @@ const AddEditTransactionDialog = (props: Props) => {
           <Grid xs={12} marginTop={4}>
             <Collapse in={isSplitTransactionFormOpen}>
               <SplitTransactionForm
-                state={{
-                  ...splitTransactionFormState,
-                  accountFrom: accountFromValue,
-                  accountTo: accountToValue,
-                  type: transactionType,
-                }}
+                state={splitTransactionFormState}
                 handleEssentialInputChange={(checked) =>
                   setSplitTransactionFormState((prevState) => ({
                     ...prevState,
@@ -1014,18 +1018,24 @@ const SplitTransactionForm = ({
         {/* Value, date & description */}
         <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
           <Grid xs={12} md={3}>
-            <TextField
+            <NumericFormat
               autoFocus
               required={isOpen}
               margin="dense"
               id="split_amount"
               name="split_amount"
               value={state?.amount || ''}
-              onChange={(e) => handleAmountChange(Number(e.target.value))}
+              onValueChange={(values) => {
+                const { floatValue } = values;
+                handleAmountChange(floatValue || 0);
+              }}
               label={t('common.value')}
-              type="number"
+              customInput={TextField}
               fullWidth
               variant="outlined"
+              decimalScale={2}
+              fixedDecimalScale
+              thousandSeparator
               inputProps={{
                 step: 0.01,
               }}
@@ -1068,7 +1078,11 @@ const SplitTransactionForm = ({
               id="split_account_from"
               disabled={!isAccountFromRequired}
               options={state?.accountOptions ?? []}
-              value={state?.accountFrom ?? null}
+              value={
+                isAccountFromRequired == true
+                  ? (state?.accountFrom ?? null)
+                  : null
+              }
               onChange={(_event, value) => {
                 handleAccountFromChange(value as IdLabelPair);
               }}
@@ -1097,7 +1111,7 @@ const SplitTransactionForm = ({
               id="split_account_to"
               disabled={!isAccountToRequired}
               options={state?.accountOptions ?? []}
-              value={state?.accountTo ?? null}
+              value={isAccountToRequired ? (state?.accountTo ?? null) : null}
               onChange={(_event, value) => {
                 handleAccountToChange(value as IdLabelPair);
               }}
