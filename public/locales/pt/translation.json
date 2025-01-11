@@ -290,7 +290,8 @@
     "deleteAccountModalTitle": "Remover conta {{name}}",
     "deleteAccountModalSubtitle": "Tem a certeza de que pretende remover esta conta?",
     "deleteAccountModalAlert": "Esta ação é irreversível!",
-    "accountSuccessfullyDeleted": "Conta removida com sucesso!"
+    "accountSuccessfullyDeleted": "Conta removida com sucesso!",
+    "excludeFromBudgetsTooltip": "Todas as transferências realizadas para esta conta serão tratadas como despesas no que diz respeito a cálculos orçamentais e análises. Como regra geral, deve ativar este atributo para todos os seus cartões de crédito e empréstimos."
   },
   "categories": {
     "categories": "Categorias",
@@ -310,7 +311,8 @@
     "inactive": "Inativa",
     "categorySuccessfullyAdded": "Categoria adicionada com sucesso!",
     "editCategoryModalTitle": "Editar categoria",
-    "categorySuccessfullyUpdated": "Categoria atualizada com sucesso!"
+    "categorySuccessfullyUpdated": "Categoria atualizada com sucesso!",
+    "excludeFromBudgetsTooltip": "Excluir todas as transações associadas a esta categoria dos cálculos orçamentais"
   },
   "entities": {
     "entities": "Entidades",
