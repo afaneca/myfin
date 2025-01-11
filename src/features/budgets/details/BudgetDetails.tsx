@@ -154,27 +154,26 @@ const BudgetDetails = () => {
 
     return categories.reduce(
       (acc, cur) => {
+        const shouldIgnore = cur.exclude_from_budgets == 1;
         return {
           plannedBalance:
             acc.plannedBalance +
-            cur.planned_amount_credit -
-            cur.planned_amount_debit,
+            (shouldIgnore
+              ? 0
+              : cur.planned_amount_credit - cur.planned_amount_debit),
           currentBalance:
             acc.currentBalance +
-            cur.current_amount_credit -
-            cur.current_amount_debit,
+            (shouldIgnore
+              ? 0
+              : cur.current_amount_credit - cur.current_amount_debit),
           plannedIncome:
-            acc.plannedIncome +
-            (cur.exclude_from_budgets ? 0 : cur.planned_amount_credit),
+            acc.plannedIncome + (shouldIgnore ? 0 : cur.planned_amount_credit),
           plannedExpenses:
-            acc.plannedExpenses +
-            (cur.exclude_from_budgets ? 0 : cur.planned_amount_debit),
+            acc.plannedExpenses + (shouldIgnore ? 0 : cur.planned_amount_debit),
           currentIncome:
-            acc.currentIncome +
-            (cur.exclude_from_budgets ? 0 : cur.current_amount_credit),
+            acc.currentIncome + (shouldIgnore ? 0 : cur.current_amount_credit),
           currentExpenses:
-            acc.currentExpenses +
-            (cur.exclude_from_budgets ? 0 : cur.current_amount_debit),
+            acc.currentExpenses + (shouldIgnore ? 0 : cur.current_amount_debit),
         };
       },
       {
