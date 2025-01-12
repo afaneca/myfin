@@ -11,7 +11,14 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
 import { Box, List, ListItem, useTheme } from '@mui/material';
 import Button from '@mui/material/Button/Button';
-import { CloudUpload, FileCopy, Lock, LockOpen } from '@mui/icons-material';
+import {
+  ArrowBackIos,
+  ArrowForwardIos,
+  CloudUpload,
+  FileCopy,
+  Lock,
+  LockOpen,
+} from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   useCreateBudgetStep0,
@@ -37,6 +44,14 @@ import BudgetCategoryRow from './BudgetCategoryRow.tsx';
 import BudgetSummaryBoard from './BudgetSummaryBoard.tsx';
 import { debounce } from 'lodash';
 import BudgetDescription from './BudgetDescription.tsx';
+import Stack from '@mui/material/Stack/Stack';
+import { getMonthsFullName } from '../../../utils/dateUtils.ts';
+
+type RelatedBudget = {
+  id: bigint;
+  month: string;
+  year: string;
+};
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
@@ -69,6 +84,10 @@ const BudgetDetails = () => {
   } | null>(null);
   const [isTrxTableDialogOpen, setTrxTableDialogOpen] = useState(false);
   const [isCloneBudgetDialogOpen, setCloneBudgetDialogOpen] = useState(false);
+  const [previousBudget, setPreviousBudget] = useState<RelatedBudget | null>(
+    null,
+  );
+  const [nextBudget, setNextBudget] = useState<RelatedBudget | null>(null);
   const orderCategoriesByDebitAmount = (
     categories: BudgetCategory[],
     isOpen: boolean,
@@ -268,6 +287,24 @@ const BudgetDetails = () => {
 
       // categories
       setCategories(getBudgetRequest.data.categories);
+
+      // related budgets
+      const previous = getBudgetRequest.data.related?.previous;
+      const next = getBudgetRequest.data.related?.next;
+      if (previous) {
+        setPreviousBudget({
+          id: previous.id,
+          month: getMonthsFullName(previous.month),
+          year: `${previous.year}`,
+        });
+      }
+      if (next) {
+        setNextBudget({
+          id: next.id,
+          month: getMonthsFullName(next.month),
+          year: `${next.year}`,
+        });
+      }
     } else if (createBudgetStep0Request.data) {
       // open
       setOpen(true);
@@ -308,6 +345,10 @@ const BudgetDetails = () => {
     setDescriptionValue(getBudgetToCloneRequest.data.observations);
     setCategories(getBudgetToCloneRequest.data.categories);
   }, [getBudgetToCloneRequest.data]);
+
+  const goToRelatedBudget = (budgetId: bigint) => {
+    navigate(ROUTE_BUDGET_DETAILS.replace(':id', budgetId + ''));
+  };
 
   const handleCategoryClick = (category: BudgetCategory, isDebit: boolean) => {
     setActionableCategory({ category, isDebit });
@@ -434,6 +475,54 @@ const BudgetDetails = () => {
         </Button>
       </Box>
       <Grid container spacing={2}>
+        <Grid container xs={12} mb={2}>
+          <Grid xs={6}>
+            {previousBudget && (
+              <Button
+                size="small"
+                startIcon={<ArrowBackIos />}
+                onClick={() => goToRelatedBudget(previousBudget?.id ?? -1n)}
+              >
+                <Stack direction="column">
+                  <Typography
+                    variant="overline"
+                    color={theme.palette.text.secondary}
+                  >
+                    {t('common.previous')}
+                  </Typography>
+                  <Typography>
+                    {previousBudget.month} {previousBudget.year}
+                  </Typography>
+                </Stack>
+              </Button>
+            )}
+          </Grid>
+          <Grid
+            xs={6}
+            xsOffset="auto"
+            sx={{ display: 'flex', justifyContent: 'flex-end' }}
+          >
+            {nextBudget && (
+              <Button
+                size="small"
+                endIcon={<ArrowForwardIos />}
+                onClick={() => goToRelatedBudget(nextBudget?.id ?? -1n)}
+              >
+                <Stack direction="column">
+                  <Typography
+                    variant="overline"
+                    color={theme.palette.text.secondary}
+                  >
+                    {t('common.next')}
+                  </Typography>
+                  <Typography>
+                    {nextBudget.month} {nextBudget.year}
+                  </Typography>
+                </Stack>
+              </Button>
+            )}
+          </Grid>
+        </Grid>
         <Grid xs={12} md={6} lg={3}>
           <DatePicker
             label={t('stats.month')}
