@@ -36,6 +36,11 @@ export function useRemoveBudget() {
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_BUDGETS],
     });
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_LIST_SUMMARY],
+    });
+
     return request;
   }
 
@@ -99,6 +104,11 @@ export function useUpdateBudget() {
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_BUDGET],
     });
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_LIST_SUMMARY],
+    });
+
     return request;
   }
 
@@ -128,6 +138,11 @@ export function useCreateBudgetStep1() {
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_BUDGET],
     });
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_LIST_SUMMARY],
+    });
+
     return request.data;
   }
 
@@ -145,6 +160,7 @@ export function useGetBudgetListSummary() {
   return useQuery({
     queryKey: [QUERY_KEY_GET_BUDGET_LIST_SUMMARY],
     queryFn: getBudgetListSummary,
+    staleTime: 5 * 60 * 1_000, // 5 minutes
   });
 }
 

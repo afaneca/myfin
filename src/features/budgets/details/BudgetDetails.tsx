@@ -11,12 +11,20 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
 import { Box, List, ListItem, useTheme } from '@mui/material';
 import Button from '@mui/material/Button/Button';
-import { CloudUpload, FileCopy, Lock, LockOpen } from '@mui/icons-material';
+import {
+  ArrowBackIos,
+  ArrowForwardIos,
+  CloudUpload,
+  FileCopy,
+  Lock,
+  LockOpen,
+} from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   useCreateBudgetStep0,
   useCreateBudgetStep1,
   useGetBudget,
+  useGetBudgetListSummary,
   useGetBudgetToClone,
   useUpdateBudget,
   useUpdateBudgetStatus,
@@ -37,6 +45,14 @@ import BudgetCategoryRow from './BudgetCategoryRow.tsx';
 import BudgetSummaryBoard from './BudgetSummaryBoard.tsx';
 import { debounce } from 'lodash';
 import BudgetDescription from './BudgetDescription.tsx';
+import Stack from '@mui/material/Stack/Stack';
+import { getMonthsFullName } from '../../../utils/dateUtils.ts';
+
+type RelatedBudget = {
+  id: bigint;
+  month: string;
+  year: string;
+};
 
 const BudgetDetails = () => {
   const { t } = useTranslation();
@@ -52,6 +68,7 @@ const BudgetDetails = () => {
   const updateBudgetStatusRequest = useUpdateBudgetStatus();
   const updateBudgetRequest = useUpdateBudget();
   const getBudgetToCloneRequest = useGetBudgetToClone(budgetToClone);
+  const getBudgetListSummaryRequest = useGetBudgetListSummary();
   const [monthYear, setMonthYear] = useState({
     month: dayjs().month() + 1,
     year: dayjs().year(),
@@ -69,6 +86,10 @@ const BudgetDetails = () => {
   } | null>(null);
   const [isTrxTableDialogOpen, setTrxTableDialogOpen] = useState(false);
   const [isCloneBudgetDialogOpen, setCloneBudgetDialogOpen] = useState(false);
+  const [previousBudget, setPreviousBudget] = useState<RelatedBudget | null>(
+    null,
+  );
+  const [nextBudget, setNextBudget] = useState<RelatedBudget | null>(null);
   const orderCategoriesByDebitAmount = (
     categories: BudgetCategory[],
     isOpen: boolean,
@@ -202,6 +223,37 @@ const BudgetDetails = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    if (!getBudgetListSummaryRequest.data) return;
+    const list = getBudgetListSummaryRequest.data;
+    const budgetIndex = list.findIndex(
+      (elem) => elem.budget_id == BigInt(id ?? -1),
+    );
+
+    const previous = list[budgetIndex + 1];
+    const next = list[budgetIndex - 1];
+
+    setPreviousBudget(
+      previous
+        ? {
+            id: previous.budget_id,
+            month: getMonthsFullName(previous.month),
+            year: `${previous.year}`,
+          }
+        : null,
+    );
+
+    setNextBudget(
+      next
+        ? {
+            id: next.budget_id,
+            month: getMonthsFullName(next.month),
+            year: `${next.year}`,
+          }
+        : null,
+    );
+  }, [getBudgetListSummaryRequest.data, id]);
+
   // Loading
   useEffect(() => {
     if (
@@ -308,6 +360,10 @@ const BudgetDetails = () => {
     setDescriptionValue(getBudgetToCloneRequest.data.observations);
     setCategories(getBudgetToCloneRequest.data.categories);
   }, [getBudgetToCloneRequest.data]);
+
+  const goToRelatedBudget = (budgetId: bigint) => {
+    navigate(ROUTE_BUDGET_DETAILS.replace(':id', budgetId + ''));
+  };
 
   const handleCategoryClick = (category: BudgetCategory, isDebit: boolean) => {
     setActionableCategory({ category, isDebit });
@@ -527,47 +583,96 @@ const BudgetDetails = () => {
             overflow: 'hidden',
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-            }}
-          >
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<CloudUpload />}
-              sx={{ margin: 1 }}
-              onClick={() => (isNew ? createBudget() : updateBudget())}
+          <Grid xs={12} md={3}>
+            {previousBudget && (
+              <Button
+                size="small"
+                startIcon={<ArrowBackIos />}
+                onClick={() => goToRelatedBudget(previousBudget?.id ?? -1n)}
+              >
+                <Stack direction="column">
+                  <Typography
+                    variant="overline"
+                    color={theme.palette.text.secondary}
+                  >
+                    {t('common.previous')}
+                  </Typography>
+                  <Typography>
+                    {previousBudget.month} {previousBudget.year}
+                  </Typography>
+                </Stack>
+              </Button>
+            )}
+          </Grid>
+          <Grid xs={12} md={6}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
             >
-              {t(
-                isNew
-                  ? 'budgetDetails.addBudgetCTA'
-                  : 'budgetDetails.updateBudget',
-              )}
-            </Button>
-            {!isNew && (
               <Button
                 variant="contained"
                 size="large"
-                startIcon={isOpen ? <Lock /> : <LockOpen />}
-                onClick={() =>
-                  updateBudgetStatusRequest.mutate({
-                    budgetId: BigInt(id ?? -1),
-                    isOpen: isOpen,
-                  })
-                }
+                startIcon={<CloudUpload />}
+                sx={{ margin: 1 }}
+                onClick={() => (isNew ? createBudget() : updateBudget())}
               >
                 {t(
-                  isOpen
-                    ? 'budgetDetails.closeBudgetCTA'
-                    : 'budgetDetails.reopenBudget',
+                  isNew
+                    ? 'budgetDetails.addBudgetCTA'
+                    : 'budgetDetails.updateBudget',
                 )}
               </Button>
+              {!isNew && (
+                <Button
+                  variant="contained"
+                  size="large"
+                  startIcon={isOpen ? <Lock /> : <LockOpen />}
+                  onClick={() =>
+                    updateBudgetStatusRequest.mutate({
+                      budgetId: BigInt(id ?? -1),
+                      isOpen: isOpen,
+                    })
+                  }
+                >
+                  {t(
+                    isOpen
+                      ? 'budgetDetails.closeBudgetCTA'
+                      : 'budgetDetails.reopenBudget',
+                  )}
+                </Button>
+              )}
+            </Box>
+          </Grid>
+          <Grid
+            xs={12}
+            md={3}
+            xsOffset="auto"
+            sx={{ display: 'flex', justifyContent: 'flex-end' }}
+          >
+            {nextBudget && (
+              <Button
+                size="small"
+                endIcon={<ArrowForwardIos />}
+                onClick={() => goToRelatedBudget(nextBudget?.id ?? -1n)}
+              >
+                <Stack direction="column">
+                  <Typography
+                    variant="overline"
+                    color={theme.palette.text.secondary}
+                  >
+                    {t('common.next')}
+                  </Typography>
+                  <Typography>
+                    {nextBudget.month} {nextBudget.year}
+                  </Typography>
+                </Stack>
+              </Button>
             )}
-          </Box>
+          </Grid>
         </Grid>
       </Grid>
     </Paper>
