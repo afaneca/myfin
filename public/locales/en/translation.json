@@ -48,7 +48,8 @@
     "no": "No",
     "theme": "Theme",
     "language": "Language",
-    "next": "Next"
+    "next": "Next",
+    "previous": "Previous"
   },
   "sidebar": {
     "dashboard": "Dashboard",
