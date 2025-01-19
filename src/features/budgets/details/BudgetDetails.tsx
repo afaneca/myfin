@@ -24,6 +24,7 @@ import {
   useCreateBudgetStep0,
   useCreateBudgetStep1,
   useGetBudget,
+  useGetBudgetListSummary,
   useGetBudgetToClone,
   useUpdateBudget,
   useUpdateBudgetStatus,
@@ -67,6 +68,7 @@ const BudgetDetails = () => {
   const updateBudgetStatusRequest = useUpdateBudgetStatus();
   const updateBudgetRequest = useUpdateBudget();
   const getBudgetToCloneRequest = useGetBudgetToClone(budgetToClone);
+  const getBudgetListSummaryRequest = useGetBudgetListSummary();
   const [monthYear, setMonthYear] = useState({
     month: dayjs().month() + 1,
     year: dayjs().year(),
@@ -221,6 +223,37 @@ const BudgetDetails = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    if (!getBudgetListSummaryRequest.data) return;
+    const list = getBudgetListSummaryRequest.data;
+    const budgetIndex = list.findIndex(
+      (elem) => elem.budget_id == BigInt(id ?? -1),
+    );
+
+    const previous = list[budgetIndex + 1];
+    const next = list[budgetIndex - 1];
+
+    setPreviousBudget(
+      previous
+        ? {
+            id: previous.budget_id,
+            month: getMonthsFullName(previous.month),
+            year: `${previous.year}`,
+          }
+        : null,
+    );
+
+    setNextBudget(
+      next
+        ? {
+            id: next.budget_id,
+            month: getMonthsFullName(next.month),
+            year: `${next.year}`,
+          }
+        : null,
+    );
+  }, [getBudgetListSummaryRequest.data, id]);
+
   // Loading
   useEffect(() => {
     if (
@@ -287,24 +320,6 @@ const BudgetDetails = () => {
 
       // categories
       setCategories(getBudgetRequest.data.categories);
-
-      // related budgets
-      const previous = getBudgetRequest.data.related?.previous;
-      const next = getBudgetRequest.data.related?.next;
-      if (previous) {
-        setPreviousBudget({
-          id: previous.id,
-          month: getMonthsFullName(previous.month),
-          year: `${previous.year}`,
-        });
-      }
-      if (next) {
-        setNextBudget({
-          id: next.id,
-          month: getMonthsFullName(next.month),
-          year: `${next.year}`,
-        });
-      }
     } else if (createBudgetStep0Request.data) {
       // open
       setOpen(true);
@@ -475,54 +490,6 @@ const BudgetDetails = () => {
         </Button>
       </Box>
       <Grid container spacing={2}>
-        <Grid container xs={12} mb={2}>
-          <Grid xs={6}>
-            {previousBudget && (
-              <Button
-                size="small"
-                startIcon={<ArrowBackIos />}
-                onClick={() => goToRelatedBudget(previousBudget?.id ?? -1n)}
-              >
-                <Stack direction="column">
-                  <Typography
-                    variant="overline"
-                    color={theme.palette.text.secondary}
-                  >
-                    {t('common.previous')}
-                  </Typography>
-                  <Typography>
-                    {previousBudget.month} {previousBudget.year}
-                  </Typography>
-                </Stack>
-              </Button>
-            )}
-          </Grid>
-          <Grid
-            xs={6}
-            xsOffset="auto"
-            sx={{ display: 'flex', justifyContent: 'flex-end' }}
-          >
-            {nextBudget && (
-              <Button
-                size="small"
-                endIcon={<ArrowForwardIos />}
-                onClick={() => goToRelatedBudget(nextBudget?.id ?? -1n)}
-              >
-                <Stack direction="column">
-                  <Typography
-                    variant="overline"
-                    color={theme.palette.text.secondary}
-                  >
-                    {t('common.next')}
-                  </Typography>
-                  <Typography>
-                    {nextBudget.month} {nextBudget.year}
-                  </Typography>
-                </Stack>
-              </Button>
-            )}
-          </Grid>
-        </Grid>
         <Grid xs={12} md={6} lg={3}>
           <DatePicker
             label={t('stats.month')}
@@ -616,47 +583,96 @@ const BudgetDetails = () => {
             overflow: 'hidden',
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-            }}
-          >
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<CloudUpload />}
-              sx={{ margin: 1 }}
-              onClick={() => (isNew ? createBudget() : updateBudget())}
+          <Grid xs={12} md={3}>
+            {previousBudget && (
+              <Button
+                size="small"
+                startIcon={<ArrowBackIos />}
+                onClick={() => goToRelatedBudget(previousBudget?.id ?? -1n)}
+              >
+                <Stack direction="column">
+                  <Typography
+                    variant="overline"
+                    color={theme.palette.text.secondary}
+                  >
+                    {t('common.previous')}
+                  </Typography>
+                  <Typography>
+                    {previousBudget.month} {previousBudget.year}
+                  </Typography>
+                </Stack>
+              </Button>
+            )}
+          </Grid>
+          <Grid xs={12} md={6}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
             >
-              {t(
-                isNew
-                  ? 'budgetDetails.addBudgetCTA'
-                  : 'budgetDetails.updateBudget',
-              )}
-            </Button>
-            {!isNew && (
               <Button
                 variant="contained"
                 size="large"
-                startIcon={isOpen ? <Lock /> : <LockOpen />}
-                onClick={() =>
-                  updateBudgetStatusRequest.mutate({
-                    budgetId: BigInt(id ?? -1),
-                    isOpen: isOpen,
-                  })
-                }
+                startIcon={<CloudUpload />}
+                sx={{ margin: 1 }}
+                onClick={() => (isNew ? createBudget() : updateBudget())}
               >
                 {t(
-                  isOpen
-                    ? 'budgetDetails.closeBudgetCTA'
-                    : 'budgetDetails.reopenBudget',
+                  isNew
+                    ? 'budgetDetails.addBudgetCTA'
+                    : 'budgetDetails.updateBudget',
                 )}
               </Button>
+              {!isNew && (
+                <Button
+                  variant="contained"
+                  size="large"
+                  startIcon={isOpen ? <Lock /> : <LockOpen />}
+                  onClick={() =>
+                    updateBudgetStatusRequest.mutate({
+                      budgetId: BigInt(id ?? -1),
+                      isOpen: isOpen,
+                    })
+                  }
+                >
+                  {t(
+                    isOpen
+                      ? 'budgetDetails.closeBudgetCTA'
+                      : 'budgetDetails.reopenBudget',
+                  )}
+                </Button>
+              )}
+            </Box>
+          </Grid>
+          <Grid
+            xs={12}
+            md={3}
+            xsOffset="auto"
+            sx={{ display: 'flex', justifyContent: 'flex-end' }}
+          >
+            {nextBudget && (
+              <Button
+                size="small"
+                endIcon={<ArrowForwardIos />}
+                onClick={() => goToRelatedBudget(nextBudget?.id ?? -1n)}
+              >
+                <Stack direction="column">
+                  <Typography
+                    variant="overline"
+                    color={theme.palette.text.secondary}
+                  >
+                    {t('common.next')}
+                  </Typography>
+                  <Typography>
+                    {nextBudget.month} {nextBudget.year}
+                  </Typography>
+                </Stack>
+              </Button>
             )}
-          </Box>
+          </Grid>
         </Grid>
       </Grid>
     </Paper>

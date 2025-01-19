@@ -32,17 +32,6 @@ export type Budget = {
   savings_rate_percentage: number;
 };
 
-export type RelatedBudgets = {
-  previous?: RelatedBudget;
-  next?: RelatedBudget;
-};
-
-export type RelatedBudget = {
-  id: bigint;
-  month: number;
-  year: number;
-};
-
 export type BudgetDetails = {
   budget_id: bigint;
   balance_change_percentage: number;
@@ -57,7 +46,6 @@ export type BudgetDetails = {
   debit_essential_trx_total: number;
   initial_balance: number;
   categories: BudgetCategory[];
-  related: RelatedBudgets;
 };
 
 export type GetBudgetsResponse = {
