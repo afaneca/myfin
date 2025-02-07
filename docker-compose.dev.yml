@@ -4,7 +4,9 @@ services:
   web:
     container_name: myfin_frontend
     image: myfin_frontend
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     ports:
       - "5173:5173"
     volumes:
