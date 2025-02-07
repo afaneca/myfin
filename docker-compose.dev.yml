@@ -3,7 +3,7 @@ name: myfin_fe
 services: 
   web:
     container_name: myfin_frontend
-    image: myfin_frontend
+    image: myfin_frontend:dev
     build:
       context: .
       dockerfile: Dockerfile.dev
