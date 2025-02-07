@@ -1,5 +1,9 @@
+name: myfin-fe
+
 services:
   web:
+    container_name: myfin_frontend
+    # image: # TODO: image name
     build:
       context: .
       dockerfile: Dockerfile.prod
