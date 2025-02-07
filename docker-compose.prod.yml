@@ -1,0 +1,9 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - 80:80
+    environment:
+      - VITE_MYFIN_BASE_API_URL=http://api.xyzwebsite.com:3001/ # the trailing slash is important
