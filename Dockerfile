@@ -13,7 +13,7 @@ RUN npm ci
 COPY . .
 
 ARG VITE_MYFIN_BASE_API_URL
-ENV VITE_MYFIN_BASE_API_URL="change-me-api-url"
+ENV VITE_MYFIN_BASE_API_URL="myfin-api-url-placeholder"
 
 # Build the app
 RUN npm run build
@@ -42,7 +42,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create startup script
 RUN echo '#!/bin/sh' > /start.sh && \
-    echo 'find /usr/share/nginx/html -type f -name "*.js" -exec sed -i "s|change-me-api-url|$VITE_MYFIN_BASE_API_URL|g" {} +' >> /start.sh && \
+    echo 'find /usr/share/nginx/html -type f -name "*.js" -exec sed -i "s|myfin-api-url-placeholder|$VITE_MYFIN_BASE_API_URL|g" {} +' >> /start.sh && \
     echo "nginx -g 'daemon off;'" >> /start.sh && \
     chmod +x /start.sh
 
