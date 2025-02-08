@@ -7,6 +7,12 @@ services:
       MARIADB_DATABASE: myfin
       MARIADB_USER: myfin
       MARIADB_PASSWORD: myfinpassword
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   myfin-api:
     image: ghcr.io/afaneca/myfin-api:latest
@@ -36,7 +42,7 @@ services:
       - API_VERSION=v1
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
 
   myfin-frontend:
     image: ghcr.io/afaneca/myfin:latest
