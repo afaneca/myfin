@@ -1,0 +1,51 @@
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: myfinrootpassword
+      MARIADB_DATABASE: myfin
+      MARIADB_USER: myfin
+      MARIADB_PASSWORD: myfinpassword
+
+  myfin-api:
+    image: ghcr.io/afaneca/myfin-api:latest
+    container_name: myfin-api
+    restart: unless-stopped
+    ports:
+      - 8081:3001
+    environment:
+    # Database Configuration
+      - DB_NAME=myfin
+      - DB_USER=myfin
+      - DB_PW=myfinpassword
+      - DB_PORT=3306
+      - DB_HOST=db
+      # Email Configuration
+      - SMTP_HOST=
+      - SMTP_PORT=
+      - SMTP_SECURE=
+      - SMTP_USER=
+      - SMTP_PASSWORD=
+      - SMTP_FROM=
+      # Application Configuration
+      - PORT=3001
+      - LOGGING=true
+      - BYPASS_SESSION_CHECK=false
+      - ENABLE_USER_SIGNUP=true
+      - API_VERSION=v1
+    depends_on:
+      db:
+        condition: service_started
+
+  myfin-frontend:
+    image: ghcr.io/afaneca/myfin:latest
+    container_name: myfin-frontend
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    depends_on:
+      myfin-api:
+        condition: service_healthy
+    environment:
+      - VITE_MYFIN_BASE_API_URL=fill-me
