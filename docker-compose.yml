@@ -7,6 +7,8 @@ services:
       MARIADB_DATABASE: myfin
       MARIADB_USER: myfin
       MARIADB_PASSWORD: myfinpassword
+    volumes:
+      - db_data:/var/lib/mysql
     healthcheck:
       test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
       start_period: 10s
@@ -54,4 +56,7 @@ services:
       myfin-api:
         condition: service_healthy
     environment:
-      - VITE_MYFIN_BASE_API_URL=fill-me
+      - VITE_MYFIN_BASE_API_URL=http://localhost:8081
+
+volumes:
+  db_data:
