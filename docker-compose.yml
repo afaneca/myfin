@@ -1,20 +1,16 @@
 services:
   db:
-    image: mariadb
+    image: mysql:8.4
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: myfinrootpassword
-      MARIADB_DATABASE: myfin
-      MARIADB_USER: myfin
-      MARIADB_PASSWORD: myfinpassword
+      MYSQL_ROOT_PASSWORD: myfinrootpassword
+      MYSQL_DATABASE: myfin
+      MYSQL_USER: myfin
+      MYSQL_PASSWORD: myfinpassword
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
-      start_period: 10s
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
 
   myfin-api:
     image: ghcr.io/afaneca/myfin-api:latest
