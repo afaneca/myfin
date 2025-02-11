@@ -225,21 +225,25 @@ const Dashboard = () => {
       }
     });
 
-    setMonthlyOverviewChartData([
-      {
-        id: t('dashboard.current'),
-        type: '0',
-        value: totalExpensesRealAmount,
-      },
-      {
-        id: t('dashboard.remaining'),
-        type: '1',
-        value: Math.max(
-          totalExpensesBudgetedAmount - totalExpensesRealAmount,
-          0,
-        ),
-      },
-    ]);
+    if (totalExpensesBudgetedAmount == 0 && totalExpensesRealAmount == 0) {
+      setMonthlyOverviewChartData([]);
+    } else {
+      setMonthlyOverviewChartData([
+        {
+          id: t('dashboard.current'),
+          type: '0',
+          value: totalExpensesRealAmount,
+        },
+        {
+          id: t('dashboard.remaining'),
+          type: '1',
+          value: Math.max(
+            totalExpensesBudgetedAmount - totalExpensesRealAmount,
+            0,
+          ),
+        },
+      ]);
+    }
   };
 
   const handleMonthChange = (newDate: Dayjs | null) => {

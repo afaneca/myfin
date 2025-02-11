@@ -51,7 +51,7 @@ EXPOSE 80
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget -qO- http://localhost:80/ | grep -q '<title>MyFin</title>' || exit 1
+    CMD wget -qO- http://localhost:80/ | grep -q '<title>MyFin Budget</title>' || exit 1
 
 # Start nginx
 CMD ["/start.sh"]
