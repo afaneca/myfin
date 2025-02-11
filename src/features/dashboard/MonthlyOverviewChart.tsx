@@ -54,7 +54,6 @@ const MonthlyOverviewChart = ({ data }: Props) => {
     }));
     return setChartData(transformedData);
   }, [data]);
-
   return (
     <Stack height={200}>
       {data && data.length > 0 ? (

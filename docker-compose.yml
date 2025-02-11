@@ -13,7 +13,7 @@ services:
       test: [ "CMD", "mysqladmin", "ping", "--silent" ]
 
   myfin-api:
-    image: ghcr.io/afaneca/myfin-api:latest
+    image: myfin-api:latest
     container_name: myfin-api
     restart: unless-stopped
     ports:
@@ -42,7 +42,7 @@ services:
         condition: service_healthy
 
   myfin-frontend:
-    image: ghcr.io/afaneca/myfin:latest
+    image: myfin-web:latest
     container_name: myfin-frontend
     restart: unless-stopped
     ports:

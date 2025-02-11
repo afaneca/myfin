@@ -26,10 +26,10 @@ WORKDIR /usr/share/nginx/html
 # Add metadata
 LABEL maintainer="José Valdiviesso <me@zmiguel.me>"
 LABEL author="José Valdiviesso <me@zmiguel.me>"
-LABEL version="7.4.2"
+LABEL version="7.5.0"
 LABEL description="MyFin Frontend Application"
 LABEL org.opencontainers.image.authors="José Valdiviesso <me@zmiguel.me>"
-LABEL org.opencontainers.image.version="7.4.2"
+LABEL org.opencontainers.image.version="7.5.0"
 LABEL org.opencontainers.image.title="MyFin Frontend"
 LABEL org.opencontainers.image.description="Web frontend for the personal finances platform that'll help you budget, keep track of your income/spending and forecast your financial future."
 LABEL org.opencontainers.image.source="https://github.com/afaneca/myfin"
@@ -51,7 +51,7 @@ EXPOSE 80
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget -qO- http://localhost:80/ | grep -q '<title>MyFin</title>' || exit 1
+    CMD wget -qO- http://localhost:80/ | grep -q '<title>MyFin Budget</title>' || exit 1
 
 # Start nginx
 CMD ["/start.sh"]
