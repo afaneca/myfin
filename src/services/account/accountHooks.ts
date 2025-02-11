@@ -4,12 +4,16 @@ import AccountServices, {
   EditAccountRequest,
 } from './accountServices.ts';
 import { queryClient } from '../../data/react-query.ts';
+import { useUserData } from '../../providers/UserProvider.tsx';
 
 const QUERY_KEY_GET_ACCOUNTS = 'QUERY_KEY_GET_ACCOUNTS';
 
 export function useGetAccounts() {
+  const { updateUserAccounts } = useUserData();
+
   async function getAccounts() {
     const data = await AccountServices.getAccounts();
+    updateUserAccounts(data.data);
     return data.data;
   }
 

@@ -205,9 +205,13 @@ const Dashboard = () => {
     );
   };
 
-  const setupLastUpdatedTimestamp = (timestamp: number | undefined) => {
-    if (!timestamp) return '-';
-    setLastUpdatedTimestamp(dayjs.unix(timestamp).format('YYYY-MM-DD'));
+  const setupLastUpdatedTimestamp = (
+    timestamp: number | string | undefined,
+  ) => {
+    if (!timestamp || timestamp == '0') return '-';
+    setLastUpdatedTimestamp(
+      dayjs.unix(timestamp as number).format('YYYY-MM-DD'),
+    );
   };
 
   const setupMonthlyOverviewChart = (
@@ -271,6 +275,7 @@ const Dashboard = () => {
           justifyContent: 'flex-end',
           alignItems: 'center',
         }}
+        visibility={lastUpdatedTimestamp == '' ? 'hidden' : 'visible'}
       >
         <Tooltip title={t('dashboard.lastUpdate')}>
           <Stack direction="row" alignItems="center" gap={0.5}>
