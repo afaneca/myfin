@@ -1,10 +1,13 @@
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { useGetTopSummaryValues } from '../services/user/userHooks.ts';
 import { formatNumberAsCurrency } from '../utils/textUtils';
+import { useTranslation } from 'react-i18next';
 
 const TopSummary = () => {
   const { operatingFundsSum, investingSum, debtSum, netWorthSum } =
     useGetTopSummaryValues();
+  const { t } = useTranslation();
+
   return (
     <Stack
       direction="row"
@@ -14,19 +17,19 @@ const TopSummary = () => {
       }}
     >
       <Stack direction="column">
-        <TopSummaryLabel value="Operating funds" />
+        <TopSummaryLabel value={t('topBar.operatingFunds')} />
         <TopSummaryAmount value={formatNumberAsCurrency(operatingFundsSum)} />
       </Stack>
       <Stack direction="column">
-        <TopSummaryLabel value="Investing" />
+        <TopSummaryLabel value={t('topBar.investing')} />
         <TopSummaryAmount value={formatNumberAsCurrency(investingSum)} />
       </Stack>
       <Stack direction="column">
-        <TopSummaryLabel value="Debt" />
+        <TopSummaryLabel value={t('topBar.debt')} />
         <TopSummaryAmount value={formatNumberAsCurrency(debtSum)} />
       </Stack>
       <Stack direction="column">
-        <TopSummaryLabel value="Net worth" />
+        <TopSummaryLabel value={t('topBar.netWorth')} />
         <TopSummaryAmount value={formatNumberAsCurrency(netWorthSum)} />
       </Stack>
     </Stack>
