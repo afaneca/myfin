@@ -157,17 +157,16 @@ const Categories = () => {
       minWidth: 100,
       editable: false,
       sortable: false,
-      renderCell: (params) => (
-        <Chip
-          label={params.value}
-          variant="outlined"
-          color={
-            params.value.startsWith(CategoryStatus.Active)
-              ? 'success'
-              : 'warning'
-          }
-        />
-      ),
+      renderCell: (params) => {
+        const isActive = params.value.startsWith(CategoryStatus.Active);
+        return (
+          <Chip
+            label={t(isActive ? 'categories.active' : 'categories.inactive')}
+            variant="outlined"
+            color={isActive ? 'success' : 'warning'}
+          />
+        );
+      },
     },
     {
       field: 'actions',
