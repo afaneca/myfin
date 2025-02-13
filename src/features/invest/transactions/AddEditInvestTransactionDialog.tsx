@@ -10,11 +10,12 @@ import React, { useEffect, useReducer } from 'react';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import {
   AccountCircle,
+  AttachMoney,
   CallMerge,
   CallSplit,
   ControlPointDuplicate,
   Description,
-  Euro,
+  EuroSymbol,
   FiberSmartRecord,
   Send,
   Undo,
@@ -51,6 +52,7 @@ import DialogActions from '@mui/material/DialogActions/DialogActions';
 import Chip from '@mui/material/Chip/Chip';
 import { TFunction } from 'i18next';
 import { NumericFormat } from 'react-number-format';
+import { useUserData } from '../../../providers/UserProvider.tsx';
 
 type UiState = {
   isLoading: boolean;
@@ -435,7 +437,7 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Euro />
+                    {useUserData().userSessionData?.currency == 'EUR' ? <EuroSymbol /> : <AttachMoney />}
                   </InputAdornment>
                 ),
               }}
@@ -726,7 +728,7 @@ const SplitTransactionForm = (props: SplitTransactionFormProps) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Euro />
+                  {useUserData().userSessionData?.currency == 'EUR' ? <EuroSymbol /> : <AttachMoney />}
                 </InputAdornment>
               ),
             }}

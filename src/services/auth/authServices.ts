@@ -33,6 +33,7 @@ export type UserSession = {
   sessionkey: string;
   last_update_timestamp: number;
   language: string;
+  currency: string;
 };
 
 export type AttemptLoginDto = {

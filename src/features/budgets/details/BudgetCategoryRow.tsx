@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
-import { Euro } from '@mui/icons-material';
+import { AttachMoney, EuroSymbol } from '@mui/icons-material';
 import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
 import { ColorGradient } from '../../../consts';
@@ -24,6 +24,7 @@ import { getMonthsFullName } from '../../../utils/dateUtils.ts';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import Container from '@mui/material/Container/Container';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import { useUserData } from '../../../providers/UserProvider.tsx';
 
 type Props = {
   isOpen: boolean;
@@ -313,7 +314,7 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Euro />
+                  {useUserData().userSessionData?.currency == 'EUR' ? <EuroSymbol /> : <AttachMoney />}
                 </InputAdornment>
               ),
             }}
@@ -342,7 +343,7 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Euro />
+                  {useUserData().userSessionData?.currency == 'EUR' ? <EuroSymbol /> : <AttachMoney />}
                 </InputAdornment>
               ),
             }}

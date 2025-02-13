@@ -5,6 +5,7 @@ const storagePrefix = 'myfin';
 const sessionDataTag = 'sessionData';
 const userAccountsTag = 'accounts';
 const uiModeTag = 'uiMode';
+const currencyTag = 'currencyMode'
 const lastTrxTag = 'lastTrxTag';
 
 export type CachedTransaction = {
@@ -65,6 +66,16 @@ const localStore = {
   toggleUiMode: () => {
     const prevMode = localStore.getUiMode();
     localStore.setUiMode(prevMode === 'light' ? 'dark' : 'light');
+  },
+  getCurrencyMode: (): 'eu' | 'us' => {
+    return (
+      (window.localStorage.getItem(`${storagePrefix}.${currencyTag}`) as
+        | 'eu'
+        | 'us') ?? 'eu'
+    );
+  },
+  setCurrencyMode: (mode: 'eu' | 'us') => {
+    window.localStorage.setItem(`${storagePrefix}.${currencyTag}`, mode);
   },
   getLastCachedTrx: (): CachedTransaction | null => {
     return JSON.parse(

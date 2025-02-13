@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import localStore, { CachedTransaction } from '../data/localStore.ts';
 import { Account, UserSession } from '../services/auth/authServices.ts';
+import Cookies from 'universal-cookie';
 
 export const useUserData = () => {
   return useContext(UserContext);
@@ -58,6 +59,9 @@ export const UserContextProvider = ({
   const updateUserSessionData = (newSessionData: UserSession) => {
     setUserSessionData(newSessionData);
     localStore.setSessionData(newSessionData);
+    if (newSessionData.currency) {
+      new Cookies().set('currency', newSessionData.currency, { sameSite: 'strict' });
+    }
   };
 
   const partiallyUpdateUserSessionData = (

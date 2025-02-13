@@ -26,12 +26,13 @@ import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import {
   AccountCircle,
+  AttachMoney,
   AutoAwesome,
   Business,
   CallMerge,
   CallSplit,
   Description,
-  Euro,
+  EuroSymbol,
   FolderShared,
   Send,
   Star,
@@ -607,7 +608,7 @@ const AddEditTransactionDialog = (props: Props) => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Euro />
+                      {useUserData().userSessionData?.currency == 'EUR' ? <EuroSymbol /> : <AttachMoney />}
                     </InputAdornment>
                   ),
                 }}
@@ -1042,7 +1043,7 @@ const SplitTransactionForm = ({
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Euro />
+                    {useUserData().userSessionData?.currency == 'EUR' ? <EuroSymbol /> : <AttachMoney />}
                   </InputAdornment>
                 ),
               }}

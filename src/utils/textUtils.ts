@@ -1,14 +1,15 @@
+import { useUserData } from '../providers/UserProvider.tsx';
+
 export const formatStringAsCurrency = (
   text: string,
-  currency: string = 'EUR',
 ) => {
-  return formatNumberAsCurrency(parseFloat(text), currency);
+  return formatNumberAsCurrency(parseFloat(text));
 };
 
 export const formatNumberAsCurrency = (
   text: number,
-  currency: string = 'EUR',
 ) => {
+  const currency = useUserData().userSessionData?.currency;
   const formatter = Intl.NumberFormat('en', {
     style: 'currency',
     currency: currency,

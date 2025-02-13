@@ -31,6 +31,7 @@ const Profile = () => {
   const { t } = useTranslation();
   const colorMode = useContext(ColorModeContext);
   const [language, setLanguage] = useState(i18next.resolvedLanguage || 'en');
+  const [currency, setCurrency] = useState(useUserData().userSessionData?.currency || 'EUR')
   const [currentTheme, setTheme] = useState<PaletteMode>(
     theme.palette.mode || 'dark',
   );
@@ -45,8 +46,16 @@ const Profile = () => {
     partiallyUpdateUserSessionData({ language });
   }, [language]);
 
+  useEffect(() => {
+    partiallyUpdateUserSessionData({ currency })
+  }, [currency]);
+
   function handleLanguageChange(event: React.ChangeEvent<HTMLInputElement>) {
     setLanguage(event.currentTarget.value);
+  }
+
+  function handleCurrencyChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setCurrency(event.currentTarget.value);
   }
 
   function handleThemeChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -97,6 +106,45 @@ const Profile = () => {
                     value="en"
                     control={<Radio />}
                     label="English"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </AccordionDetails>
+          </Accordion>
+          {/* Change currency */}
+          <Accordion sx={{ width: '100%', maxWidth: '700px' }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="currency-content"
+              id="currency-header"
+            >
+              <Grid container xs={12}>
+                <Grid xs={6} spacing={1}>
+                  <Typography>{t('profile.changeCurrency')}</Typography>
+                </Grid>
+                <Grid xs={6}>
+                  <Typography sx={{ color: 'text.secondary' }}>
+                    {t('profile.changeCurrencyStrapLine')}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FormControl>
+                <RadioGroup
+                  value={currency}
+                  name="radio-buttons-group"
+                  onChange={handleCurrencyChange}
+                >
+                  <FormControlLabel
+                    value="EUR"
+                    control={<Radio />}
+                    label="Euro (€)"
+                  />
+                  <FormControlLabel
+                    value="USD"
+                    control={<Radio />}
+                    label="USD ($)"
                   />
                 </RadioGroup>
               </FormControl>

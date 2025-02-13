@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useUserData } from '../../providers/UserProvider.tsx';
 import i18next from 'i18next';
 import { AxiosError } from 'axios';
+import Cookies from 'universal-cookie';
 
 const QUERY_KEY_SESSION_VALIDITY = 'session_validity';
 
@@ -27,7 +28,7 @@ export function useLogin() {
     const resp = await AuthServices.attemptLogin(data);
     const { accounts, ...sessionData } = resp.data;
     const language = i18next.resolvedLanguage;
-    updateUserSessionData({ ...sessionData, language });
+    updateUserSessionData({ ...sessionData, language, currency: new Cookies().get('currency') || 'EUR' });
     updateUserAccounts(accounts);
     return resp;
   }
