@@ -11,7 +11,7 @@ export function useGetTopSummaryValues() {
         current.type == AccountType.Meal ||
         current.type == AccountType.Wallet
       ) {
-        return result + current.balance;
+        return result + Number(current.balance);
       }
 
       return result;
@@ -19,7 +19,7 @@ export function useGetTopSummaryValues() {
   const investingSum =
     accounts?.reduce((result, current: Account) => {
       if (current.type == AccountType.Investing) {
-        return result + current.balance;
+        return result + Number(current.balance);
       }
 
       return result;
@@ -27,13 +27,13 @@ export function useGetTopSummaryValues() {
   const debtSum =
     accounts?.reduce((result, current: Account) => {
       if (current.type == AccountType.Credit) {
-        return result + current.balance;
+        return result + Number(current.balance);
       }
       return result;
     }, 0) ?? 0;
   const netWorthSum =
     accounts?.reduce((result, current: Account) => {
-      return result + current.balance;
+      return result + Number(current.balance);
     }, 0) ?? 0;
 
   return { operatingFundsSum, investingSum, debtSum, netWorthSum };

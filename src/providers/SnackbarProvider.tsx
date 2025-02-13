@@ -12,7 +12,7 @@ export enum AlertSeverity {
 interface SnackbarContextType {
   showSnackbar: (
     message: string,
-    serverity: AlertSeverity,
+    severity: AlertSeverity,
     duration?: number,
   ) => void;
 }
@@ -29,9 +29,9 @@ export const SnackbarProvider = ({ children }: { children: ReactNode }) => {
   const [severity, setSeverity] = useState<AlertColor>('info');
   const [duration, setDuration] = useState();
 
-  const showSnackbar = (message: string, serverity: AlertColor) => {
+  const showSnackbar = (message: string, severity: AlertColor) => {
     setMessage(message);
-    setSeverity(serverity);
+    setSeverity(severity);
     setDuration(duration);
     setOpen(true);
   };
