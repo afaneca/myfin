@@ -246,13 +246,17 @@ const BudgetList = () => {
       filterable: false,
       renderCell: (params) => (
         <Chip
-          color={getPercentageTextColor(params.value)}
-          label={
-            params.value == 0
-              ? '-%'
-              : formatNumberAsPercentage(params.value, true)
+          color={
+            params.value.highlighted
+              ? 'default'
+              : getPercentageTextColor(params.value.value)
           }
-          variant="filled"
+          label={
+            params.value.value == 0
+              ? '-%'
+              : formatNumberAsPercentage(params.value.value, true)
+          }
+          variant={params.value.highlighted ? 'filled' : 'outlined'}
           size="small"
         />
       ),
@@ -308,7 +312,10 @@ const BudgetList = () => {
       changePercentage: result.balance_change_percentage,
       highlighted: shouldRowBeHighlighted(result),
     },
-    savings: result.savings_rate_percentage,
+    savings: {
+      value: result.savings_rate_percentage,
+      highlighted: shouldRowBeHighlighted(result),
+    },
     actions: result,
   }));
 
