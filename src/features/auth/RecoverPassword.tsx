@@ -217,8 +217,8 @@ const RecoverPassword = () => {
           <img
             src={
               theme.palette.mode === 'dark'
-                ? '/res/logo_white_font_transparent_bg.png'
-                : '/res/logo_transparent_bg_v2.png'
+                ? '/res/logo_light_transparentbg.png'
+                : '/res/logo_dark_transparentbg.png'
             }
             width="60%"
             style={{ marginBottom: 20 }}

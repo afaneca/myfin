@@ -64,7 +64,16 @@ const Profile = () => {
         </Box>
         <Stack spacing={2} alignItems="flex-start">
           {/* Change language */}
-          <Accordion sx={{ width: '100%', maxWidth: '700px' }}>
+          <Accordion
+            sx={{
+              width: '100%',
+              maxWidth: '700px',
+              backgroundColor:
+                theme.palette.mode === 'dark'
+                  ? 'background.paper'
+                  : 'background.default',
+            }}
+          >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="language-content"
@@ -103,7 +112,16 @@ const Profile = () => {
             </AccordionDetails>
           </Accordion>
           {/* Change theme */}
-          <Accordion sx={{ width: '100%', maxWidth: '700px' }}>
+          <Accordion
+            sx={{
+              width: '100%',
+              maxWidth: '700px',
+              backgroundColor:
+                theme.palette.mode === 'dark'
+                  ? 'background.paper'
+                  : 'background.default',
+            }}
+          >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="theme-content"
@@ -142,7 +160,16 @@ const Profile = () => {
             </AccordionDetails>
           </Accordion>
           {/* Change password */}
-          <Accordion sx={{ width: '100%', maxWidth: '700px' }}>
+          <Accordion
+            sx={{
+              width: '100%',
+              maxWidth: '700px',
+              backgroundColor:
+                theme.palette.mode === 'dark'
+                  ? 'background.paper'
+                  : 'background.default',
+            }}
+          >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="password-content"
@@ -164,7 +191,16 @@ const Profile = () => {
             </AccordionDetails>
           </Accordion>
           {/* Utilities */}
-          <Accordion sx={{ width: '100%', maxWidth: '700px' }}>
+          <Accordion
+            sx={{
+              width: '100%',
+              maxWidth: '700px',
+              backgroundColor:
+                theme.palette.mode === 'dark'
+                  ? 'background.paper'
+                  : 'background.default',
+            }}
+          >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="tools-content"
@@ -186,7 +222,16 @@ const Profile = () => {
             </AccordionDetails>
           </Accordion>
           {/* Stats for nerds */}
-          <Accordion sx={{ width: '100%', maxWidth: '700px' }}>
+          <Accordion
+            sx={{
+              width: '100%',
+              maxWidth: '700px',
+              backgroundColor:
+                theme.palette.mode === 'dark'
+                  ? 'background.paper'
+                  : 'background.default',
+            }}
+          >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="stats-content"

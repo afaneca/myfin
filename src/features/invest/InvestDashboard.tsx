@@ -87,6 +87,10 @@ const TopPerformerCard = (props: {
         ':hover': {
           boxShadow: 20, // theme.shadows[20]
         },
+        backgroundColor:
+          theme.palette.mode === 'dark' || !props.isExpanded
+            ? 'background.paper'
+            : 'background.default',
       }}
     >
       <CardContent>
@@ -143,8 +147,17 @@ const SummaryCard = (props: {
   absoluteValue: string;
   percentageValue?: number;
 }) => {
+  const theme = useTheme();
   return (
-    <Card sx={{ height: 120 }}>
+    <Card
+      sx={{
+        height: 120,
+        backgroundColor:
+          theme.palette.mode === 'dark'
+            ? 'background.paper'
+            : 'background.default',
+      }}
+    >
       <CardContent
         sx={{
           height: '100%',
