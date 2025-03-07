@@ -49,7 +49,8 @@
     "theme": "Theme",
     "language": "Language",
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "currency": "Currency"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -143,7 +144,9 @@
     "profileManagement": "Profile Management",
     "strapLine": "Read and update your personal preferences",
     "changeLanguage": "Change Language",
-    "changeLanguageStrapLine": "Choose the language to be used in this platform",
+    "changeLanguageStrapLine": "Choose the language to be used on this platform",
+    "changeCurrency": "Change Currency",
+    "changeCurrencyStrapline": "Choose the currency to be used on this platform",
     "changeTheme": "Change Theme",
     "darkTheme": "Dark Theme",
     "lightTheme": "Light Theme",
@@ -157,6 +160,7 @@
     "version": "Version",
     "selectOneOfOptionsBelow": "Select one of the options below",
     "changeLanguageCTA": "Change Language",
+    "changeCurrencyCTA": "Change Currency",
     "changeThemeCTA": "Change Theme",
     "currentPassword": "Current password",
     "newPassword": "New password",

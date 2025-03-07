@@ -14,7 +14,6 @@ import {
   CallSplit,
   ControlPointDuplicate,
   Description,
-  Euro,
   FiberSmartRecord,
   Send,
   Undo,
@@ -51,6 +50,7 @@ import DialogActions from '@mui/material/DialogActions/DialogActions';
 import Chip from '@mui/material/Chip/Chip';
 import { TFunction } from 'i18next';
 import { NumericFormat } from 'react-number-format';
+import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
 
 type UiState = {
   isLoading: boolean;
@@ -435,7 +435,7 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Euro />
+                    <CurrencyIcon />
                   </InputAdornment>
                 ),
               }}
@@ -726,7 +726,7 @@ const SplitTransactionForm = (props: SplitTransactionFormProps) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Euro />
+                  <CurrencyIcon />
                 </InputAdornment>
               ),
             }}

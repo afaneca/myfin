@@ -27,11 +27,11 @@ import {
 import dayjs from 'dayjs';
 import { ImportTrxStep1Result } from './ImportTrxStep1.tsx';
 import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
-import { formatNumberAsCurrency } from '../../../utils/textUtils';
 import { useImportTransactionsStep2 } from '../../../services/trx/trxHooks.ts';
 import { inferTrxTypeByAttributes } from '../../../utils/transactionUtils.ts';
 import { TransactionType } from '../../../services/trx/trxServices.ts';
 import ImportTrxStep2AccountsCell from './ImportTrxStep2AccountsCell.tsx';
+import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 
 export type Props = {
   data: ImportTrxStep1Result;
@@ -104,7 +104,7 @@ const ImportTrxStep2 = (props: Props) => {
   const snackbar = useSnackbar();
 
   const importTrxStep2Request = useImportTransactionsStep2();
-
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactions, setTransactions] = useState<ImportedTrx[]>([]);
 
@@ -496,7 +496,7 @@ const ImportTrxStep2 = (props: Props) => {
             account: accounts.find(
               (acc) => props.data.selectedAccountId == acc.id,
             )?.label,
-            value: formatNumberAsCurrency(newAccountBalance),
+            value: formatNumberAsCurrency.invoke(newAccountBalance),
           })}
           positiveText={t('transactions.import')}
         />

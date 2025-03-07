@@ -49,7 +49,8 @@
     "theme": "Tema",
     "language": "Linguagem",
     "next": "Seguinte",
-    "previous": "Anterior"
+    "previous": "Anterior",
+    "currency": "Moeda"
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -144,6 +145,8 @@
     "strapLine": "Veja e atualize os seus dados e preferências pessoais",
     "changeLanguage": "Alterar Linguagem",
     "changeLanguageStrapLine": "Escolha a linguagem a ser utilizada na plataforma",
+    "changeCurrency": "Alterar Moeda",
+    "changeCurrencyStrapline": "Escolha a moeda a ser utilizada na plataforma",
     "changeTheme": "Alterar Tema",
     "darkTheme": "Tema Escuro",
     "lightTheme": "Tema Claro",
@@ -157,6 +160,7 @@
     "version": "Versão",
     "selectOneOfOptionsBelow": "Selecione uma das opções abaixo",
     "changeLanguageCTA": "Alterar Linguagem",
+    "changeCurrencyCTA": "Alterar Moeda",
     "changeThemeCTA": "Alterar Tema",
     "currentPassword": "Password atual",
     "newPassword": "Nova password",

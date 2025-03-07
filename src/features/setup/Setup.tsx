@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTE_AUTH } from '../../providers/RoutesProvider.tsx';
 import { useAuthStatus } from '../../services/auth/authHooks.ts';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
+import { CURRENCIES } from '../../consts/Currency.ts';
 
 const Setup = () => {
   const theme = useTheme();
@@ -34,6 +35,7 @@ const Setup = () => {
 
   const [usernameValue, setUsername] = useState('');
   const [emailValue, setEmail] = useState('');
+  const [currencyValue, setCurrency] = useState(CURRENCIES.EUR);
 
   const goToAuth = () => {
     navigate(ROUTE_AUTH);
@@ -57,7 +59,14 @@ const Setup = () => {
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <SetupStep0 onNext={() => setCurrentStep(1)} />;
+        return (
+          <SetupStep0
+            onNext={(currency) => {
+              setCurrency(currency);
+              setCurrentStep(1);
+            }}
+          />
+        );
       case 1:
         return (
           <SetupStep1
@@ -73,6 +82,7 @@ const Setup = () => {
           <SetupStep2
             username={usernameValue}
             email={emailValue}
+            currency={currencyValue}
             onNext={() => setCurrentStep(3)}
           />
         );

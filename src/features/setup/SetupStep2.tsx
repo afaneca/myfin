@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography/Typography';
 import Stack from '@mui/material/Stack/Stack';
 import TextField from '@mui/material/TextField/TextField';
 import { useInitSetup } from '../../services/auth/authHooks.ts';
+import { Currency } from '../../consts/Currency.ts';
 
 type UiState = {
   isLoading: boolean;
@@ -80,6 +81,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
 type Props = {
   username: string;
   email: string;
+  currency: Currency;
   onNext: () => void;
 };
 
@@ -132,6 +134,7 @@ const SetupStep2 = (props: Props) => {
       username: props.username,
       email: props.email,
       password: state.password1,
+      currency: props.currency.code,
     });
   };
 

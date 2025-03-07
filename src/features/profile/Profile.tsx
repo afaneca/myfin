@@ -25,6 +25,7 @@ import UserStatList from './UserStatList.tsx';
 import Utilities from './Utilities.tsx';
 import ChangePasswordForm from './ChangePasswordForm.tsx';
 import { useUserData } from '../../providers/UserProvider.tsx';
+import ChangeCurrencyForm from './ChangeCurrencyForm.tsx';
 
 const Profile = () => {
   const theme = useTheme();
@@ -109,6 +110,37 @@ const Profile = () => {
                   />
                 </RadioGroup>
               </FormControl>
+            </AccordionDetails>
+          </Accordion>
+          {/* Change currency */}
+          <Accordion
+            sx={{
+              width: '100%',
+              maxWidth: '700px',
+              backgroundColor:
+                theme.palette.mode === 'dark'
+                  ? 'background.paper'
+                  : 'background.default',
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="currency-content"
+              id="currency-header"
+            >
+              <Grid container xs={12}>
+                <Grid xs={6} spacing={1}>
+                  <Typography>{t('profile.changeCurrency')}</Typography>
+                </Grid>
+                <Grid xs={6}>
+                  <Typography sx={{ color: 'text.secondary' }}>
+                    {t('profile.changeCurrencyStrapline')}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails>
+              <ChangeCurrencyForm />
             </AccordionDetails>
           </Accordion>
           {/* Change theme */}

@@ -1,4 +1,5 @@
 import { axios } from '../../data/axios.ts';
+import { CurrencyCode } from '../../consts/Currency.ts';
 
 export enum AccountStatus {
   Active = 'Ativa',
@@ -33,6 +34,7 @@ export type UserSession = {
   sessionkey: string;
   last_update_timestamp: number;
   language: string;
+  currency: CurrencyCode;
 };
 
 export type AttemptLoginDto = {
@@ -92,8 +94,15 @@ const initSetup = (data: {
   username: string;
   email: string;
   password: string;
+  currency: string;
 }) => {
   return axios.post('/setup/init', data);
+};
+
+const changeCurrency = (currency: string) => {
+  return axios.put('/users/changeCurrency', {
+    currency,
+  });
 };
 
 export default {
@@ -104,4 +113,5 @@ export default {
   sendRecoveryOtp,
   setRecoveryNewPassword,
   initSetup,
+  changeCurrency,
 };

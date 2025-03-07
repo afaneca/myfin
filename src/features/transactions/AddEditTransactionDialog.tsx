@@ -31,7 +31,6 @@ import {
   CallMerge,
   CallSplit,
   Description,
-  Euro,
   FolderShared,
   Send,
   Star,
@@ -61,6 +60,7 @@ import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip/Chip';
 import { Account } from '../../services/auth/authServices.ts';
 import { NumericFormat } from 'react-number-format';
+import CurrencyIcon from '../../components/CurrencyIcon.tsx';
 
 interface Props {
   isOpen: boolean;
@@ -607,7 +607,7 @@ const AddEditTransactionDialog = (props: Props) => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Euro />
+                      <CurrencyIcon />
                     </InputAdornment>
                   ),
                 }}
@@ -1042,7 +1042,7 @@ const SplitTransactionForm = ({
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Euro />
+                    <CurrencyIcon />
                   </InputAdornment>
                 ),
               }}

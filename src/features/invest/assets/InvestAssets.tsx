@@ -14,7 +14,6 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { GridColDef } from '@mui/x-data-grid';
 import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
-import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import Button from '@mui/material/Button/Button';
 import {
   AddCircleOutline,
@@ -34,6 +33,7 @@ import GenericConfirmationDialog from '../../../components/GenericConfirmationDi
 import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
 import AddEditInvestAssetDialog from './AddEditInvestAssetDialog.tsx';
 import PercentageChip from '../../../components/PercentageChip.tsx';
+import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 
 type UiState = {
   assets?: InvestAsset[];
@@ -186,6 +186,7 @@ const InvestAssets = () => {
   const getAssetsRequest = useGetAssets();
   const removeAssetRequest = useRemoveAsset();
   const getLocalizedAssetTypeText = useGetLocalizedAssetType();
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
   const [state, dispatch] = useReducer(reduceState, null, createInitialState);
 
   // Loading
@@ -283,11 +284,11 @@ const InvestAssets = () => {
       renderCell: (params) => (
         <Stack>
           <Typography variant="body1" color={theme.palette.text.primary}>
-            {formatNumberAsCurrency(params.value.invested)}
+            {formatNumberAsCurrency.invoke(params.value.invested)}
           </Typography>
           <Typography variant="caption" color={theme.palette.text.secondary}>
             {t('investments.perUnitPrice', {
-              price: formatNumberAsCurrency(params.value.pricePerUnit),
+              price: formatNumberAsCurrency.invoke(params.value.pricePerUnit),
             })}
           </Typography>
         </Stack>
@@ -299,7 +300,9 @@ const InvestAssets = () => {
       minWidth: 120,
       editable: false,
       sortable: false,
-      renderCell: (params) => <p>{formatNumberAsCurrency(params.value)}</p>,
+      renderCell: (params) => (
+        <p>{formatNumberAsCurrency.invoke(params.value)}</p>
+      ),
     },
     {
       field: 'currentValue',
@@ -309,7 +312,7 @@ const InvestAssets = () => {
       sortable: false,
       renderCell: (params) => (
         <p>
-          {formatNumberAsCurrency(params.value.current_value)}
+          {formatNumberAsCurrency.invoke(params.value.current_value)}
           {
             <Tooltip title={t('investments.updateValue')}>
               <IconButton
@@ -344,7 +347,7 @@ const InvestAssets = () => {
             flexDirection: 'column',
           }}
         >
-          {formatNumberAsCurrency(params.value.absolute)} <br />
+          {formatNumberAsCurrency.invoke(params.value.absolute)} <br />
           <PercentageChip
             percentage={params.value.percentage}
             hideIcon

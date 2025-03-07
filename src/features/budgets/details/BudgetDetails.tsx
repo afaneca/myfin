@@ -3,10 +3,7 @@ import PageHeader from '../../../components/PageHeader.tsx';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
-import {
-  addLeadingZero,
-  formatNumberAsCurrency,
-} from '../../../utils/textUtils.ts';
+import { addLeadingZero } from '../../../utils/textUtils.ts';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper/Paper';
 import { Box, List, ListItem, useTheme } from '@mui/material';
@@ -47,6 +44,7 @@ import { debounce } from 'lodash';
 import BudgetDescription from './BudgetDescription.tsx';
 import Stack from '@mui/material/Stack/Stack';
 import { getMonthsFullName } from '../../../utils/dateUtils.ts';
+import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 
 type RelatedBudget = {
   id: bigint;
@@ -74,7 +72,7 @@ const BudgetDetails = () => {
     year: dayjs().year(),
   });
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
   const [isOpen, setOpen] = useState(false);
   const [isNew, setNew] = useState(true);
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
@@ -518,7 +516,7 @@ const BudgetDetails = () => {
             </Grid>
             <Grid xs={12} md={6} xsOffset="auto">
               <Chip
-                label={`${t('budgetDetails.essentialExpenses')}: ${formatNumberAsCurrency(getBudgetRequest?.data?.debit_essential_trx_total || 0)}`}
+                label={`${t('budgetDetails.essentialExpenses')}: ${formatNumberAsCurrency.invoke(getBudgetRequest?.data?.debit_essential_trx_total || 0)}`}
                 variant="filled"
                 size="medium"
                 color="default"
