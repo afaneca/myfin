@@ -1,6 +1,6 @@
 import { Step, StepButton, Stepper, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageHeader from '../../components/PageHeader.tsx';
 import Box from '@mui/material/Box/Box';
 import Paper from '@mui/material/Paper/Paper';
@@ -11,12 +11,16 @@ import SetupStep2 from './SetupStep2.tsx';
 import SetupStep3 from './SetupStep3.tsx';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_AUTH } from '../../providers/RoutesProvider.tsx';
+import { useAuthStatus } from '../../services/auth/authHooks.ts';
+import { useLoading } from '../../providers/LoadingProvider.tsx';
+import { CURRENCIES } from '../../consts/Currency.ts';
 
 const Setup = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const loader = useLoading();
   const navigate = useNavigate();
-
+  const authStatus = useAuthStatus(true);
   const steps = [
     t('setup.step0Label'),
     t('setup.step1Label'),
@@ -31,15 +35,38 @@ const Setup = () => {
 
   const [usernameValue, setUsername] = useState('');
   const [emailValue, setEmail] = useState('');
+  const [currencyValue, setCurrency] = useState(CURRENCIES.EUR);
 
   const goToAuth = () => {
     navigate(ROUTE_AUTH);
   };
 
+  useEffect(() => {
+    if (!authStatus.isPending && !authStatus.needsSetup) {
+      goToAuth();
+    }
+  }, [authStatus]);
+
+  useEffect(() => {
+    // Show loading indicator when isLoading is true
+    if (authStatus.isPending) {
+      loader.showLoading();
+    } else {
+      loader.hideLoading();
+    }
+  }, [authStatus.isPending]);
+
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <SetupStep0 onNext={() => setCurrentStep(1)} />;
+        return (
+          <SetupStep0
+            onNext={(currency) => {
+              setCurrency(currency);
+              setCurrentStep(1);
+            }}
+          />
+        );
       case 1:
         return (
           <SetupStep1
@@ -55,6 +82,7 @@ const Setup = () => {
           <SetupStep2
             username={usernameValue}
             email={emailValue}
+            currency={currencyValue}
             onNext={() => setCurrentStep(3)}
           />
         );
@@ -79,8 +107,8 @@ const Setup = () => {
           <img
             src={
               theme.palette.mode === 'dark'
-                ? '/res/logo_white_font_transparent_bg.png'
-                : '/res/logo_transparent_bg_v2.png'
+                ? '/res/logo_light_transparentbg.png'
+                : '/res/logo_dark_transparentbg.png'
             }
             width="60%"
             style={{ marginBottom: 20 }}

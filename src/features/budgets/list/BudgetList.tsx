@@ -30,10 +30,7 @@ import {
   getCurrentYear,
   getMonthsFullName,
 } from '../../../utils/dateUtils.ts';
-import {
-  formatNumberAsCurrency,
-  formatNumberAsPercentage,
-} from '../../../utils/textUtils.ts';
+import { formatNumberAsPercentage } from '../../../utils/textUtils.ts';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import Button from '@mui/material/Button/Button';
 import TextField from '@mui/material/TextField/TextField';
@@ -50,6 +47,7 @@ import {
 } from '../../../providers/RoutesProvider.tsx';
 import { debounce } from 'lodash';
 import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
+import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 
 const BudgetList = () => {
   const theme = useTheme();
@@ -74,6 +72,7 @@ const BudgetList = () => {
   const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
 
   const removeBudgetRequest = useRemoveBudget();
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
 
   // Loading
   useEffect(() => {
@@ -184,7 +183,9 @@ const BudgetList = () => {
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (params) => <>{formatNumberAsCurrency(params.value)}</>,
+      renderCell: (params) => (
+        <>{formatNumberAsCurrency.invoke(params.value)}</>
+      ),
     },
     {
       field: 'income',
@@ -193,7 +194,9 @@ const BudgetList = () => {
       minWidth: 100,
       editable: false,
       sortable: false,
-      renderCell: (params) => <>{formatNumberAsCurrency(params.value)}</>,
+      renderCell: (params) => (
+        <>{formatNumberAsCurrency.invoke(params.value)}</>
+      ),
     },
     {
       field: 'balance',
@@ -206,7 +209,7 @@ const BudgetList = () => {
       renderCell: (params) => (
         <Stack pt={2} pb={2}>
           <Stack direction="row" alignItems="center" gap={0.5}>
-            <strong>{formatNumberAsCurrency(params.value.value)}</strong>
+            <strong>{formatNumberAsCurrency.invoke(params.value.value)}</strong>
           </Stack>
           <Stack direction="row" alignItems="center" gap={0.5} mt={0.5}>
             <Chip
@@ -246,13 +249,17 @@ const BudgetList = () => {
       filterable: false,
       renderCell: (params) => (
         <Chip
-          color={getPercentageTextColor(params.value)}
-          label={
-            params.value == 0
-              ? '-%'
-              : formatNumberAsPercentage(params.value, true)
+          color={
+            params.value.highlighted
+              ? 'default'
+              : getPercentageTextColor(params.value.value)
           }
-          variant="filled"
+          label={
+            params.value.value == 0
+              ? '-%'
+              : formatNumberAsPercentage(params.value.value, true)
+          }
+          variant={params.value.highlighted ? 'filled' : 'outlined'}
           size="small"
         />
       ),
@@ -308,7 +315,10 @@ const BudgetList = () => {
       changePercentage: result.balance_change_percentage,
       highlighted: shouldRowBeHighlighted(result),
     },
-    savings: result.savings_rate_percentage,
+    savings: {
+      value: result.savings_rate_percentage,
+      highlighted: shouldRowBeHighlighted(result),
+    },
     actions: result,
   }));
 

@@ -1,7 +1,7 @@
 import Paper from '@mui/material/Paper/Paper';
-import { formatNumberAsCurrency } from '../utils/textUtils.ts';
 import { LineSvgProps, ResponsiveLine, Serie } from '@nivo/line';
 import { useMediaQuery, useTheme } from '@mui/material';
+import { useFormatNumberAsCurrency } from '../utils/textHooks.ts';
 
 type Props = {
   chartData: Serie[];
@@ -11,6 +11,7 @@ type Props = {
 const MyFinLineChart = (props: Props) => {
   const theme = useTheme();
   const matchesMdScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
 
   return (
     <ResponsiveLine
@@ -60,7 +61,9 @@ const MyFinLineChart = (props: Props) => {
           }}
         >
           {String(item.point.data.x)}:{' '}
-          <strong>{formatNumberAsCurrency(Number(item.point.data.y))}</strong>
+          <strong>
+            {formatNumberAsCurrency.invoke(Number(item.point.data.y))}
+          </strong>
         </Paper>
       )}
       theme={theme.nivo}

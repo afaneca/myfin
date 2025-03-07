@@ -19,11 +19,11 @@ import {
   getFullYearFromUnixTimestamp,
   getMonthShortStringFromUnixTimestamp,
 } from '../utils/dateUtils.ts';
-import { formatNumberAsCurrency } from '../utils/textUtils.ts';
 import { useGetTransactionsForCategoryInMonth } from '../services/trx/trxHooks.ts';
 import { useEffect, useState } from 'react';
 import { useLoading } from '../providers/LoadingProvider.tsx';
 import { AlertSeverity, useSnackbar } from '../providers/SnackbarProvider.tsx';
+import { useFormatNumberAsCurrency } from '../utils/textHooks.ts';
 
 type Props = {
   isOpen: boolean;
@@ -40,6 +40,7 @@ function TransactionsTableDialog(props: Props) {
   const loader = useLoading();
   const snackbar = useSnackbar();
   const [trxList, setTrxList] = useState<Transaction[]>([]);
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
   const getTransactionsForCategoryInMonthRequest =
     useGetTransactionsForCategoryInMonth({
       month: props.month,
@@ -118,7 +119,9 @@ function TransactionsTableDialog(props: Props) {
                       ? item.account_from_name
                       : item.account_to_name}
                   </TableCell>
-                  <TableCell>{formatNumberAsCurrency(item.amount)}</TableCell>
+                  <TableCell>
+                    {formatNumberAsCurrency.invoke(item.amount)}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

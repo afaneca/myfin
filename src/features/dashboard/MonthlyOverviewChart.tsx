@@ -1,7 +1,6 @@
 import { useTheme } from '@mui/material';
 import Stack from '@mui/material/Stack/Stack';
 import { ResponsivePie } from '@nivo/pie';
-import { formatNumberAsCurrency } from '../../utils/textUtils.ts';
 import {
   generateDefsForGradients,
   generateFillArrayForGradients,
@@ -10,6 +9,7 @@ import Paper from '@mui/material/Paper/Paper';
 import { useEffect, useState } from 'react';
 import { ColorGradient } from '../../consts';
 import EmptyView from '../../components/EmptyView.tsx';
+import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
 
 export interface ChartDataItem {
   id: string;
@@ -27,6 +27,7 @@ interface Props {
 
 const MonthlyOverviewChart = ({ data }: Props) => {
   const theme = useTheme();
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
   const [chartData, setChartData] = useState<InternalChartDataItem[]>([]);
 
   const getColorGradientForCurrentAmount = (
@@ -73,7 +74,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
           borderWidth={0}
           enableArcLinkLabels={false}
           arcLabel={'id'}
-          valueFormat={(value) => formatNumberAsCurrency(value)}
+          valueFormat={(value) => formatNumberAsCurrency.invoke(value)}
           defs={generateDefsForGradients()}
           // @ts-expect-error could assume different structural identities
           fill={generateFillArrayForGradients()}

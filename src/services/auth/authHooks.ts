@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useUserData } from '../../providers/UserProvider.tsx';
 import i18next from 'i18next';
 import { AxiosError } from 'axios';
+import { CurrencyCode } from '../../consts/Currency.ts';
 
 const QUERY_KEY_SESSION_VALIDITY = 'session_validity';
 
@@ -123,6 +124,7 @@ export function useInitSetup() {
     username: string;
     email: string;
     password: string;
+    currency: CurrencyCode;
   }) {
     const resp = await AuthServices.initSetup(data);
     return resp;
@@ -130,5 +132,16 @@ export function useInitSetup() {
 
   return useMutation({
     mutationFn: initSetup,
+  });
+}
+
+export function useChangeCurrency() {
+  async function changeCurrency(currency: CurrencyCode) {
+    const resp = await AuthServices.changeCurrency(currency);
+    return resp.data;
+  }
+
+  return useMutation({
+    mutationFn: changeCurrency,
   });
 }

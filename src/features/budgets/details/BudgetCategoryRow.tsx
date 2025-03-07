@@ -6,7 +6,6 @@ import {
   CardActions,
   Chip,
   Divider,
-  InputAdornment,
   LinearProgress,
   linearProgressClasses,
   ListItemText,
@@ -16,14 +15,16 @@ import {
   Typography,
 } from '@mui/material';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
-import { Euro } from '@mui/icons-material';
 import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
 import { ColorGradient } from '../../../consts';
 import { getMonthsFullName } from '../../../utils/dateUtils.ts';
-import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import Container from '@mui/material/Container/Container';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
+import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
+import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
 
 type Props = {
   isOpen: boolean;
@@ -45,93 +46,96 @@ interface TooltipContentProps {
 
 // Separate Tooltip Content for memoization
 const TooltipContent = memo(
-  ({ category, isDebit, t, month, year }: TooltipContentProps) => (
-    <>
-      <Container>
-        <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
-          <strong>
-            <em>{category.description || '-'}</em>
-          </strong>
-        </Typography>
-        {category.exclude_from_budgets === 1 && (
-          <Chip
-            label={t('categories.excludedFromBudgets')}
-            sx={{ mt: 1, display: 'flex' }}
-          />
-        )}
-      </Container>
-      <Divider sx={{ m: 2 }} />
-      <Grid container xs={12} spacing={2}>
-        <Grid xs={6}>
-          <Typography variant="caption">
-            {getMonthsFullName(month)} {year - 1}
+  ({ category, isDebit, t, month, year }: TooltipContentProps) => {
+    const formatNumberAsCurrency = useFormatNumberAsCurrency();
+    return (
+      <>
+        <Container>
+          <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+            <strong>
+              <em>{category.description || '-'}</em>
+            </strong>
           </Typography>
+          {category.exclude_from_budgets === 1 && (
+            <Chip
+              label={t('categories.excludedFromBudgets')}
+              sx={{ mt: 1, display: 'flex' }}
+            />
+          )}
+        </Container>
+        <Divider sx={{ m: 2 }} />
+        <Grid container xs={12} spacing={2}>
+          <Grid xs={6}>
+            <Typography variant="caption">
+              {getMonthsFullName(month)} {year - 1}
+            </Typography>
+          </Grid>
+          <Grid xs={6} sx={{ textAlign: 'right' }}>
+            <Chip
+              label={formatNumberAsCurrency.invoke(
+                isDebit
+                  ? category.avg_same_month_previous_year_debit
+                  : category.avg_same_month_previous_year_credit,
+              )}
+            />
+          </Grid>
         </Grid>
-        <Grid xs={6} sx={{ textAlign: 'right' }}>
-          <Chip
-            label={formatNumberAsCurrency(
-              isDebit
-                ? category.avg_same_month_previous_year_debit
-                : category.avg_same_month_previous_year_credit,
-            )}
-          />
+        <Grid container xs={12} spacing={2}>
+          <Grid xs={6}>
+            <Typography variant="caption">
+              {t('budgetDetails.previousMonth')}
+            </Typography>
+          </Grid>
+          <Grid xs={6} sx={{ textAlign: 'right' }}>
+            <Chip
+              label={formatNumberAsCurrency.invoke(
+                isDebit
+                  ? category.avg_previous_month_debit
+                  : category.avg_previous_month_credit,
+              )}
+            />
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid container xs={12} spacing={2}>
-        <Grid xs={6}>
-          <Typography variant="caption">
-            {t('budgetDetails.previousMonth')}
-          </Typography>
+        <Grid container xs={12} spacing={2}>
+          <Grid xs={6}>
+            <Typography variant="caption">
+              {t('budgetDetails.12MonthAvg')}
+            </Typography>
+          </Grid>
+          <Grid xs={6} sx={{ textAlign: 'right' }}>
+            <Chip
+              label={formatNumberAsCurrency.invoke(
+                isDebit
+                  ? category.avg_12_months_debit
+                  : category.avg_12_months_credit,
+              )}
+            />
+          </Grid>
         </Grid>
-        <Grid xs={6} sx={{ textAlign: 'right' }}>
-          <Chip
-            label={formatNumberAsCurrency(
-              isDebit
-                ? category.avg_previous_month_debit
-                : category.avg_previous_month_credit,
-            )}
-          />
+        <Grid container xs={12} spacing={2}>
+          <Grid xs={6}>
+            <Typography variant="caption">
+              {t('budgetDetails.globalAverage')}
+            </Typography>
+          </Grid>
+          <Grid xs={6} sx={{ textAlign: 'right' }}>
+            <Chip
+              label={formatNumberAsCurrency.invoke(
+                isDebit
+                  ? category.avg_lifetime_debit
+                  : category.avg_lifetime_credit,
+              )}
+            />
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid container xs={12} spacing={2}>
-        <Grid xs={6}>
-          <Typography variant="caption">
-            {t('budgetDetails.12MonthAvg')}
-          </Typography>
-        </Grid>
-        <Grid xs={6} sx={{ textAlign: 'right' }}>
-          <Chip
-            label={formatNumberAsCurrency(
-              isDebit
-                ? category.avg_12_months_debit
-                : category.avg_12_months_credit,
-            )}
-          />
-        </Grid>
-      </Grid>
-      <Grid container xs={12} spacing={2}>
-        <Grid xs={6}>
-          <Typography variant="caption">
-            {t('budgetDetails.globalAverage')}
-          </Typography>
-        </Grid>
-        <Grid xs={6} sx={{ textAlign: 'right' }}>
-          <Chip
-            label={formatNumberAsCurrency(
-              isDebit
-                ? category.avg_lifetime_debit
-                : category.avg_lifetime_credit,
-            )}
-          />
-        </Grid>
-      </Grid>
-      <Card variant="elevation" sx={{ width: '100%', mt: 2 }}>
-        <center>
-          <TooltipBottomCard category={category} isDebit={isDebit} />
-        </center>
-      </Card>
-    </>
-  ),
+        <Card variant="elevation" sx={{ width: '100%', mt: 2 }}>
+          <center>
+            <TooltipBottomCard category={category} isDebit={isDebit} />
+          </center>
+        </Card>
+      </>
+    );
+  },
 );
 TooltipContent.displayName = 'TooltipContent';
 
@@ -313,7 +317,7 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Euro />
+                  <CurrencyIcon />
                 </InputAdornment>
               ),
             }}
@@ -342,7 +346,7 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Euro />
+                  <CurrencyIcon />
                 </InputAdornment>
               ),
             }}
