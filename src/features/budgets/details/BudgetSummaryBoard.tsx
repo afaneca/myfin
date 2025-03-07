@@ -2,11 +2,11 @@ import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { ColorGradient } from '../../../consts';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import Stack from '@mui/material/Stack/Stack';
-import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import { Card } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography/Typography';
 import Chip from '@mui/material/Chip/Chip';
+import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 
 type Props = {
   isOpen: boolean;
@@ -46,6 +46,7 @@ const TopSummaryLabelValue = ({
 
 const BudgetSummaryBoard = (props: Props) => {
   const { t } = useTranslation();
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
 
   return (
     <Card
@@ -72,7 +73,7 @@ const BudgetSummaryBoard = (props: Props) => {
                     ? 'budgetDetails.estimatedExpenses'
                     : 'budgetDetails.actualExpenses',
                 )}
-                value={formatNumberAsCurrency(
+                value={formatNumberAsCurrency.invoke(
                   props.isOpen
                     ? props.calculatedBalances.plannedExpenses
                     : props.calculatedBalances.currentExpenses,
@@ -82,7 +83,7 @@ const BudgetSummaryBoard = (props: Props) => {
             <Stack>
               <TopSummaryLabelValue
                 label={t('budgetDetails.initialBalance')}
-                value={formatNumberAsCurrency(props.initialBalance)}
+                value={formatNumberAsCurrency.invoke(props.initialBalance)}
               />
             </Stack>
           </Stack>
@@ -96,7 +97,7 @@ const BudgetSummaryBoard = (props: Props) => {
                     ? 'budgetDetails.estimatedBalance'
                     : 'budgetDetails.actualBalance',
                 )}
-                value={formatNumberAsCurrency(
+                value={formatNumberAsCurrency.invoke(
                   props.isOpen
                     ? props.calculatedBalances.plannedBalance
                     : props.calculatedBalances.currentBalance,
@@ -124,7 +125,7 @@ const BudgetSummaryBoard = (props: Props) => {
                     ? 'budgetDetails.estimatedIncome'
                     : 'budgetDetails.actualIncome',
                 )}
-                value={formatNumberAsCurrency(
+                value={formatNumberAsCurrency.invoke(
                   props.isOpen
                     ? props.calculatedBalances.plannedIncome
                     : props.calculatedBalances.currentIncome,
@@ -134,7 +135,7 @@ const BudgetSummaryBoard = (props: Props) => {
             <Stack>
               <TopSummaryLabelValue
                 label={t('budgetDetails.finalBalance')}
-                value={formatNumberAsCurrency(
+                value={formatNumberAsCurrency.invoke(
                   props.initialBalance +
                     (props.isOpen
                       ? props.calculatedBalances.plannedBalance

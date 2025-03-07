@@ -20,7 +20,6 @@ import {
   AccountType,
 } from '../../services/auth/authServices.ts';
 import { GridColDef } from '@mui/x-data-grid';
-import { formatStringAsCurrency } from '../../utils/textUtils.ts';
 import IconButton from '@mui/material/IconButton';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
 import Stack from '@mui/material/Stack/Stack';
@@ -35,6 +34,7 @@ import TextField from '@mui/material/TextField/TextField';
 import { debounce } from 'lodash';
 import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
 import Typography from '@mui/material/Typography/Typography';
+import { useFormatStringAsCurrency } from '../../utils/textHooks.ts';
 
 const Accounts = () => {
   const theme = useTheme();
@@ -54,7 +54,7 @@ const Accounts = () => {
   );
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isAddEditAccountDialogOpen, setAddEditDialogOpen] = useState(false);
-
+  const formatStringAsCurrency = useFormatStringAsCurrency();
   const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
 
   const filteredAccounts = useMemo(() => {
@@ -199,7 +199,10 @@ const Accounts = () => {
       editable: false,
       sortable: false,
       renderCell: (params) => (
-        <Chip variant="outlined" label={formatStringAsCurrency(params.value)} />
+        <Chip
+          variant="outlined"
+          label={formatStringAsCurrency.invoke(params.value)}
+        />
       ),
     },
     {

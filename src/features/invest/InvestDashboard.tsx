@@ -29,6 +29,7 @@ import { ColorGradient } from '../../consts';
 import Stack from '@mui/material/Stack/Stack';
 import { useGetGradientColorForAssetType } from './InvestUtilHooks.ts';
 import PercentageChip from '../../components/PercentageChip.tsx';
+import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
 
 type UiState = {
   currentValue: number;
@@ -69,6 +70,7 @@ const TopPerformerCard = (props: {
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
   const borderRadius = theme.shape.borderRadius;
   const cardStyle = {
     borderRadius:
@@ -132,7 +134,7 @@ const TopPerformerCard = (props: {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Chip
               variant="outlined"
-              label={formatNumberAsCurrency(props.value)}
+              label={formatNumberAsCurrency.invoke(props.value)}
               color={props.value < 0 ? 'warning' : 'success'}
             />
           </Box>

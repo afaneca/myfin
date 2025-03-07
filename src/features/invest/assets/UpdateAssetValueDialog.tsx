@@ -7,7 +7,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import React, { useEffect, useReducer } from 'react';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import Button from '@mui/material/Button/Button';
-import { Euro, Send, Undo } from '@mui/icons-material';
+import { Send, Undo } from '@mui/icons-material';
 import { useUpdateAssetValue } from '../../../services/invest/investHooks.ts';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -16,6 +16,7 @@ import TextField from '@mui/material/TextField/TextField';
 import DialogActions from '@mui/material/DialogActions/DialogActions';
 import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
 import { NumericFormat } from 'react-number-format';
+import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
 
 type UiState = {
   isLoading: boolean;
@@ -199,7 +200,7 @@ const UpdateAssetValueDialog = (props: Props) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Euro />
+                  <CurrencyIcon />
                 </InputAdornment>
               ),
             }}

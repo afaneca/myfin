@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material';
 import { ResponsiveSankey } from '@nivo/sankey';
-import { formatNumberAsCurrency } from '../utils/textUtils.ts';
+import { useFormatNumberAsCurrency } from '../utils/textHooks.ts';
 
 export type SankeyNode = {
   id: string;
@@ -24,6 +24,7 @@ type Props = {
 
 const MyFinSankeyDiagram = (props: Props) => {
   const theme = useTheme();
+  const formatNumberAsCurrency = useFormatNumberAsCurrency();
 
   return (
     <ResponsiveSankey
@@ -43,7 +44,7 @@ const MyFinSankeyDiagram = (props: Props) => {
       labelPosition="inside"
       labelOrientation="horizontal"
       labelPadding={16}
-      valueFormat={(value) => formatNumberAsCurrency(value)}
+      valueFormat={(value) => formatNumberAsCurrency.invoke(value)}
       linkBlendMode={theme.palette.mode === 'dark' ? 'lighten' : 'multiply'}
       labelTextColor={{
         from: 'color',
