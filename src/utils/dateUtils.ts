@@ -2,9 +2,11 @@ import i18n from '../i18n';
 import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(customParseFormat);
 
 export const getLocalizedDatesObj = () => {
   return {
@@ -97,9 +99,94 @@ export const isCurrentMonthAndYear = (month: number, year: number) => {
 
 export const convertDateStringToUnixTimestamp = (
   dateStr: string,
-  format: string = 'DD/MM/YYYY',
+  format?: string,
 ): number => {
-  return dayjs.tz(dateStr + ' 09:00', format + ' HH:mm', 'UTC').unix();
+  if (!format) {
+    const possibleFormats = [
+      // Standard numeric formats
+      'DD/MM/YYYY',
+      'DD/MMM/YYYY',
+      'MM/DD/YYYY',
+      'YYYY-MM-DD',
+      'YYYY/MM/DD',
+      'DD-MM-YYYY',
+      'MM-DD-YYYY',
+      'DD.MM.YYYY',
+      'MM.DD.YYYY',
+      'YYYY.MM.DD',
+      'YYYY MM DD',
+      'DD MM YYYY',
+      'MM DD YYYY',
+
+      // Short year variations
+      'DD/MM/YY',
+      'MM/DD/YY',
+      'YY-MM-DD',
+      'YY/MM/DD',
+      'DD-MM-YY',
+      'MM-DD-YY',
+      'DD.MM.YY',
+      'MM.DD.YY',
+      'YY.MM.DD',
+      'YY MM DD',
+      'DD MM YY',
+      'MM DD YY',
+
+      // Month name formats (abbreviated)
+      'DD-MMM-YY',
+      'DD-MMM-YYYY',
+      'MMM DD, YYYY',
+      'MMM DD YYYY',
+      'YYYY-MMM-DD',
+      'DD MMM YY',
+      'DD MMM YYYY',
+      'MMM-DD-YY',
+      'MMM-DD-YYYY',
+
+      // Month name formats (full)
+      'DD-MMMM-YY',
+      'DD-MMMM-YYYY',
+      'MMMM DD, YYYY',
+      'MMMM DD YYYY',
+      'YYYY-MMMM-DD',
+      'DD MMMM YY',
+      'DD MMMM YYYY',
+      'MMMM-DD-YY',
+      'MMMM-DD-YYYY',
+
+      // Time variants (24-hour and 12-hour)
+      'DD/MM/YYYY HH:mm',
+      'MM/DD/YYYY hh:mm A',
+      'YYYY-MM-DD HH:mm:ss',
+      'YYYY/MM/DD hh:mm A',
+      'DD-MMM-YYYY HH:mm:ss',
+      'MMM DD, YYYY HH:mm A',
+      'DD MMMM YYYY HH:mm:ss',
+
+      // ISO 8601 and common variations
+      'YYYY-MM-DDTHH:mm:ssZ',
+      'YYYY-MM-DDTHH:mm:ss.SSSZ',
+      'YYYY/MM/DD HH:mm:ss',
+      'YYYY-MM-DD HH:mm:ss.SSS',
+    ];
+
+    // Detect format
+    const detectedFormat = possibleFormats.find((f) =>
+      dayjs(dateStr, f, true).isValid(),
+    );
+    if (!detectedFormat) {
+      throw new Error(`Could not determine date format for: ${dateStr}`);
+    }
+    format = detectedFormat;
+  }
+
+  // Check if time already exists in format
+  const hasTime = /[HhmsA]/.test(format);
+  const fullFormat = hasTime ? format : `${format} HH:mm`;
+
+  return dayjs
+    .tz(hasTime ? dateStr : `${dateStr} 09:00`, fullFormat, 'UTC')
+    .unix();
 };
 
 export const convertUnixTimestampToDateString = (
