@@ -36,6 +36,118 @@ import {
   convertStringToFloat,
 } from '../../../utils/textUtils.ts';
 import { convertDateStringToUnixTimestamp } from '../../../utils/dateUtils.ts';
+import * as fuzzball from 'fuzzball';
+
+const IMPORT_TRX_FIELD_HEADER_VARIATIONS = {
+  DATE: [
+    'date',
+    'data',
+    'data da operação',
+    'data de operação',
+    'data do movimento',
+    'data de movimento',
+    'data valor',
+    'data operação',
+  ],
+  DESCRIPTION: [
+    'description',
+    'descrição',
+    'descrição da operação',
+    'descrição de operação',
+    'descrição do movimento',
+    'descrição de movimento',
+    'movimento',
+  ],
+  AMOUNT: [
+    'amount',
+    'montante',
+    'montante',
+    'valor',
+    'montante (eur)',
+    'montante(eur)',
+    'montante(€)',
+    'montante (€)',
+    'montante( eur )',
+  ],
+  CREDIT: ['credit', 'crédito', 'receita'],
+  DEBIT: ['debit', 'débito', 'despesa'],
+  TYPE: [
+    'type',
+    'tipo',
+    'tipo de operação',
+    'tipo de movimento',
+    'tipo de transação',
+  ],
+};
+
+enum FIELD_MAPPING {
+  IGNORE = 'ignore',
+  DATE = 'date',
+  DESCRIPTION = 'description',
+  AMOUNT = 'amount',
+  CREDIT = 'credit',
+  DEBIT = 'debit',
+  TYPE = 'type',
+}
+
+// Track the fields that have been already matched
+const usedFields = new Set<FIELD_MAPPING>();
+
+const guessColumnMapping = (row: string): FIELD_MAPPING => {
+  const normalizedRow = row.toLowerCase().trim();
+
+  const fieldMappings: {
+    [key in keyof typeof IMPORT_TRX_FIELD_HEADER_VARIATIONS]: FIELD_MAPPING;
+  } = {
+    DATE: FIELD_MAPPING.DATE,
+    CREDIT: FIELD_MAPPING.CREDIT,
+    DEBIT: FIELD_MAPPING.DEBIT,
+    TYPE: FIELD_MAPPING.TYPE,
+    AMOUNT: FIELD_MAPPING.AMOUNT,
+    DESCRIPTION: FIELD_MAPPING.DESCRIPTION,
+  };
+
+  let bestMatch: { field?: FIELD_MAPPING; score: number } = {
+    field: undefined,
+    score: 0,
+  };
+
+  // Iterate through all field headers
+  Object.entries(IMPORT_TRX_FIELD_HEADER_VARIATIONS).forEach(
+    ([key, variations]) => {
+      const matches = fuzzball.extract(
+        normalizedRow,
+        variations.map((v) => v.toLowerCase()),
+        { scorer: fuzzball.ratio },
+      );
+
+      if (matches.length > 0) {
+        const [, score] = matches[0]; // Best match is the first one
+
+        // Get the corresponding field mapping for the current key
+        const currentField = fieldMappings[key as keyof typeof fieldMappings];
+
+        // Ensure we don't choose the same field more than once
+        if (
+          score > bestMatch.score &&
+          score >= 75 &&
+          !usedFields.has(currentField)
+        ) {
+          bestMatch = { field: currentField, score };
+        }
+      }
+    },
+  );
+
+  // If we have found a valid match, mark it as used and return the result
+  if (bestMatch.field) {
+    usedFields.add(bestMatch.field);
+    return bestMatch.field;
+  }
+
+  // If no valid match is found or the score is below threshold, return the ignore field
+  return FIELD_MAPPING.IGNORE;
+};
 
 export type Props = {
   clipboardText: string;
@@ -65,64 +177,12 @@ const ImportTrxStep1 = (props: Props) => {
     Record<string, FIELD_MAPPING>
   >({});
 
-  const IMPORT_TRX_FIELD_HEADER_VARIATIONS = {
-    DATE: [
-      'date',
-      'data',
-      'data da operação',
-      'data de operação',
-      'data do movimento',
-      'data de movimento',
-      'data valor',
-      'data operação',
-    ],
-    DESCRIPTION: [
-      'description',
-      'descrição',
-      'descrição da operação',
-      'descrição de operação',
-      'descrição do movimento',
-      'descrição de movimento',
-      'movimento',
-    ],
-    AMOUNT: [
-      'amount',
-      'montante',
-      'montante',
-      'valor',
-      'montante (eur)',
-      'montante(eur)',
-      'montante(€)',
-      'montante (€)',
-      'montante( eur )',
-    ],
-    CREDIT: ['credit', 'crédito', 'receita'],
-    DEBIT: ['debit', 'débito', 'despesa'],
-    TYPE: [
-      'type',
-      'tipo',
-      'tipo de operação',
-      'tipo de movimento',
-      'tipo de transação',
-    ],
-  };
-
   const handleMappingChange = (columnIndex: number, value: FIELD_MAPPING) => {
     setColumnMappings((prev) => ({
       ...prev,
       [`column-${columnIndex}`]: value,
     }));
   };
-
-  enum FIELD_MAPPING {
-    IGNORE = 'ignore',
-    DATE = 'date',
-    DESCRIPTION = 'description',
-    AMOUNT = 'amount',
-    CREDIT = 'credit',
-    DEBIT = 'debit',
-    TYPE = 'type',
-  }
 
   // Loading
   useEffect(() => {
@@ -179,39 +239,9 @@ const ImportTrxStep1 = (props: Props) => {
     return null;
   }
 
-  const guessColumnMapping = (row: string): FIELD_MAPPING => {
-    if (IMPORT_TRX_FIELD_HEADER_VARIATIONS.DATE.includes(row.toLowerCase())) {
-      return FIELD_MAPPING.DATE;
-    }
-
-    if (IMPORT_TRX_FIELD_HEADER_VARIATIONS.CREDIT.includes(row.toLowerCase())) {
-      return FIELD_MAPPING.CREDIT;
-    }
-
-    if (IMPORT_TRX_FIELD_HEADER_VARIATIONS.DEBIT.includes(row.toLowerCase())) {
-      return FIELD_MAPPING.DEBIT;
-    }
-
-    if (IMPORT_TRX_FIELD_HEADER_VARIATIONS.TYPE.includes(row.toLowerCase())) {
-      return FIELD_MAPPING.TYPE;
-    }
-
-    if (IMPORT_TRX_FIELD_HEADER_VARIATIONS.AMOUNT.includes(row.toLowerCase())) {
-      return FIELD_MAPPING.AMOUNT;
-    }
-
-    if (
-      IMPORT_TRX_FIELD_HEADER_VARIATIONS.DESCRIPTION.includes(row.toLowerCase())
-    ) {
-      return FIELD_MAPPING.DESCRIPTION;
-    }
-
-    return FIELD_MAPPING.IGNORE;
-  };
-
   const tryToPrefillHeaders = (firstRow: string[]) => {
     const initialMappings: Record<string, FIELD_MAPPING> = {};
-
+    usedFields.clear();
     firstRow.map((row, index) => {
       initialMappings[`column-${index}`] = guessColumnMapping(row);
     });
