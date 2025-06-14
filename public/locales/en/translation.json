@@ -180,7 +180,15 @@
     "autoPopulateDemoData": "Automatically populate with mock data",
     "autoPopulateDemoDataDescription": "Will reset all user data and re-populate with mock data",
     "demoDataConfirmationTitle": "Are you sure you want to feed your account with demo data?",
-    "demoDataConfirmationSubtitle": "All your current data will be lost!"
+    "demoDataConfirmationSubtitle": "All your current data will be lost!",
+    "importDataTitle":  "Import data",
+    "importDataDescription": "Restore your user's data from a backup file",
+    "exportDataTitle": "Export data",
+    "exportDataDescription": "Export your data in json format. The file can later be used to restore your data",
+    "importDataConfirmationTitle": "Beware!",
+    "importDataConfirmationSubtitle": "The data you are about to import will overwrite the records currently associated with your user account. To avoid accidental data loss, we recommend exporting your current data before proceeding with the import.",
+    "exportDataConfirmationTitle": "Beware!",
+    "exportDataConfirmationSubtitle": "An unencrypted JSON file will be generated containing all records associated with your user account."
   },
   "transactions": {
     "transactions": "Transactions",

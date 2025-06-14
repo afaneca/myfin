@@ -1,5 +1,7 @@
 import { Account, AccountType } from '../auth/authServices.ts';
 import { useUserData } from '../../providers/UserProvider.tsx';
+import UserServices from '../user/userServices.ts';
+import { useMutation } from '@tanstack/react-query';
 
 export function useGetTopSummaryValues() {
   const { userAccounts: accounts } = useUserData();
@@ -52,4 +54,15 @@ export function useGetInvestingAccounts() {
         acc.type == AccountType.Investing || acc.type == AccountType.Savings,
     ) ?? []
   );
+}
+
+export function useGetBackupData() {
+  async function getBackupData() {
+    const data = await UserServices.getBackupData();
+    return data.data;
+  }
+
+  return useMutation({
+    mutationFn: getBackupData,
+  });
 }
