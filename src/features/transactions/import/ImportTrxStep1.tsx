@@ -288,7 +288,7 @@ const ImportTrxStep1 = (props: Props) => {
               {t('common.ignore')}
             </MenuItem>
             <MenuItem value={FIELD_MAPPING.DATE}>
-              {t('common.date')} (DD-MM-YYYY)
+              {t('common.date')}
             </MenuItem>
             <MenuItem value={FIELD_MAPPING.DESCRIPTION}>
               {t('common.description')}

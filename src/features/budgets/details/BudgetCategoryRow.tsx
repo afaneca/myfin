@@ -358,7 +358,7 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
             decimalScale={2}
             fixedDecimalScale
             thousandSeparator
-            defaultValue={
+            value={
               isDebit
                 ? category.current_amount_debit
                 : category.current_amount_credit
