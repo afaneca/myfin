@@ -9,7 +9,7 @@ services:
       MYSQL_USER: myfin
       MYSQL_PASSWORD: myfinpassword
     ports:
-      - "3006:3006"
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
