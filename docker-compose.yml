@@ -2,11 +2,14 @@ services:
   db:
     image: mysql:8.4
     restart: always
+    container_name: db
     environment:
       MYSQL_ROOT_PASSWORD: myfinrootpassword
       MYSQL_DATABASE: myfin
       MYSQL_USER: myfin
       MYSQL_PASSWORD: myfinpassword
+    ports:
+      - "3006:3006"
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -19,7 +22,7 @@ services:
     ports:
       - "8081:3001"
     environment:
-    # Database Configuration
+      # Database Configuration
       - DB_NAME=myfin
       - DB_USER=myfin
       - DB_PW=myfinpassword
@@ -34,9 +37,9 @@ services:
       - SMTP_FROM=
       # Application Configuration
       - PORT=3001
-      - LOGGING=true
+      - LOGGING=false
       - BYPASS_SESSION_CHECK=false
-      - ENABLE_USER_SIGNUP=true
+      - ENABLE_USER_SIGNUP=false
     depends_on:
       db:
         condition: service_healthy
