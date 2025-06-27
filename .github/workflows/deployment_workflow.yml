@@ -2,7 +2,7 @@ name: CI Deployment to AFaneca Server
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, changes_to_deployment_workflow ]
   workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
