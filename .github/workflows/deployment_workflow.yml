@@ -29,7 +29,9 @@ jobs:
     # Step 4: Build the project
     - name: Build project
       run: npm run build
-    
+      env:
+        VITE_MYFIN_BASE_API_URL: ${{ secrets.VITE_MYFIN_BASE_API_URL }}
+        
     # Step 5: Deploy built files to server
     - name: Deploy to server
       uses: appleboy/scp-action@v0.1.7
@@ -41,4 +43,3 @@ jobs:
         source: "dist/"
         target: ${{ secrets.MYFIN_WEB_PUBLIC_DIRECTORY_PATH }}
         overwrite: true
-        
