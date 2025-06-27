@@ -41,3 +41,4 @@ jobs:
         source: "dist/"
         target: ${{ secrets.MYFIN_WEB_PUBLIC_DIRECTORY_PATH }}
         overwrite: true
+        
