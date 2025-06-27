@@ -38,6 +38,6 @@ jobs:
         username: ${{ secrets.MYFIN_SSH_USERNAME }}
         key: ${{ secrets.MYFIN_SECRET }}
         port: ${{ secrets.MYFIN_SSH_PORT }}
-        source: "dist/*"
+        source: "dist/"
         target: ${{ secrets.MYFIN_WEB_PUBLIC_DIRECTORY_PATH }}
-        strip_components: 1
+        overwrite: true
