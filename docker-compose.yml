@@ -17,9 +17,9 @@ services:
     container_name: myfin-api
     restart: unless-stopped
     ports:
-      - "8081:3001"
+      - "3001:3001"
     environment:
-    # Database Configuration
+      # Database Configuration
       - DB_NAME=myfin
       - DB_USER=myfin
       - DB_PW=myfinpassword
@@ -46,12 +46,12 @@ services:
     container_name: myfin-frontend
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "8181:80"
     depends_on:
       myfin-api:
         condition: service_healthy
     environment:
-      - VITE_MYFIN_BASE_API_URL=http://localhost:8081
+      - VITE_MYFIN_BASE_API_URL=https://myfin.domain.tld:3001
 
 volumes:
   db_data:

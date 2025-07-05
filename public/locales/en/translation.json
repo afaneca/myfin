@@ -52,6 +52,11 @@
     "previous": "Previous",
     "currency": "Currency"
   },
+  "dropZone": {
+    "uploadText": "Drag & drop your file here or click to select a file",
+    "uploadFailure":  "An error occurred reading your file. Please try again!",
+    "uploadIncompatibleVersionError": "The backup file you uploaded is not compatible with your current API version"
+  },
   "sidebar": {
     "dashboard": "Dashboard",
     "transactions": "Transactions",

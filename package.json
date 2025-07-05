@@ -38,6 +38,7 @@
     "lodash.debounce": "^4.0.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.3.8",
     "react-i18next": "^14.1.0",
     "react-number-format": "^5.4.2",
     "react-pro-sidebar": "^1.1.0",

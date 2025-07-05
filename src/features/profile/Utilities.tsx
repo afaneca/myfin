@@ -28,11 +28,14 @@ import { useLogout } from '../../services/auth/authHooks.ts';
 import { useGetBackupData } from '../../services/user/userHooks.ts';
 import { downloadJsonFile } from '../../utils/fileUtils.ts';
 import dayjs from 'dayjs';
+import RestoreUserDialog from './RestoreUserDialog.tsx';
+import { useUserData } from '../../providers/UserProvider.tsx';
 
 type UiState = {
   isLoading: boolean;
   isDemoDataConfirmationDialogOpen: boolean;
   isBackupUserConfirmationDialogOpen: boolean;
+  isRestoreUserDialogOpen: boolean;
 };
 
 const enum StateActionType {
@@ -42,6 +45,7 @@ const enum StateActionType {
   ConfirmationDialogClosed,
   PopulateDemoDataClicked,
   BackupUserClicked,
+  RestoreUserClicked,
 }
 
 type StateAction =
@@ -50,13 +54,15 @@ type StateAction =
   | { type: StateActionType.PopulateDemoDataClicked }
   | { type: StateActionType.RequestSuccess }
   | { type: StateActionType.RequestFailure }
-  | { type: StateActionType.BackupUserClicked };
+  | { type: StateActionType.BackupUserClicked }
+  | { type: StateActionType.RestoreUserClicked };
 
 const createInitialState = (): UiState => {
   return {
     isLoading: false,
     isDemoDataConfirmationDialogOpen: false,
     isBackupUserConfirmationDialogOpen: false,
+    isRestoreUserDialogOpen: false,
   };
 };
 
@@ -82,6 +88,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         isDemoDataConfirmationDialogOpen: false,
         isBackupUserConfirmationDialogOpen: false,
+        isRestoreUserDialogOpen: false,
       };
     case StateActionType.PopulateDemoDataClicked:
       return {
@@ -93,11 +100,16 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         isBackupUserConfirmationDialogOpen: true,
       };
+    case StateActionType.RestoreUserClicked:
+      return {
+        ...prevState,
+        isRestoreUserDialogOpen: true,
+      };
   }
 };
 
-const generateBackupFileName = () => {
-  return `myfin_${dayjs().format('YYYY_MM_DD_HH_mm_ss')}.json`;
+const generateBackupFileName = (username: string) => {
+  return `myfin_${username}_${dayjs().format('YYYY_MM_DD_HH_mm_ss')}.json`;
 };
 
 const Utilities = () => {
@@ -111,6 +123,7 @@ const Utilities = () => {
   const autoPopulateWithDemoData = useAutoPopulateWithDemoData();
   const backupUserData = useGetBackupData();
   const logout = useLogout();
+  const { userSessionData } = useUserData();
 
   // Loading
   useEffect(() => {
@@ -164,12 +177,23 @@ const Utilities = () => {
         t('common.taskSuccessfullyCompleted'),
         AlertSeverity.SUCCESS,
       );
-      downloadJsonFile(backupUserData.data, generateBackupFileName());
+      downloadJsonFile(
+        backupUserData.data,
+        generateBackupFileName(userSessionData?.username ?? ''),
+      );
     }
   }, [backupUserData.isSuccess]);
 
   return (
     <>
+      {state.isRestoreUserDialogOpen && (
+        <RestoreUserDialog
+          isOpen={state.isRestoreUserDialogOpen}
+          onClose={() =>
+            dispatch({ type: StateActionType.ConfirmationDialogClosed })
+          }
+        />
+      )}
       {state.isBackupUserConfirmationDialogOpen && (
         <GenericConfirmationDialog
           isOpen={state.isBackupUserConfirmationDialogOpen}
@@ -263,7 +287,7 @@ const Utilities = () => {
         <ListItem disablePadding>
           <ListItemButton
             onClick={(_) => {
-              dispatch({ type: StateActionType.PopulateDemoDataClicked });
+              dispatch({ type: StateActionType.RestoreUserClicked });
             }}
           >
             <ListItemIcon>

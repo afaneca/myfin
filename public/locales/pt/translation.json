@@ -52,6 +52,11 @@
     "previous": "Anterior",
     "currency": "Moeda"
   },
+  "dropZone": {
+    "uploadText": "Arraste o seu ficheiro para aqui ou clique para selecionar um ficheiro",
+    "uploadFailure":  "Ocorreu um erro na leitura do ficheiro carregado. Por favor, tente novamente",
+    "uploadIncompatibleVersionError": "O ficheiro que carregou não é compatível com a sua versão atual da API"
+  },
   "sidebar": {
     "dashboard": "Dashboard",
     "transactions": "Transações",
