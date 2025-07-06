@@ -1,5 +1,12 @@
 import { Account, AccountType } from '../auth/authServices.ts';
 import { useUserData } from '../../providers/UserProvider.tsx';
+import UserServices from '../user/userServices.ts';
+import { useMutation } from '@tanstack/react-query';
+import {
+  BusinessLogicError,
+  CustomApiError,
+} from '../../data/customApiError.ts';
+import axios from 'axios';
 
 export function useGetTopSummaryValues() {
   const { userAccounts: accounts } = useUserData();
@@ -52,4 +59,41 @@ export function useGetInvestingAccounts() {
         acc.type == AccountType.Investing || acc.type == AccountType.Savings,
     ) ?? []
   );
+}
+
+export function useGetBackupData() {
+  async function getBackupData() {
+    const data = await UserServices.getBackupData();
+    return data.data;
+  }
+
+  return useMutation({
+    mutationFn: getBackupData,
+  });
+}
+
+export function useRestoreUserData() {
+  async function restoreUserData(userData: string) {
+    try {
+      const data = await UserServices.restoreUserData(userData);
+      return data.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorData = error.response.data as CustomApiError;
+
+        if (errorData.rationale && errorData.message) {
+          throw new BusinessLogicError(
+            errorData.rationale,
+            errorData.message,
+            error,
+          );
+        }
+      }
+      throw error;
+    }
+  }
+
+  return useMutation({
+    mutationFn: restoreUserData,
+  });
 }

@@ -1,4 +1,5 @@
 import {
+  Divider,
   List,
   ListItem,
   ListItemButton,
@@ -12,17 +13,29 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useReducer } from 'react';
-import { RocketLaunch } from '@mui/icons-material';
+import {
+  CalculateOutlined,
+  CloudDownloadOutlined,
+  Restore,
+  RocketLaunchOutlined,
+} from '@mui/icons-material';
 import {
   useAutoPopulateWithDemoData,
   useRecalculateAllBalances,
 } from '../../services/account/accountHooks.ts';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import { useLogout } from '../../services/auth/authHooks.ts';
+import { useGetBackupData } from '../../services/user/userHooks.ts';
+import { downloadJsonFile } from '../../utils/fileUtils.ts';
+import dayjs from 'dayjs';
+import RestoreUserDialog from './RestoreUserDialog.tsx';
+import { useUserData } from '../../providers/UserProvider.tsx';
 
 type UiState = {
   isLoading: boolean;
-  isConfirmationDialogOpen: boolean;
+  isDemoDataConfirmationDialogOpen: boolean;
+  isBackupUserConfirmationDialogOpen: boolean;
+  isRestoreUserDialogOpen: boolean;
 };
 
 const enum StateActionType {
@@ -31,6 +44,8 @@ const enum StateActionType {
   RequestFailure,
   ConfirmationDialogClosed,
   PopulateDemoDataClicked,
+  BackupUserClicked,
+  RestoreUserClicked,
 }
 
 type StateAction =
@@ -38,12 +53,16 @@ type StateAction =
   | { type: StateActionType.ConfirmationDialogClosed }
   | { type: StateActionType.PopulateDemoDataClicked }
   | { type: StateActionType.RequestSuccess }
-  | { type: StateActionType.RequestFailure };
+  | { type: StateActionType.RequestFailure }
+  | { type: StateActionType.BackupUserClicked }
+  | { type: StateActionType.RestoreUserClicked };
 
 const createInitialState = (): UiState => {
   return {
     isLoading: false,
-    isConfirmationDialogOpen: false,
+    isDemoDataConfirmationDialogOpen: false,
+    isBackupUserConfirmationDialogOpen: false,
+    isRestoreUserDialogOpen: false,
   };
 };
 
@@ -67,14 +86,30 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
     case StateActionType.ConfirmationDialogClosed:
       return {
         ...prevState,
-        isConfirmationDialogOpen: false,
+        isDemoDataConfirmationDialogOpen: false,
+        isBackupUserConfirmationDialogOpen: false,
+        isRestoreUserDialogOpen: false,
       };
     case StateActionType.PopulateDemoDataClicked:
       return {
         ...prevState,
-        isConfirmationDialogOpen: true,
+        isDemoDataConfirmationDialogOpen: true,
+      };
+    case StateActionType.BackupUserClicked:
+      return {
+        ...prevState,
+        isBackupUserConfirmationDialogOpen: true,
+      };
+    case StateActionType.RestoreUserClicked:
+      return {
+        ...prevState,
+        isRestoreUserDialogOpen: true,
       };
   }
+};
+
+const generateBackupFileName = (username: string) => {
+  return `myfin_${username}_${dayjs().format('YYYY_MM_DD_HH_mm_ss')}.json`;
 };
 
 const Utilities = () => {
@@ -86,7 +121,9 @@ const Utilities = () => {
 
   const recalculateAllBalancesRequest = useRecalculateAllBalances();
   const autoPopulateWithDemoData = useAutoPopulateWithDemoData();
+  const backupUserData = useGetBackupData();
   const logout = useLogout();
+  const { userSessionData } = useUserData();
 
   // Loading
   useEffect(() => {
@@ -133,11 +170,53 @@ const Utilities = () => {
     }
   }, [autoPopulateWithDemoData.data]);
 
+  useEffect(() => {
+    if (backupUserData.isSuccess && backupUserData.data) {
+      dispatch({ type: StateActionType.RequestSuccess });
+      snackbar.showSnackbar(
+        t('common.taskSuccessfullyCompleted'),
+        AlertSeverity.SUCCESS,
+      );
+      downloadJsonFile(
+        backupUserData.data,
+        generateBackupFileName(userSessionData?.username ?? ''),
+      );
+    }
+  }, [backupUserData.isSuccess]);
+
   return (
     <>
-      {state.isConfirmationDialogOpen && (
+      {state.isRestoreUserDialogOpen && (
+        <RestoreUserDialog
+          isOpen={state.isRestoreUserDialogOpen}
+          onClose={() =>
+            dispatch({ type: StateActionType.ConfirmationDialogClosed })
+          }
+        />
+      )}
+      {state.isBackupUserConfirmationDialogOpen && (
         <GenericConfirmationDialog
-          isOpen={state.isConfirmationDialogOpen}
+          isOpen={state.isBackupUserConfirmationDialogOpen}
+          onClose={() =>
+            dispatch({ type: StateActionType.ConfirmationDialogClosed })
+          }
+          onPositiveClick={() => {
+            dispatch({ type: StateActionType.ConfirmationDialogClosed });
+            dispatch({ type: StateActionType.RequestStarted });
+            backupUserData.mutate();
+          }}
+          onNegativeClick={() =>
+            dispatch({ type: StateActionType.ConfirmationDialogClosed })
+          }
+          titleText={t('profile.exportDataConfirmationTitle')}
+          descriptionText={t('profile.exportDataConfirmationSubtitle')}
+          positiveText={t('common.confirm')}
+          alert={''}
+        />
+      )}
+      {state.isDemoDataConfirmationDialogOpen && (
+        <GenericConfirmationDialog
+          isOpen={state.isDemoDataConfirmationDialogOpen}
           onClose={() =>
             dispatch({ type: StateActionType.ConfirmationDialogClosed })
           }
@@ -163,7 +242,7 @@ const Utilities = () => {
             }}
           >
             <ListItemIcon>
-              <RocketLaunch />
+              <CalculateOutlined />
             </ListItemIcon>
             <ListItemText
               primary={t('profile.recalculateBalancesOfAllAccounts')}
@@ -181,11 +260,42 @@ const Utilities = () => {
             }}
           >
             <ListItemIcon>
-              <RocketLaunch />
+              <RocketLaunchOutlined />
             </ListItemIcon>
             <ListItemText
               primary={t('profile.autoPopulateDemoData')}
               secondary={t('profile.autoPopulateDemoDataDescription')}
+            />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={(_) => {
+              dispatch({ type: StateActionType.BackupUserClicked });
+            }}
+          >
+            <ListItemIcon>
+              <CloudDownloadOutlined />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('profile.exportDataTitle')}
+              secondary={t('profile.exportDataDescription')}
+            />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={(_) => {
+              dispatch({ type: StateActionType.RestoreUserClicked });
+            }}
+          >
+            <ListItemIcon>
+              <Restore />
+            </ListItemIcon>
+            <ListItemText
+              primary={t('profile.importDataTitle')}
+              secondary={t('profile.importDataDescription')}
             />
           </ListItemButton>
         </ListItem>

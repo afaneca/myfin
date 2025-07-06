@@ -23,7 +23,7 @@ const GenericConfirmationDialog = (props: Props) => {
       onNegativeClick={props.onNegativeClick}
       title={props.titleText}
       description={props.descriptionText}
-      alert={props.alert || t('transactions.deleteTransactionModalAlert')}
+      alert={props.alert ?? t('transactions.deleteTransactionModalAlert')}
       positiveText={props.positiveText}
       negativeText={props.negativeText ?? t('common.cancel')}
     />

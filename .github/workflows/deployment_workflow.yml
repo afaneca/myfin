@@ -3,21 +3,43 @@ name: CI Deployment to AFaneca Server
 on:
   push:
     branches: [ master ]
+  workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
-  job_one:
-    name: Deploy
+  build-and-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Connecting to server
-      uses: appleboy/ssh-action@master
+    
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    # Step 2: Setup Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: npm ci
+    
+    # Step 4: Build the project
+    - name: Build project
+      run: npm run build
+      env:
+        VITE_MYFIN_BASE_API_URL: ${{ secrets.VITE_MYFIN_BASE_API_URL }}
+        
+    # Step 5: Deploy built files to server
+    - name: Deploy to server
+      uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.MYFIN_SSH_HOST }}
         username: ${{ secrets.MYFIN_SSH_USERNAME }}
         key: ${{ secrets.MYFIN_SECRET }}
         port: ${{ secrets.MYFIN_SSH_PORT }}
-        script: |
-          ./update_myfin_web_react.sh
-        
-
-
+        source: "dist/"
+        target: ${{ secrets.MYFIN_WEB_PUBLIC_DIRECTORY_PATH }}
+        overwrite: true
