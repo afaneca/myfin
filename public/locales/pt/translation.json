@@ -52,6 +52,11 @@
     "previous": "Anterior",
     "currency": "Moeda"
   },
+  "dropZone": {
+    "uploadText": "Arraste o seu ficheiro para aqui ou clique para selecionar um ficheiro",
+    "uploadFailure":  "Ocorreu um erro na leitura do ficheiro carregado. Por favor, tente novamente",
+    "uploadIncompatibleVersionError": "O ficheiro que carregou não é compatível com a sua versão atual da API"
+  },
   "sidebar": {
     "dashboard": "Dashboard",
     "transactions": "Transações",
@@ -180,7 +185,15 @@
     "autoPopulateDemoData": "Popular automaticamente com dados demonstrativos",
     "autoPopulateDemoDataDescription": "Vai repôr todos os dados do utilizador e repopulá-lo com dados demonstrativos",
     "demoDataConfirmationTitle": "Tem a certeza de que pretende popular com dados de demonstração?",
-    "demoDataConfirmationSubtitle": "Todos os dados atuais serão perdidos!"
+    "demoDataConfirmationSubtitle": "Todos os dados atuais serão perdidos!",
+    "importDataTitle":  "Importar dados",
+    "importDataDescription": "Restaure os dados do seu utilizador a partir de um ficheiro de backup",
+    "exportDataTitle": "Exportar dados",
+    "exportDataDescription": "Exporte os dados do seu utilizador em formato json. O ficheiro pode posteriormente ser utilizado para restaurar os seus dados",
+    "importDataConfirmationTitle": "Atenção!",
+    "importDataConfirmationSubtitle": "Os dados que está prestes a importar irão substituir os registos atualmente associados à sua conta de utilizador. Para evitar a perda acidental de dados, recomendamos que exporte os dados atuais antes de prosseguir com a importação.",
+    "exportDataConfirmationTitle": "Atenção!",
+    "exportDataConfirmationSubtitle": "Será gerado um ficheiro JSON não encriptado contendo todos os registos associados à sua conta de utilizador."
   },
   "transactions": {
     "transactions": "Transações",

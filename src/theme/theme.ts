@@ -3,7 +3,7 @@ import { Theme as NivoTheme } from '@nivo/core';
 import { generateNivoTheme } from '../utils/nivoUtils.ts';
 
 // Extend MUI's Theme object to include Nivo theme settings
-interface MyFinTheme extends ThemeOptions {
+export interface MyFinTheme extends ThemeOptions {
   nivo: NivoTheme;
 }
 
