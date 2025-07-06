@@ -24,7 +24,7 @@ version-resolver:
   default: patch
 template: |
   > [!NOTE] 
-  > This release requires version 3.0.x or higher of [myfin-api](https://github.com/afaneca/myfin-api/).
+  > This release requires version 3.1.x or higher of [myfin-api](https://github.com/afaneca/myfin-api/).
   
   ## Changes
 
