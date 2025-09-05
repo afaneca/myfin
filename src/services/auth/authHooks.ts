@@ -28,7 +28,8 @@ export function useLogin() {
     const resp = await AuthServices.attemptLogin(data);
     const { accounts, ...sessionData } = resp.data;
     const language = i18next.resolvedLanguage;
-    updateUserSessionData({ ...sessionData, language });
+    const apiVersion = resp.headers['api-version'];
+    updateUserSessionData({ ...sessionData, language, apiVersion });
     updateUserAccounts(accounts);
     return resp;
   }

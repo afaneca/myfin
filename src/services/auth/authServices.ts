@@ -35,6 +35,7 @@ export type UserSession = {
   last_update_timestamp: number;
   language: string;
   currency: CurrencyCode;
+  apiVersion: string;
 };
 
 export type AttemptLoginDto = {
