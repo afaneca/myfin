@@ -2,6 +2,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Divider,
   Link,
   PaletteMode,
   useTheme,
@@ -35,7 +36,7 @@ const Profile = () => {
   const [currentTheme, setTheme] = useState<PaletteMode>(
     theme.palette.mode || 'dark',
   );
-  const { partiallyUpdateUserSessionData } = useUserData();
+  const { partiallyUpdateUserSessionData, userSessionData } = useUserData();
 
   useEffect(() => {
     colorMode.setColorMode(currentTheme);
@@ -287,16 +288,32 @@ const Profile = () => {
         </Stack>
       </Paper>
       <Box display="flex" justifyContent="center">
-        <Typography variant="caption">
-          {t('profile.version')}:{' '}
-          <Link
-            href="https://github.com/afaneca/myfin/releases"
-            target="_blank"
-            rel="noopener"
-          >
-            {import.meta.env.PACKAGE_VERSION}
-          </Link>
-        </Typography>
+        <Stack
+          direction="row"
+          spacing={1}
+          divider={<Divider orientation="vertical" flexItem />}
+        >
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            {t('profile.version')}:{' '}
+            <Link
+              href="https://github.com/afaneca/myfin/releases"
+              target="_blank"
+              rel="noopener"
+            >
+              {import.meta.env.PACKAGE_VERSION}
+            </Link>
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            API:{' '}
+            <Link
+              href="https://github.com/afaneca/myfin-api/releases"
+              target="_blank"
+              rel="noopener"
+            >
+              {userSessionData?.apiVersion || '-'}
+            </Link>
+          </Typography>
+        </Stack>
       </Box>
     </>
   );
