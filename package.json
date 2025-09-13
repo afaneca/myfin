@@ -35,8 +35,8 @@
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-http-backend": "^3.0.2",
     "lodash.debounce": "^4.0.8",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-dropzone": "^14.3.8",
     "react-i18next": "^15.7.3",
     "react-number-format": "^5.4.2",
@@ -49,8 +49,8 @@
   "devDependencies": {
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.11.17",
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
@@ -66,5 +66,11 @@
     "prettier": "^3.2.5",
     "typescript": "^5.9.2",
     "vite": "^7.1.5"
+  },
+  "overrides": {
+    "@emoji-mart/react": {
+      "react": "19.1.1",
+      "react-dom": "19.1.1"
+    }
   }
 }
