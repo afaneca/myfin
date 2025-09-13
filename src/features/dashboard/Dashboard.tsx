@@ -26,7 +26,6 @@ import {
   MonthByMonthDataItem,
   MonthExpensesDistributionDataResponse,
 } from '../../services/stats/statServices.ts';
-import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import Typography from '@mui/material/Typography/Typography';
 import { AccessTime } from '@mui/icons-material';
@@ -36,6 +35,7 @@ import {
   useGetInvestingAccounts,
 } from '../../services/user/userHooks.ts';
 import { Account } from '../../services/auth/authServices.ts';
+import { DatePicker } from '@mui/x-date-pickers';
 
 const Dashboard = () => {
   const MONTH_BY_MONTH_MAX_MONTHS = 6;

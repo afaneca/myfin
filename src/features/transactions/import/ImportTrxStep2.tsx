@@ -19,7 +19,7 @@ import { GridColDef } from '@mui/x-data-grid';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { IdLabelPair } from '../AddEditTransactionDialog.tsx';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker/DatePicker';
+import { DatePicker } from '@mui/x-date-pickers';
 import {
   convertDayJsToUnixTimestamp,
   convertUnixTimestampToDayJs,
