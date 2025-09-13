@@ -2,10 +2,10 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import { GridColDef } from '@mui/x-data-grid';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import { Search } from '@mui/icons-material';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import { useTranslation } from 'react-i18next';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
 import { Box } from '@mui/material';
@@ -73,10 +73,12 @@ const YearByYearSearchableList = (props: Props) => {
   return (
     <Grid container>
       <Grid
-        xs={12}
-        md={6}
-        xsOffset="auto"
         sx={{ display: 'flex', justifyContent: 'flex-end' }}
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+        offset="auto"
       >
         <TextField
           id="search"
@@ -94,7 +96,7 @@ const YearByYearSearchableList = (props: Props) => {
           }}
         />
       </Grid>
-      <Grid xs={12} mt={2}>
+      <Grid mt={2} size={12}>
         <MyFinStaticTable
           isRefetching={props.isLoading}
           rows={rows}

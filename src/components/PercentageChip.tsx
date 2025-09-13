@@ -1,4 +1,4 @@
-import Chip from '@mui/material/Chip/Chip';
+import Chip from '@mui/material/Chip';
 import { formatNumberAsPercentage } from '../utils/textUtils.ts';
 import { ArrowOutward } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';

@@ -12,10 +12,10 @@ import { useAddRule, useEditRule } from '../../services/rule/ruleHooks.tsx';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent/DialogContent';
+import DialogContent from '@mui/material/DialogContent';
 import { Send, Undo } from '@mui/icons-material';
-import DialogActions from '@mui/material/DialogActions/DialogActions';
-import Button from '@mui/material/Button/Button';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 import {
   Accordion,
   AccordionDetails,
@@ -24,9 +24,9 @@ import {
   MenuItem,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Typography from '@mui/material/Typography/Typography';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import TextField from '@mui/material/TextField/TextField';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 import { Entity, TransactionType } from '../../services/trx/trxServices.ts';
 import { Account } from '../../services/auth/authServices.ts';
 import { Category } from '../../services/category/categoryServices.ts';
@@ -163,11 +163,11 @@ const AddEditRuleDialog = (props: Props) => {
       <DialogContent>
         <Accordion defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Grid container xs={12}>
-              <Grid xs={6} spacing={1}>
+            <Grid container size={12}>
+              <Grid spacing={1} size={6}>
                 <Typography>{t('rules.conditions')}</Typography>
               </Grid>
-              <Grid xs={6}>
+              <Grid>
                 <Typography sx={{ color: 'text.secondary' }}>
                   {t('rules.conditionsDescription')}
                 </Typography>
@@ -175,9 +175,14 @@ const AddEditRuleDialog = (props: Props) => {
             </Grid>
           </AccordionSummary>
           <AccordionDetails>
-            <Grid container xs={12} spacing={2}>
+            <Grid container spacing={2} size={12}>
               {/* Description */}
-              <Grid xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3,
+                }}
+              >
                 <TextField
                   fullWidth
                   select
@@ -201,7 +206,12 @@ const AddEditRuleDialog = (props: Props) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid xs={12} md={9}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 9,
+                }}
+              >
                 <TextField
                   margin="dense"
                   id="description-condition"
@@ -224,7 +234,12 @@ const AddEditRuleDialog = (props: Props) => {
                 />
               </Grid>
               {/* Amount */}
-              <Grid xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3,
+                }}
+              >
                 <TextField
                   fullWidth
                   select
@@ -248,7 +263,12 @@ const AddEditRuleDialog = (props: Props) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid xs={12} md={9}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 9,
+                }}
+              >
                 <TextField
                   margin="dense"
                   id="amount-condition"
@@ -275,7 +295,12 @@ const AddEditRuleDialog = (props: Props) => {
                 />
               </Grid>
               {/* Type */}
-              <Grid xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3,
+                }}
+              >
                 <TextField
                   fullWidth
                   select
@@ -299,7 +324,12 @@ const AddEditRuleDialog = (props: Props) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid xs={12} md={9}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 9,
+                }}
+              >
                 <TextField
                   select
                   fullWidth
@@ -330,7 +360,12 @@ const AddEditRuleDialog = (props: Props) => {
                 </TextField>
               </Grid>
               {/* Account from */}
-              <Grid xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3,
+                }}
+              >
                 <TextField
                   fullWidth
                   select
@@ -354,7 +389,12 @@ const AddEditRuleDialog = (props: Props) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid xs={12} md={9}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 9,
+                }}
+              >
                 <Autocomplete
                   fullWidth
                   id="account-from-condition"
@@ -394,7 +434,12 @@ const AddEditRuleDialog = (props: Props) => {
                 />
               </Grid>
               {/* Account to */}
-              <Grid xs={12} md={3}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 3,
+                }}
+              >
                 <TextField
                   fullWidth
                   select
@@ -418,7 +463,12 @@ const AddEditRuleDialog = (props: Props) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid xs={12} md={9}>
+              <Grid
+                size={{
+                  xs: 12,
+                  md: 9,
+                }}
+              >
                 <Autocomplete
                   fullWidth
                   id="account-to-condition"
@@ -462,11 +512,11 @@ const AddEditRuleDialog = (props: Props) => {
         </Accordion>
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Grid container xs={12}>
-              <Grid xs={6} spacing={1}>
+            <Grid container size={12}>
+              <Grid spacing={1} size={6}>
                 <Typography>{t('rules.result')}</Typography>
               </Grid>
-              <Grid xs={6}>
+              <Grid>
                 <Typography sx={{ color: 'text.secondary' }}>
                   {t('rules.resultDescription')}
                 </Typography>
@@ -474,9 +524,9 @@ const AddEditRuleDialog = (props: Props) => {
             </Grid>
           </AccordionSummary>
           <AccordionDetails>
-            <Grid container xs={12} spacing={2}>
+            <Grid container spacing={2} size={12}>
               {/* Category */}
-              <Grid xs={12}>
+              <Grid size={12}>
                 <Autocomplete
                   fullWidth
                   id="category-result"
@@ -516,7 +566,7 @@ const AddEditRuleDialog = (props: Props) => {
                 />
               </Grid>
               {/* Entity */}
-              <Grid xs={12}>
+              <Grid size={12}>
                 <Autocomplete
                   fullWidth
                   id="entity-result"
@@ -555,7 +605,7 @@ const AddEditRuleDialog = (props: Props) => {
                 />
               </Grid>
               {/* Account from */}
-              <Grid xs={12}>
+              <Grid size={12}>
                 <Autocomplete
                   fullWidth
                   id="account-from-result"
@@ -595,7 +645,7 @@ const AddEditRuleDialog = (props: Props) => {
                 />
               </Grid>
               {/* Account to */}
-              <Grid xs={12}>
+              <Grid size={12}>
                 <Autocomplete
                   fullWidth
                   id="account-to-result"
@@ -635,7 +685,7 @@ const AddEditRuleDialog = (props: Props) => {
                 />
               </Grid>
               {/* Essential */}
-              <Grid xs={12}>
+              <Grid size={12}>
                 <TextField
                   select
                   fullWidth

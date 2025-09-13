@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { DataGrid, GridSlots } from '@mui/x-data-grid';
-import Box from '@mui/material/Box/Box';
-import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 import { styled } from '@mui/material/styles';
 import type { GridColDef } from '@mui/x-data-grid/models/colDef/gridColDef';
 import { GridRowsProp } from '@mui/x-data-grid/models/gridRows';

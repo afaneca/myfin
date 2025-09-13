@@ -12,12 +12,12 @@ import {
 import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent/DialogContent';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import DialogContent from '@mui/material/DialogContent';
+import InputAdornment from '@mui/material/InputAdornment';
 import { Folder, Send, Undo } from '@mui/icons-material';
-import TextField from '@mui/material/TextField/TextField';
-import Button from '@mui/material/Button/Button';
-import DialogActions from '@mui/material/DialogActions/DialogActions';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
 
 type Props = {
   isOpen: boolean;

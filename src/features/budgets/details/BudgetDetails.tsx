@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../../../components/PageHeader.tsx';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { addLeadingZero } from '../../../utils/textUtils.ts';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import Paper from '@mui/material/Paper/Paper';
+import Paper from '@mui/material/Paper';
 import { Box, List, ListItem, useTheme } from '@mui/material';
-import Button from '@mui/material/Button/Button';
+import Button from '@mui/material/Button';
 import {
   ArrowBackIos,
   ArrowForwardIos,
@@ -32,8 +32,8 @@ import {
   useSnackbar,
 } from '../../../providers/SnackbarProvider.tsx';
 import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
-import Typography from '@mui/material/Typography/Typography';
-import Chip from '@mui/material/Chip/Chip';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
 import { ROUTE_BUDGET_DETAILS } from '../../../providers/RoutesProvider.tsx';
 import { TransactionType } from '../../../services/trx/trxServices.ts';
 import TransactionsTableDialog from '../../../components/TransactionsTableDialog.tsx';
@@ -42,7 +42,7 @@ import BudgetCategoryRow from './BudgetCategoryRow.tsx';
 import BudgetSummaryBoard from './BudgetSummaryBoard.tsx';
 import { debounce } from 'lodash';
 import BudgetDescription from './BudgetDescription.tsx';
-import Stack from '@mui/material/Stack/Stack';
+import Stack from '@mui/material/Stack';
 import { getMonthsFullName } from '../../../utils/dateUtils.ts';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 
@@ -488,7 +488,13 @@ const BudgetDetails = () => {
         </Button>
       </Box>
       <Grid container spacing={2}>
-        <Grid xs={12} md={6} lg={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6,
+            lg: 3,
+          }}
+        >
           <DatePicker
             label={t('stats.month')}
             views={['month', 'year']}
@@ -498,10 +504,18 @@ const BudgetDetails = () => {
             )}
           />
         </Grid>
-        <Grid xs={12} md={6} lgOffset={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6,
+          }}
+          offset={{
+            lg: 3,
+          }}
+        >
           <BudgetDescription ref={descriptionRef} />
         </Grid>
-        <Grid xs={12}>
+        <Grid size={12}>
           <BudgetSummaryBoard
             calculatedBalances={calculatedBalances}
             isOpen={isOpen}
@@ -509,12 +523,28 @@ const BudgetDetails = () => {
           />
         </Grid>
         {/* Debit categories */}
-        <Grid xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6,
+          }}
+        >
           <Grid container>
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <Typography variant="h4">{t('common.debit')}</Typography>
             </Grid>
-            <Grid xs={12} md={6} xsOffset="auto">
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+              offset="auto"
+            >
               <Chip
                 label={`${t('budgetDetails.essentialExpenses')}: ${formatNumberAsCurrency.invoke(getBudgetRequest?.data?.debit_essential_trx_total || 0)}`}
                 variant="filled"
@@ -544,7 +574,12 @@ const BudgetDetails = () => {
           </List>
         </Grid>
         {/*Credit categories*/}
-        <Grid xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6,
+          }}
+        >
           <Typography variant="h4">{t('common.credit')}</Typography>
           <List>
             {creditCategories.map((category) => (
@@ -568,7 +603,6 @@ const BudgetDetails = () => {
         </Grid>
         <Grid
           container
-          xs={12}
           sx={{
             color: 'gray',
             position: 'sticky',
@@ -580,8 +614,14 @@ const BudgetDetails = () => {
             justifyContent: 'center',
             overflow: 'hidden',
           }}
+          size={12}
         >
-          <Grid xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3,
+            }}
+          >
             {previousBudget && (
               <Button
                 size="small"
@@ -602,7 +642,12 @@ const BudgetDetails = () => {
               </Button>
             )}
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
             <Box
               sx={{
                 display: 'flex',
@@ -646,10 +691,12 @@ const BudgetDetails = () => {
             </Box>
           </Grid>
           <Grid
-            xs={12}
-            md={3}
-            xsOffset="auto"
             sx={{ display: 'flex', justifyContent: 'flex-end' }}
+            size={{
+              xs: 12,
+              md: 3,
+            }}
+            offset="auto"
           >
             {nextBudget && (
               <Button

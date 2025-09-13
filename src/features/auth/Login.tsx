@@ -1,10 +1,10 @@
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import { useTheme } from '@mui/material';
-import Box from '@mui/material/Box/Box';
-import Button from '@mui/material/Button/Button';
-import Container from '@mui/material/Container/Container';
-import TextField from '@mui/material/TextField/TextField';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
 import {
   useAuthStatus,

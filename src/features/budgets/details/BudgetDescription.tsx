@@ -1,15 +1,15 @@
 import { Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, MutableRefObject, Ref, useState } from 'react';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import {
   AddReaction,
   AddReactionOutlined,
   Description,
 } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box/Box';
+import Box from '@mui/material/Box';
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import i18next from 'i18next';

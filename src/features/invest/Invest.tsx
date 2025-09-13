@@ -1,10 +1,10 @@
 import { Tab, Tabs, useTheme } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import React, { useEffect, useState } from 'react';
-import Box from '@mui/material/Box/Box';
+import Box from '@mui/material/Box';
 import PageHeader from '../../components/PageHeader.tsx';
 import { useTranslation } from 'react-i18next';
-import Paper from '@mui/material/Paper/Paper';
+import Paper from '@mui/material/Paper';
 import InvestDashboard from './InvestDashboard.tsx';
 import InvestAssets from './assets/InvestAssets.tsx';
 import InvestTransactions from './transactions/InvestTransactions.tsx';
@@ -78,7 +78,7 @@ const Invest = ({ defaultTab }: { defaultTab?: InvestTab }) => {
       </Box>
       <Grid container spacing={2}>
         {' '}
-        <Grid xs={12}>
+        <Grid size={12}>
           <Tabs
             selectionFollowsFocus
             value={selectedTab}

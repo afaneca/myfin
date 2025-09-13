@@ -16,8 +16,8 @@ import {
 } from '../../../services/invest/investHooks.ts';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
 import {
   AccountBalanceWalletOutlined,
   Business,
@@ -26,9 +26,9 @@ import {
   Send,
   Undo,
 } from '@mui/icons-material';
-import TextField from '@mui/material/TextField/TextField';
-import Button from '@mui/material/Button/Button';
-import DialogActions from '@mui/material/DialogActions/DialogActions';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
 import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
 
 type UiState = {
@@ -197,7 +197,12 @@ const AddEditInvestAssetDialog = (props: Props) => {
       }}
     >
       <DialogTitle>
-        <Grid xs={12} md={10}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 10,
+          }}
+        >
           <Trans
             i18nKey={
               isEditForm
@@ -212,7 +217,12 @@ const AddEditInvestAssetDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} rowSpacing={2}>
-          <Grid xs={12} md={8}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 8,
+            }}
+          >
             {/* Name */}
             <TextField
               required
@@ -238,7 +248,12 @@ const AddEditInvestAssetDialog = (props: Props) => {
               }}
             />
           </Grid>
-          <Grid xs={12} md={4}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4,
+            }}
+          >
             {/* Ticker */}
             <TextField
               required
@@ -265,7 +280,12 @@ const AddEditInvestAssetDialog = (props: Props) => {
             />
           </Grid>
           {/* Type */}
-          <Grid xs={12} md={8}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 8,
+            }}
+          >
             <TextField
               select
               required
@@ -297,7 +317,12 @@ const AddEditInvestAssetDialog = (props: Props) => {
               ))}
             </TextField>
           </Grid>
-          <Grid xs={12} md={4}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4,
+            }}
+          >
             {/* Broker */}
             <TextField
               required

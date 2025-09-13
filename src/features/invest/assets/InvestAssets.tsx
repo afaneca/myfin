@@ -10,11 +10,11 @@ import {
 } from '../../../services/invest/investHooks.ts';
 import React, { useEffect, useMemo, useReducer } from 'react';
 import { InvestAsset } from '../../../services/invest/investServices.ts';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import { GridColDef } from '@mui/x-data-grid';
 import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
-import Button from '@mui/material/Button/Button';
+import Button from '@mui/material/Button';
 import {
   AddCircleOutline,
   Delete,
@@ -22,13 +22,13 @@ import {
   MonetizationOn,
   Search,
 } from '@mui/icons-material';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { Box, Checkbox, FormGroup, Tooltip, useTheme } from '@mui/material';
-import Stack from '@mui/material/Stack/Stack';
-import Typography from '@mui/material/Typography/Typography';
-import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
 import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
 import AddEditInvestAssetDialog from './AddEditInvestAssetDialog.tsx';
@@ -396,7 +396,7 @@ const InvestAssets = () => {
 
   if (!state) return null;
   return (
-    <Grid container spacing={2} xs={12}>
+    <Grid container spacing={2} size={12}>
       {state.isEditDialogOpen && (
         <AddEditInvestAssetDialog
           isOpen={true}
@@ -437,7 +437,12 @@ const InvestAssets = () => {
           positiveText={t('common.delete')}
         />
       )}
-      <Grid xs={12} md={8}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 8,
+        }}
+      >
         <Button
           variant="contained"
           color="primary"
@@ -467,10 +472,12 @@ const InvestAssets = () => {
         </FormGroup>
       </Grid>
       <Grid
-        xs={12}
-        md={4}
-        xsOffset="auto"
         sx={{ display: 'flex', justifyContent: 'flex-end' }}
+        size={{
+          xs: 12,
+          md: 4,
+        }}
+        offset="auto"
       >
         <TextField
           id="search"
@@ -491,7 +498,7 @@ const InvestAssets = () => {
           }}
         />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <MyFinStaticTable
           isRefetching={getAssetsRequest.isRefetching}
           rows={rows || []}

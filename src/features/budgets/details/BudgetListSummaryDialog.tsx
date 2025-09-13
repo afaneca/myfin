@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent/DialogContent';
-import DialogActions from '@mui/material/DialogActions/DialogActions';
-import Button from '@mui/material/Button/Button';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 import { InsertInvitation, Send } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { Autocomplete } from '@mui/material';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import { useGetBudgetListSummary } from '../../../services/budget/budgetHooks.ts';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import {
@@ -17,7 +17,7 @@ import {
 } from '../../../providers/SnackbarProvider.tsx';
 import { getMonthsFullName } from '../../../utils/dateUtils.ts';
 import { IdLabelPair } from '../../transactions/AddEditTransactionDialog.tsx';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 
 type Props = {
   isOpen: boolean;
@@ -81,7 +81,7 @@ const BudgetListSummaryDialog = (props: Props) => {
     >
       <DialogTitle>{t('budgetDetails.cloneAPreviousMonth')}</DialogTitle>
       <DialogContent>
-        <Grid xs={12} spacing={2} rowSpacing={2}>
+        <Grid spacing={2} rowSpacing={2} size={12}>
           <Autocomplete
             sx={{ paddingTop: 2 }}
             id="budget"

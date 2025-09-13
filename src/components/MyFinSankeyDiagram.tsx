@@ -52,7 +52,6 @@ const MyFinSankeyDiagram = (props: Props) => {
           theme.palette.mode === 'dark' ? ['brighter', 1] : ['darker', 1.5],
         ],
       }}
-      // @ts-expect-error TODO - need to look into this
       theme={theme.nivo}
     />
   );

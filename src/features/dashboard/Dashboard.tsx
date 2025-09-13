@@ -1,6 +1,6 @@
 import { Tooltip, useTheme } from '@mui/material';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import { useTranslation } from 'react-i18next';
 import DataCard from '../../components/DataCard.tsx';
 import MonthlyOverviewChart, {
@@ -27,9 +27,9 @@ import {
   MonthExpensesDistributionDataResponse,
 } from '../../services/stats/statServices.ts';
 import dayjs, { Dayjs } from 'dayjs';
-import Typography from '@mui/material/Typography/Typography';
+import Typography from '@mui/material/Typography';
 import { AccessTime } from '@mui/icons-material';
-import Stack from '@mui/material/Stack/Stack';
+import Stack from '@mui/material/Stack';
 import {
   useGetDebtAccounts,
   useGetInvestingAccounts,
@@ -257,7 +257,11 @@ const Dashboard = () => {
 
   return (
     <Grid container spacing={2} sx={{ p: theme.spacing(2) }}>
-      <Grid xs={12} md={3}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 3
+        }}>
         <DatePicker
           label={t('stats.month')}
           views={['month', 'year']}
@@ -266,8 +270,6 @@ const Dashboard = () => {
         />
       </Grid>
       <Grid
-        xs={3}
-        xsOffset={6}
         direction="column"
         sx={{
           // Hide on screens smaller than 'md'
@@ -276,6 +278,8 @@ const Dashboard = () => {
           alignItems: 'center',
         }}
         visibility={lastUpdatedTimestamp == '' ? 'hidden' : 'visible'}
+        size={3}
+        offset={6}
       >
         <Tooltip title={t('dashboard.lastUpdate')}>
           <Stack direction="row" alignItems="center" gap={0.5}>
@@ -289,37 +293,61 @@ const Dashboard = () => {
           </Stack>
         </Tooltip>
       </Grid>
-      <Grid xs={12} md={4}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 4
+        }}>
         <DataCard>
           <PanelTitle>{t('dashboard.monthlyOverview')}</PanelTitle>
           <MonthlyOverviewChart data={monthlyOverviewChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} md={8}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 8
+        }}>
         <DataCard>
           <PanelTitle>{t('dashboard.monthlySavings')}</PanelTitle>
           <MonthByMonthBalanceChart data={monthByMonthChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} lg={6}>
+      <Grid
+        size={{
+          xs: 12,
+          lg: 6
+        }}>
         <DataCard>
           <PanelTitle>{t('dashboard.incomeDistribution')}</PanelTitle>
           <DashboardPieChart data={incomeChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} lg={6}>
+      <Grid
+        size={{
+          xs: 12,
+          lg: 6
+        }}>
         <DataCard>
           <PanelTitle>{t('dashboard.expenseDistribution')}</PanelTitle>
           <DashboardPieChart data={expensesChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} lg={6}>
+      <Grid
+        size={{
+          xs: 12,
+          lg: 6
+        }}>
         <DataCard>
           <PanelTitle>{t('common.investmentPortfolio')}</PanelTitle>
           <DashboardPieChart data={investChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} lg={6}>
+      <Grid
+        size={{
+          xs: 12,
+          lg: 6
+        }}>
         <DataCard>
           <PanelTitle>{t('common.debtDistribution')}</PanelTitle>
           <DashboardPieChart data={debtChartData} />

@@ -9,16 +9,16 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Tag } from '../../services/trx/trxServices.ts';
 import { useGetTags, useRemoveTag } from '../../services/tag/tagHooks.ts';
 import { GridColDef } from '@mui/x-data-grid';
-import Stack from '@mui/material/Stack/Stack';
+import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
-import Box from '@mui/material/Box/Box';
+import Box from '@mui/material/Box';
 import PageHeader from '../../components/PageHeader.tsx';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import Button from '@mui/material/Button/Button';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import { debounce } from 'lodash';
 import MyFinTable from '../../components/MyFinTable.tsx';
 import AddEditTagDialog from './AddEditTagDialog.tsx';
@@ -180,7 +180,12 @@ const Tags = () => {
         <PageHeader title={t('tags.tags')} subtitle={t('tags.strapLine')} />
       </Box>
       <Grid container spacing={2}>
-        <Grid xs={12} md={8}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 8,
+          }}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -192,10 +197,12 @@ const Tags = () => {
           </Button>
         </Grid>
         <Grid
-          xs={12}
-          md={4}
-          xsOffset="auto"
           sx={{ display: 'flex', justifyContent: 'flex-end' }}
+          size={{
+            xs: 12,
+            md: 4,
+          }}
+          offset="auto"
         >
           <TextField
             id="search"
@@ -213,7 +220,7 @@ const Tags = () => {
             }}
           />
         </Grid>
-        <Grid xs={12}>
+        <Grid size={12}>
           <MyFinTable
             isRefetching={getTagsRequest.isRefetching}
             rows={rows}

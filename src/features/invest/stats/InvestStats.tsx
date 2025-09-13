@@ -1,7 +1,7 @@
 import { Divider } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useReducer } from 'react';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
@@ -14,7 +14,7 @@ import {
   InvestAsset,
   MonthlySnapshot,
 } from '../../../services/invest/investServices.ts';
-import Typography from '@mui/material/Typography/Typography';
+import Typography from '@mui/material/Typography';
 import DashboardPieChart, {
   ChartDataItem,
 } from '../../dashboard/DashboardPieChart.tsx';
@@ -154,9 +154,15 @@ const InvestStats = () => {
   }, [getInvestStatsRequest.data]);
 
   return (
-    <Grid container spacing={2} xs={12}>
+    <Grid container spacing={2} size={12}>
       <SectionHeader title={t('investments.distribution')} />
-      <Grid xs={12} md={6} sx={{ minHeight: 10 }}>
+      <Grid
+        sx={{ minHeight: 10 }}
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         {state.distributionByAssetClassData &&
         state.distributionByAssetClassData.length > 0 ? (
           <DashboardPieChart
@@ -176,7 +182,13 @@ const InvestStats = () => {
           {t('investments.assetClasses')}
         </Typography>
       </Grid>
-      <Grid xs={12} md={6} sx={{ minHeight: 100 }}>
+      <Grid
+        sx={{ minHeight: 100 }}
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         {state.distributionByAssetData &&
         state.distributionByAssetData.length > 0 ? (
           <DashboardPieChart
@@ -197,19 +209,19 @@ const InvestStats = () => {
         </Typography>
       </Grid>
       <SectionHeader title={t('investments.returnsByAsset')} />
-      <Grid xs={12}>
+      <Grid size={12}>
         <AssetRoiList list={state?.assets ?? []} />
       </Grid>
       <SectionHeader title={t('investments.returnsByAssetClass')} />
-      <Grid xs={12}>
+      <Grid size={12}>
         <i>{t('common.soon')}...</i>
       </Grid>
       <SectionHeader title={t('investments.combinedPerformanceByYear')} />
-      <Grid xs={12}>
+      <Grid size={12}>
         <CombinedRoiByYearList list={state?.combinedRoiByYearData ?? []} />
       </Grid>
       <SectionHeader title={t('investments.portfolioEvolution')} />
-      <Grid xs={12} sx={{ height: 300 }}>
+      <Grid sx={{ height: 300 }} size={12}>
         <PortfolioEvolutionChart data={state?.monthlySnapshots ?? []} />
       </Grid>
     </Grid>
@@ -218,7 +230,7 @@ const InvestStats = () => {
 
 const SectionHeader = ({ title }: { title: string }) => {
   return (
-    <Grid xs={12} mt={2}>
+    <Grid mt={2} size={12}>
       <Typography variant="h5">{title}</Typography>
       <Divider sx={{ mt: 1 }} />
     </Grid>

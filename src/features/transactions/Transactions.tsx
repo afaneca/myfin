@@ -1,12 +1,12 @@
 import { ListItem, Tooltip, useTheme } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import Box from '@mui/material/Box/Box';
-import Chip from '@mui/material/Chip/Chip';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import Paper from '@mui/material/Paper/Paper';
-import Stack from '@mui/material/Stack/Stack';
-import TextField from '@mui/material/TextField/TextField';
-import Typography from '@mui/material/Typography/Typography';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import InputAdornment from '@mui/material/InputAdornment';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { GridColDef } from '@mui/x-data-grid';
 import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
@@ -44,7 +44,7 @@ import {
   AlertSeverity,
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
-import Button from '@mui/material/Button/Button';
+import Button from '@mui/material/Button';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import AddEditTransactionDialog from './AddEditTransactionDialog.tsx';
 import IconButton from '@mui/material/IconButton';
@@ -368,7 +368,14 @@ const Transactions = () => {
         />
       </Box>
       <Grid container spacing={2}>
-        <Grid sm={8} xs={12} container spacing={2}>
+        <Grid
+          container
+          spacing={2}
+          size={{
+            sm: 8,
+            xs: 12,
+          }}
+        >
           <Grid>
             <Button
               variant="contained"
@@ -395,10 +402,12 @@ const Transactions = () => {
           </Grid>
         </Grid>
         <Grid
-          sm={12}
-          lg={4}
-          xsOffset="auto"
           sx={{ display: 'flex', justifyContent: 'flex-end' }}
+          size={{
+            sm: 12,
+            lg: 4,
+          }}
+          offset="auto"
         >
           {' '}
           <TextField
@@ -417,7 +426,7 @@ const Transactions = () => {
             }}
           />
         </Grid>
-        <Grid xs={12}>
+        <Grid size={12}>
           <MyFinTable
             isRefetching={getTransactionsRequest.isRefetching}
             rows={rows}

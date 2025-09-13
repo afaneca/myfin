@@ -8,8 +8,8 @@ import {
 } from 'react';
 import localStore from '../data/localStore.ts';
 import { createTheme, PaletteMode } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
-import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
+import CircularProgress from '@mui/material/CircularProgress';
+import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { generateGlobalTheme } from '../theme';
 import { LoadingProvider } from './LoadingProvider.tsx';

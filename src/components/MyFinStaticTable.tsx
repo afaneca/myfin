@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { GridSlots } from '@mui/x-data-grid';
-import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 import type { GridColDef } from '@mui/x-data-grid/models/colDef/gridColDef';
 import { GridRowsProp } from '@mui/x-data-grid/models/gridRows';
 import { ptPT, enUS } from '@mui/x-data-grid/locales';

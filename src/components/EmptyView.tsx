@@ -1,6 +1,6 @@
 import { Coffee } from '@mui/icons-material';
-import Typography from '@mui/material/Typography/Typography';
-import Stack from '@mui/material/Stack/Stack';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 

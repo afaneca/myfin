@@ -11,8 +11,8 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent/DialogContent';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import DialogContent from '@mui/material/DialogContent';
+import Grid from '@mui/material/Grid';
 import React, { useEffect, useState } from 'react';
 import {
   Checkbox,
@@ -32,14 +32,14 @@ import {
   Send,
   Undo,
 } from '@mui/icons-material';
-import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { cssGradients } from '../../utils/gradientUtils.ts';
 import { ColorGradient } from '../../consts';
-import TextField from '@mui/material/TextField/TextField';
-import Stack from '@mui/material/Stack/Stack';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import Button from '@mui/material/Button/Button';
-import DialogActions from '@mui/material/DialogActions/DialogActions';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
+import InputAdornment from '@mui/material/InputAdornment';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
 import {
   useAddAccount,
   useEditAccount,
@@ -211,7 +211,12 @@ const AddEditAccountDialog = (props: Props) => {
     >
       <DialogTitle>
         <Grid container>
-          <Grid xs={12} md={10}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 10,
+            }}
+          >
             <Stack>
               <Trans
                 i18nKey={
@@ -247,11 +252,13 @@ const AddEditAccountDialog = (props: Props) => {
             </Stack>
           </Grid>
           <Grid
-            xs={12}
-            md={2}
             display="flex"
             justifyContent="flex-end"
             sx={{ height: 'fit-content' }}
+            size={{
+              xs: 12,
+              md: 2,
+            }}
           >
             <AccountStatusToggle
               selectedStatus={statusValue}
@@ -262,8 +269,13 @@ const AddEditAccountDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} rowSpacing={2}>
-          <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
-            <Grid md={6} xs={12}>
+          <Grid container spacing={2} columns={{ xs: 1, md: 12 }} size={12}>
+            <Grid
+              size={{
+                md: 6,
+                xs: 12,
+              }}
+            >
               {/* Name */}
               <TextField
                 required
@@ -284,7 +296,12 @@ const AddEditAccountDialog = (props: Props) => {
                 }}
               />
             </Grid>
-            <Grid md={4} xs={12}>
+            <Grid
+              size={{
+                md: 4,
+                xs: 12,
+              }}
+            >
               {/* Type */}
               <TextField
                 fullWidth
@@ -305,10 +322,17 @@ const AddEditAccountDialog = (props: Props) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid xs={12} md={2} display="flex" justifyContent="flex-end">
+            <Grid
+              display="flex"
+              justifyContent="flex-end"
+              size={{
+                xs: 12,
+                md: 2,
+              }}
+            >
               <ColorOptionsSelect selectedColor={colorValue} />
             </Grid>
-            <Grid xs={12}>
+            <Grid size={12}>
               {/* Description */}
               <TextField
                 margin="dense"

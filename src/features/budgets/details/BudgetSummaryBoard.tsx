@@ -1,11 +1,11 @@
 import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { ColorGradient } from '../../../consts';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import Stack from '@mui/material/Stack/Stack';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import { Card } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Typography from '@mui/material/Typography/Typography';
-import Chip from '@mui/material/Chip/Chip';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 
 type Props = {

@@ -19,11 +19,11 @@ import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
 import { ColorGradient } from '../../../consts';
 import { getMonthsFullName } from '../../../utils/dateUtils.ts';
-import Container from '@mui/material/Container/Container';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import InputAdornment from '@mui/material/InputAdornment';
 import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
 
 type Props = {
@@ -64,13 +64,13 @@ const TooltipContent = memo(
           )}
         </Container>
         <Divider sx={{ m: 2 }} />
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={6}>
+        <Grid container spacing={2} size={12}>
+          <Grid size={6}>
             <Typography variant="caption">
               {getMonthsFullName(month)} {year - 1}
             </Typography>
           </Grid>
-          <Grid xs={6} sx={{ textAlign: 'right' }}>
+          <Grid sx={{ textAlign: 'right' }} size={6}>
             <Chip
               label={formatNumberAsCurrency.invoke(
                 isDebit
@@ -80,13 +80,13 @@ const TooltipContent = memo(
             />
           </Grid>
         </Grid>
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={6}>
+        <Grid container spacing={2} size={12}>
+          <Grid size={6}>
             <Typography variant="caption">
               {t('budgetDetails.previousMonth')}
             </Typography>
           </Grid>
-          <Grid xs={6} sx={{ textAlign: 'right' }}>
+          <Grid sx={{ textAlign: 'right' }} size={6}>
             <Chip
               label={formatNumberAsCurrency.invoke(
                 isDebit
@@ -96,13 +96,13 @@ const TooltipContent = memo(
             />
           </Grid>
         </Grid>
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={6}>
+        <Grid container spacing={2} size={12}>
+          <Grid size={6}>
             <Typography variant="caption">
               {t('budgetDetails.12MonthAvg')}
             </Typography>
           </Grid>
-          <Grid xs={6} sx={{ textAlign: 'right' }}>
+          <Grid sx={{ textAlign: 'right' }} size={6}>
             <Chip
               label={formatNumberAsCurrency.invoke(
                 isDebit
@@ -112,13 +112,13 @@ const TooltipContent = memo(
             />
           </Grid>
         </Grid>
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={6}>
+        <Grid container spacing={2} size={12}>
+          <Grid size={6}>
             <Typography variant="caption">
               {t('budgetDetails.globalAverage')}
             </Typography>
           </Grid>
-          <Grid xs={6} sx={{ textAlign: 'right' }}>
+          <Grid sx={{ textAlign: 'right' }} size={6}>
             <Chip
               label={formatNumberAsCurrency.invoke(
                 isDebit
@@ -299,8 +299,13 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
 
   return (
     <Card variant="elevation" sx={{ width: '100%', pt: 1, pb: 1 }}>
-      <Grid container xs={12} spacing={2} p={2}>
-        <Grid xs={12} md={4}>
+      <Grid container spacing={2} p={2} size={12}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4,
+          }}
+        >
           <Tooltip title={renderCategoryTooltip}>
             <ListItemText
               primary={category.name}
@@ -309,7 +314,12 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
             />
           </Tooltip>
         </Grid>
-        <Grid xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4,
+          }}
+        >
           <NumericFormat
             required
             disabled={!isOpen}
@@ -339,7 +349,12 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
             }}
           />
         </Grid>
-        <Grid xs={12} md={4}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 4,
+          }}
+        >
           <NumericFormat
             required
             disabled

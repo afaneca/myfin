@@ -9,10 +9,10 @@ import {
   ROUTE_STATS_PROJECTIONS,
   ROUTE_STATS_YEAR_BY_YEAR,
 } from '../../providers/RoutesProvider.tsx';
-import Paper from '@mui/material/Paper/Paper';
-import Box from '@mui/material/Box/Box';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 import PageHeader from '../../components/PageHeader.tsx';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import PatrimonyEvolutionStats from './patrimony/PatrimonyEvolutionStats.tsx';
 import ProjectionsStats from './projections/ProjectionsStats.tsx';
 import ExpensesIncomeStats, {
@@ -84,7 +84,7 @@ const Stats = ({ defaultTab }: { defaultTab?: StatTab }) => {
       </Box>
       <Grid container spacing={2}>
         {' '}
-        <Grid xs={12}>
+        <Grid size={12}>
           <Tabs
             selectionFollowsFocus
             value={selectedTab}

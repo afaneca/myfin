@@ -1,11 +1,20 @@
-import Paper from '@mui/material/Paper/Paper';
-import { LineSvgProps, ResponsiveLine, Serie } from '@nivo/line';
+import Paper from '@mui/material/Paper';
+import { LineSvgProps, ResponsiveLine } from '@nivo/line';
 import { useMediaQuery, useTheme } from '@mui/material';
 import { useFormatNumberAsCurrency } from '../utils/textHooks.ts';
+import Stack from '@mui/material/Stack';
+
+type ChartDataItem = {
+  id: string;
+  data: {
+    x: string | number;
+    y: number;
+  }[];
+};
 
 type Props = {
-  chartData: Serie[];
-  customLineProps?: Partial<LineSvgProps>;
+  chartData: ChartDataItem[];
+  customLineProps?: Partial<LineSvgProps<never>>;
 };
 
 const MyFinLineChart = (props: Props) => {
@@ -15,7 +24,7 @@ const MyFinLineChart = (props: Props) => {
 
   return (
     <ResponsiveLine
-      data={props.chartData}
+      data={props.chartData as unknown as readonly never[]}
       margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
       xScale={{ type: 'point' }}
       yScale={{
@@ -54,16 +63,22 @@ const MyFinLineChart = (props: Props) => {
       tooltip={(item) => (
         <Paper
           sx={{
+            width: 'max-content',
             fontSize: '12px',
             background: 'white',
             color: 'black',
             p: theme.spacing(1),
           }}
         >
-          {String(item.point.data.x)}:{' '}
-          <strong>
-            {formatNumberAsCurrency.invoke(Number(item.point.data.y))}
-          </strong>
+          <Stack>
+            {/*@ts-expect-error type error from nivo (?)*/}
+            {String(item.point.data.x)}
+            <br />
+            <strong>
+              {/*@ts-expect-error type error from nivo (?)*/}
+              {formatNumberAsCurrency.invoke(Number(item.point.data.y))}
+            </strong>
+          </Stack>
         </Paper>
       )}
       theme={theme.nivo}

@@ -1,11 +1,11 @@
 import { useTheme } from '@mui/material';
-import Stack from '@mui/material/Stack/Stack';
+import Stack from '@mui/material/Stack';
 import { ResponsivePie } from '@nivo/pie';
 import {
   generateDefsForGradients,
   generateFillArrayForGradients,
 } from '../../utils/nivoUtils.ts';
-import Paper from '@mui/material/Paper/Paper';
+import Paper from '@mui/material/Paper';
 import { useEffect, useState } from 'react';
 import { ColorGradient } from '../../consts';
 import EmptyView from '../../components/EmptyView.tsx';
