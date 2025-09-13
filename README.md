@@ -2,6 +2,8 @@
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/afaneca/myfin-android?include_prereleases)](https://github.com/afaneca/myfin/releases)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](https://github.com/afaneca/myfin/pkgs/container/myfin)
 
+[![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostinger.com/vps/docker-hosting?compose_url=https://github.com/afaneca/myfin/blob/master/docker-compose.yml&REFERRALCODE=SC1ADNFANHG6)
+
 📟 ***The API project is available [here](https://github.com/aFaneca/myfin-api/).*** 📟
 
 📱 ***The android mobile app project lives [here](https://github.com/aFaneca/myfin-android/).*** 📱
