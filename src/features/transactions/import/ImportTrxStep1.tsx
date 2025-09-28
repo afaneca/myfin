@@ -338,7 +338,7 @@ const ImportTrxStep1 = (props: Props) => {
             amount,
             type,
           });
-        } catch (error) {
+        } catch (_error) {
           /* no-op */
         }
       }
