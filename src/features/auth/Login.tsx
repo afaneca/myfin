@@ -155,7 +155,7 @@ const Login = () => {
               return (
                 <Form>
                   {!isLogin && ( // Show email field only when not in login mode
-                    <TextField
+                    (<TextField
                       id="email"
                       name="email"
                       label="Email"
@@ -166,7 +166,7 @@ const Login = () => {
                       onBlur={props.handleBlur}
                       error={props.touched.email && Boolean(props.errors.email)}
                       helperText={props.touched.email && props.errors.email}
-                    />
+                    />)
                   )}
                   <TextField
                     id="username"
