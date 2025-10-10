@@ -47,7 +47,7 @@
     "yup-locales": "^1.2.21"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.4",
+    "@biomejs/biome": "^2.2.5",
     "@types/lodash": "^4.17.5",
     "@types/node": "^24.5.2",
     "@types/react": "^19.1.13",
