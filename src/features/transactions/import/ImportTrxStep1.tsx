@@ -1,5 +1,5 @@
 import { AccountCircle, KeyboardDoubleArrowRight } from '@mui/icons-material';
-import Button from '@mui/material/Button/Button';
+import Button from '@mui/material/Button';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   useImportTransactionsStep0,
@@ -22,9 +22,9 @@ import {
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
 import { GridColDef } from '@mui/x-data-grid';
 import { countBy } from 'lodash';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Grid from '@mui/material/Grid';
 import { IdLabelPair } from '../AddEditTransactionDialog.tsx';
 import {
   ExportedTransactionItem,
@@ -287,9 +287,7 @@ const ImportTrxStep1 = (props: Props) => {
             <MenuItem value={FIELD_MAPPING.IGNORE}>
               {t('common.ignore')}
             </MenuItem>
-            <MenuItem value={FIELD_MAPPING.DATE}>
-              {t('common.date')}
-            </MenuItem>
+            <MenuItem value={FIELD_MAPPING.DATE}>{t('common.date')}</MenuItem>
             <MenuItem value={FIELD_MAPPING.DESCRIPTION}>
               {t('common.description')}
             </MenuItem>
@@ -340,7 +338,7 @@ const ImportTrxStep1 = (props: Props) => {
             amount,
             type,
           });
-        } catch (error) {
+        } catch (_error) {
           /* no-op */
         }
       }
@@ -470,7 +468,7 @@ const ImportTrxStep1 = (props: Props) => {
             <Trans i18nKey="importTransactions.step1Text" />
           </Typography>
         </Grid>
-        <Grid xs={2}>
+        <Grid size={2}>
           <Autocomplete
             id="account"
             options={accountOptionsValue}
@@ -496,7 +494,7 @@ const ImportTrxStep1 = (props: Props) => {
             )}
           />
         </Grid>
-        <Grid xs={12}>
+        <Grid size={12}>
           <MyFinStaticTable
             isRefetching={false}
             rows={buildRowsForTable(rows)}

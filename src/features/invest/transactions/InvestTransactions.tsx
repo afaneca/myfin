@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import Button from '@mui/material/Button/Button';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
 import {
   InvestAsset,
@@ -13,8 +13,8 @@ import {
   useGetInvestTransactions,
   useRemoveInvestTransaction,
 } from '../../../services/invest/investHooks.ts';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import MyFinTable from '../../../components/MyFinTable.tsx';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import {
@@ -23,20 +23,20 @@ import {
 } from '../../../providers/SnackbarProvider.tsx';
 import { debounce } from 'lodash';
 import { GridColDef } from '@mui/x-data-grid';
-import Stack from '@mui/material/Stack/Stack';
-import Box from '@mui/material/Box/Box';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import {
   getDayNumberFromUnixTimestamp,
   getMonthShortStringFromUnixTimestamp,
   getShortYearFromUnixTimestamp,
 } from '../../../utils/dateUtils.ts';
 import { Tooltip, useTheme } from '@mui/material';
-import Typography from '@mui/material/Typography/Typography';
+import Typography from '@mui/material/Typography';
 import {
   useGetLocalizedAssetType,
   useGetLocalizedInvestTransactionType,
 } from '../InvestUtilHooks.ts';
-import Chip from '@mui/material/Chip/Chip';
+import Chip from '@mui/material/Chip';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import IconButton from '@mui/material/IconButton';
 import AddEditInvestTransactionDialog from './AddEditInvestTransactionDialog.tsx';
@@ -440,7 +440,14 @@ const InvestTransactions = () => {
           positiveText={t('common.delete')}
         />
       )}
-      <Grid sm={8} xs={12} container spacing={2}>
+      <Grid
+        container
+        spacing={2}
+        size={{
+          sm: 8,
+          xs: 12,
+        }}
+      >
         <Grid>
           <Button
             variant="contained"
@@ -455,10 +462,12 @@ const InvestTransactions = () => {
         </Grid>
       </Grid>
       <Grid
-        sm={12}
-        lg={4}
-        xsOffset="auto"
         sx={{ display: 'flex', justifyContent: 'flex-end' }}
+        size={{
+          sm: 12,
+          lg: 4,
+        }}
+        offset="auto"
       >
         {' '}
         <TextField
@@ -477,7 +486,7 @@ const InvestTransactions = () => {
           }}
         />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <MyFinTable
           isRefetching={getTransactionsRequest.isRefetching}
           rows={rows || []}

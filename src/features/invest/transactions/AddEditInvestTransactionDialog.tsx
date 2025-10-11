@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useReducer } from 'react';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   AccountCircle,
   CallMerge,
@@ -34,8 +34,8 @@ import {
   convertDayJsToUnixTimestamp,
   convertUnixTimestampToDayJs,
 } from '../../../utils/dateUtils.ts';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
@@ -44,10 +44,10 @@ import {
   useSnackbar,
 } from '../../../providers/SnackbarProvider.tsx';
 import { DatePicker } from '@mui/x-date-pickers';
-import DialogContent from '@mui/material/DialogContent/DialogContent';
-import Button from '@mui/material/Button/Button';
-import DialogActions from '@mui/material/DialogActions/DialogActions';
-import Chip from '@mui/material/Chip/Chip';
+import DialogContent from '@mui/material/DialogContent';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
+import Chip from '@mui/material/Chip';
 import { TFunction } from 'i18next';
 import { NumericFormat } from 'react-number-format';
 import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
@@ -368,7 +368,12 @@ const AddEditInvestTransactionDialog = (props: Props) => {
     >
       <DialogTitle>
         <Grid container spacing={2} rowSpacing={2}>
-          <Grid xs={12} md={8}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 8,
+            }}
+          >
             {t(
               isEditForm
                 ? 'transactions.editTransactionModalTitle'
@@ -378,7 +383,14 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               },
             )}
           </Grid>
-          <Grid xs={12} md={4} display="flex" justifyContent="flex-end">
+          <Grid
+            display="flex"
+            justifyContent="flex-end"
+            size={{
+              xs: 12,
+              md: 4,
+            }}
+          >
             {/* Type */}
             <ToggleButtonGroup
               value={state.typeInput}
@@ -405,7 +417,12 @@ const AddEditInvestTransactionDialog = (props: Props) => {
       <DialogContent>
         <Grid container spacing={2} rowSpacing={2}>
           {/* Value */}
-          <Grid xs={12} md={2}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 2,
+            }}
+          >
             <NumericFormat
               value={state.valueInput ?? ''}
               onValueChange={(values) => {
@@ -442,7 +459,12 @@ const AddEditInvestTransactionDialog = (props: Props) => {
             />
           </Grid>
           {/* Units */}
-          <Grid xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3,
+            }}
+          >
             <NumericFormat
               required
               margin="dense"
@@ -479,7 +501,12 @@ const AddEditInvestTransactionDialog = (props: Props) => {
             />
           </Grid>
           {/* Asset */}
-          <Grid xs={12} md={4}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4,
+            }}
+          >
             <Autocomplete
               id="asset"
               options={state.assets?.map((a) => ({
@@ -514,7 +541,12 @@ const AddEditInvestTransactionDialog = (props: Props) => {
             />
           </Grid>
           {/* Date */}
-          <Grid xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3,
+            }}
+          >
             <DatePicker
               name="date"
               label={t('transactions.dateOfTransaction')}
@@ -541,7 +573,12 @@ const AddEditInvestTransactionDialog = (props: Props) => {
           </Grid>
 
           {/* Description */}
-          <Grid xs={12} md={9}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 9,
+            }}
+          >
             <TextField
               margin="dense"
               id="description"
@@ -567,7 +604,12 @@ const AddEditInvestTransactionDialog = (props: Props) => {
             />
           </Grid>
           {/* Fees & taxes */}
-          <Grid xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3,
+            }}
+          >
             <NumericFormat
               value={state.feesTaxesInput || '0'}
               onValueChange={(values) => {
@@ -602,7 +644,7 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               }}
             />
           </Grid>
-          <Grid xs={12} marginTop={4}>
+          <Grid marginTop={4} size={12}>
             <Collapse in={state.isSplit}>
               <SplitTransactionForm
                 isOpen={state.isSplit}
@@ -705,9 +747,14 @@ const SplitTransactionForm = (props: SplitTransactionFormProps) => {
       <Divider sx={{ mb: 5 }}>
         <Chip label={t('transactions.splitTransaction')} size="small" />
       </Divider>
-      <Grid container spacing={2} rowSpacing={2} xs={12} columns={{ xs: 12 }}>
+      <Grid container spacing={2} rowSpacing={2} columns={{ xs: 12 }} size={12}>
         {/* Value */}
-        <Grid xs={12} md={2}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 2,
+          }}
+        >
           <TextField
             autoFocus
             required={props.isOpen}
@@ -733,7 +780,12 @@ const SplitTransactionForm = (props: SplitTransactionFormProps) => {
           />
         </Grid>
         {/* Units */}
-        <Grid xs={12} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 3,
+          }}
+        >
           <TextField
             autoFocus
             required={props.isOpen}
@@ -758,7 +810,14 @@ const SplitTransactionForm = (props: SplitTransactionFormProps) => {
             }}
           />
         </Grid>
-        <Grid xs={12} md={7} display="flex" justifyContent="flex-end">
+        <Grid
+          display="flex"
+          justifyContent="flex-end"
+          size={{
+            xs: 12,
+            md: 7,
+          }}
+        >
           {/* Type */}
           <ToggleButtonGroup
             value={props.state?.type}
@@ -781,7 +840,12 @@ const SplitTransactionForm = (props: SplitTransactionFormProps) => {
           </ToggleButtonGroup>
         </Grid>
         {/* Description */}
-        <Grid xs={12} md={9}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 9,
+          }}
+        >
           <TextField
             margin="dense"
             id="split-description"

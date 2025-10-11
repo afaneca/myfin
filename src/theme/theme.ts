@@ -1,5 +1,5 @@
 import { PaletteMode, ThemeOptions, colors } from '@mui/material';
-import { Theme as NivoTheme } from '@nivo/core';
+import { Theme as NivoTheme } from '@nivo/theming';
 import { generateNivoTheme } from '../utils/nivoUtils.ts';
 
 // Extend MUI's Theme object to include Nivo theme settings
@@ -91,6 +91,6 @@ export const generateGlobalTheme = (mode: PaletteMode): MyFinTheme => {
       },*/
     },
     // theme for nivo charts
-    nivo: generateNivoTheme(mode, palette),
+    nivo: generateNivoTheme(mode, palette) as NivoTheme,
   };
 };

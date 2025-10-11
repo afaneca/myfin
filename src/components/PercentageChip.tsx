@@ -1,4 +1,4 @@
-import Chip from '@mui/material/Chip/Chip';
+import Chip from '@mui/material/Chip';
 import { formatNumberAsPercentage } from '../utils/textUtils.ts';
 import { ArrowOutward } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';
@@ -28,7 +28,7 @@ const PercentageChip = ({
         hideIcon === true ||
         percentage === 0 ||
         !Number.isFinite(percentage) ? (
-          <></>
+          <div></div>
         ) : percentage < 0 ? (
           <ArrowOutward sx={{ transform: 'rotate(90deg)' }} />
         ) : (

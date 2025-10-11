@@ -1,8 +1,8 @@
 import { memo } from 'react';
 import { GridSlots } from '@mui/x-data-grid';
-import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
-import type { GridColDef } from '@mui/x-data-grid/models/colDef/gridColDef';
-import { GridRowsProp } from '@mui/x-data-grid/models/gridRows';
+import LinearProgress from '@mui/material/LinearProgress';
+import type { GridColDef } from '@mui/x-data-grid/models/colDef';
+import { GridRowsProp } from '@mui/x-data-grid/models';
 import { ptPT, enUS } from '@mui/x-data-grid/locales';
 import i18next from 'i18next';
 import { NoRows, StyledDataGrid } from './MyFinTable.tsx';

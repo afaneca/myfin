@@ -1,10 +1,10 @@
 import MyFinLineChart from '../../../components/MyFinLineChart.tsx';
 import { ProjectionStatsItem } from '../../../services/stats/statHooks.ts';
 import { useMemo, useState } from 'react';
-import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { Checkbox, FormGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 
 type Props = {
   list: ProjectionStatsItem[];
@@ -28,7 +28,7 @@ const ProjectionsChart = (props: Props) => {
   /*return <MyFinLineChart chartData={chartData} />;*/
   return (
     <Grid container>
-      <Grid xs={12} display="flex" justifyContent="flex-end">
+      <Grid display="flex" justifyContent="flex-end" size={12}>
         <FormGroup sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FormControlLabel
             sx={{ width: 'auto' }}
@@ -42,8 +42,7 @@ const ProjectionsChart = (props: Props) => {
           />
         </FormGroup>
       </Grid>
-
-      <Grid xs={12} height={420}>
+      <Grid height={420} size={12}>
         <MyFinLineChart chartData={chartData} />
       </Grid>
     </Grid>

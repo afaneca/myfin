@@ -9,7 +9,7 @@ import {
   useGetProjectionStats,
 } from '../../../services/stats/statHooks.ts';
 import { useEffect, useReducer } from 'react';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import ProjectionsList from './ProjectionsList.tsx';
 import ProjectionsChart from './ProjectionsChart.tsx';
 
@@ -82,11 +82,11 @@ const ProjectionsStats = () => {
   }, [getProjectionStatsRequest.data]);
 
   return (
-    <Grid container spacing={2} xs={12}>
-      <Grid xs={12}>
+    <Grid container spacing={2} size={12}>
+      <Grid size={12}>
         <ProjectionsChart list={state.statData ?? []} />
       </Grid>
-      <Grid xs={12} mt={4}>
+      <Grid mt={4} size={12}>
         <ProjectionsList list={state.statData ?? []} />
       </Grid>
     </Grid>

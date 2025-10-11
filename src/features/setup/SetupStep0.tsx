@@ -1,20 +1,20 @@
 import { Autocomplete, Divider, PaletteMode, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import React, { useContext, useEffect, useState } from 'react';
-import Paper from '@mui/material/Paper/Paper';
-import Button from '@mui/material/Button/Button';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 import { KeyboardDoubleArrowRight } from '@mui/icons-material';
-import Typography from '@mui/material/Typography/Typography';
-import RadioGroup from '@mui/material/RadioGroup/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
-import Radio from '@mui/material/Radio/Radio';
-import FormControl from '@mui/material/FormControl/FormControl';
+import Typography from '@mui/material/Typography';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import FormControl from '@mui/material/FormControl';
 import i18next from 'i18next';
 import { ColorModeContext } from '../../providers/MyFinThemeProvider.tsx';
 import { useUserData } from '../../providers/UserProvider.tsx';
-import Stack from '@mui/material/Stack/Stack';
+import Stack from '@mui/material/Stack';
 import { CURRENCIES, Currency } from '../../consts/Currency.ts';
-import TextField from '@mui/material/TextField/TextField';
+import TextField from '@mui/material/TextField';
 
 export type Props = {
   onNext: (currency: Currency) => void;

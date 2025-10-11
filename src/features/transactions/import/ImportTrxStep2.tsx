@@ -1,5 +1,5 @@
 import { KeyboardDoubleArrowRight } from '@mui/icons-material';
-import Button from '@mui/material/Button/Button';
+import Button from '@mui/material/Button';
 import { Trans, useTranslation } from 'react-i18next';
 import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
@@ -16,10 +16,10 @@ import {
   useTheme,
 } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import { IdLabelPair } from '../AddEditTransactionDialog.tsx';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker/DatePicker';
+import { DatePicker } from '@mui/x-date-pickers';
 import {
   convertDayJsToUnixTimestamp,
   convertUnixTimestampToDayJs,
@@ -507,7 +507,7 @@ const ImportTrxStep2 = (props: Props) => {
             <Trans i18nKey="importTransactions.step2Text" />
           </Typography>
         </Grid>
-        <Grid xs={12}>
+        <Grid size={12}>
           <MyFinStaticTable
             isRefetching={false}
             rows={rows}

@@ -2,9 +2,9 @@ import { Transaction, TransactionType } from '../services/trx/trxServices.ts';
 import { useTranslation } from 'react-i18next';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent/DialogContent';
-import DialogActions from '@mui/material/DialogActions/DialogActions';
-import Button from '@mui/material/Button/Button';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import Paper from '@mui/material/Paper/Paper';
+import Paper from '@mui/material/Paper';
 import {
   getDayNumberFromUnixTimestamp,
   getFullYearFromUnixTimestamp,

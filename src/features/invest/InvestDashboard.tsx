@@ -6,7 +6,7 @@ import {
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import { useGetInvestStats } from '../../services/invest/investHooks.ts';
 import {
   AssetType,
@@ -17,8 +17,8 @@ import {
   formatNumberAsCurrency,
   formatNumberAsPercentage,
 } from '../../utils/textUtils.ts';
-import Typography from '@mui/material/Typography/Typography';
-import Chip from '@mui/material/Chip/Chip';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
 import { getCurrentYear } from '../../utils/dateUtils.ts';
 import DashboardPieChart, {
   ChartDataItem,
@@ -26,7 +26,7 @@ import DashboardPieChart, {
 import EmptyView from '../../components/EmptyView.tsx';
 import { TFunction } from 'i18next';
 import { ColorGradient } from '../../consts';
-import Stack from '@mui/material/Stack/Stack';
+import Stack from '@mui/material/Stack';
 import { useGetGradientColorForAssetType } from './InvestUtilHooks.ts';
 import PercentageChip from '../../components/PercentageChip.tsx';
 import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
@@ -324,8 +324,13 @@ const InvestDashboard = () => {
 
   return (
     <Grid container spacing={2}>
-      <Grid container xs={12}>
-        <Grid xs={12} sm={5}>
+      <Grid container size={12}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 5,
+          }}
+        >
           {state.assetDistributionPieChartData &&
           state.assetDistributionPieChartData.length > 0 ? (
             <DashboardPieChart
@@ -345,7 +350,12 @@ const InvestDashboard = () => {
             <EmptyView />
           )}
         </Grid>
-        <Grid xs={12} sm={7}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 7,
+          }}
+        >
           <Typography variant="overline" color="text.secondary" gutterBottom>
             {t('investments.topPerformers')}
           </Typography>
@@ -372,27 +382,47 @@ const InvestDashboard = () => {
           )}
         </Grid>
       </Grid>
-      <Grid container xs={12} alignContent="center" textAlign="center">
-        <Grid xs={12} sm={3}>
+      <Grid container alignContent="center" textAlign="center" size={12}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 3,
+          }}
+        >
           <SummaryCard
             title={t('investments.totalInvested')}
             absoluteValue={state.totalInvestedFormatted}
           />
         </Grid>
-        <Grid xs={12} sm={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 3,
+          }}
+        >
           <SummaryCard
             title={t('investments.currentValue')}
             absoluteValue={state.currentValueFormatted}
           />
         </Grid>
-        <Grid xs={12} sm={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 3,
+          }}
+        >
           <SummaryCard
             title={`ROI ${getCurrentYear()}`}
             absoluteValue={state.currentYearRoiValueFormatted}
             percentageValue={state.currentYearRoiPercentageValue}
           />
         </Grid>
-        <Grid xs={12} sm={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 3,
+          }}
+        >
           <SummaryCard
             title={t('investments.globalROI')}
             absoluteValue={state.globalRoiValueFormatted}

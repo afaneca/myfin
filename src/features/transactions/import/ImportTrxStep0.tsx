@@ -1,7 +1,7 @@
 import { KeyboardDoubleArrowRight } from '@mui/icons-material';
-import Button from '@mui/material/Button/Button';
+import Button from '@mui/material/Button';
 import { useTranslation } from 'react-i18next';
-import Typography from '@mui/material/Typography/Typography';
+import Typography from '@mui/material/Typography';
 import { Box, useTheme } from '@mui/material';
 import {
   AlertSeverity,

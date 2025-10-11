@@ -48,68 +48,62 @@ const RoutesProvider = () => {
   return (
     <HashRouter>
       <Routes>
-        <Route path={`${ROUTE_AUTH}`} element={<Login />} />
-        <Route
-          path={`${ROUTE_RECOVER_PASSWORD}`}
-          element={<RecoverPassword />}
-        />
-        <Route path={`${ROUTE_SETUP}`} element={<Setup />} />
+        <Route path={ROUTE_AUTH} element={<Login />} />
+        <Route path={ROUTE_RECOVER_PASSWORD} element={<RecoverPassword />} />
+        <Route path={ROUTE_SETUP} element={<Setup />} />
         <Route element={<PrivateRoute />}>
           {/* Private authenticated routes */}
-          <Route path={`${ROUTE_DASHBOARD}`} element={<Dashboard />} />
-          <Route path={`${ROUTE_PROFILE}`} element={<Profile />} />
-          <Route path={`${ROUTE_TRX}`} element={<Transactions />} />
-          <Route path={`${ROUTE_BUDGETS}`} element={<BudgetList />} />
-          <Route path={`${ROUTE_BUDGET_DETAILS}`} element={<BudgetDetails />} />
-          <Route path={`${ROUTE_BUDGET_NEW}`} element={<BudgetDetails />} />
-          <Route path={`${ROUTE_ACCOUNTS}`} element={<Accounts />} />
-          <Route path={`${ROUTE_CATEGORIES}`} element={<Categories />} />
-          <Route path={`${ROUTE_ENTITIES}`} element={<Entities />} />
-          <Route path={`${ROUTE_TAGS}`} element={<Tags />} />
+          <Route path={ROUTE_DASHBOARD} element={<Dashboard />} />
+          <Route path={ROUTE_PROFILE} element={<Profile />} />
+          <Route path={ROUTE_TRX} element={<Transactions />} />
+          <Route path={ROUTE_BUDGETS} element={<BudgetList />} />
+          <Route path={ROUTE_BUDGET_DETAILS} element={<BudgetDetails />} />
+          <Route path={ROUTE_BUDGET_NEW} element={<BudgetDetails />} />
+          <Route path={ROUTE_ACCOUNTS} element={<Accounts />} />
+          <Route path={ROUTE_CATEGORIES} element={<Categories />} />
+          <Route path={ROUTE_ENTITIES} element={<Entities />} />
+          <Route path={ROUTE_TAGS} element={<Tags />} />
+          <Route path={ROUTE_IMPORT_TRX} element={<ImportTransactions />} />
+          <Route path={ROUTE_RULES} element={<Rules />} />
+          <Route path={ROUTE_INVEST} element={<Invest />} />
           <Route
-            path={`${ROUTE_IMPORT_TRX}`}
-            element={<ImportTransactions />}
-          />
-          <Route path={`${ROUTE_RULES}`} element={<Rules />} />
-          <Route path={`${ROUTE_INVEST}`} element={<Invest />} />
-          <Route
-            path={`${ROUTE_INVEST_DASHBOARD}`}
+            path={ROUTE_INVEST_DASHBOARD}
             element={<Invest defaultTab={InvestTab.Summary} />}
           />
           <Route
-            path={`${ROUTE_INVEST_ASSETS}`}
+            path={ROUTE_INVEST_ASSETS}
             element={<Invest defaultTab={InvestTab.Assets} />}
           />
           <Route
-            path={`${ROUTE_INVEST_TRANSACTIONS}`}
+            path={ROUTE_INVEST_TRANSACTIONS}
             element={<Invest defaultTab={InvestTab.Transactions} />}
           />
           <Route
-            path={`${ROUTE_INVEST_STATS}`}
+            path={ROUTE_INVEST_STATS}
             element={<Invest defaultTab={InvestTab.Reports} />}
           />
-          <Route path={`${ROUTE_STATS}`} element={<Stats />} />
+          <Route path={ROUTE_STATS} element={<Stats />} />
           <Route
-            path={`${ROUTE_STATS_PATRIMONY_EVO}`}
+            path={ROUTE_STATS_PATRIMONY_EVO}
             element={<Stats defaultTab={StatTab.PatrimonyEvolution} />}
           />
           <Route
-            path={`${ROUTE_STATS_PROJECTIONS}`}
+            path={ROUTE_STATS_PROJECTIONS}
             element={<Stats defaultTab={StatTab.Projections} />}
           />
           <Route
-            path={`${ROUTE_STATS_EXPENSES}`}
+            path={ROUTE_STATS_EXPENSES}
             element={<Stats defaultTab={StatTab.Expenses} />}
           />
           <Route
-            path={`${ROUTE_STATS_INCOME}`}
+            path={ROUTE_STATS_INCOME}
             element={<Stats defaultTab={StatTab.Income} />}
           />
           <Route
-            path={`${ROUTE_STATS_YEAR_BY_YEAR}`}
+            path={ROUTE_STATS_YEAR_BY_YEAR}
             element={<Stats defaultTab={StatTab.YearByYear} />}
           />
-          <Route path="*" element={<Navigate to="/auth" replace={true} />} />
+          <Route path="*" element={<Navigate to="/auth" replace />} />
         </Route>
       </Routes>
     </HashRouter>

@@ -6,9 +6,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useEffect, useReducer } from 'react';
 import { useChangePassword, useLogout } from '../../services/auth/authHooks.ts';
-import TextField from '@mui/material/TextField/TextField';
-import Button from '@mui/material/Button/Button';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 
 type UiState = {
   isLoading: boolean;
@@ -146,8 +146,8 @@ const ChangePasswordForm = () => {
   };
 
   return (
-    <Grid container xs={12} spacing={2}>
-      <Grid xs={12}>
+    <Grid container spacing={2} size={12}>
+      <Grid size={12}>
         <TextField
           type="password"
           variant="outlined"
@@ -163,7 +163,12 @@ const ChangePasswordForm = () => {
           }
         />
       </Grid>
-      <Grid xs={12} md={6}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         <TextField
           type="password"
           variant="outlined"
@@ -179,7 +184,12 @@ const ChangePasswordForm = () => {
           }
         />
       </Grid>
-      <Grid xs={12} md={6}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         <TextField
           type="password"
           variant="outlined"
@@ -195,7 +205,7 @@ const ChangePasswordForm = () => {
           }
         />
       </Grid>
-      <Grid xsOffset="auto">
+      <Grid offset="auto">
         <Button
           variant="contained"
           onClick={onButtonClick}

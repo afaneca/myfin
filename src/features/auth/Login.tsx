@@ -1,10 +1,10 @@
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import { useTheme } from '@mui/material';
-import Box from '@mui/material/Box/Box';
-import Button from '@mui/material/Button/Button';
-import Container from '@mui/material/Container/Container';
-import TextField from '@mui/material/TextField/TextField';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
 import {
   useAuthStatus,
@@ -155,7 +155,7 @@ const Login = () => {
               return (
                 <Form>
                   {!isLogin && ( // Show email field only when not in login mode
-                    <TextField
+                    (<TextField
                       id="email"
                       name="email"
                       label="Email"
@@ -166,7 +166,7 @@ const Login = () => {
                       onBlur={props.handleBlur}
                       error={props.touched.email && Boolean(props.errors.email)}
                       helperText={props.touched.email && props.errors.email}
-                    />
+                    />)
                   )}
                   <TextField
                     id="username"

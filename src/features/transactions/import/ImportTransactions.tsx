@@ -1,9 +1,9 @@
 import { Step, StepButton, Stepper, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import Box from '@mui/material/Box/Box';
+import Box from '@mui/material/Box';
 import PageHeader from '../../../components/PageHeader.tsx';
-import Paper from '@mui/material/Paper/Paper';
+import Paper from '@mui/material/Paper';
 import ImportTrxStep0 from './ImportTrxStep0.tsx';
 import ImportTrxStep1, { ImportTrxStep1Result } from './ImportTrxStep1.tsx';
 import ImportTrxStep2, { ImportTrxStep2Result } from './ImportTrxStep2.tsx';

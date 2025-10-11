@@ -9,7 +9,7 @@ export default defineConfig({
       '@emotion/react',
       '@emotion/styled',
       '@mui/material/Tooltip',
-      '@mui/material/Unstable_Grid2',
+      '@mui/material/Grid',
     ],
   },
   plugins: [
