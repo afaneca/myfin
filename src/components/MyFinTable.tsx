@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import type { GridColDef } from '@mui/x-data-grid/models/colDef';
 import { GridRowsProp } from '@mui/x-data-grid/models';
 import { useTranslation } from 'react-i18next';
-import { ptPT, enUS } from '@mui/x-data-grid/locales';
+import { enUS, ptPT } from '@mui/x-data-grid/locales';
 import i18next from 'i18next';
 
 type Props = {
@@ -23,6 +23,7 @@ type Props = {
 
 export const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   border: 0,
+  '--DataGrid-rowBorderColor': `${theme.palette.mode === 'light' ? '#ebe7e7' : '#304052'}`,
   '& .highlighted-row': {
     background: 'linear-gradient(to top, #0083B0, #00B4DB)',
     '&:hover': {
@@ -39,13 +40,13 @@ export const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     },
   },
   '& .MuiDataGrid-row': {
-    borderBottom: `0px solid ${theme.palette.background.paper}`,
+    borderBottom: '0px solid #304052',
   },
   '& .MuiDataGrid-iconSeparator': {
     display: 'none',
   },
-  '& .MuiDataGrid-columnHeaders': {
-    background: `${theme.palette.mode === 'light' ? 'white' : '#192431'}`,
+  '& .MuiDataGrid-columnHeader': {
+    background: `${theme.palette.mode === 'light' ? '#ebe7e7' : '#304052'}`,
     color: `${theme.palette.text.primary}`,
     border: 'none',
   },
@@ -80,35 +81,36 @@ const MyFinTable = (props: Props) => {
 
   return (
     <Box sx={{ height: 'auto', width: '100%' }}>
-      <StyledDataGrid
-        slots={{
-          loadingOverlay: LinearProgress as GridSlots['loadingOverlay'],
-          noRowsOverlay: NoRows,
-        }}
-        loading={isRefetching}
-        rows={rows}
-        columns={columns}
-        rowCount={itemCount}
-        paginationMode="server"
-        paginationModel={paginationModel}
-        pageSizeOptions={[5, 10, 15, 20, 50, 100]}
-        onPaginationModelChange={setPaginationModel}
-        disableRowSelectionOnClick
-        onRowClick={(row) => props.onRowClicked?.(BigInt(row.id))}
-        autoHeight
-        getRowHeight={() => 'auto'}
-        getRowClassName={(params) =>
-          params.row.highlight == true ? 'highlighted-row' : 'regular-row'
-        }
-        sx={{
-          '& .MuiDataGrid-cell': {
-            display: 'flex',
-            alignItems: 'center',
-          },
-          minHeight: 300,
-        }}
-        localeText={getLocaleTextForDataGrid()}
-      />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <StyledDataGrid
+          slots={{
+            loadingOverlay: LinearProgress as GridSlots['loadingOverlay'],
+            noRowsOverlay: NoRows,
+          }}
+          loading={isRefetching}
+          rows={rows}
+          columns={columns}
+          rowCount={itemCount}
+          paginationMode="server"
+          paginationModel={paginationModel}
+          pageSizeOptions={[5, 10, 15, 20, 50, 100]}
+          onPaginationModelChange={setPaginationModel}
+          disableRowSelectionOnClick
+          onRowClick={(row) => props.onRowClicked?.(BigInt(row.id))}
+          getRowHeight={() => 'auto'}
+          getRowClassName={(params) =>
+            params.row.highlight == true ? 'highlighted-row' : 'regular-row'
+          }
+          sx={{
+            '& .MuiDataGrid-cell': {
+              display: 'flex',
+              alignItems: 'center',
+            },
+            minHeight: 300,
+          }}
+          localeText={getLocaleTextForDataGrid()}
+        />
+      </div>
     </Box>
   );
 };

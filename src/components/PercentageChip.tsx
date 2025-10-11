@@ -28,7 +28,7 @@ const PercentageChip = ({
         hideIcon === true ||
         percentage === 0 ||
         !Number.isFinite(percentage) ? (
-          <></>
+          <div></div>
         ) : percentage < 0 ? (
           <ArrowOutward sx={{ transform: 'rotate(90deg)' }} />
         ) : (
