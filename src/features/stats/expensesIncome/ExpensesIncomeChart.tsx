@@ -1,7 +1,7 @@
 import { CategoryExpensesIncomeEvolutionItem } from '../../../services/stats/statServices.ts';
 import { ExpensesIncomeStatPeriod } from './ExpensesIncomeStats.tsx';
 import { useMemo } from 'react';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import MyFinLineChart from '../../../components/MyFinLineChart.tsx';
 
 type Props = {
@@ -26,7 +26,7 @@ const ExpensesIncomeChart = (props: Props) => {
   }, [props.list]);
 
   return (
-    <Grid xs={12} height={420}>
+    <Grid height={420} size={12}>
       <MyFinLineChart chartData={chartData} />
     </Grid>
   );

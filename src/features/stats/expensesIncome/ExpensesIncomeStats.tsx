@@ -1,7 +1,7 @@
 import { Autocomplete, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useReducer } from 'react';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   CategoryExpensesIncomeEvolutionItem,
   GetCategoriesEntitiesTagsResponse,
@@ -20,8 +20,8 @@ import {
   AlertSeverity,
   useSnackbar,
 } from '../../../providers/SnackbarProvider.tsx';
-import TextField from '@mui/material/TextField/TextField';
-import Stack from '@mui/material/Stack/Stack';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
 import ExpensesIncomeChart from './ExpensesIncomeChart.tsx';
 import ExpensesIncomeList from './ExpensesIncomeList.tsx';
 
@@ -344,8 +344,8 @@ const ExpensesIncomeStats = (props: Props) => {
   };
 
   return (
-    <Grid container spacing={2} xs={12}>
-      <Grid xs={12}>
+    <Grid container spacing={2} size={12}>
+      <Grid size={12}>
         <Stack direction="row" spacing={2}>
           {/* Period selection */}
           <ToggleButtonGroup
@@ -408,18 +408,28 @@ const ExpensesIncomeStats = (props: Props) => {
           />
         </Stack>
       </Grid>
-      <Grid xs={12} md={2}></Grid>
-      <Grid xs={12} md={8}></Grid>
+      <Grid
+        size={{
+          xs: 12,
+          md: 2,
+        }}
+      ></Grid>
+      <Grid
+        size={{
+          xs: 12,
+          md: 8,
+        }}
+      ></Grid>
       {/* Stats */}
       {state.statData && (
         <>
-          <Grid xs={12}>
+          <Grid size={12}>
             <ExpensesIncomeChart
               list={state.statData}
               period={state.selectedPeriod}
             />
           </Grid>
-          <Grid xs={12}>
+          <Grid size={12}>
             <ExpensesIncomeList
               list={state.statData}
               period={state.selectedPeriod}

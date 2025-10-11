@@ -7,20 +7,20 @@ import {
   PaletteMode,
   useTheme,
 } from '@mui/material';
-import Box from '@mui/material/Box/Box';
-import FormControl from '@mui/material/FormControl/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
-import Paper from '@mui/material/Paper/Paper';
-import Radio from '@mui/material/Radio/Radio';
-import RadioGroup from '@mui/material/RadioGroup/RadioGroup';
-import Stack from '@mui/material/Stack/Stack';
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Paper from '@mui/material/Paper';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Stack from '@mui/material/Stack';
 import PageHeader from '../../components/PageHeader.tsx';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import React, { useContext, useEffect, useState } from 'react';
-import Typography from '@mui/material/Typography/Typography';
+import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import { ColorModeContext } from '../../providers/MyFinThemeProvider.tsx';
 import UserStatList from './UserStatList.tsx';
 import Utilities from './Utilities.tsx';
@@ -81,11 +81,11 @@ const Profile = () => {
               aria-controls="language-content"
               id="language-header"
             >
-              <Grid container xs={12}>
-                <Grid xs={6} spacing={1}>
+              <Grid container size={12}>
+                <Grid spacing={1} size={6}>
                   <Typography>{t('profile.changeLanguage')}</Typography>
                 </Grid>
-                <Grid xs={6}>
+                <Grid>
                   <Typography sx={{ color: 'text.secondary' }}>
                     {t('profile.changeLanguageStrapLine')}
                   </Typography>
@@ -129,11 +129,11 @@ const Profile = () => {
               aria-controls="currency-content"
               id="currency-header"
             >
-              <Grid container xs={12}>
-                <Grid xs={6} spacing={1}>
+              <Grid container size={12}>
+                <Grid spacing={1} size={6}>
                   <Typography>{t('profile.changeCurrency')}</Typography>
                 </Grid>
-                <Grid xs={6}>
+                <Grid>
                   <Typography sx={{ color: 'text.secondary' }}>
                     {t('profile.changeCurrencyStrapline')}
                   </Typography>
@@ -160,11 +160,11 @@ const Profile = () => {
               aria-controls="theme-content"
               id="theme-header"
             >
-              <Grid container xs={12}>
-                <Grid xs={6} spacing={1}>
+              <Grid container size={12}>
+                <Grid spacing={1} size={6}>
                   <Typography>{t('profile.changeTheme')}</Typography>
                 </Grid>
-                <Grid xs={6}>
+                <Grid>
                   <Typography sx={{ color: 'text.secondary' }}>
                     {t('profile.changeThemeStrapLine')}
                   </Typography>
@@ -208,11 +208,11 @@ const Profile = () => {
               aria-controls="password-content"
               id="password-header"
             >
-              <Grid container xs={12}>
-                <Grid xs={6} spacing={1}>
+              <Grid container size={12}>
+                <Grid spacing={1} size={6}>
                   <Typography>{t('profile.changePassword')}</Typography>
                 </Grid>
-                <Grid xs={6}>
+                <Grid>
                   <Typography sx={{ color: 'text.secondary' }}>
                     {t('profile.changePasswordStrapLine')}
                   </Typography>
@@ -239,11 +239,11 @@ const Profile = () => {
               aria-controls="tools-content"
               id="tools-header"
             >
-              <Grid container xs={12}>
-                <Grid xs={6} spacing={1}>
+              <Grid container size={12}>
+                <Grid spacing={1} size={6}>
                   <Typography>{t('profile.tools')}</Typography>
                 </Grid>
-                <Grid xs={6}>
+                <Grid>
                   <Typography sx={{ color: 'text.secondary' }}>
                     {t('profile.toolsStrapLine')}
                   </Typography>
@@ -270,11 +270,11 @@ const Profile = () => {
               aria-controls="stats-content"
               id="stats-header"
             >
-              <Grid container xs={12}>
-                <Grid xs={6} spacing={1}>
+              <Grid container size={12}>
+                <Grid spacing={1} size={6}>
                   <Typography>{t('profile.statsForNerds')}</Typography>
                 </Grid>
-                <Grid xs={6}>
+                <Grid>
                   <Typography sx={{ color: 'text.secondary' }}>
                     {t('profile.statsForNerdsStrapLine')}
                   </Typography>

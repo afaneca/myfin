@@ -7,20 +7,20 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useEffect, useReducer } from 'react';
 import PageHeader from '../../components/PageHeader.tsx';
-import Box from '@mui/material/Box/Box';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import Button from '@mui/material/Button/Button';
-import Container from '@mui/material/Container/Container';
-import TextField from '@mui/material/TextField/TextField';
-import Slide from '@mui/material/Slide/Slide';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
+import Slide from '@mui/material/Slide';
 import {
   useSendRecoveryOtp,
   useSetRecoveryNewPassword,
 } from '../../services/auth/authHooks.ts';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_AUTH } from '../../providers/RoutesProvider.tsx';
-import Paper from '@mui/material/Paper/Paper';
-import Chip from '@mui/material/Chip/Chip';
+import Paper from '@mui/material/Paper';
+import Chip from '@mui/material/Chip';
 
 type UiState = {
   isLoading: boolean;
@@ -239,8 +239,13 @@ const RecoverPassword = () => {
             subtitle={t('login.accountRecoveryStrapline')}
           />
         </Box>
-        <Grid container xs={12} spacing={2}>
-          <Grid xs={12} md={8}>
+        <Grid container spacing={2} size={12}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 8,
+            }}
+          >
             <TextField
               type="username"
               variant="outlined"
@@ -257,7 +262,12 @@ const RecoverPassword = () => {
               }
             />
           </Grid>
-          <Grid xs={12} md={4}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 4,
+            }}
+          >
             <Button
               variant="outlined"
               color="primary"
@@ -273,11 +283,11 @@ const RecoverPassword = () => {
             </Button>
           </Grid>
           <Slide direction="up" in={state.isNewPasswordEnabled}>
-            <Grid xs={12} pl={0} pr={0}>
+            <Grid pl={0} pr={0} size={12}>
               <Divider variant="middle" sx={{ mb: 2, mt: 2 }}>
                 <Chip label={t('login.setNewPassword')} />
               </Divider>
-              <Grid xs={12}>
+              <Grid size={12}>
                 <TextField
                   type="text"
                   variant="outlined"
@@ -294,7 +304,12 @@ const RecoverPassword = () => {
                 />
               </Grid>
               <Grid container>
-                <Grid xs={12} md={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6,
+                  }}
+                >
                   <TextField
                     type="password"
                     variant="outlined"
@@ -310,7 +325,12 @@ const RecoverPassword = () => {
                     }
                   />
                 </Grid>
-                <Grid xs={12} md={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6,
+                  }}
+                >
                   <TextField
                     type="password"
                     variant="outlined"
@@ -327,7 +347,7 @@ const RecoverPassword = () => {
                   />
                 </Grid>
               </Grid>
-              <Grid xsOffset="auto">
+              <Grid offset="auto">
                 <Button
                   variant="contained"
                   onClick={onButtonClick}

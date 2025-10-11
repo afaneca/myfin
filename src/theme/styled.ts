@@ -1,5 +1,5 @@
-import styled from '@mui/material/styles/styled';
-import Typography from '@mui/material/Typography/Typography';
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
 export const PanelTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,

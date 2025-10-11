@@ -5,7 +5,7 @@ import {
 } from '../../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useReducer } from 'react';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   NamedBalanceSnapshot,
   useGetBalanceSnapshots,
@@ -15,7 +15,7 @@ import PatrimonyEvolutionList, {
 } from './PatrimonyEvolutionList.tsx';
 import { NamedAccountSnapshot } from '../../../services/stats/statServices.ts';
 import PatrimonyEvolutionChart from './PatrimonyEvolutionChart.tsx';
-import TextField from '@mui/material/TextField/TextField';
+import TextField from '@mui/material/TextField';
 import { Autocomplete } from '@mui/material';
 
 type UiState = {
@@ -138,8 +138,8 @@ const PatrimonyEvolutionStats = () => {
   }, [state.snapshotData, state.filteredAccountId]);
 
   return (
-    <Grid container spacing={2} xs={12}>
-      <Grid xs={12}>
+    <Grid container spacing={2} size={12}>
+      <Grid size={12}>
         <Autocomplete
           fullWidth
           id="account-from-condition"
@@ -170,10 +170,10 @@ const PatrimonyEvolutionStats = () => {
           )}
         />
       </Grid>
-      <Grid xs={12} height={400}>
+      <Grid height={400} size={12}>
         <PatrimonyEvolutionChart list={patrimonyEvoData} />
       </Grid>
-      <Grid xs={12} mt={4}>
+      <Grid mt={4} size={12}>
         <PatrimonyEvolutionList list={patrimonyEvoData} />
       </Grid>
     </Grid>

@@ -1,41 +1,39 @@
 import { Tooltip, useTheme } from '@mui/material';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import { useTranslation } from 'react-i18next';
 import DataCard from '../../components/DataCard.tsx';
-import MonthlyOverviewChart, {
-  ChartDataItem as MonthlyOverviewChartDataItem,
-} from './MonthlyOverviewChart.tsx';
+import MonthlyOverviewChart, { ChartDataItem as MonthlyOverviewChartDataItem } from './MonthlyOverviewChart.tsx';
 import { PanelTitle } from '../../theme/styled.ts';
 import DashboardPieChart, { ChartDataItem } from './DashboardPieChart.tsx';
-import MonthByMonthBalanceChart, {
-  MonthByMonthChartDataItem,
-} from './MonthByMonthBalanceChart.tsx';
-import {
-  useGetMonthByMonthData,
-  useGetMonthExpensesIncomeDistributionData,
-} from '../../services/stats/statHooks.ts';
-import { memo, useEffect, useState } from 'react';
+import MonthByMonthBalanceChart, { MonthByMonthChartDataItem } from './MonthByMonthBalanceChart.tsx';
+import { useGetMonthByMonthData, useGetMonthExpensesIncomeDistributionData } from '../../services/stats/statHooks.ts';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { addLeadingZero } from '../../utils/textUtils.ts';
 
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../providers/SnackbarProvider.tsx';
-import {
-  MonthByMonthDataItem,
-  MonthExpensesDistributionDataResponse,
-} from '../../services/stats/statServices.ts';
-import { DatePicker } from '@mui/x-date-pickers';
+import { AlertSeverity, useSnackbar } from '../../providers/SnackbarProvider.tsx';
+import { MonthByMonthDataItem, MonthExpensesDistributionDataResponse } from '../../services/stats/statServices.ts';
 import dayjs, { Dayjs } from 'dayjs';
-import Typography from '@mui/material/Typography/Typography';
+import Typography from '@mui/material/Typography';
 import { AccessTime } from '@mui/icons-material';
-import Stack from '@mui/material/Stack/Stack';
-import {
-  useGetDebtAccounts,
-  useGetInvestingAccounts,
-} from '../../services/user/userHooks.ts';
+import Stack from '@mui/material/Stack';
+import { useGetDebtAccounts, useGetInvestingAccounts } from '../../services/user/userHooks.ts';
 import { Account } from '../../services/auth/authServices.ts';
+import { DatePicker } from '@mui/x-date-pickers';
+
+const generateDebtIncomeDistributionChartData = (accounts: Account[]) => {
+  return (
+    accounts
+      ?.filter((acc) => acc.balance != 0)
+      ?.sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance))
+      ?.slice(0, 5)
+      ?.map((acc) => ({
+        id: acc.name ?? '',
+        color: acc.color_gradient ?? '',
+        value: Math.abs(acc.balance ?? 0),
+      })) ?? []
+  );
+};
 
 const Dashboard = () => {
   const MONTH_BY_MONTH_MAX_MONTHS = 6;
@@ -63,9 +61,17 @@ const Dashboard = () => {
 
   const debtAccounts = useGetDebtAccounts();
   const investAccounts = useGetInvestingAccounts();
-  const [debtChartData, setDebtChartData] = useState<ChartDataItem[]>([]);
-  const [investChartData, setInvestChartData] = useState<ChartDataItem[]>([]);
   const getMonthByMonthData = useGetMonthByMonthData(MONTH_BY_MONTH_MAX_MONTHS);
+
+  const debtChartData = useMemo(
+    () => generateDebtIncomeDistributionChartData(debtAccounts),
+    [debtAccounts]
+  );
+
+  const investChartData = useMemo(
+    () => generateDebtIncomeDistributionChartData(investAccounts),
+    [investAccounts]
+  );
 
   useEffect(() => {
     // Show loading indicator when isLoading is true
@@ -138,28 +144,6 @@ const Dashboard = () => {
       setMonthByMonthChartData(transformBudgetData(getMonthByMonthData.data));
     }
   }, [getMonthByMonthData.data]);
-
-  useEffect(() => {
-    setDebtChartData(generateDebtIncomeDistributionChartData(debtAccounts));
-  }, [debtAccounts]);
-
-  useEffect(() => {
-    setInvestChartData(generateDebtIncomeDistributionChartData(investAccounts));
-  }, [investAccounts]);
-
-  const generateDebtIncomeDistributionChartData = (accounts: Account[]) => {
-    return (
-      accounts
-        ?.filter((acc) => acc.balance != 0)
-        ?.sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance))
-        ?.slice(0, 5)
-        ?.map((acc) => ({
-          id: acc.name ?? '',
-          color: acc.color_gradient ?? '',
-          value: Math.abs(acc.balance ?? 0),
-        })) ?? []
-    );
-  };
 
   const setupIncomeDistributionChart = (
     data: MonthExpensesDistributionDataResponse,
@@ -257,7 +241,11 @@ const Dashboard = () => {
 
   return (
     <Grid container spacing={2} sx={{ p: theme.spacing(2) }}>
-      <Grid xs={12} md={3}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 3,
+        }}>
         <DatePicker
           label={t('stats.month')}
           views={['month', 'year']}
@@ -266,8 +254,6 @@ const Dashboard = () => {
         />
       </Grid>
       <Grid
-        xs={3}
-        xsOffset={6}
         direction="column"
         sx={{
           // Hide on screens smaller than 'md'
@@ -276,6 +262,8 @@ const Dashboard = () => {
           alignItems: 'center',
         }}
         visibility={lastUpdatedTimestamp == '' ? 'hidden' : 'visible'}
+        size={3}
+        offset={6}
       >
         <Tooltip title={t('dashboard.lastUpdate')}>
           <Stack direction="row" alignItems="center" gap={0.5}>
@@ -289,37 +277,61 @@ const Dashboard = () => {
           </Stack>
         </Tooltip>
       </Grid>
-      <Grid xs={12} md={4}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 4,
+        }}>
         <DataCard>
           <PanelTitle>{t('dashboard.monthlyOverview')}</PanelTitle>
           <MonthlyOverviewChart data={monthlyOverviewChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} md={8}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 8,
+        }}>
         <DataCard>
           <PanelTitle>{t('dashboard.monthlySavings')}</PanelTitle>
           <MonthByMonthBalanceChart data={monthByMonthChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} lg={6}>
+      <Grid
+        size={{
+          xs: 12,
+          lg: 6,
+        }}>
         <DataCard>
           <PanelTitle>{t('dashboard.incomeDistribution')}</PanelTitle>
           <DashboardPieChart data={incomeChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} lg={6}>
+      <Grid
+        size={{
+          xs: 12,
+          lg: 6,
+        }}>
         <DataCard>
           <PanelTitle>{t('dashboard.expenseDistribution')}</PanelTitle>
           <DashboardPieChart data={expensesChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} lg={6}>
+      <Grid
+        size={{
+          xs: 12,
+          lg: 6,
+        }}>
         <DataCard>
           <PanelTitle>{t('common.investmentPortfolio')}</PanelTitle>
           <DashboardPieChart data={investChartData} />
         </DataCard>
       </Grid>
-      <Grid xs={12} lg={6}>
+      <Grid
+        size={{
+          xs: 12,
+          lg: 6,
+        }}>
         <DataCard>
           <PanelTitle>{t('common.debtDistribution')}</PanelTitle>
           <DashboardPieChart data={debtChartData} />

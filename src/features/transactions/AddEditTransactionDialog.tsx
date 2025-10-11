@@ -5,12 +5,12 @@ import {
 } from '../../services/trx/trxServices.ts';
 import { useTranslation } from 'react-i18next';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent/DialogContent';
-import TextField from '@mui/material/TextField/TextField';
-import DialogActions from '@mui/material/DialogActions/DialogActions';
-import Button from '@mui/material/Button/Button';
-import Dialog from '@mui/material/Dialog/Dialog';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import DialogContent from '@mui/material/DialogContent';
+import TextField from '@mui/material/TextField';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import Grid from '@mui/material/Grid';
 import {
   Autocomplete,
   AutocompleteRenderInputParams,
@@ -22,8 +22,8 @@ import {
   ToggleButtonGroup,
   Tooltip,
 } from '@mui/material';
-import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import InputAdornment from '@mui/material/InputAdornment';
 import {
   AccountCircle,
   AutoAwesome,
@@ -57,7 +57,7 @@ import {
   inferTrxTypeByAttributes,
 } from '../../utils/transactionUtils.ts';
 import IconButton from '@mui/material/IconButton';
-import Chip from '@mui/material/Chip/Chip';
+import Chip from '@mui/material/Chip';
 import { Account } from '../../services/auth/authServices.ts';
 import { NumericFormat } from 'react-number-format';
 import CurrencyIcon from '../../components/CurrencyIcon.tsx';
@@ -534,8 +534,13 @@ const AddEditTransactionDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} rowSpacing={2}>
-          <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
-            <Grid md={4} xs={12}>
+          <Grid container spacing={2} columns={{ xs: 1, md: 12 }} size={12}>
+            <Grid
+              size={{
+                md: 4,
+                xs: 12,
+              }}
+            >
               {/* Essential */}
               <Grow in={isEssentialVisible}>
                 <FormControlLabel
@@ -549,7 +554,14 @@ const AddEditTransactionDialog = (props: Props) => {
                 />
               </Grow>
             </Grid>
-            <Grid xs={12} md={8} display="flex" justifyContent="flex-end">
+            <Grid
+              display="flex"
+              justifyContent="flex-end"
+              size={{
+                xs: 12,
+                md: 8,
+              }}
+            >
               {/* Transaction type */}
               <ToggleButtonGroup
                 value={transactionType}
@@ -579,8 +591,13 @@ const AddEditTransactionDialog = (props: Props) => {
             </Grid>
           </Grid>
           {/* Value, date & description */}
-          <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
-            <Grid xs={12} md={3}>
+          <Grid container spacing={2} columns={{ xs: 1, md: 12 }} size={12}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3,
+              }}
+            >
               <NumericFormat
                 value={amountValue}
                 onValueChange={(values) => {
@@ -613,7 +630,12 @@ const AddEditTransactionDialog = (props: Props) => {
                 }}
               />
             </Grid>
-            <Grid xs={12} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 3,
+              }}
+            >
               <DatePicker
                 name="date"
                 label={t('transactions.dateOfTransaction')}
@@ -633,7 +655,12 @@ const AddEditTransactionDialog = (props: Props) => {
                 }}
               />
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <TextField
                 margin="dense"
                 id="description"
@@ -669,9 +696,14 @@ const AddEditTransactionDialog = (props: Props) => {
               />
             </Grid>
           </Grid>
-          <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
+          <Grid container spacing={2} columns={{ xs: 1, md: 12 }} size={12}>
             {/* Origin & destination accounts */}
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <Autocomplete
                 id="account_from"
                 disabled={!isAccountFromEnabled}
@@ -699,7 +731,12 @@ const AddEditTransactionDialog = (props: Props) => {
                 )}
               />
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <Autocomplete
                 id="account_to"
                 disabled={!isAccountToEnabled}
@@ -728,7 +765,12 @@ const AddEditTransactionDialog = (props: Props) => {
               />
             </Grid>
             {/* Category & Entity */}
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <Autocomplete
                 id="category"
                 value={categoryValue}
@@ -754,7 +796,12 @@ const AddEditTransactionDialog = (props: Props) => {
                 )}
               />
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <Autocomplete
                 id="entity"
                 value={entityValue}
@@ -781,7 +828,7 @@ const AddEditTransactionDialog = (props: Props) => {
               />
             </Grid>
           </Grid>
-          <Grid xs={12}>
+          <Grid size={12}>
             <Autocomplete
               multiple
               id="tags"
@@ -798,7 +845,7 @@ const AddEditTransactionDialog = (props: Props) => {
               )}
             />
           </Grid>
-          <Grid xs={12} marginTop={4}>
+          <Grid marginTop={4} size={12}>
             <Collapse in={isSplitTransactionFormOpen}>
               <SplitTransactionForm
                 state={splitTransactionFormState}
@@ -972,8 +1019,13 @@ const SplitTransactionForm = ({
       <Divider sx={{ mb: 5 }}>
         <Chip label={t('transactions.splitTransaction')} size="small" />
       </Divider>
-      <Grid container spacing={0} rowSpacing={2} xs={12} columns={{ xs: 12 }}>
-        <Grid md={4} xs={12}>
+      <Grid container spacing={0} rowSpacing={2} columns={{ xs: 12 }} size={12}>
+        <Grid
+          size={{
+            md: 4,
+            xs: 12,
+          }}
+        >
           {/* Essential */}
           <Grow in={isEssentialVisible}>
             <FormControlLabel
@@ -987,7 +1039,14 @@ const SplitTransactionForm = ({
             />
           </Grow>
         </Grid>
-        <Grid xs={12} md={8} display="flex" justifyContent="flex-end">
+        <Grid
+          display="flex"
+          justifyContent="flex-end"
+          size={{
+            xs: 12,
+            md: 8,
+          }}
+        >
           {/* Transaction type */}
           <ToggleButtonGroup
             value={state?.type ?? TransactionType.Expense}
@@ -1016,8 +1075,13 @@ const SplitTransactionForm = ({
           </ToggleButtonGroup>
         </Grid>
         {/* Value, date & description */}
-        <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
-          <Grid xs={12} md={3}>
+        <Grid container spacing={2} columns={{ xs: 1, md: 12 }} size={12}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3,
+            }}
+          >
             <NumericFormat
               autoFocus
               required={isOpen}
@@ -1049,7 +1113,12 @@ const SplitTransactionForm = ({
             />
           </Grid>
 
-          <Grid xs={12} md={9}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 9,
+            }}
+          >
             <TextField
               required={isOpen}
               margin="dense"
@@ -1071,9 +1140,14 @@ const SplitTransactionForm = ({
             />
           </Grid>
         </Grid>
-        <Grid container spacing={2} xs={12} columns={{ xs: 1, md: 12 }}>
+        <Grid container spacing={2} columns={{ xs: 1, md: 12 }} size={12}>
           {/* Origin & destination accounts */}
-          <Grid xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
             <Autocomplete
               id="split_account_from"
               disabled={!isAccountFromRequired}
@@ -1106,7 +1180,12 @@ const SplitTransactionForm = ({
               )}
             />
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
             <Autocomplete
               id="split_account_to"
               disabled={!isAccountToRequired}
@@ -1136,7 +1215,12 @@ const SplitTransactionForm = ({
             />
           </Grid>
           {/* Category & Entity */}
-          <Grid xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
             <Autocomplete
               id="split_category"
               value={state?.category ?? null}
@@ -1162,7 +1246,12 @@ const SplitTransactionForm = ({
               )}
             />
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
             <Autocomplete
               id="split_entity"
               value={state?.entity ?? null}
@@ -1189,7 +1278,7 @@ const SplitTransactionForm = ({
             />
           </Grid>
         </Grid>
-        <Grid xs={12}>
+        <Grid size={12}>
           <Autocomplete
             multiple
             id="split_tags"

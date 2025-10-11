@@ -1,24 +1,17 @@
 import { ListItem, Tooltip, useTheme } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import Box from '@mui/material/Box/Box';
-import Chip from '@mui/material/Chip/Chip';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import Paper from '@mui/material/Paper/Paper';
-import Stack from '@mui/material/Stack/Stack';
-import TextField from '@mui/material/TextField/TextField';
-import Typography from '@mui/material/Typography/Typography';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import InputAdornment from '@mui/material/InputAdornment';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { GridColDef } from '@mui/x-data-grid';
 import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
-import {
-  useGetTransactions,
-  useRemoveTransaction,
-} from '../../services/trx/trxHooks.ts';
-import {
-  Tag,
-  Transaction,
-  TransactionType,
-} from '../../services/trx/trxServices.ts';
+import { useGetTransactions, useRemoveTransaction } from '../../services/trx/trxHooks.ts';
+import { Tag, Transaction, TransactionType } from '../../services/trx/trxServices.ts';
 import React, { memo, useEffect, useMemo, useState } from 'react';
 import {
   AddCircleOutline,
@@ -35,16 +28,14 @@ import {
 import { formatNumberAsCurrency } from '../../utils/textUtils';
 import { useTranslation } from 'react-i18next';
 import {
+  convertUnixTimestampToDateString,
   getDayNumberFromUnixTimestamp,
   getMonthShortStringFromUnixTimestamp,
   getShortYearFromUnixTimestamp,
 } from '../../utils/dateUtils';
 import MyFinTable from '../../components/MyFinTable.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../providers/SnackbarProvider.tsx';
-import Button from '@mui/material/Button/Button';
+import { AlertSeverity, useSnackbar } from '../../providers/SnackbarProvider.tsx';
+import Button from '@mui/material/Button';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import AddEditTransactionDialog from './AddEditTransactionDialog.tsx';
 import IconButton from '@mui/material/IconButton';
@@ -134,16 +125,20 @@ const Transactions = () => {
       minWidth: 100,
       editable: false,
       sortable: false,
-      renderCell: (params) => (
-        <Stack direction="column" alignItems="center" gap={0.5}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            height="100%"
-          >
-            <span style={{ textAlign: 'center' }}>
+      renderCell: (params) => {
+        const textColor =
+          (params.value.first == true) ? theme.palette.text.primary : theme.palette.text.disabled;
+        return (
+          <Stack direction="column" alignItems="center" gap={0.5}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              height="100%"
+            >
+
+            <span style={{ textAlign: 'center', color: textColor }}>
               <b>
                 {getDayNumberFromUnixTimestamp(params.value.date_timestamp)}
               </b>{' '}
@@ -152,22 +147,23 @@ const Transactions = () => {
                 {getMonthShortStringFromUnixTimestamp(
                   params.value.date_timestamp,
                 )}
-                {" '"}
+                {' \''}
                 {getShortYearFromUnixTimestamp(params.value.date_timestamp)}
               </span>
             </span>
-          </Box>
-          <Tooltip title={t('transactions.essential')}>
-            <IconButton
-              sx={{
-                display: params.value.essential === 1 ? 'flex' : 'none',
-              }}
-            >
-              <Stars fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Stack>
-      ),
+            </Box>
+            <Tooltip title={t('transactions.essential')}>
+              <IconButton
+                sx={{
+                  display: params.value.essential === 1 ? 'flex' : 'none',
+                }}
+              >
+                <Stars fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        );
+      },
     },
     {
       field: 'flow',
@@ -236,7 +232,8 @@ const Transactions = () => {
                         variant="outlined"
                         size="small"
                         color="primary"
-                        onClick={() => {}}
+                        onClick={() => {
+                        }}
                       />
                     </ListItem>
                   );
@@ -312,30 +309,43 @@ const Transactions = () => {
     }
   }
 
-  const rows = getTransactionsRequest.data.results.map(
-    (result: Transaction) => ({
-      id: result.transaction_id,
-      date: {
-        date_timestamp: result.date_timestamp,
-        essential: result.is_essential,
+  const rows = (() => {
+    const seenDates = new Set();
+
+    return getTransactionsRequest.data.results.map(
+      (result: Transaction) => {
+        const dateKey = convertUnixTimestampToDateString(result.date_timestamp || 0);
+        const isFirstOfDay = !seenDates.has(dateKey);
+        if (isFirstOfDay) {
+          seenDates.add(dateKey);
+        }
+
+        return {
+          id: result.transaction_id,
+          date: {
+            date_timestamp: result.date_timestamp,
+            essential: result.is_essential,
+            first: isFirstOfDay,
+          },
+          flow: {
+            acc_from_name: result.account_from_name,
+            acc_to_name: result.account_to_name,
+          },
+          description: {
+            description: result.description,
+            entity: result.entity_name,
+            category: result.category_name,
+            tags: result.tags,
+          },
+          value: {
+            amount: formatNumberAsCurrency(result.amount),
+            chipColor: getChipColorForAmount(result),
+          },
+          actions: result,
+        };
       },
-      flow: {
-        acc_from_name: result.account_from_name,
-        acc_to_name: result.account_to_name,
-      },
-      description: {
-        description: result.description,
-        entity: result.entity_name,
-        category: result.category_name,
-        tags: result.tags,
-      },
-      value: {
-        amount: formatNumberAsCurrency(result.amount),
-        chipColor: getChipColorForAmount(result),
-      },
-      actions: result,
-    }),
-  );
+    );
+  })();
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
@@ -368,7 +378,14 @@ const Transactions = () => {
         />
       </Box>
       <Grid container spacing={2}>
-        <Grid sm={8} xs={12} container spacing={2}>
+        <Grid
+          container
+          spacing={2}
+          size={{
+            sm: 8,
+            xs: 12,
+          }}
+        >
           <Grid>
             <Button
               variant="contained"
@@ -395,10 +412,12 @@ const Transactions = () => {
           </Grid>
         </Grid>
         <Grid
-          sm={12}
-          lg={4}
-          xsOffset="auto"
           sx={{ display: 'flex', justifyContent: 'flex-end' }}
+          size={{
+            sm: 12,
+            lg: 4,
+          }}
+          offset="auto"
         >
           {' '}
           <TextField
@@ -417,7 +436,7 @@ const Transactions = () => {
             }}
           />
         </Grid>
-        <Grid xs={12}>
+        <Grid size={12}>
           <MyFinTable
             isRefetching={getTransactionsRequest.isRefetching}
             rows={rows}

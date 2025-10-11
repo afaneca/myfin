@@ -6,12 +6,12 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useReducer } from 'react';
-import Paper from '@mui/material/Paper/Paper';
-import Button from '@mui/material/Button/Button';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 import { KeyboardDoubleArrowRight } from '@mui/icons-material';
-import Typography from '@mui/material/Typography/Typography';
-import Stack from '@mui/material/Stack/Stack';
-import TextField from '@mui/material/TextField/TextField';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import { useInitSetup } from '../../services/auth/authHooks.ts';
 import { Currency } from '../../consts/Currency.ts';
 

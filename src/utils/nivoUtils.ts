@@ -1,18 +1,21 @@
-import { PaletteOptions } from '@mui/material/styles/createPalette';
-import { LinearGradientDef, Theme as NivoTheme } from '@nivo/core';
+import { PaletteOptions } from '@mui/material/styles';
+import { LinearGradientDef } from '@nivo/core';
+import { Theme as NivoTheme } from '@nivo/theming';
 import { ColorGradient } from '../consts';
 import { cssGradients } from './gradientUtils.ts';
 
 export function generateNivoTheme(
   _mode: 'light' | 'dark',
   palette: PaletteOptions,
-): NivoTheme {
+): Partial<NivoTheme> {
   return {
     text: {
       fontSize: 11,
-      fill: palette.text?.primary,
+      fill: palette.text?.primary || '',
       outlineWidth: 0,
       outlineColor: 'transparent',
+      fontFamily: '',
+      outlineOpacity: 1,
     },
     tooltip: {
       container: {
@@ -20,6 +23,11 @@ export function generateNivoTheme(
         color: '#333333',
         fontSize: 12,
       },
+      basic: {},
+      chip: {},
+      table: {},
+      tableCell: {},
+      tableCellValue: {},
     },
     grid: {
       line: {

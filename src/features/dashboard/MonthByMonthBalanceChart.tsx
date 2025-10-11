@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material';
-import Stack from '@mui/material/Stack/Stack';
+import Stack from '@mui/material/Stack';
 import { BarDatum, ResponsiveBar } from '@nivo/bar';
 import { formatNumberAsCurrency } from '../../utils/textUtils.ts';
 import {
@@ -8,7 +8,7 @@ import {
 } from '../../utils/nivoUtils.ts';
 import { ColorGradient } from '../../consts';
 import { useEffect, useState } from 'react';
-import Paper from '@mui/material/Paper/Paper';
+import Paper from '@mui/material/Paper';
 import EmptyView from '../../components/EmptyView.tsx';
 
 interface ChartDataItem {
@@ -92,7 +92,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
               legendOrientation: 'vertical',
             },
           ]}
-          borderRadius={theme.shape.borderRadius}
+          borderRadius={theme.shape.borderRadius as number}
           enableGridY={false}
           defs={generateDefsForGradients()}
           // @ts-expect-error could assume different structural identities

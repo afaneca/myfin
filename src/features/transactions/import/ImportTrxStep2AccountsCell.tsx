@@ -2,7 +2,7 @@ import { Autocomplete, Stack } from '@mui/material';
 import { IdLabelPair } from '../AddEditTransactionDialog.tsx';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import TextField from '@mui/material/TextField/TextField';
+import TextField from '@mui/material/TextField';
 
 type Props = {
   accounts: IdLabelPair[];

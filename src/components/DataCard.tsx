@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { useTheme, Theme, SxProps } from '@mui/material';
-import Box from '@mui/material/Box/Box';
+import Box from '@mui/material/Box';
 
 const DataCard = ({
   children,

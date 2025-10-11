@@ -5,10 +5,10 @@ import {
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
-import Paper from '@mui/material/Paper/Paper';
-import Box from '@mui/material/Box/Box';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 import PageHeader from '../../components/PageHeader.tsx';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   useGetAccounts,
   useRemoveAccount,
@@ -22,18 +22,18 @@ import {
 import { GridColDef } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
-import Stack from '@mui/material/Stack/Stack';
+import Stack from '@mui/material/Stack';
 import { cssGradients } from '../../utils/gradientUtils.ts';
-import Chip from '@mui/material/Chip/Chip';
-import Button from '@mui/material/Button/Button';
+import Chip from '@mui/material/Chip';
+import Button from '@mui/material/Button';
 import { ColorGradient } from '../../consts';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import AddEditAccountDialog from './AddEditAccountDialog.tsx';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import TextField from '@mui/material/TextField/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
 import { debounce } from 'lodash';
 import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
-import Typography from '@mui/material/Typography/Typography';
+import Typography from '@mui/material/Typography';
 import { useFormatStringAsCurrency } from '../../utils/textHooks.ts';
 
 const Accounts = () => {
@@ -317,7 +317,12 @@ const Accounts = () => {
         {t('accounts.addAccount')}
       </Button>
       <Grid container spacing={2}>
-        <Grid xs={12} md={8}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 8,
+          }}
+        >
           <Tabs
             selectionFollowsFocus
             value={selectedTab}
@@ -332,10 +337,12 @@ const Accounts = () => {
           </Tabs>
         </Grid>
         <Grid
-          xs={12}
-          md={4}
-          xsOffset="auto"
           sx={{ display: 'flex', justifyContent: 'flex-end' }}
+          size={{
+            xs: 12,
+            md: 4,
+          }}
+          offset="auto"
         >
           <TextField
             id="search"
@@ -353,7 +360,7 @@ const Accounts = () => {
             }}
           />
         </Grid>
-        <Grid xs={12}>
+        <Grid size={12}>
           <MyFinStaticTable
             isRefetching={getAccountsRequest.isRefetching}
             rows={rows}

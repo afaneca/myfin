@@ -7,8 +7,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useEffect, useReducer } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText/DialogContentText';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 import Dialog from '@mui/material/Dialog';
 import Dropzone from 'react-dropzone';
 import UploadDropzoneBox from '../../components/UploadDropzoneBox.tsx';

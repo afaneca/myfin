@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
-import Typography from '@mui/material/Typography/Typography';
+import Typography from '@mui/material/Typography';
 import PercentageChip from '../../../components/PercentageChip.tsx';
 
 export type CombinedRoiByYearData = {

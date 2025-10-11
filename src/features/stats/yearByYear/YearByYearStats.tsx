@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useReducer } from 'react';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Grid from '@mui/material/Grid';
 import {
   CategoryYearByYearDataItem,
   YearByYearStatsResponse,
@@ -14,9 +14,9 @@ import { useGetYearByYearData } from '../../../services/stats/statHooks.ts';
 import YearByYearSearchableList, {
   YearByYearSearchableListItem,
 } from './YearByYearSearchableList.tsx';
-import TextField from '@mui/material/TextField/TextField';
+import TextField from '@mui/material/TextField';
 import { Autocomplete, Divider } from '@mui/material';
-import Typography from '@mui/material/Typography/Typography';
+import Typography from '@mui/material/Typography';
 import MyFinSankeyDiagram, {
   SankeyDiagramData,
   SankeyLink,
@@ -215,7 +215,7 @@ const YearByYearStats = () => {
   return (
     <Grid container spacing={2}>
       {/* Year selection */}
-      <Grid xs={12}>
+      <Grid size={12}>
         <Autocomplete
           fullWidth
           id="select-year"
@@ -239,16 +239,20 @@ const YearByYearStats = () => {
           )}
         />
       </Grid>
-
       {/* Sankey Chart */}
       {state.moneyFlowData && (
-        <Grid xs={12} height={500}>
+        <Grid height={500} size={12}>
           <MyFinSankeyDiagram chartData={state.moneyFlowData} />
         </Grid>
       )}
-
       {/* Category income */}
-      <Grid xs={12} md={6} mt={2}>
+      <Grid
+        mt={2}
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         <Typography variant="h5">{t('stats.incomeByCategory')}</Typography>
         <Divider sx={{ mb: 2, mt: 1 }} />
         <YearByYearSearchableList
@@ -257,7 +261,13 @@ const YearByYearStats = () => {
         />
       </Grid>
       {/* Category expenses */}
-      <Grid xs={12} md={6} mt={2}>
+      <Grid
+        mt={2}
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         <Typography variant="h5">{t('stats.expensesByCategory')}</Typography>
         <Divider sx={{ mb: 2, mt: 1 }} />
         <YearByYearSearchableList
@@ -265,9 +275,14 @@ const YearByYearStats = () => {
           isLoading={state.isLoading}
         />
       </Grid>
-
       {/* Entity income */}
-      <Grid xs={12} md={6} mt={2}>
+      <Grid
+        mt={2}
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         <Typography variant="h5">{t('stats.incomeByEntity')}</Typography>
         <Divider sx={{ mb: 2, mt: 1 }} />
         <YearByYearSearchableList
@@ -276,7 +291,13 @@ const YearByYearStats = () => {
         />
       </Grid>
       {/* Entity expenses */}
-      <Grid xs={12} md={6} mt={2}>
+      <Grid
+        mt={2}
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         <Typography variant="h5">{t('stats.expensesByEntity')}</Typography>
         <Divider sx={{ mb: 2, mt: 1 }} />
         <YearByYearSearchableList
@@ -284,9 +305,14 @@ const YearByYearStats = () => {
           isLoading={state.isLoading}
         />
       </Grid>
-
       {/* Tag income */}
-      <Grid xs={12} md={6} mt={2}>
+      <Grid
+        mt={2}
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         <Typography variant="h5">{t('stats.incomeByTag')}</Typography>
         <Divider sx={{ mb: 2, mt: 1 }} />
         <YearByYearSearchableList
@@ -295,7 +321,13 @@ const YearByYearStats = () => {
         />
       </Grid>
       {/* Tag expenses */}
-      <Grid xs={12} md={6} mt={2}>
+      <Grid
+        mt={2}
+        size={{
+          xs: 12,
+          md: 6,
+        }}
+      >
         <Typography variant="h5">{t('stats.expensesByTag')}</Typography>
         <Divider sx={{ mb: 2, mt: 1 }} />
         <YearByYearSearchableList

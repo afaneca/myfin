@@ -25,6 +25,7 @@ const PrivateRoute = () => {
   }
 
   function goToProfile() {
+    /*navigate(ROUTE_PROFILE, { replace: false });*/
     navigate(ROUTE_PROFILE);
   }
 

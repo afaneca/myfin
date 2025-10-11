@@ -1,5 +1,5 @@
-import Alert from '@mui/material/Alert/Alert';
-import Snackbar from '@mui/material/Snackbar/Snackbar';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 import { AlertColor } from '@mui/material/Alert';
 
 type Props = {

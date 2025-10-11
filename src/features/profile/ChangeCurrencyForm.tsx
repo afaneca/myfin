@@ -7,10 +7,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useEffect, useReducer } from 'react';
 import { CURRENCIES, Currency } from '../../consts/Currency.ts';
-import TextField from '@mui/material/TextField/TextField';
+import TextField from '@mui/material/TextField';
 import { useChangeCurrency } from '../../services/auth/authHooks.ts';
-import Button from '@mui/material/Button/Button';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 import { useUserData } from '../../providers/UserProvider.tsx';
 
 type UiState = {
@@ -110,8 +110,8 @@ const ChangeCurrencyForm = () => {
   };
 
   return (
-    <Grid container xs={12} spacing={2}>
-      <Grid xs={12}>
+    <Grid container spacing={2} size={12}>
+      <Grid size={12}>
         <Autocomplete
           id="currency"
           value={state.currency}
@@ -139,7 +139,7 @@ const ChangeCurrencyForm = () => {
           )}
         />
       </Grid>
-      <Grid xsOffset="auto">
+      <Grid offset="auto">
         <Button variant="contained" onClick={onButtonClick} autoFocus>
           {t('profile.changeCurrencyCTA')}
         </Button>

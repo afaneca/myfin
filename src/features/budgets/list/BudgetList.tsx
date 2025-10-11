@@ -1,10 +1,10 @@
 import { Checkbox, FormGroup, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import React, { memo, useEffect, useMemo, useState } from 'react';
-import Paper from '@mui/material/Paper/Paper';
-import Box from '@mui/material/Box/Box';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 import PageHeader from '../../../components/PageHeader.tsx';
-import Stack from '@mui/material/Stack/Stack';
+import Stack from '@mui/material/Stack';
 import {
   useGetBudgets,
   useRemoveBudget,
@@ -31,13 +31,13 @@ import {
   getMonthsFullName,
 } from '../../../utils/dateUtils.ts';
 import { formatNumberAsPercentage } from '../../../utils/textUtils.ts';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import Button from '@mui/material/Button/Button';
-import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import MyFinTable from '../../../components/MyFinTable.tsx';
-import Typography from '@mui/material/Typography/Typography';
-import Chip from '@mui/material/Chip/Chip';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -46,7 +46,7 @@ import {
   ROUTE_BUDGET_NEW,
 } from '../../../providers/RoutesProvider.tsx';
 import { debounce } from 'lodash';
-import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 
 const BudgetList = () => {
@@ -345,7 +345,14 @@ const BudgetList = () => {
         />
       </Box>
       <Grid container spacing={2}>
-        <Grid sm={8} xs={12} container spacing={2}>
+        <Grid
+          container
+          spacing={2}
+          size={{
+            sm: 8,
+            xs: 12,
+          }}
+        >
           <Grid>
             <Button
               variant="contained"
@@ -372,10 +379,12 @@ const BudgetList = () => {
         </Grid>
 
         <Grid
-          sm={12}
-          lg={4}
-          xsOffset="auto"
           sx={{ display: 'flex', justifyContent: 'flex-end' }}
+          size={{
+            sm: 12,
+            lg: 4,
+          }}
+          offset="auto"
         >
           {' '}
           <TextField
@@ -394,7 +403,7 @@ const BudgetList = () => {
             }}
           />
         </Grid>
-        <Grid xs={12}>
+        <Grid size={12}>
           <MyFinTable
             isRefetching={getBudgetsRequest.isRefetching}
             rows={rows}

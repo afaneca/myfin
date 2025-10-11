@@ -8,7 +8,7 @@ import {
 import { useAddCategory, useEditCategory } from './CategoryHooks.tsx';
 import React, { useEffect, useState } from 'react';
 import { ColorGradient } from '../../consts';
-import TextField from '@mui/material/TextField/TextField';
+import TextField from '@mui/material/TextField';
 import {
   Checkbox,
   MenuItem,
@@ -19,9 +19,9 @@ import {
 } from '@mui/material';
 import { cssGradients } from '../../utils/gradientUtils.ts';
 import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Unstable_Grid2/Grid2';
-import Stack from '@mui/material/Stack/Stack';
-import FormControlLabel from '@mui/material/FormControlLabel/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import {
   AcUnit,
   Description,
@@ -33,10 +33,10 @@ import {
   Undo,
 } from '@mui/icons-material';
 import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent/DialogContent';
-import InputAdornment from '@mui/material/InputAdornment/InputAdornment';
-import Button from '@mui/material/Button/Button';
-import DialogActions from '@mui/material/DialogActions/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import InputAdornment from '@mui/material/InputAdornment';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
 
 type Props = {
   isOpen: boolean;
@@ -200,7 +200,12 @@ const AddEditCategoryDialog = (props: Props) => {
     >
       <DialogTitle>
         <Grid container>
-          <Grid xs={12} md={10}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 10,
+            }}
+          >
             <Stack>
               <Trans
                 i18nKey={
@@ -233,11 +238,13 @@ const AddEditCategoryDialog = (props: Props) => {
             </Stack>
           </Grid>
           <Grid
-            xs={12}
-            md={2}
             display="flex"
             justifyContent="flex-end"
             sx={{ height: 'fit-content' }}
+            size={{
+              xs: 12,
+              md: 2,
+            }}
           >
             <CategoryStatusToggle
               selectedStatus={statusValue}
@@ -247,8 +254,15 @@ const AddEditCategoryDialog = (props: Props) => {
         </Grid>
       </DialogTitle>
       <DialogContent>
-        <Grid container xs={12} spacing={0}>
-          <Grid xs={12} md={10} pr={2} pb={1}>
+        <Grid container spacing={0} size={12}>
+          <Grid
+            pr={2}
+            pb={1}
+            size={{
+              xs: 12,
+              md: 10,
+            }}
+          >
             <TextField
               margin="dense"
               id="name"
@@ -267,10 +281,17 @@ const AddEditCategoryDialog = (props: Props) => {
               }}
             />
           </Grid>
-          <Grid xs={12} md={2} display="flex" justifyContent="flex-end">
+          <Grid
+            display="flex"
+            justifyContent="flex-end"
+            size={{
+              xs: 12,
+              md: 2,
+            }}
+          >
             <ColorOptionsSelect selectedColor={colorValue} />
           </Grid>
-          <Grid xs={12}>
+          <Grid size={12}>
             <TextField
               margin="dense"
               id="description"
