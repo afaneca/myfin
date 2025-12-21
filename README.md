@@ -1,6 +1,6 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/afaneca/myfin-android?include_prereleases)](https://github.com/afaneca/myfin/releases)
-[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](https://github.com/afaneca/myfin/pkgs/container/myfin)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/afaneca/myfin?include_prereleases&logo=github&style=flat-square)](https://github.com/afaneca/myfin/releases)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff&style=flat-square)](https://github.com/afaneca/myfin/pkgs/container/myfin)
 
 [![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostinger.com/vps/docker-hosting?compose_url=https://raw.githubusercontent.com/afaneca/myfin/refs/heads/master/docker-compose.yml&REFERRALCODE=SC1ADNFANHG6)
 
