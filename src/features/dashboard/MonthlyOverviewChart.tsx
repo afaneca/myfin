@@ -78,6 +78,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
           defs={generateDefsForGradients()}
           // @ts-expect-error could assume different structural identities
           fill={generateFillArrayForGradients()}
+          arcLabelsSkipAngle={10}
           theme={theme.nivo}
           tooltip={(item) => (
             <Paper
@@ -86,6 +87,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
                 background: 'white',
                 color: 'black',
                 p: theme.spacing(1),
+                whiteSpace: 'nowrap',
               }}
             >
               {item.datum.label}: <strong>{item.datum.formattedValue}</strong>
