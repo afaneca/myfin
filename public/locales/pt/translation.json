@@ -88,7 +88,8 @@
     "monthlyOverview": "Overview Mensal",
     "incomeDistribution": "Distribuição de Receita",
     "expenseDistribution": "Distribuição de Despesa",
-    "monthlySavings": "Poupança mensal"
+    "monthlySavings": "Poupança mensal",
+    "chartValueAdjusted": "* Reduzido para visibilidade"
   },
   "monthsShort": {
     "jan": "Jan",
