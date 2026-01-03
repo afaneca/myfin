@@ -43,7 +43,11 @@ const MonthlyOverviewChart = ({ data }: Props) => {
   const threshold = useMemo(() => {
     if (data.length === 0) return 0;
     const absValues = data.map((d) => Math.abs(d.balance)).sort((a, b) => a - b);
-    const median = absValues[Math.floor(absValues.length / 2)] || 0;
+    const mid = Math.floor(absValues.length / 2);
+    const median =
+      absValues.length % 2 === 0 && absValues.length > 0
+        ? (absValues[mid - 1] + absValues[mid]) / 2
+        : absValues[mid] || 0;
     return median * 5; // Threshold is 5x median
   }, [data]);
 
@@ -109,7 +113,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'food',
+            legend: '',
             legendPosition: 'middle',
             legendOffset: -40,
             truncateTickAt: 0,
