@@ -1,8 +1,8 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/afaneca/myfin-android?include_prereleases)](https://github.com/afaneca/myfin/releases)
-[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](https://github.com/afaneca/myfin/pkgs/container/myfin)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/afaneca/myfin?include_prereleases&logo=github&style=flat-square)](https://github.com/afaneca/myfin/releases)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff&style=flat-square)](https://github.com/afaneca/myfin/pkgs/container/myfin)
 
-[![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostinger.com/vps/docker-hosting?compose_url=https://github.com/afaneca/myfin/blob/master/docker-compose.yml&REFERRALCODE=SC1ADNFANHG6)
+[![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostinger.com/vps/docker-hosting?compose_url=https://raw.githubusercontent.com/afaneca/myfin/refs/heads/master/docker-compose.yml&REFERRALCODE=SC1ADNFANHG6)
 
 📟 ***The API project is available [here](https://github.com/aFaneca/myfin-api/).*** 📟
 
@@ -78,14 +78,14 @@ Here's some of the features currently in development or planned for the near fut
 
 # 🔰 Getting Started
 ## Demo account - try it for yourself!
-Before fully committing to it, you can give MyFin a try by using the demo account I've made available [here](https://myfin.afaneca.com).
+Before fully committing to it, you can give MyFin a try by using the demo account I've made available [here](https://myfinbudget.com/goto/demo).
 ````
 Username: demo
 Password: demo
 ````
 
 ## Initial setup
-[Here](https://github.com/aFaneca/myfin/wiki/Project-Setup#initial-setup) you can find the full documentation on the
+[Here](https://myfinbudget.com/goto/wiki-initial-setup) you can find the full documentation on the
 first steps to get started.
 
 # 🙋‍♂️ Contributing
