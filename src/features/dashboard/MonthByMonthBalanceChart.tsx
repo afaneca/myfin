@@ -8,7 +8,7 @@ import {
   generateFillArrayForGradients,
 } from '../../utils/nivoUtils.ts';
 import { ColorGradient } from '../../consts';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import EmptyView from '../../components/EmptyView.tsx';
 
@@ -39,17 +39,20 @@ const MonthlyOverviewChart = ({ data }: Props) => {
   const [minValue, setMinValue] = useState<number | 'auto'>('auto');
   const [maxValue, setMaxValue] = useState<number | 'auto'>('auto');
 
+  // Memoize threshold calculation to avoid recalculating on every render
+  const threshold = useMemo(() => {
+    if (data.length === 0) return 0;
+    const absValues = data.map((d) => Math.abs(d.balance)).sort((a, b) => a - b);
+    const median = absValues[Math.floor(absValues.length / 2)] || 0;
+    return median * 5; // Threshold is 5x median
+  }, [data]);
+
   useEffect(() => {
     // Show empty view if all balances equal to zero
     const showEmptyView = !data.some((d) => d.balance != 0);
     setShowEmptyView(showEmptyView);
 
     if (!showEmptyView) {
-      // Calculate median absolute value for threshold
-      const absValues = data.map((d) => Math.abs(d.balance)).sort((a, b) => a - b);
-      const median = absValues[Math.floor(absValues.length / 2)] || 0;
-      const threshold = median * 5; // Threshold is 5x median
-
       const transformedData = data.map((item) => {
         const isCapped = Math.abs(item.balance) > threshold && threshold > 0;
         const displayValue = isCapped
@@ -70,12 +73,16 @@ const MonthlyOverviewChart = ({ data }: Props) => {
       const dataMin = Math.min(...displayValues);
       const dataMax = Math.max(...displayValues);
       const range = dataMax - dataMin;
-      const padding = range * 0.15; // 15% padding
+      // Use a minimum padding when range is zero to avoid collapsed charts
+      const padding =
+        range === 0
+          ? Math.max(Math.abs(dataMax) * 0.15, 1)
+          : range * 0.15; // 15% padding
 
       setMinValue(dataMin < 0 ? dataMin - padding : 0);
       setMaxValue(dataMax + padding);
     }
-  }, [data]);
+  }, [data, threshold]);
 
   return (
     <>
