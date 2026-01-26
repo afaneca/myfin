@@ -1,10 +1,4 @@
-import {
-  Autocomplete,
-  Collapse,
-  Divider,
-  ToggleButton,
-  ToggleButtonGroup,
-} from '@mui/material';
+import { Autocomplete, Collapse, Divider, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useReducer } from 'react';
 import Grid from '@mui/material/Grid';
@@ -24,25 +18,15 @@ import {
   useGetAssets,
 } from '../../../services/invest/investHooks.ts';
 import dayjs, { Dayjs } from 'dayjs';
-import {
-  InvestAsset,
-  InvestTransaction,
-  InvestTransactionType,
-} from '../../../services/invest/investServices.ts';
+import { InvestAsset, InvestTransaction, InvestTransactionType } from '../../../services/invest/investServices.ts';
 import { IdLabelPair } from '../../transactions/AddEditTransactionDialog.tsx';
-import {
-  convertDayJsToUnixTimestamp,
-  convertUnixTimestampToDayJs,
-} from '../../../utils/dateUtils.ts';
+import { convertDayJsToUnixTimestamp, convertUnixTimestampToDayJs } from '../../../utils/dateUtils.ts';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../../providers/SnackbarProvider.tsx';
+import { AlertSeverity, useSnackbar } from '../../../providers/SnackbarProvider.tsx';
 import { DatePicker } from '@mui/x-date-pickers';
 import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
@@ -324,16 +308,30 @@ const AddEditInvestTransactionDialog = (props: Props) => {
       maxWidth="md"
       open={props.isOpen}
       onClose={props.onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          dispatch({ type: StateActionType.SubmitClick });
-          // Process the form data as needed
-          if (isEditForm) {
-            editTransactionRequest.mutate({
-              trxId: props.trx?.transaction_id ?? -1n,
-              request: {
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            dispatch({ type: StateActionType.SubmitClick });
+            // Process the form data as needed
+            if (isEditForm) {
+              editTransactionRequest.mutate({
+                trxId: props.trx?.transaction_id ?? -1n,
+                request: {
+                  date_timestamp: convertDayJsToUnixTimestamp(
+                    state.dateInput ?? dayjs(),
+                  ),
+                  note: state.observationsInput,
+                  total_price: state.valueInput,
+                  units: state.unitsInput,
+                  fees: state.feesTaxesInput,
+                  asset_id: state.assetInput?.id ?? -1n,
+                  type: state.typeInput,
+                },
+              });
+            } else {
+              addTransactionRequest.mutate({
                 date_timestamp: convertDayJsToUnixTimestamp(
                   state.dateInput ?? dayjs(),
                 ),
@@ -343,26 +341,14 @@ const AddEditInvestTransactionDialog = (props: Props) => {
                 fees: state.feesTaxesInput,
                 asset_id: state.assetInput?.id ?? -1n,
                 type: state.typeInput,
-              },
-            });
-          } else {
-            addTransactionRequest.mutate({
-              date_timestamp: convertDayJsToUnixTimestamp(
-                state.dateInput ?? dayjs(),
-              ),
-              note: state.observationsInput,
-              total_price: state.valueInput,
-              units: state.unitsInput,
-              fees: state.feesTaxesInput,
-              asset_id: state.assetInput?.id ?? -1n,
-              type: state.typeInput,
-              is_split: state.isSplit,
-              split_total_price: state.splitValueInput,
-              split_units: state.splitUnitsInput,
-              split_note: state.splitObservationsInput,
-              split_type: state.splitTypeInput,
-            });
-          }
+                is_split: state.isSplit,
+                split_total_price: state.splitValueInput,
+                split_units: state.splitUnitsInput,
+                split_note: state.splitObservationsInput,
+                split_type: state.splitTypeInput,
+              });
+            }
+          },
         },
       }}
     >

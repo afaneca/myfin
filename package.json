@@ -54,6 +54,7 @@
     "@types/react-dom": "^19.1.9",
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^5.0.4",
+    "baseline-browser-mapping": "^2.9.18",
     "typescript": "^5.9.2",
     "vite": "^7.1.5"
   },

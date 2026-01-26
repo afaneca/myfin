@@ -137,23 +137,25 @@ const AddEditRuleDialog = (props: Props) => {
       maxWidth="md"
       open={props.isOpen}
       onClose={props.onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          if (!rule) return;
-          if (isEditForm) {
-            if (rule.rule_id) {
-              // Update
-              editRuleRequest.mutate(rule as Rule);
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            if (!rule) return;
+            if (isEditForm) {
+              if (rule.rule_id) {
+                // Update
+                editRuleRequest.mutate(rule as Rule);
+              } else {
+                // Create
+                addRuleRequest.mutate(rule);
+              }
             } else {
               // Create
               addRuleRequest.mutate(rule);
             }
-          } else {
-            // Create
-            addRuleRequest.mutate(rule);
-          }
+          },
         },
       }}
     >

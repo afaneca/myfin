@@ -171,30 +171,32 @@ const AddEditCategoryDialog = (props: Props) => {
       maxWidth="md"
       open={props.isOpen}
       onClose={props.onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          if (isEditForm && props.category) {
-            // Update
-            editCategoryRequest.mutate({
-              category_id: props.category.category_id,
-              new_name: nameValue,
-              new_status: statusValue,
-              new_color_gradient: colorValue,
-              new_description: descriptionValue,
-              new_exclude_from_budgets: excludeFromBudgetsValue,
-            });
-          } else {
-            // Create
-            addCategoryRequest.mutate({
-              name: nameValue,
-              status: statusValue,
-              color_gradient: colorValue,
-              description: descriptionValue,
-              exclude_from_budgets: excludeFromBudgetsValue,
-            });
-          }
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            if (isEditForm && props.category) {
+              // Update
+              editCategoryRequest.mutate({
+                category_id: props.category.category_id,
+                new_name: nameValue,
+                new_status: statusValue,
+                new_color_gradient: colorValue,
+                new_description: descriptionValue,
+                new_exclude_from_budgets: excludeFromBudgetsValue,
+              });
+            } else {
+              // Create
+              addCategoryRequest.mutate({
+                name: nameValue,
+                status: statusValue,
+                color_gradient: colorValue,
+                description: descriptionValue,
+                exclude_from_budgets: excludeFromBudgetsValue,
+              });
+            }
+          },
         },
       }}
     >

@@ -106,6 +106,8 @@ const editAsset = (request: EditAssetRequest) => {
 export enum InvestTransactionType {
   Buy = 'B',
   Sell = 'S',
+  Income = 'I',
+  Cost = 'C',
 }
 
 export type InvestTransaction = {
