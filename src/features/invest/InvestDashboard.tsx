@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { Box, Card, CardContent, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Card, CardContent, useMediaQuery, useTheme, Tooltip, IconButton } from '@mui/material';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
@@ -30,6 +30,7 @@ import Stack from '@mui/material/Stack';
 import { useGetGradientColorForAssetType } from './InvestUtilHooks.ts';
 import PercentageChip from '../../components/PercentageChip.tsx';
 import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
+import { HelpOutline } from '@mui/icons-material';
 
 type UiState = {
   currentValue: number;
@@ -148,6 +149,8 @@ const SummaryCard = (props: {
   title: string;
   absoluteValue: string;
   percentageValue?: number;
+  helpKey?: string;
+  helpAriaLabel?: string;
 }) => {
   const theme = useTheme();
   return (
@@ -168,9 +171,22 @@ const SummaryCard = (props: {
           justifyContent: 'space-between',
         }}
       >
-        <Typography sx={{ fontSize: 14 }} color="text.secondary">
-          {props.title}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Typography sx={{ fontSize: 14 }} color="text.secondary">
+            {props.title}
+          </Typography>
+          {props.helpKey && (
+            <Tooltip title={props.helpKey} placement="top">
+              <IconButton
+                aria-label={props.helpAriaLabel}
+                size="small"
+                sx={{ ml: 0.5, color: 'text.secondary', opacity: 0.7 }}
+              >
+                <HelpOutline sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
 
         <div
           style={{
@@ -224,28 +240,26 @@ const getLocalizedTextForAssetType = (
 const reduceState = (prevState: UiState, action: StateAction): UiState => {
   switch (action.type) {
     case StateActionType.DataLoaded: {
-      const chartData = action.payload.current_value_distribution.map(
-        (item) => {
-          const [key, value] = Object.entries(item)[0];
-
+      const chartData = action.payload.current_value_distribution
+        .filter((item) => item.percentage > 0)
+        .map((item) => {
           return {
             id: getLocalizedTextForAssetType(
               action.payload.t,
-              key as AssetType,
+              item.type as AssetType,
             ),
             color: action.payload.getGradientColorForAssetType(
-              key as AssetType,
+              item.type as AssetType,
             ),
-            value: value,
+            value: item.percentage,
           };
-        },
-      );
+        });
 
       return {
         ...prevState,
         currentValue: action.payload.total_current_value,
         totalInvestedFormatted: formatNumberAsCurrency(
-          action.payload.total_invested_value,
+          action.payload.total_currently_invested_value,
         ),
         currentValueFormatted: formatNumberAsCurrency(
           action.payload.total_current_value,
@@ -392,6 +406,8 @@ const InvestDashboard = () => {
           <SummaryCard
             title={t('investments.totalInvested')}
             absoluteValue={state.totalInvestedFormatted}
+            helpKey={t('investments.summaryHelp.totalInvested')}
+            helpAriaLabel={t('investments.summaryHelp.totalInvestedAriaLabel')}
           />
         </Grid>
         <Grid
@@ -403,6 +419,8 @@ const InvestDashboard = () => {
           <SummaryCard
             title={t('investments.currentValue')}
             absoluteValue={state.currentValueFormatted}
+            helpKey={t('investments.summaryHelp.currentValue')}
+            helpAriaLabel={t('investments.summaryHelp.currentValueAriaLabel')}
           />
         </Grid>
         <Grid
@@ -415,6 +433,8 @@ const InvestDashboard = () => {
             title={`ROI ${getCurrentYear()}`}
             absoluteValue={state.currentYearRoiValueFormatted}
             percentageValue={state.currentYearRoiPercentageValue}
+            helpKey={t('investments.summaryHelp.currentYearROI')}
+            helpAriaLabel={t('investments.summaryHelp.currentYearROIAriaLabel')}
           />
         </Grid>
         <Grid
@@ -427,6 +447,8 @@ const InvestDashboard = () => {
             title={t('investments.globalROI')}
             absoluteValue={state.globalRoiValueFormatted}
             percentageValue={state.globalRoiPercentageValue}
+            helpKey={t('investments.summaryHelp.globalROI')}
+            helpAriaLabel={t('investments.summaryHelp.globalROIAriaLabel')}
           />
         </Grid>
       </Grid>

@@ -72,24 +72,26 @@ const AddEditTagDialog = (props: Props) => {
       maxWidth="sm"
       open={props.isOpen}
       onClose={props.onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          if (isEditForm && props.tag) {
-            // Update
-            editTagRequest.mutate({
-              tag_id: props.tag.tag_id,
-              new_name: nameValue,
-              new_description: descriptionValue,
-            });
-          } else {
-            // Create
-            addTagRequest.mutate({
-              name: nameValue,
-              description: descriptionValue,
-            });
-          }
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            if (isEditForm && props.tag) {
+              // Update
+              editTagRequest.mutate({
+                tag_id: props.tag.tag_id,
+                new_name: nameValue,
+                new_description: descriptionValue,
+              });
+            } else {
+              // Create
+              addTagRequest.mutate({
+                name: nameValue,
+                description: descriptionValue,
+              });
+            }
+          },
         },
       }}
     >

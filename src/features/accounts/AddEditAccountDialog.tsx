@@ -180,32 +180,34 @@ const AddEditAccountDialog = (props: Props) => {
       maxWidth="md"
       open={props.isOpen}
       onClose={props.onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          if (isEditForm && props.account) {
-            // Update
-            editAccountRequest.mutate({
-              account_id: props.account.account_id,
-              new_name: nameValue,
-              new_type: typeValue as AccountType,
-              new_status: statusValue,
-              new_description: descriptionValue,
-              exclude_from_budgets: excludeFromBudgetsValue,
-              color_gradient: colorValue as ColorGradient,
-            });
-          } else {
-            // Create
-            addAccountRequest.mutate({
-              name: nameValue,
-              type: typeValue as AccountType,
-              status: statusValue,
-              description: descriptionValue,
-              exclude_from_budgets: excludeFromBudgetsValue,
-              color_gradient: colorValue as ColorGradient,
-            });
-          }
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            if (isEditForm && props.account) {
+              // Update
+              editAccountRequest.mutate({
+                account_id: props.account.account_id,
+                new_name: nameValue,
+                new_type: typeValue as AccountType,
+                new_status: statusValue,
+                new_description: descriptionValue,
+                exclude_from_budgets: excludeFromBudgetsValue,
+                color_gradient: colorValue as ColorGradient,
+              });
+            } else {
+              // Create
+              addAccountRequest.mutate({
+                name: nameValue,
+                type: typeValue as AccountType,
+                status: statusValue,
+                description: descriptionValue,
+                exclude_from_budgets: excludeFromBudgetsValue,
+                color_gradient: colorValue as ColorGradient,
+              });
+            }
+          },
         },
       }}
     >

@@ -71,22 +71,24 @@ const AddEditEntityDialog = (props: Props) => {
       maxWidth="sm"
       open={props.isOpen}
       onClose={props.onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          if (isEditForm && props.entity) {
-            // Update
-            editEntityRequest.mutate({
-              entity_id: props.entity.entity_id,
-              new_name: nameValue,
-            });
-          } else {
-            // Create
-            addEntityRequest.mutate({
-              name: nameValue,
-            });
-          }
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            if (isEditForm && props.entity) {
+              // Update
+              editEntityRequest.mutate({
+                entity_id: props.entity.entity_id,
+                new_name: nameValue,
+              });
+            } else {
+              // Create
+              addEntityRequest.mutate({
+                name: nameValue,
+              });
+            }
+          },
         },
       }}
     >

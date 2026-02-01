@@ -57,21 +57,21 @@ const TooltipContent = memo(
             </strong>
           </Typography>
           {category.exclude_from_budgets === 1 && (
-            <Chip
+            <Chip size="small"
               label={t('categories.excludedFromBudgets')}
               sx={{ mt: 1, display: 'flex' }}
             />
           )}
         </Container>
         <Divider sx={{ m: 2 }} />
-        <Grid container spacing={2} size={12}>
+        <Grid container spacing={2} size={12} sx={{ mb: 1 }}>
           <Grid size={6}>
             <Typography variant="caption">
               {getMonthsFullName(month)} {year - 1}
             </Typography>
           </Grid>
           <Grid sx={{ textAlign: 'right' }} size={6}>
-            <Chip
+            <Chip size="small"
               label={formatNumberAsCurrency.invoke(
                 isDebit
                   ? category.avg_same_month_previous_year_debit
@@ -80,14 +80,14 @@ const TooltipContent = memo(
             />
           </Grid>
         </Grid>
-        <Grid container spacing={2} size={12}>
+        <Grid container spacing={2} size={12} sx={{ mb: 1 }}>
           <Grid size={6}>
             <Typography variant="caption">
               {t('budgetDetails.previousMonth')}
             </Typography>
           </Grid>
           <Grid sx={{ textAlign: 'right' }} size={6}>
-            <Chip
+            <Chip size="small"
               label={formatNumberAsCurrency.invoke(
                 isDebit
                   ? category.avg_previous_month_debit
@@ -96,14 +96,14 @@ const TooltipContent = memo(
             />
           </Grid>
         </Grid>
-        <Grid container spacing={2} size={12}>
+        <Grid container spacing={2} size={12} sx={{ mb: 1 }}>
           <Grid size={6}>
             <Typography variant="caption">
               {t('budgetDetails.12MonthAvg')}
             </Typography>
           </Grid>
           <Grid sx={{ textAlign: 'right' }} size={6}>
-            <Chip
+            <Chip size="small"
               label={formatNumberAsCurrency.invoke(
                 isDebit
                   ? category.avg_12_months_debit
@@ -112,14 +112,14 @@ const TooltipContent = memo(
             />
           </Grid>
         </Grid>
-        <Grid container spacing={2} size={12}>
+        <Grid container spacing={2} size={12} sx={{ mb: 1 }}>
           <Grid size={6}>
             <Typography variant="caption">
               {t('budgetDetails.globalAverage')}
             </Typography>
           </Grid>
           <Grid sx={{ textAlign: 'right' }} size={6}>
-            <Chip
+            <Chip size="small"
               label={formatNumberAsCurrency.invoke(
                 isDebit
                   ? category.avg_lifetime_debit

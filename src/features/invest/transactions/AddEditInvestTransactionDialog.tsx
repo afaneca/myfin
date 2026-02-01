@@ -1,20 +1,14 @@
-import {
-  Autocomplete,
-  Collapse,
-  Divider,
-  ToggleButton,
-  ToggleButtonGroup,
-} from '@mui/material';
+import { Autocomplete, Checkbox, FormControlLabel, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useReducer } from 'react';
 import Grid from '@mui/material/Grid';
 import {
   AccountCircle,
-  CallMerge,
-  CallSplit,
   ControlPointDuplicate,
   Description,
   FiberSmartRecord,
+  HelpOutline,
   Send,
   Undo,
 } from '@mui/icons-material';
@@ -24,31 +18,19 @@ import {
   useGetAssets,
 } from '../../../services/invest/investHooks.ts';
 import dayjs, { Dayjs } from 'dayjs';
-import {
-  InvestAsset,
-  InvestTransaction,
-  InvestTransactionType,
-} from '../../../services/invest/investServices.ts';
+import { InvestAsset, InvestTransaction, InvestTransactionType } from '../../../services/invest/investServices.ts';
 import { IdLabelPair } from '../../transactions/AddEditTransactionDialog.tsx';
-import {
-  convertDayJsToUnixTimestamp,
-  convertUnixTimestampToDayJs,
-} from '../../../utils/dateUtils.ts';
+import { convertDayJsToUnixTimestamp, convertUnixTimestampToDayJs } from '../../../utils/dateUtils.ts';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../../providers/SnackbarProvider.tsx';
+import { AlertSeverity, useSnackbar } from '../../../providers/SnackbarProvider.tsx';
 import { DatePicker } from '@mui/x-date-pickers';
 import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
-import Chip from '@mui/material/Chip';
-import { TFunction } from 'i18next';
 import { NumericFormat } from 'react-number-format';
 import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
 
@@ -61,13 +43,10 @@ type UiState = {
   unitsInput: number;
   assetInput: IdLabelPair | null;
   feesTaxesInput: number;
-  isSplit: boolean;
-  splitValueInput?: number;
-  splitObservationsInput?: string;
-  splitUnitsInput?: number;
-  splitTypeInput?: InvestTransactionType;
+  deductFeesInUnits: boolean;
+  feesUnitsInput: number;
   assets: InvestAsset[];
-  isSplitBtnVisible: boolean;
+  isFeesTaxesInputVisible: boolean;
   isEdit: boolean;
 };
 
@@ -81,11 +60,8 @@ const enum StateActionType {
   UnitsUpdated,
   AssetUpdated,
   FeesTaxesUpdated,
-  SplitBtnClick,
-  SplitValueUpdated,
-  SplitObservationsUpdated,
-  SplitUnitsUpdated,
-  SplitTypeUpdated,
+  DeductFeesInUnitsToggled,
+  FeesUnitsUpdated,
   SubmitClick,
   SubmitCompleted,
 }
@@ -100,11 +76,8 @@ type StateAction =
   | { type: StateActionType.UnitsUpdated; payload: number }
   | { type: StateActionType.AssetUpdated; payload: IdLabelPair | null }
   | { type: StateActionType.FeesTaxesUpdated; payload: number }
-  | { type: StateActionType.SplitBtnClick; payload: TFunction }
-  | { type: StateActionType.SplitValueUpdated; payload: number }
-  | { type: StateActionType.SplitObservationsUpdated; payload: string }
-  | { type: StateActionType.SplitUnitsUpdated; payload: number }
-  | { type: StateActionType.SplitTypeUpdated; payload: InvestTransactionType }
+  | { type: StateActionType.DeductFeesInUnitsToggled }
+  | { type: StateActionType.FeesUnitsUpdated; payload: number }
   | { type: StateActionType.SubmitClick }
   | { type: StateActionType.SubmitCompleted };
 
@@ -121,10 +94,11 @@ const createInitialState = (args: {
     assetInput: args.trx
       ? { id: args.trx!.asset_id, label: args.trx!.name }
       : null,
-    feesTaxesInput: args.trx?.fees_taxes ?? 0,
-    isSplit: false,
+    feesTaxesInput: args.trx?.fees_taxes_amount ?? 0,
+    deductFeesInUnits: (args.trx?.fees_taxes_units ?? 0) > 0,
+    feesUnitsInput: args.trx?.fees_taxes_units ?? 0,
     assets: [],
-    isSplitBtnVisible: false,
+    isFeesTaxesInputVisible: true,
     isEdit: args.trx != null,
   };
 };
@@ -151,16 +125,31 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
       return {
         ...prevState,
         valueInput: action.payload,
+        // For income transactions, clear units when value is set
+        unitsInput: prevState.typeInput === InvestTransactionType.Income && action.payload > 0 ? 0 : prevState.unitsInput,
       };
     case StateActionType.UnitsUpdated:
       return {
         ...prevState,
         unitsInput: action.payload,
+        // For income transactions, clear value when units is set
+        valueInput: prevState.typeInput === InvestTransactionType.Income && action.payload > 0 ? 0 : prevState.valueInput,
+        // Auto-fill fees units with fees amount if deduct option is enabled
+        feesUnitsInput: prevState.deductFeesInUnits && prevState.typeInput === InvestTransactionType.Income
+          ? prevState.feesTaxesInput
+          : prevState.feesUnitsInput,
       };
     case StateActionType.TypeUpdated:
       return {
         ...prevState,
         typeInput: action.payload,
+        isFeesTaxesInputVisible: action.payload !== InvestTransactionType.Cost,
+        // For cost transactions, clear fees & taxes amount
+        feesTaxesInput: action.payload !== InvestTransactionType.Cost ? prevState.feesTaxesInput : 0,
+        deductFeesInUnits: false,
+        feesUnitsInput: 0,
+        // For income transactions, clear units when value is set
+        unitsInput: action.payload === InvestTransactionType.Income && prevState.valueInput > 0 ? 0 : prevState.unitsInput,
       };
     case StateActionType.AssetUpdated:
       return {
@@ -171,49 +160,26 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
       return {
         ...prevState,
         feesTaxesInput: action.payload,
-        isSplitBtnVisible: !prevState.isEdit && action.payload != 0,
+        // Auto-update fees units when deduct is enabled
+        feesUnitsInput: prevState.deductFeesInUnits ? action.payload : prevState.feesUnitsInput,
       };
     case StateActionType.ObservationsUpdated:
       return {
         ...prevState,
         observationsInput: action.payload,
       };
-    case StateActionType.SplitBtnClick:
+    case StateActionType.DeductFeesInUnitsToggled: {
+      const newDeductState = !prevState.deductFeesInUnits;
       return {
         ...prevState,
-        isSplit: !prevState.isSplit,
-        splitTypeInput: InvestTransactionType.Sell,
-        splitValueInput: prevState.feesTaxesInput,
-        splitUnitsInput: prevState.feesTaxesInput,
-        splitObservationsInput: action.payload(
-          'transactions.generated_split_invest_trx_observations',
-          {
-            units: prevState.unitsInput,
-            ticker: prevState.assets?.find(
-              (asset) => asset.asset_id == prevState.assetInput?.id,
-            )?.ticker,
-          },
-        ),
+        deductFeesInUnits: newDeductState,
+        feesUnitsInput: newDeductState ? prevState.feesTaxesInput : 0,
       };
-    case StateActionType.SplitValueUpdated:
+    }
+    case StateActionType.FeesUnitsUpdated:
       return {
         ...prevState,
-        splitValueInput: action.payload,
-      };
-    case StateActionType.SplitObservationsUpdated:
-      return {
-        ...prevState,
-        splitObservationsInput: action.payload,
-      };
-    case StateActionType.SplitUnitsUpdated:
-      return {
-        ...prevState,
-        splitUnitsInput: action.payload,
-      };
-    case StateActionType.SplitTypeUpdated:
-      return {
-        ...prevState,
-        splitTypeInput: action.payload,
+        feesUnitsInput: action.payload,
       };
     case StateActionType.SubmitClick:
       return {
@@ -271,6 +237,7 @@ const AddEditInvestTransactionDialog = (props: Props) => {
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
+      dispatch({ type: StateActionType.RequestError });
     }
   }, [
     getAssetsRequest.isError,
@@ -318,51 +285,102 @@ const AddEditInvestTransactionDialog = (props: Props) => {
     }
   };
 
+  // helper functions to pick translation keys depending on transaction type & flags
+  const getAmountTooltipKey = (type: InvestTransactionType) => {
+    switch (type) {
+      case InvestTransactionType.Buy:
+        return 'investments.tooltips.amount_buy';
+      case InvestTransactionType.Sell:
+        return 'investments.tooltips.amount_sell';
+      case InvestTransactionType.Income:
+        return 'investments.tooltips.amount_income';
+      case InvestTransactionType.Cost:
+        return 'investments.tooltips.amount_cost';
+      default:
+        return 'investments.tooltips.amount_buy';
+    }
+  };
+
+  const getUnitsTooltipKey = (type: InvestTransactionType) => {
+    switch (type) {
+      case InvestTransactionType.Buy:
+        return 'investments.tooltips.units_buy';
+      case InvestTransactionType.Sell:
+        return 'investments.tooltips.units_sell';
+      case InvestTransactionType.Income:
+        return 'investments.tooltips.units_income';
+      case InvestTransactionType.Cost:
+        return 'investments.tooltips.units_cost';
+      default:
+        return 'investments.tooltips.units_buy';
+    }
+  };
+
+  const getFeesTooltipKey = (type: InvestTransactionType, deductInUnits: boolean) => {
+    const mode = deductInUnits ? 'units' : 'cash';
+    switch (type) {
+      case InvestTransactionType.Buy:
+        return `investments.tooltips.fees_buy_cash`;
+      case InvestTransactionType.Sell:
+        return `investments.tooltips.fees_sell_cash`;
+      case InvestTransactionType.Income:
+        return `investments.tooltips.fees_income_${mode}`;
+      case InvestTransactionType.Cost:
+        return `investments.tooltips.fees_cost_cash`;
+      default:
+        return `investments.tooltips.fees_buy_cash`;
+    }
+  };
+
+  // compute the keys for the current state
+  const amountTooltipKey = getAmountTooltipKey(state.typeInput);
+  const unitsTooltipKey = getUnitsTooltipKey(state.typeInput);
+  const feesTooltipKey = getFeesTooltipKey(state.typeInput, state.deductFeesInUnits);
+
   return (
     <Dialog
       fullWidth
       maxWidth="md"
       open={props.isOpen}
       onClose={props.onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          dispatch({ type: StateActionType.SubmitClick });
-          // Process the form data as needed
-          if (isEditForm) {
-            editTransactionRequest.mutate({
-              trxId: props.trx?.transaction_id ?? -1n,
-              request: {
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            dispatch({ type: StateActionType.SubmitClick });
+            // Process the form data as needed
+            if (isEditForm) {
+              editTransactionRequest.mutate({
+                trxId: props.trx?.transaction_id ?? -1n,
+                request: {
+                  date_timestamp: convertDayJsToUnixTimestamp(
+                    state.dateInput ?? dayjs(),
+                  ),
+                  note: state.observationsInput,
+                  total_price: state.valueInput,
+                  units: state.unitsInput,
+                  fees_amount: state.feesTaxesInput,
+                  fees_units: state.feesUnitsInput,
+                  asset_id: state.assetInput?.id ?? -1n,
+                  type: state.typeInput,
+                },
+              });
+            } else {
+              addTransactionRequest.mutate({
                 date_timestamp: convertDayJsToUnixTimestamp(
                   state.dateInput ?? dayjs(),
                 ),
                 note: state.observationsInput,
                 total_price: state.valueInput,
                 units: state.unitsInput,
-                fees: state.feesTaxesInput,
+                fees_amount: state.feesTaxesInput,
+                fees_units: state.feesUnitsInput,
                 asset_id: state.assetInput?.id ?? -1n,
                 type: state.typeInput,
-              },
-            });
-          } else {
-            addTransactionRequest.mutate({
-              date_timestamp: convertDayJsToUnixTimestamp(
-                state.dateInput ?? dayjs(),
-              ),
-              note: state.observationsInput,
-              total_price: state.valueInput,
-              units: state.unitsInput,
-              fees: state.feesTaxesInput,
-              asset_id: state.assetInput?.id ?? -1n,
-              type: state.typeInput,
-              is_split: state.isSplit,
-              split_total_price: state.splitValueInput,
-              split_units: state.splitUnitsInput,
-              split_note: state.splitObservationsInput,
-              split_type: state.splitTypeInput,
-            });
-          }
+              });
+            }
+          },
         },
       }}
     >
@@ -402,20 +420,46 @@ const AddEditInvestTransactionDialog = (props: Props) => {
                 value={InvestTransactionType.Buy}
                 aria-label={t('investments.buy')}
               >
-                {t('investments.buy')}
+                <TypeLabelWithTooltip
+                  labelKey={'investments.buy'}
+                  helpKey={'investments.buy_help'}
+                />
               </ToggleButton>
               <ToggleButton
                 value={InvestTransactionType.Sell}
                 aria-label={t('investments.sell')}
               >
-                {t('investments.sell')}
+                <TypeLabelWithTooltip
+                  labelKey={'investments.sell'}
+                  helpKey={'investments.sell_help'}
+                />
+              </ToggleButton>
+              <ToggleButton
+                value={InvestTransactionType.Income}
+                aria-label={t('investments.income')}
+              >
+                <TypeLabelWithTooltip
+                  labelKey={'investments.income'}
+                  helpKey={'investments.income_help'}
+                />
+              </ToggleButton>
+              <ToggleButton
+                value={InvestTransactionType.Cost}
+                aria-label={t('investments.cost')}
+              >
+                <TypeLabelWithTooltip
+                  labelKey={'investments.cost'}
+                  helpKey={'investments.cost_help'}
+                />
               </ToggleButton>
             </ToggleButtonGroup>
           </Grid>
         </Grid>
+        <Grid size={{ xs: 6 }}>
+        </Grid>
       </DialogTitle>
       <DialogContent>
-        <Grid container spacing={2} rowSpacing={2}>
+        <Grid container spacing={2} rowSpacing={2} mt={2}>
           {/* Value */}
           <Grid
             size={{
@@ -445,16 +489,22 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               decimalScale={2}
               fixedDecimalScale
               thousandSeparator
-              /*prefix="€"*/
-              inputProps={{
-                step: 0.01,
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <CurrencyIcon />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                htmlInput: {
+                  step: 0.01,
+                },
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <CurrencyIcon />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <SmallHelpIcon translationKey={amountTooltipKey} />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </Grid>
@@ -488,15 +538,22 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               decimalScale={10}
               fixedDecimalScale
               thousandSeparator
-              inputProps={{
-                step: 0.01,
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FiberSmartRecord />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                htmlInput: {
+                  step: 0.01,
+                },
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FiberSmartRecord />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <SmallHelpIcon translationKey={unitsTooltipKey} />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </Grid>
@@ -527,13 +584,15 @@ const AddEditInvestTransactionDialog = (props: Props) => {
                   fullWidth
                   required
                   margin="dense"
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AccountCircle />
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                   label={t('investments.asset')}
                 />
@@ -576,7 +635,7 @@ const AddEditInvestTransactionDialog = (props: Props) => {
           <Grid
             size={{
               xs: 12,
-              md: 9,
+              md: state.isFeesTaxesInputVisible ? 9 : 12,
             }}
           >
             <TextField
@@ -594,279 +653,202 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               type="text"
               fullWidth
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Description />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Description />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </Grid>
           {/* Fees & taxes */}
-          <Grid
-            size={{
-              xs: 12,
-              md: 3,
-            }}
-          >
-            <NumericFormat
-              value={state.feesTaxesInput || '0'}
-              onValueChange={(values) => {
-                const { floatValue } = values;
-                dispatch({
-                  type: StateActionType.FeesTaxesUpdated,
-                  payload: floatValue ?? 0,
-                });
+          {state.isFeesTaxesInputVisible && (
+            <Grid
+              size={{
+                xs: 12,
+                md: 3,
               }}
-              customInput={TextField}
-              label={t('investments.feesAndTaxes')}
-              fullWidth
-              required
-              autoFocus
-              onFocus={(event) => {
-                event.target.select();
-              }}
-              variant="outlined"
-              margin="dense"
-              decimalScale={2}
-              fixedDecimalScale
-              thousandSeparator
-              inputProps={{
-                step: 0.01,
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <ControlPointDuplicate />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid marginTop={4} size={12}>
-            <Collapse in={state.isSplit}>
-              <SplitTransactionForm
-                isOpen={state.isSplit}
-                state={{
-                  value: state.splitValueInput,
-                  units: state.splitUnitsInput,
-                  type: state.splitTypeInput,
-                  observations: state.splitObservationsInput,
+            >
+              <NumericFormat
+                value={state.feesTaxesInput || '0'}
+                onValueChange={(values) => {
+                  const { floatValue } = values;
+                  dispatch({
+                    type: StateActionType.FeesTaxesUpdated,
+                    payload: floatValue ?? 0,
+                  });
                 }}
-                handleValueChange={(input) =>
-                  dispatch({
-                    type: StateActionType.SplitValueUpdated,
-                    payload: input,
-                  })
-                }
-                handleUnitsChange={(input) =>
-                  dispatch({
-                    type: StateActionType.SplitUnitsUpdated,
-                    payload: input,
-                  })
-                }
-                handleTypeChange={(input) =>
-                  dispatch({
-                    type: StateActionType.SplitTypeUpdated,
-                    payload: input,
-                  })
-                }
-                handleObservationsChange={(input) =>
-                  dispatch({
-                    type: StateActionType.SplitObservationsUpdated,
-                    payload: input,
-                  })
-                }
+                customInput={TextField}
+                label={t('investments.feesAndTaxes')}
+                fullWidth
+                required
+                onFocus={(event) => {
+                  event.target.select();
+                }}
+                variant="outlined"
+                margin="dense"
+                decimalScale={2}
+                fixedDecimalScale
+                thousandSeparator
+                slotProps={{
+                  htmlInput: {
+                    step: 0.01,
+                  },
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <ControlPointDuplicate />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SmallHelpIcon translationKey={feesTooltipKey} />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
-            </Collapse>
-          </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions sx={{ pr: 3 }}>
-        {state.isSplitBtnVisible && (
-          <Button
-            variant="text"
-            onClick={() =>
-              dispatch({ type: StateActionType.SplitBtnClick, payload: t })
-            }
-            startIcon={state.isSplit ? <CallMerge /> : <CallSplit />}
-          >
-            {state.isSplit
-              ? t('transactions.mergeTransactions')
-              : t('transactions.deductFeesFromTransaction')}
-          </Button>
-        )}
+            </Grid>
+          )}
 
+          {/* Deduct fees in units - only for INCOME transactions */}
+          {state.typeInput === InvestTransactionType.Income &&
+            state.unitsInput > 0 &&
+            state.feesTaxesInput > 0 && (
+              <>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 4,
+                  }}
+                  display="flex"
+                  alignItems="center"
+                >
+                  <FormControlLabel
+                    sx={{
+                      alignItems: 'center',
+                      width: '100%',
+                      // ensure the label text itself is right-aligned
+                      '& .MuiFormControlLabel-label': { textAlign: 'right' },
+                    }}
+                    control={
+                      <Checkbox
+                        checked={state.deductFeesInUnits}
+                        onChange={() =>
+                          dispatch({ type: StateActionType.DeductFeesInUnitsToggled })
+                        }
+                      />
+                    }
+                    label={
+                      <TypeLabelWithTooltip
+                        labelKey="transactions.deductFeesInUnits"
+                        helpKey="transactions.deductFeesInUnitsHelp"
+                      />
+                    }
+                  />
+                </Grid>
+                {state.deductFeesInUnits && (
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 5,
+                    }}
+                  >
+                    <NumericFormat
+                      value={state.feesUnitsInput || '0'}
+                      onValueChange={(values) => {
+                        const { floatValue } = values;
+                        dispatch({
+                          type: StateActionType.FeesUnitsUpdated,
+                          payload: floatValue ?? 0,
+                        });
+                      }}
+                      customInput={TextField}
+                      label={t('transactions.feesDeductedInUnits')}
+                      fullWidth
+                      required
+                      onFocus={(event) => {
+                        event.target.select();
+                      }}
+                      variant="outlined"
+                      margin="dense"
+                      decimalScale={10}
+                      fixedDecimalScale
+                      thousandSeparator
+                      slotProps={{
+                        htmlInput: {
+                          step: 0.01,
+                        },
+                        input: {
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <FiberSmartRecord />
+                            </InputAdornment>
+                          ),
+                        },
+                      }}
+                    />
+                  </Grid>
+                )}
+              </>
+            )}
+        </Grid>
+      </DialogContent>;
+      <DialogActions sx={{ pr: 3 }}>
         <Button variant="outlined" startIcon={<Undo />} onClick={props.onClose}>
           {t('common.cancel')}
         </Button>
         <Button variant="contained" startIcon={<Send />} type="submit">
           {t(isEditForm ? 'common.edit' : 'common.add')}
         </Button>
-      </DialogActions>
+      </DialogActions>;
     </Dialog>
+  )
+    ;
+};
+
+
+export const TypeLabelWithTooltip = (props: {
+  labelKey: string;
+  showHelp?: boolean;
+  helpKey?: string;
+  className?: string;
+}) => {
+  const { labelKey, showHelp = true, helpKey, className } = props;
+  const { t } = useTranslation();
+  const theme = useTheme();
+
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }} className={className}>
+      <span>{t(labelKey)}</span>
+      {showHelp && (
+        <Tooltip title={helpKey ? t(helpKey) : ''}>
+          <HelpOutline style={{ cursor: 'help', color: theme.palette.text.secondary }} fontSize="inherit"
+                       aria-label={helpKey ?? ''} />
+        </Tooltip>
+      )}
+    </span>
   );
 };
 
-type SplitTransactionFormState = {
-  value?: number;
-  units?: number;
-  type?: InvestTransactionType;
-  observations?: string;
-};
-
-type SplitTransactionFormProps = {
-  isOpen: boolean;
-  state?: SplitTransactionFormState;
-  handleValueChange: (input: number) => void;
-  handleUnitsChange: (input: number) => void;
-  handleTypeChange: (input: InvestTransactionType) => void;
-  handleObservationsChange: (input: string) => void;
-};
-
-const SplitTransactionForm = (props: SplitTransactionFormProps) => {
+// Add small help icon component for use inside inputs (subtle, small, localized aria-label)
+const SmallHelpIcon = (props: { translationKey: string | null }) => {
+  const { translationKey } = props;
   const { t } = useTranslation();
-
-  const onTransactionTypeSelected = (
-    _: React.MouseEvent<HTMLElement>,
-    newType: string | null,
-  ) => {
-    if (
-      newType !== null &&
-      Object.values(InvestTransactionType).includes(
-        newType as InvestTransactionType,
-      )
-    ) {
-      props.handleTypeChange(newType as InvestTransactionType);
-    }
-  };
-
+  const theme = useTheme();
+  if (!translationKey) return null;
   return (
-    <>
-      <Divider sx={{ mb: 5 }}>
-        <Chip label={t('transactions.splitTransaction')} size="small" />
-      </Divider>
-      <Grid container spacing={2} rowSpacing={2} columns={{ xs: 12 }} size={12}>
-        {/* Value */}
-        <Grid
-          size={{
-            xs: 12,
-            md: 2,
-          }}
-        >
-          <TextField
-            autoFocus
-            required={props.isOpen}
-            margin="dense"
-            id="split-value"
-            name="split-value"
-            value={props?.state?.value ?? ''}
-            onChange={(e) => props.handleValueChange(Number(e.target.value))}
-            label={t('common.value')}
-            type="number"
-            fullWidth
-            variant="outlined"
-            inputProps={{
-              step: 0.01,
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <CurrencyIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        {/* Units */}
-        <Grid
-          size={{
-            xs: 12,
-            md: 3,
-          }}
-        >
-          <TextField
-            autoFocus
-            required={props.isOpen}
-            margin="dense"
-            id="split-units"
-            name="split-units"
-            value={props.state?.units || ''}
-            onChange={(e) => props.handleUnitsChange(Number(e.target.value))}
-            label={t('investments.units')}
-            type="number"
-            fullWidth
-            variant="outlined"
-            inputProps={{
-              step: 0.01,
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <FiberSmartRecord />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        <Grid
-          display="flex"
-          justifyContent="flex-end"
-          size={{
-            xs: 12,
-            md: 7,
-          }}
-        >
-          {/* Type */}
-          <ToggleButtonGroup
-            value={props.state?.type}
-            exclusive
-            onChange={onTransactionTypeSelected}
-            aria-label={t('transactions.typeOfTrx')}
-          >
-            <ToggleButton
-              value={InvestTransactionType.Buy}
-              aria-label={t('investments.buy')}
-            >
-              {t('investments.buy')}
-            </ToggleButton>
-            <ToggleButton
-              value={InvestTransactionType.Sell}
-              aria-label={t('investments.sell')}
-            >
-              {t('investments.sell')}
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Grid>
-        {/* Description */}
-        <Grid
-          size={{
-            xs: 12,
-            md: 9,
-          }}
-        >
-          <TextField
-            margin="dense"
-            id="split-description"
-            name="split-description"
-            value={props.state?.observations}
-            onChange={(e) => props.handleObservationsChange(e.target.value)}
-            label={t('common.description')}
-            type="text"
-            fullWidth
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Description />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-      </Grid>
-    </>
+    <Tooltip title={t(translationKey)}>
+      <HelpOutline
+        aria-label={t(translationKey)}
+        role="img"
+        sx={{ cursor: 'help', color: theme.palette.text.secondary, fontSize: '18px' }}
+        fontSize="small"
+      />
+    </Tooltip>
   );
 };
 
