@@ -1,4 +1,4 @@
-import { Tab, Tabs, useTheme } from '@mui/material';
+import { AlertTitle, Link, Tab, Tabs, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
@@ -16,6 +16,7 @@ import {
   ROUTE_INVEST_TRANSACTIONS,
 } from '../../providers/RoutesProvider.tsx';
 import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
 
 export enum InvestTab {
   Summary = 0,
@@ -74,7 +75,30 @@ const Invest = ({ defaultTab }: { defaultTab?: InvestTab }) => {
         <PageHeader
           title={t('investments.investments')}
           subtitle={t('investments.strapLine')}
+          titleChipText={'Beta'}
         />
+        <Alert severity="info" variant="outlined" sx={{mb: 1}}>
+          <AlertTitle>{t('investments.betaAlertTitle')}</AlertTitle>
+          {t('investments.betaAlertIntro')}{' '}
+          <Link
+            href="https://myfinbudget.com/goto/wiki-investments"
+            target="_blank"
+            rel="noopener"
+          >
+            {t('investments.betaAlertDocText')}
+          </Link>
+          {' '}
+          {t('investments.betaAlertPostDoc')}
+          {' '}
+          <Link
+            href="https://myfinbudget.com/goto/gh-discussions"
+            target="_blank"
+            rel="noopener"
+          >
+            {t('investments.betaAlertContactText')}
+          </Link>
+          .
+        </Alert>
       </Box>
       <Grid container spacing={2}>
         {' '}

@@ -150,14 +150,16 @@ const UpdateAssetValueDialog = (props: Props) => {
       maxWidth="sm"
       open={props.isOpen}
       onClose={props.onCanceled}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          updateAssetValueRequest.mutate({
-            assetId: state.assetId,
-            newValue: state.value,
-          });
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            updateAssetValueRequest.mutate({
+              assetId: state.assetId,
+              newValue: state.value,
+            });
+          },
         },
       }}
     >

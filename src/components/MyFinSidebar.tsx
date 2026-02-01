@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import { Menu, MenuItem, Sidebar, SubMenu } from 'react-pro-sidebar';
 import { NavLink } from 'react-router-dom';
 import {
   AccountBalanceWalletOutlined,
@@ -16,6 +16,7 @@ import {
   TipsAndUpdatesOutlined,
 } from '@mui/icons-material';
 import { alpha, useMediaQuery, useTheme } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   ROUTE_ACCOUNTS,
   ROUTE_BUDGETS,
@@ -28,7 +29,6 @@ import {
   ROUTE_TAGS,
   ROUTE_TRX,
 } from '../providers/RoutesProvider';
-import { useTranslation } from 'react-i18next';
 
 const MyFinSidebar = () => {
   const theme = useTheme();
@@ -82,6 +82,7 @@ const MyFinSidebar = () => {
                   ? '/res/logo_light_plain_transparentbg.png'
                   : '/res/logo_dark_transparentbg.png'
               }
+              alt={t('sidebar.logoAlt')}
               style={{ width: '70%' }}
             />
           </MenuItem>

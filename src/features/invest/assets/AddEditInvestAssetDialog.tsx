@@ -170,29 +170,31 @@ const AddEditInvestAssetDialog = (props: Props) => {
       maxWidth="md"
       open={props.isOpen}
       onClose={props.onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          dispatch({ type: StateActionType.RequestStarted });
-          if (isEditForm && props.asset) {
-            // Update
-            editAssetRequest.mutate({
-              name: state.nameInput,
-              broker: state.brokerInput,
-              ticker: state.tickerInput,
-              type: state.typeInput as AssetType,
-              asset_id: props.asset!.asset_id,
-            });
-          } else {
-            // Create
-            addAssetRequest.mutate({
-              name: state.nameInput,
-              broker: state.brokerInput,
-              ticker: state.tickerInput,
-              type: state.typeInput as AssetType,
-            });
-          }
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            dispatch({ type: StateActionType.RequestStarted });
+            if (isEditForm && props.asset) {
+              // Update
+              editAssetRequest.mutate({
+                name: state.nameInput,
+                broker: state.brokerInput,
+                ticker: state.tickerInput,
+                type: state.typeInput as AssetType,
+                asset_id: props.asset!.asset_id,
+              });
+            } else {
+              // Create
+              addAssetRequest.mutate({
+                name: state.nameInput,
+                broker: state.brokerInput,
+                ticker: state.tickerInput,
+                type: state.typeInput as AssetType,
+              });
+            }
+          },
         },
       }}
     >

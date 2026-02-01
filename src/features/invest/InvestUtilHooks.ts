@@ -14,6 +14,10 @@ export function useGetLocalizedInvestTransactionType() {
         return t('investments.buy');
       case InvestTransactionType.Sell:
         return t('investments.sell');
+      case InvestTransactionType.Cost:
+        return t('investments.cost');
+      case InvestTransactionType.Income:
+        return t('investments.income');
       default:
         return '';
     }

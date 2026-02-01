@@ -66,17 +66,18 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
   switch (action.type) {
     case StateActionType.DataLoaded: {
       const assetClassChartData =
-        action.payload.data.current_value_distribution.map((item, _index) => {
-          const [key, value] = Object.entries(item)[0];
-
-          return {
-            id: action.payload.getLocalizedAssetName(key as AssetType),
-            color: action.payload.getGradientColorForAssetType(
-              key as AssetType,
-            ),
-            value: value,
-          };
-        });
+        action.payload.data.current_value_distribution
+          .filter((item) => item.percentage > 0)
+          .map((item) => {
+            return {
+              id: action.payload.getLocalizedAssetName(item.type as AssetType),
+              color: action.payload.getGradientColorForAssetType(
+                item.type as AssetType,
+              ),
+              value: item.percentage,
+              altValue: formatNumberAsCurrency(item.value),
+            };
+          });
 
       const assetChartData = action.payload.data.top_performing_assets.map(
         (item) => {

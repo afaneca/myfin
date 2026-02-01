@@ -426,99 +426,101 @@ const AddEditTransactionDialog = (props: Props) => {
       maxWidth="md"
       open={props.isOpen}
       onClose={props.onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          const formData = new FormData(event.currentTarget);
-          const formJson = Object.fromEntries((formData as any).entries());
-          const isEssential = formJson.essential == 'on';
-          const accountFrom = accountFromValue;
-          const accountTo = accountToValue;
-          const category = categoryValue;
-          const entity = entityValue;
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            const formJson = Object.fromEntries((formData as any).entries());
+            const isEssential = formJson.essential == 'on';
+            const accountFrom = accountFromValue;
+            const accountTo = accountToValue;
+            const category = categoryValue;
+            const entity = entityValue;
 
-          const splitAmount = isSplitTransactionFormOpen
-            ? splitTransactionFormState?.amount
-            : undefined;
+            const splitAmount = isSplitTransactionFormOpen
+              ? splitTransactionFormState?.amount
+              : undefined;
 
-          const splitCategory = isSplitTransactionFormOpen
-            ? splitTransactionFormState?.category
-            : undefined;
+            const splitCategory = isSplitTransactionFormOpen
+              ? splitTransactionFormState?.category
+              : undefined;
 
-          const splitEntity = isSplitTransactionFormOpen
-            ? splitTransactionFormState?.entity
-            : undefined;
+            const splitEntity = isSplitTransactionFormOpen
+              ? splitTransactionFormState?.entity
+              : undefined;
 
-          const splitType = isSplitTransactionFormOpen
-            ? splitTransactionFormState?.type
-            : undefined;
+            const splitType = isSplitTransactionFormOpen
+              ? splitTransactionFormState?.type
+              : undefined;
 
-          const splitAccountFrom = isSplitTransactionFormOpen
-            ? splitTransactionFormState?.accountFrom?.id
-            : undefined;
+            const splitAccountFrom = isSplitTransactionFormOpen
+              ? splitTransactionFormState?.accountFrom?.id
+              : undefined;
 
-          const splitAccountTo = isSplitTransactionFormOpen
-            ? splitTransactionFormState?.accountTo?.id
-            : undefined;
+            const splitAccountTo = isSplitTransactionFormOpen
+              ? splitTransactionFormState?.accountTo?.id
+              : undefined;
 
-          const splitDescription = isSplitTransactionFormOpen
-            ? splitTransactionFormState?.description
-            : undefined;
+            const splitDescription = isSplitTransactionFormOpen
+              ? splitTransactionFormState?.description
+              : undefined;
 
-          const splitEssential = isSplitTransactionFormOpen
-            ? splitTransactionFormState?.isEssential
-            : undefined;
+            const splitEssential = isSplitTransactionFormOpen
+              ? splitTransactionFormState?.isEssential
+              : undefined;
 
-          const splitTags = isSplitTransactionFormOpen
-            ? JSON.stringify(splitTransactionFormState?.tags)
-            : undefined;
+            const splitTags = isSplitTransactionFormOpen
+              ? JSON.stringify(splitTransactionFormState?.tags)
+              : undefined;
 
-          // Process the form data as needed
-          if (isEditForm) {
-            editTransactionRequest.mutate({
-              transaction_id: props.transaction?.transaction_id ?? -1n,
-              new_amount: amountValue as number,
-              new_type: transactionType ?? TransactionType.Expense,
-              new_description: formJson.description,
-              new_account_from_id:
-                typeof accountFrom === 'string' ? undefined : accountFrom?.id,
-              new_account_to_id:
-                typeof accountTo === 'string' ? undefined : accountTo?.id,
-              new_category_id:
-                typeof category === 'string' ? undefined : category?.id,
-              new_entity_id:
-                typeof entity === 'string' ? undefined : entity?.id,
-              tags: JSON.stringify(selectedTags),
-              new_date_timestamp: convertDateStringToUnixTimestamp(
-                formJson.date,
-              ),
-              new_is_essential: isEssential,
-              is_split: isSplitTransactionFormOpen,
-              split_amount: splitAmount,
-              split_category: splitCategory?.id,
-              split_entity: splitEntity?.id,
-              split_type: splitType ?? TransactionType.Expense,
-              split_account_from: splitAccountFrom,
-              split_account_to: splitAccountTo,
-              split_description: splitDescription,
-              split_is_essential: splitEssential,
-              split_tags: splitTags,
-            });
-          } else {
-            addTransactionStep1Request.mutate({
-              amount: amountValue as number,
-              type: transactionType ?? TransactionType.Expense,
-              description: formJson.description,
-              account_from_id: accountFrom?.id,
-              account_to_id: accountTo?.id,
-              category_id: category?.id,
-              entity_id: entity?.id,
-              tags: JSON.stringify(selectedTags),
-              date_timestamp: convertDateStringToUnixTimestamp(formJson.date),
-              is_essential: isEssential,
-            });
-          }
+            // Process the form data as needed
+            if (isEditForm) {
+              editTransactionRequest.mutate({
+                transaction_id: props.transaction?.transaction_id ?? -1n,
+                new_amount: amountValue as number,
+                new_type: transactionType ?? TransactionType.Expense,
+                new_description: formJson.description,
+                new_account_from_id:
+                  typeof accountFrom === 'string' ? undefined : accountFrom?.id,
+                new_account_to_id:
+                  typeof accountTo === 'string' ? undefined : accountTo?.id,
+                new_category_id:
+                  typeof category === 'string' ? undefined : category?.id,
+                new_entity_id:
+                  typeof entity === 'string' ? undefined : entity?.id,
+                tags: JSON.stringify(selectedTags),
+                new_date_timestamp: convertDateStringToUnixTimestamp(
+                  formJson.date,
+                ),
+                new_is_essential: isEssential,
+                is_split: isSplitTransactionFormOpen,
+                split_amount: splitAmount,
+                split_category: splitCategory?.id,
+                split_entity: splitEntity?.id,
+                split_type: splitType ?? TransactionType.Expense,
+                split_account_from: splitAccountFrom,
+                split_account_to: splitAccountTo,
+                split_description: splitDescription,
+                split_is_essential: splitEssential,
+                split_tags: splitTags,
+              });
+            } else {
+              addTransactionStep1Request.mutate({
+                amount: amountValue as number,
+                type: transactionType ?? TransactionType.Expense,
+                description: formJson.description,
+                account_from_id: accountFrom?.id,
+                account_to_id: accountTo?.id,
+                category_id: category?.id,
+                entity_id: entity?.id,
+                tags: JSON.stringify(selectedTags),
+                date_timestamp: convertDateStringToUnixTimestamp(formJson.date),
+                is_essential: isEssential,
+              });
+            }
+          },
         },
       }}
     >
