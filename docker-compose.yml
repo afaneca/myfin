@@ -40,6 +40,10 @@ services:
       - LOGGING=false
       - BYPASS_SESSION_CHECK=false
       - ENABLE_USER_SIGNUP=false
+      # Reverse proxy trust for Express
+      # - TRUST_PROXY=1 trusts the first proxy hop (Traefik / Nginx proxy in front)
+      # - Override with other values as needed (see README/.env.example)
+      - TRUST_PROXY=1
     depends_on:
       db:
         condition: service_healthy
