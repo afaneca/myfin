@@ -9,18 +9,12 @@ import {
   InvestTransactionsPageResponse,
   InvestTransactionType,
 } from '../../../services/invest/investServices.ts';
-import {
-  useGetInvestTransactions,
-  useRemoveInvestTransaction,
-} from '../../../services/invest/investHooks.ts';
+import { useGetInvestTransactions, useRemoveInvestTransaction } from '../../../services/invest/investHooks.ts';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import MyFinTable from '../../../components/MyFinTable.tsx';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../../providers/SnackbarProvider.tsx';
+import { AlertSeverity, useSnackbar } from '../../../providers/SnackbarProvider.tsx';
 import { debounce } from 'lodash';
 import { GridColDef } from '@mui/x-data-grid';
 import Stack from '@mui/material/Stack';
@@ -30,12 +24,9 @@ import {
   getMonthShortStringFromUnixTimestamp,
   getShortYearFromUnixTimestamp,
 } from '../../../utils/dateUtils.ts';
-import { Tooltip, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import {
-  useGetLocalizedAssetType,
-  useGetLocalizedInvestTransactionType,
-} from '../InvestUtilHooks.ts';
+import { useGetLocalizedAssetType, useGetLocalizedInvestTransactionType } from '../InvestUtilHooks.ts';
 import Chip from '@mui/material/Chip';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import IconButton from '@mui/material/IconButton';
@@ -70,9 +61,9 @@ const enum StateActionType {
 
 type StateAction =
   | {
-      type: StateActionType.RequestSuccess;
-      payload: InvestTransactionsPageResponse;
-    }
+  type: StateActionType.RequestSuccess;
+  payload: InvestTransactionsPageResponse;
+}
   | { type: StateActionType.RequestError }
   | { type: StateActionType.RequestStarted }
   | { type: StateActionType.SearchQueryUpdated; payload: string }
@@ -82,9 +73,9 @@ type StateAction =
   | { type: StateActionType.DialogDismissed }
   | { type: StateActionType.DialogSuccess; payload: InvestAsset }
   | {
-      type: StateActionType.PaginationModelChanged;
-      payload: { pageSize: number; page: number };
-    };
+  type: StateActionType.PaginationModelChanged;
+  payload: { pageSize: number; page: number };
+};
 
 const createInitialState = (): UiState => {
   return {
@@ -246,7 +237,7 @@ const InvestTransactions = () => {
           qty: result.units,
           ticker: result.ticker,
         },
-        value: { price: result.total_price, feesTaxes: result.fees_taxes },
+        value: { price: result.total_price, feesTaxes: result.fees_taxes_amount },
         observations: result.note,
         actions: result,
       })),
@@ -275,27 +266,32 @@ const InvestTransactions = () => {
               {/*<br />*/}
               <span>
                 {getMonthShortStringFromUnixTimestamp(params.value.date)}
-                {" '"}
+                {' \''}
                 {getShortYearFromUnixTimestamp(params.value.date)}
               </span>
             </span>
           </Box>
-          <Tooltip
-            title={getLocalizedInvestTransactionType.invoke(params.value.type)}
-          >
-            <Chip
-              label={
-                getLocalizedInvestTransactionType.invoke(params.value.type)[0]
+          <Chip
+            label={
+              getLocalizedInvestTransactionType.invoke(params.value.type)
+            }
+            variant="outlined"
+            size="small"
+            color={(() => {
+              switch (params.value.type) {
+                case InvestTransactionType.Buy:
+                  return 'success';
+                case InvestTransactionType.Sell:
+                  return 'warning';
+                case InvestTransactionType.Income:
+                  return 'info';
+                case InvestTransactionType.Cost:
+                  return 'error';
+                default:
+                  return 'default';
               }
-              variant="outlined"
-              size="small"
-              color={
-                params.value.type == InvestTransactionType.Buy
-                  ? 'success'
-                  : 'warning'
-              }
-            />
-          </Tooltip>
+            })()}
+          />
         </Stack>
       ),
     },
@@ -474,12 +470,14 @@ const InvestTransactions = () => {
           id="search"
           label={t('common.search')}
           variant="outlined"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Search />
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Search />
+                </InputAdornment>
+              ),
+            },
           }}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             debouncedSearchQuery(event.target.value);

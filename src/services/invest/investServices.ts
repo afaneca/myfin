@@ -13,10 +13,13 @@ export enum AssetType {
 
 export type YearlyRoi = {
   fees_taxes: number;
-  invested_in_year_amount: number;
+  total_inflow: number;
+  total_outflow: number;
+  ending_value: number;
   roi_amount: number;
+  roi_value: number;
   roi_percentage: number;
-  value_total_amount: number;
+  total_net_flows: number;
 };
 
 export type MonthlySnapshot = {
@@ -38,6 +41,8 @@ export type InvestAsset = {
   current_value: number;
   currently_invested_value: number;
   fees_taxes: number;
+  fees_taxes_amount: number;
+  fees_taxes_units: number;
   invested_value: number;
   name: string;
   price_per_unit: string;
@@ -48,17 +53,24 @@ export type InvestAsset = {
   withdrawn_amount: number;
 };
 
+export type AssetDistributionItem = {
+  type: AssetType;
+  value: number;
+  percentage: number;
+};
+
 export type GetInvestStatsResponse = {
   combined_roi_by_year: { [year: string]: YearlyRoi };
-  current_value_distribution: Array<Record<AssetType, number>>;
+  current_value_distribution: AssetDistributionItem[];
   current_year_roi_percentage: number;
   current_year_roi_value: number;
+  current_year_annualized_roi_percentage: number;
   global_roi_percentage: number;
   global_roi_value: number;
   monthly_snapshots: MonthlySnapshot[];
   top_performing_assets: InvestAsset[];
   total_current_value: number;
-  total_invested_value: number;
+  total_currently_invested_value: number;
 };
 
 const getInvestStats = () => {
@@ -116,7 +128,8 @@ export type InvestTransaction = {
   asset_type: AssetType;
   broker: string;
   date_timestamp: number;
-  fees_taxes: number;
+  fees_taxes_amount: number;
+  fees_taxes_units: number;
   name: string;
   note: string;
   ticker: string;
@@ -148,14 +161,10 @@ export type AddInvestTransactionRequest = {
   note?: string;
   total_price: number;
   units: number;
-  fees: number;
+  fees_amount: number;
+  fees_units: number;
   asset_id: bigint;
   type: InvestTransactionType;
-  is_split: boolean;
-  split_total_price?: number;
-  split_units?: number;
-  split_note?: string;
-  split_type?: InvestTransactionType;
 };
 
 const addTransaction = (request: AddInvestTransactionRequest) => {
@@ -167,7 +176,8 @@ export type EditInvestTransactionRequest = {
   note?: string;
   total_price: number;
   units: number;
-  fees: number;
+  fees_amount: number;
+  fees_units: number;
   asset_id: bigint;
   type: InvestTransactionType;
 };
