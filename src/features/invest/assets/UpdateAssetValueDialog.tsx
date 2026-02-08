@@ -1,8 +1,5 @@
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../../providers/SnackbarProvider.tsx';
+import { AlertSeverity, useSnackbar } from '../../../providers/SnackbarProvider.tsx';
 import { Trans, useTranslation } from 'react-i18next';
 import React, { useEffect, useReducer } from 'react';
 import Grid from '@mui/material/Grid';
@@ -20,8 +17,6 @@ import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
 
 type UiState = {
   isLoading: boolean;
-  isError: boolean;
-  errorMessage: string | null;
   assetId: bigint;
   value: number;
   assetName: string;
@@ -29,15 +24,13 @@ type UiState = {
 
 const enum StateActionType {
   RequestStarted,
-  RequestSuccess,
-  RequestError,
+  RequestFinished,
   AmountUpdated,
 }
 
 type StateAction =
   | { type: StateActionType.RequestStarted }
-  | { type: StateActionType.RequestSuccess }
-  | { type: StateActionType.RequestError }
+  | { type: StateActionType.RequestFinished }
   | { type: StateActionType.AmountUpdated; payload: number };
 
 const createInitialState = (args: {
@@ -47,8 +40,6 @@ const createInitialState = (args: {
 }): UiState => {
   return {
     isLoading: false,
-    isError: false,
-    errorMessage: null,
     value: args.currentValue,
     assetId: args.assetId,
     assetName: args.assetName,
@@ -62,8 +53,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         isLoading: true,
       };
-    case StateActionType.RequestSuccess:
-    case StateActionType.RequestError:
+    case StateActionType.RequestFinished:
       return {
         ...prevState,
         isLoading: false,
@@ -83,6 +73,9 @@ type Props = {
   assetId: bigint;
   currentValue: number;
   assetName: string;
+  month?: number;
+  year?: number;
+  onViewHistory?: () => void;
 };
 
 const UpdateAssetValueDialog = (props: Props) => {
@@ -109,40 +102,34 @@ const UpdateAssetValueDialog = (props: Props) => {
     } else {
       loader.hideLoading();
     }
-  }, [state.isLoading]);
-
-  // Error
-  useEffect(() => {
-    if (state.isError) {
-      dispatch({ type: StateActionType.RequestError });
-      snackbar.showSnackbar(
-        state.errorMessage
-          ? state.errorMessage
-          : t('common.somethingWentWrongTryAgain'),
-        AlertSeverity.ERROR,
-      );
-    }
-  }, [state.isError, state.errorMessage]);
-
-  useEffect(() => {
-    if (updateAssetValueRequest.isError) {
-      snackbar.showSnackbar(
-        t('common.somethingWentWrongTryAgain'),
-        AlertSeverity.ERROR,
-      );
-    }
-  }, [updateAssetValueRequest.isError]);
+  }, [state.isLoading, loader]);
 
   // Success
   useEffect(() => {
     if (!updateAssetValueRequest.data) return;
-    dispatch({ type: StateActionType.RequestSuccess });
+    dispatch({ type: StateActionType.RequestFinished });
     snackbar.showSnackbar(
       t('investments.updateValueSuccess'),
       AlertSeverity.SUCCESS,
     );
-    props.onSuccess();
   }, [updateAssetValueRequest.data]);
+
+  // Error - update state
+  useEffect(() => {
+    if (!updateAssetValueRequest.isError) return;
+    dispatch({ type: StateActionType.RequestFinished });
+    snackbar.showSnackbar(
+      t('common.somethingWentWrongTryAgain'),
+      AlertSeverity.ERROR,
+    );
+  }, [updateAssetValueRequest.isError]);
+
+  // After loading is dismissed (on success), close the dialog
+  useEffect(() => {
+    if (!state.isLoading && updateAssetValueRequest.data) {
+      props.onSuccess();
+    }
+  }, [state.isLoading, updateAssetValueRequest.data]);
 
   return (
     <Dialog
@@ -155,9 +142,12 @@ const UpdateAssetValueDialog = (props: Props) => {
           component: 'form',
           onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
+            dispatch({ type: StateActionType.RequestStarted });
             updateAssetValueRequest.mutate({
               assetId: state.assetId,
               newValue: state.value,
+              month: props.month,
+              year: props.year,
             });
           },
         },
@@ -165,9 +155,17 @@ const UpdateAssetValueDialog = (props: Props) => {
     >
       <DialogTitle>
         <Trans
-          i18nKey={'investments.currentInvestValue'}
+          i18nKey={
+            props.month && props.year
+              ? 'investments.updateHistoricalValue'
+              : 'investments.currentInvestValue'
+          }
           values={{
             name: props.assetName,
+            date:
+              props.month && props.year
+                ? `${props.month}/${props.year}`
+                : undefined,
           }}
         />
       </DialogTitle>
@@ -214,17 +212,24 @@ const UpdateAssetValueDialog = (props: Props) => {
           />
         </Grid>
       </DialogContent>
-      <DialogActions sx={{ pr: 3 }}>
-        <Button
-          variant="outlined"
-          startIcon={<Undo />}
-          onClick={props.onCanceled}
-        >
-          {t('common.cancel')}
-        </Button>
-        <Button variant="contained" startIcon={<Send />} type="submit">
-          {t('common.edit')}
-        </Button>
+      <DialogActions sx={{ pr: 3, justifyContent: 'space-between' }}>
+        {props.onViewHistory && (
+          <Button onClick={props.onViewHistory}>
+            {t('investments.viewHistory')}
+          </Button>
+        )}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Button
+            variant="outlined"
+            startIcon={<Undo />}
+            onClick={props.onCanceled}
+          >
+            {t('common.cancel')}
+          </Button>
+          <Button variant="contained" startIcon={<Send />} type="submit">
+            {t('common.edit')}
+          </Button>
+        </div>
       </DialogActions>
     </Dialog>
   );

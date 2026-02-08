@@ -32,6 +32,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
 import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
 import AddEditInvestAssetDialog from './AddEditInvestAssetDialog.tsx';
+import AssetValueHistoryDrawer from './AssetValueHistoryDrawer.tsx';
 import PercentageChip from '../../../components/PercentageChip.tsx';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 
@@ -44,6 +45,12 @@ type UiState = {
   isEditDialogOpen: boolean;
   isRemoveDialogOpen: boolean;
   isUpdateAssetValueDialogOpen: boolean;
+
+  isHistoryDrawerOpen: boolean;
+  historyDrawerAssetId?: bigint;
+  historyDrawerAssetName?: string;
+  historyDrawerHighlightMonth?: number;
+  historyDrawerHighlightYear?: number;
 };
 
 const enum StateActionType {
@@ -56,6 +63,8 @@ const enum StateActionType {
   DialogDismissed,
   DialogConfirmationClick,
   DialogUpdateAssetValueClick,
+  OpenHistoryDrawer,
+  CloseHistoryDrawer,
 }
 
 type StateAction =
@@ -70,7 +79,20 @@ type StateAction =
   | { type: StateActionType.EditClick; payload: InvestAsset }
   | { type: StateActionType.RemoveClick; payload: InvestAsset }
   | { type: StateActionType.DialogConfirmationClick }
-  | { type: StateActionType.DialogUpdateAssetValueClick; payload: InvestAsset };
+  | {
+      type: StateActionType.DialogUpdateAssetValueClick;
+      payload: InvestAsset;
+    }
+  | {
+      type: StateActionType.OpenHistoryDrawer;
+      payload: {
+        assetId: bigint;
+        assetName: string;
+        highlightMonth?: number;
+        highlightYear?: number;
+      };
+    }
+  | { type: StateActionType.CloseHistoryDrawer };
 
 const createInitialState = (): UiState => {
   return {
@@ -79,6 +101,7 @@ const createInitialState = (): UiState => {
     isEditDialogOpen: false,
     isRemoveDialogOpen: false,
     isUpdateAssetValueDialogOpen: false,
+    isHistoryDrawerOpen: false,
   };
 };
 
@@ -173,6 +196,26 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         isRemoveDialogOpen: false,
         isUpdateAssetValueDialogOpen: false,
         actionableAsset: action.payload,
+      };
+    case StateActionType.OpenHistoryDrawer:
+      return {
+        ...prevState,
+        isHistoryDrawerOpen: true,
+        historyDrawerAssetId: action.payload.assetId,
+        historyDrawerAssetName: action.payload.assetName,
+        historyDrawerHighlightMonth: action.payload.highlightMonth,
+        historyDrawerHighlightYear: action.payload.highlightYear,
+        // Close other dialogs if open, though usually this is called from within one
+        isUpdateAssetValueDialogOpen: false,
+      };
+    case StateActionType.CloseHistoryDrawer:
+      return {
+        ...prevState,
+        isHistoryDrawerOpen: false,
+        historyDrawerAssetId: undefined,
+        historyDrawerAssetName: undefined,
+        historyDrawerHighlightMonth: undefined,
+        historyDrawerHighlightYear: undefined,
       };
   }
 };
@@ -416,6 +459,27 @@ const InvestAssets = () => {
           assetId={state.actionableAsset?.asset_id || -1n}
           currentValue={state.actionableAsset?.current_value || 0}
           assetName={state.actionableAsset?.name || ''}
+          onViewHistory={() => {
+            if (state.actionableAsset) {
+              dispatch({
+                type: StateActionType.OpenHistoryDrawer,
+                payload: {
+                  assetId: state.actionableAsset.asset_id,
+                  assetName: state.actionableAsset.name,
+                },
+              });
+            }
+          }}
+        />
+      )}
+      {state.isHistoryDrawerOpen && state.historyDrawerAssetId && (
+        <AssetValueHistoryDrawer
+          isOpen={true}
+          onClose={() => dispatch({ type: StateActionType.CloseHistoryDrawer })}
+          assetId={state.historyDrawerAssetId}
+          assetName={state.historyDrawerAssetName || ''}
+          highlightMonth={state.historyDrawerHighlightMonth}
+          highlightYear={state.historyDrawerHighlightYear}
         />
       )}
       {state.isRemoveDialogOpen && (

@@ -50,7 +50,8 @@
     "language": "Language",
     "next": "Next",
     "previous": "Previous",
-    "currency": "Currency"
+    "currency": "Currency",
+    "close": "Close"
   },
   "dropZone": {
     "uploadText": "Drag & drop your file here or click to select a file",
@@ -512,7 +513,7 @@
     "investedValue": "Invested value",
     "currentROI": "Current ROI",
     "editAsset": "Edit Asset",
-    "currentInvestValue": "Current valuation for investment in <strong>{{name}}</strong>",
+    "currentInvestValue": "Current valuation for <strong>{{name}}</strong>",
     "deleteAssetModalTitle": "Delete asset {{name}}?",
     "deleteAssetModalSubtitle": "Are you sure you want to delete this asset?",
     "deleteAssetModalAlert": "This action is irreversible!",
@@ -534,6 +535,13 @@
     "betaAlertDocText": "Read the documentation",
     "betaAlertPostDoc": "to learn about what has changed. If you spot any issues,",
     "betaAlertContactText": "get in touch",
+    "valueHistory": "Value History: {{name}}",
+    "valueHistoryDescription": "Here you can see the history of monthly values for this asset. You can edit past values if needed.",
+    "updateHistoricalValue": "Update value for {{name}} in {{date}}",
+    "viewHistory": "View History",
+    "backdatedTransactionTitle": "Backdated Transaction Alert",
+    "backdatedTransactionDescription": "You have added, edited or removed a transaction that affects a past month. It is recommended to check the asset history to ensure the monthly values are correct.",
+    "backdatedTransactionAlert": "The asset value history might need adjustments.",
     "tooltips": {
       "amount_buy": "Amount paid to acquire the asset in this purchase (not including fees)",
       "amount_sell": "Total received from selling the asset in this sale (not including fees)",
