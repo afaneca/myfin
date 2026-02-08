@@ -50,7 +50,8 @@
     "language": "Linguagem",
     "next": "Seguinte",
     "previous": "Anterior",
-    "currency": "Moeda"
+    "currency": "Moeda",
+    "close": "Fechar"
   },
   "dropZone": {
     "uploadText": "Arraste o seu ficheiro para aqui ou clique para selecionar um ficheiro",
@@ -534,6 +535,13 @@
     "betaAlertDocText": "Consulte a documentação",
     "betaAlertPostDoc": "para saber como o novo módulo funciona. Se encontrar algum problema,",
     "betaAlertContactText": "contacte-nos",
+    "valueHistory": "Histórico de Valor: {{name}}",
+    "valueHistoryDescription": "Aqui pode consultar o histórico de valores mensais para este ativo. Pode editar valores passados se necessário.",
+    "updateHistoricalValue": "Atualizar valor para {{name}} em {{date}}",
+    "viewHistory": "Ver Histórico",
+    "backdatedTransactionTitle": "Alerta de Transação Antiga",
+    "backdatedTransactionDescription": "Adicionou, editou ou removeu uma transação que afeta um mês passado. É recomendado verificar o histórico do ativo para garantir que os valores mensais estão corretos.",
+    "backdatedTransactionAlert": "O histórico de valores do ativo pode precisar de ajustes.",
     "tooltips": {
       "amount_buy": "Montante pago para adquirir o ativo nesta compra",
       "amount_sell": "Montante total recebido pela venda deste ativo",

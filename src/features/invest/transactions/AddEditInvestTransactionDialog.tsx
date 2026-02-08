@@ -197,7 +197,11 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (asset: InvestAsset) => void;
+  onSuccess: (
+    asset: InvestAsset,
+    checkDate: number,
+    prevDate?: number,
+  ) => void;
   trx: InvestTransaction | undefined;
 };
 
@@ -264,7 +268,9 @@ const AddEditInvestTransactionDialog = (props: Props) => {
       const asset = state.assets.find(
         (asset) => asset.asset_id == state.assetInput?.id,
       );
-      if (asset) props.onSuccess(asset);
+      const checkDate = convertDayJsToUnixTimestamp(state.dateInput ?? dayjs());
+      const prevDate = props.trx?.date_timestamp;
+      if (asset) props.onSuccess(asset, checkDate, prevDate);
     }, 0);
   }, [editTransactionRequest.data, addTransactionRequest.data]);
 
