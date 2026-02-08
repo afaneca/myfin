@@ -58,14 +58,21 @@ export function useUpdateAssetValue() {
   async function updateAssetValue(request: {
     assetId: bigint;
     newValue: number;
+    month?: number;
+    year?: number;
   }) {
     const result = await InvestServices.updateAssetValue(
       request.assetId,
       request.newValue,
+      request.month,
+      request.year,
     );
 
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_ASSETS],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_INVEST_STATS],
     });
     return result;
   }
