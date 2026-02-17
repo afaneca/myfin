@@ -1,13 +1,13 @@
-import { memo, useEffect } from 'react';
-import { GridSlots, useGridApiRef } from '@mui/x-data-grid';
-import LinearProgress from '@mui/material/LinearProgress';
-import type { GridColDef } from '@mui/x-data-grid/models/colDef';
-import { GridRowsProp } from '@mui/x-data-grid/models';
-import { ptPT, enUS } from '@mui/x-data-grid/locales';
-import i18next from 'i18next';
-import { NoRows, StyledDataGrid } from './MyFinTable.tsx';
 import { Box } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 import type { GridPaginationModel } from '@mui/x-data-grid';
+import { GridSlots, useGridApiRef } from '@mui/x-data-grid';
+import { enUS, ptPT } from '@mui/x-data-grid/locales';
+import { GridRowsProp } from '@mui/x-data-grid/models';
+import type { GridColDef } from '@mui/x-data-grid/models/colDef';
+import i18next from 'i18next';
+import { memo, useEffect } from 'react';
+import { NoRows, StyledDataGrid } from './MyFinTable.tsx';
 
 type Props = {
   isRefetching: boolean;
@@ -15,10 +15,7 @@ type Props = {
   columns: GridColDef[];
   paginationModel: { pageSize: number; page?: number };
   onRowClicked?: (id: bigint) => void;
-  onPaginationModelChange?: (model: {
-    pageSize: number;
-    page: number;
-  }) => void;
+  onPaginationModelChange?: (model: { pageSize: number; page: number }) => void;
   scrollToId?: number | string;
 };
 
@@ -39,9 +36,8 @@ const MyFinStaticTable = (props: Props) => {
 
     setTimeout(() => {
       try {
-        const rowIndex = apiRef.current?.getRowIndexRelativeToVisibleRows(
-          scrollToId,
-        );
+        const rowIndex =
+          apiRef.current?.getRowIndexRelativeToVisibleRows(scrollToId);
         if (rowIndex != null) {
           apiRef.current?.scrollToIndexes({ rowIndex });
         }
@@ -84,9 +80,7 @@ const MyFinStaticTable = (props: Props) => {
             paginationModel: paginationModel,
           },
         }}
-        paginationModel={
-          gridPaginationModel
-        }
+        paginationModel={gridPaginationModel}
         onPaginationModelChange={onPaginationModelChange}
         pageSizeOptions={[5, 10, 15, 20, 50, 100]}
         disableRowSelectionOnClick
@@ -100,6 +94,7 @@ const MyFinStaticTable = (props: Props) => {
           '& .MuiDataGrid-cell': {
             display: 'flex',
             alignItems: 'center',
+            py: 1.5,
           },
           minHeight: 300,
         }}

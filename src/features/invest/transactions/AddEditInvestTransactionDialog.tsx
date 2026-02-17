@@ -1,8 +1,3 @@
-import { Autocomplete, Checkbox, FormControlLabel, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
-import React, { useEffect, useReducer } from 'react';
-import Grid from '@mui/material/Grid';
 import {
   AccountCircle,
   ControlPointDuplicate,
@@ -13,26 +8,48 @@ import {
   Undo,
 } from '@mui/icons-material';
 import {
+  Autocomplete,
+  Checkbox,
+  FormControlLabel,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+} from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
+import { useTheme } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+import React, { useEffect, useReducer } from 'react';
+import { useTranslation } from 'react-i18next';
+import { NumericFormat } from 'react-number-format';
+import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
+import { useLoading } from '../../../providers/LoadingProvider.tsx';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../../providers/SnackbarProvider.tsx';
+import {
   useAddInvestTransaction,
   useEditInvestTransaction,
   useGetAssets,
 } from '../../../services/invest/investHooks.ts';
-import dayjs, { Dayjs } from 'dayjs';
-import { InvestAsset, InvestTransaction, InvestTransactionType } from '../../../services/invest/investServices.ts';
+import {
+  InvestAsset,
+  InvestTransaction,
+  InvestTransactionType,
+} from '../../../services/invest/investServices.ts';
+import {
+  convertDayJsToUnixTimestamp,
+  convertUnixTimestampToDayJs,
+} from '../../../utils/dateUtils.ts';
 import { IdLabelPair } from '../../transactions/AddEditTransactionDialog.tsx';
-import { convertDayJsToUnixTimestamp, convertUnixTimestampToDayJs } from '../../../utils/dateUtils.ts';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import { useLoading } from '../../../providers/LoadingProvider.tsx';
-import { AlertSeverity, useSnackbar } from '../../../providers/SnackbarProvider.tsx';
-import { DatePicker } from '@mui/x-date-pickers';
-import DialogContent from '@mui/material/DialogContent';
-import Button from '@mui/material/Button';
-import DialogActions from '@mui/material/DialogActions';
-import { NumericFormat } from 'react-number-format';
-import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
 
 type UiState = {
   isLoading: boolean;
@@ -126,18 +143,28 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         valueInput: action.payload,
         // For income transactions, clear units when value is set
-        unitsInput: prevState.typeInput === InvestTransactionType.Income && action.payload > 0 ? 0 : prevState.unitsInput,
+        unitsInput:
+          prevState.typeInput === InvestTransactionType.Income &&
+          action.payload > 0
+            ? 0
+            : prevState.unitsInput,
       };
     case StateActionType.UnitsUpdated:
       return {
         ...prevState,
         unitsInput: action.payload,
         // For income transactions, clear value when units is set
-        valueInput: prevState.typeInput === InvestTransactionType.Income && action.payload > 0 ? 0 : prevState.valueInput,
+        valueInput:
+          prevState.typeInput === InvestTransactionType.Income &&
+          action.payload > 0
+            ? 0
+            : prevState.valueInput,
         // Auto-fill fees units with fees amount if deduct option is enabled
-        feesUnitsInput: prevState.deductFeesInUnits && prevState.typeInput === InvestTransactionType.Income
-          ? prevState.feesTaxesInput
-          : prevState.feesUnitsInput,
+        feesUnitsInput:
+          prevState.deductFeesInUnits &&
+          prevState.typeInput === InvestTransactionType.Income
+            ? prevState.feesTaxesInput
+            : prevState.feesUnitsInput,
       };
     case StateActionType.TypeUpdated:
       return {
@@ -145,11 +172,18 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         typeInput: action.payload,
         isFeesTaxesInputVisible: action.payload !== InvestTransactionType.Cost,
         // For cost transactions, clear fees & taxes amount
-        feesTaxesInput: action.payload !== InvestTransactionType.Cost ? prevState.feesTaxesInput : 0,
+        feesTaxesInput:
+          action.payload !== InvestTransactionType.Cost
+            ? prevState.feesTaxesInput
+            : 0,
         deductFeesInUnits: false,
         feesUnitsInput: 0,
         // For income transactions, clear units when value is set
-        unitsInput: action.payload === InvestTransactionType.Income && prevState.valueInput > 0 ? 0 : prevState.unitsInput,
+        unitsInput:
+          action.payload === InvestTransactionType.Income &&
+          prevState.valueInput > 0
+            ? 0
+            : prevState.unitsInput,
       };
     case StateActionType.AssetUpdated:
       return {
@@ -161,7 +195,9 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         ...prevState,
         feesTaxesInput: action.payload,
         // Auto-update fees units when deduct is enabled
-        feesUnitsInput: prevState.deductFeesInUnits ? action.payload : prevState.feesUnitsInput,
+        feesUnitsInput: prevState.deductFeesInUnits
+          ? action.payload
+          : prevState.feesUnitsInput,
       };
     case StateActionType.ObservationsUpdated:
       return {
@@ -197,11 +233,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (
-    asset: InvestAsset,
-    checkDate: number,
-    prevDate?: number,
-  ) => void;
+  onSuccess: (asset: InvestAsset, checkDate: number, prevDate?: number) => void;
   trx: InvestTransaction | undefined;
 };
 
@@ -322,7 +354,10 @@ const AddEditInvestTransactionDialog = (props: Props) => {
     }
   };
 
-  const getFeesTooltipKey = (type: InvestTransactionType, deductInUnits: boolean) => {
+  const getFeesTooltipKey = (
+    type: InvestTransactionType,
+    deductInUnits: boolean,
+  ) => {
     const mode = deductInUnits ? 'units' : 'cash';
     switch (type) {
       case InvestTransactionType.Buy:
@@ -341,7 +376,10 @@ const AddEditInvestTransactionDialog = (props: Props) => {
   // compute the keys for the current state
   const amountTooltipKey = getAmountTooltipKey(state.typeInput);
   const unitsTooltipKey = getUnitsTooltipKey(state.typeInput);
-  const feesTooltipKey = getFeesTooltipKey(state.typeInput, state.deductFeesInUnits);
+  const feesTooltipKey = getFeesTooltipKey(
+    state.typeInput,
+    state.deductFeesInUnits,
+  );
 
   return (
     <Dialog
@@ -461,8 +499,7 @@ const AddEditInvestTransactionDialog = (props: Props) => {
             </ToggleButtonGroup>
           </Grid>
         </Grid>
-        <Grid size={{ xs: 6 }}>
-        </Grid>
+        <Grid size={{ xs: 6 }}></Grid>
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} rowSpacing={2} mt={2}>
@@ -498,6 +535,7 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               slotProps={{
                 htmlInput: {
                   step: 0.01,
+                  min: 0,
                 },
                 input: {
                   startAdornment: (
@@ -744,7 +782,9 @@ const AddEditInvestTransactionDialog = (props: Props) => {
                       <Checkbox
                         checked={state.deductFeesInUnits}
                         onChange={() =>
-                          dispatch({ type: StateActionType.DeductFeesInUnitsToggled })
+                          dispatch({
+                            type: StateActionType.DeductFeesInUnitsToggled,
+                          })
                         }
                       />
                     }
@@ -802,7 +842,8 @@ const AddEditInvestTransactionDialog = (props: Props) => {
               </>
             )}
         </Grid>
-      </DialogContent>;
+      </DialogContent>
+      ;
       <DialogActions sx={{ pr: 3 }}>
         <Button variant="outlined" startIcon={<Undo />} onClick={props.onClose}>
           {t('common.cancel')}
@@ -810,12 +851,11 @@ const AddEditInvestTransactionDialog = (props: Props) => {
         <Button variant="contained" startIcon={<Send />} type="submit">
           {t(isEditForm ? 'common.edit' : 'common.add')}
         </Button>
-      </DialogActions>;
+      </DialogActions>
+      ;
     </Dialog>
-  )
-    ;
+  );
 };
-
 
 export const TypeLabelWithTooltip = (props: {
   labelKey: string;
@@ -828,12 +868,18 @@ export const TypeLabelWithTooltip = (props: {
   const theme = useTheme();
 
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }} className={className}>
+    <span
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+      className={className}
+    >
       <span>{t(labelKey)}</span>
       {showHelp && (
         <Tooltip title={helpKey ? t(helpKey) : ''}>
-          <HelpOutline style={{ cursor: 'help', color: theme.palette.text.secondary }} fontSize="inherit"
-                       aria-label={helpKey ?? ''} />
+          <HelpOutline
+            style={{ cursor: 'help', color: theme.palette.text.secondary }}
+            fontSize="inherit"
+            aria-label={helpKey ?? ''}
+          />
         </Tooltip>
       )}
     </span>
@@ -851,7 +897,11 @@ const SmallHelpIcon = (props: { translationKey: string | null }) => {
       <HelpOutline
         aria-label={t(translationKey)}
         role="img"
-        sx={{ cursor: 'help', color: theme.palette.text.secondary, fontSize: '18px' }}
+        sx={{
+          cursor: 'help',
+          color: theme.palette.text.secondary,
+          fontSize: '18px',
+        }}
         fontSize="small"
       />
     </Tooltip>
