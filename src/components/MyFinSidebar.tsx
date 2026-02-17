@@ -14,6 +14,7 @@ import {
   MenuOutlined,
   PaymentsOutlined,
   TipsAndUpdatesOutlined,
+  TrackChangesOutlined,
 } from '@mui/icons-material';
 import { alpha, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,7 @@ import {
   ROUTE_CATEGORIES,
   ROUTE_DASHBOARD,
   ROUTE_ENTITIES,
+  ROUTE_GOALS,
   ROUTE_INVEST,
   ROUTE_RULES,
   ROUTE_STATS,
@@ -121,6 +123,13 @@ const MyFinSidebar = () => {
           >
             {' '}
             {t('sidebar.investments')}
+          </MenuItem>
+          <MenuItem
+            icon={<TrackChangesOutlined />}
+            component={<NavLink to={ROUTE_GOALS} />}
+          >
+            {' '}
+            {t('sidebar.goals')}
           </MenuItem>
           <SubMenu label={t('sidebar.meta')} icon={<DisplaySettingsOutlined />}>
             <MenuItem

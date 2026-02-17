@@ -1,22 +1,12 @@
 import { Category, CategoryStatus } from './categoryServices.ts';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../providers/SnackbarProvider.tsx';
+import { AlertSeverity, useSnackbar } from '../../providers/SnackbarProvider.tsx';
 import { useAddCategory, useEditCategory } from './CategoryHooks.tsx';
 import React, { useEffect, useState } from 'react';
 import { ColorGradient } from '../../consts';
 import TextField from '@mui/material/TextField';
-import {
-  Checkbox,
-  MenuItem,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Checkbox, MenuItem, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@mui/material';
 import { cssGradients } from '../../utils/gradientUtils.ts';
 import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';

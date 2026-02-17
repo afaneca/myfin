@@ -201,6 +201,7 @@ const UpdateAssetValueDialog = (props: Props) => {
             }}
             inputProps={{
               step: 0.01,
+              min: 0,
             }}
             InputProps={{
               startAdornment: (

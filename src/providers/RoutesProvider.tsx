@@ -16,6 +16,7 @@ import Invest, { InvestTab } from '../features/invest/Invest.tsx';
 import Stats, { StatTab } from '../features/stats/Stats.tsx';
 import RecoverPassword from '../features/auth/RecoverPassword.tsx';
 import Setup from '../features/setup/Setup.tsx';
+import Goals from '../features/goals/Goals.tsx';
 
 export const ROUTE_AUTH = '/auth';
 export const ROUTE_RECOVER_PASSWORD = '/recover-password';
@@ -42,6 +43,7 @@ export const ROUTE_STATS_PROJECTIONS = '/stats/projections';
 export const ROUTE_STATS_EXPENSES = '/stats/expenses';
 export const ROUTE_STATS_INCOME = '/stats/income';
 export const ROUTE_STATS_YEAR_BY_YEAR = '/stats/year-by-year';
+export const ROUTE_GOALS = '/goals';
 export const ROUTE_SETUP = '/setup';
 
 const RoutesProvider = () => {
@@ -65,6 +67,7 @@ const RoutesProvider = () => {
           <Route path={ROUTE_TAGS} element={<Tags />} />
           <Route path={ROUTE_IMPORT_TRX} element={<ImportTransactions />} />
           <Route path={ROUTE_RULES} element={<Rules />} />
+          <Route path={ROUTE_GOALS} element={<Goals />} />
           <Route path={ROUTE_INVEST} element={<Invest />} />
           <Route
             path={ROUTE_INVEST_DASHBOARD}

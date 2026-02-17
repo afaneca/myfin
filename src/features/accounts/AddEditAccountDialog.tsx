@@ -289,12 +289,14 @@ const AddEditAccountDialog = (props: Props) => {
                 label={t('accounts.name')}
                 fullWidth
                 variant="outlined"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AccountCircle />
-                    </InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    ),
+                  },
                 }}
               />
             </Grid>
@@ -345,12 +347,14 @@ const AddEditAccountDialog = (props: Props) => {
                 label={t('common.description')}
                 fullWidth
                 variant="outlined"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Description />
-                    </InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Description />
+                      </InputAdornment>
+                    ),
+                  },
                 }}
               />
             </Grid>

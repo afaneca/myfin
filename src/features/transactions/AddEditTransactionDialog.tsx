@@ -1,29 +1,3 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react';
-import {
-  Transaction,
-  TransactionType,
-} from '../../services/trx/trxServices.ts';
-import { useTranslation } from 'react-i18next';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import TextField from '@mui/material/TextField';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import Grid from '@mui/material/Grid';
-import {
-  Autocomplete,
-  AutocompleteRenderInputParams,
-  Checkbox,
-  Collapse,
-  Divider,
-  Grow,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
-} from '@mui/material';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import InputAdornment from '@mui/material/InputAdornment';
 import {
   AccountCircle,
   AutoAwesome,
@@ -37,30 +11,56 @@ import {
   StarBorder,
   Undo,
 } from '@mui/icons-material';
+import {
+  Autocomplete,
+  AutocompleteRenderInputParams,
+  Checkbox,
+  Collapse,
+  Divider,
+  Grow,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+} from '@mui/material';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
+import React, { SyntheticEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { NumericFormat } from 'react-number-format';
+import CurrencyIcon from '../../components/CurrencyIcon.tsx';
+import { useLoading } from '../../providers/LoadingProvider.tsx';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../providers/SnackbarProvider.tsx';
 import { useUserData } from '../../providers/UserProvider.tsx';
+import { Account } from '../../services/auth/authServices.ts';
 import {
   useAddTransactionStep0,
   useAddTransactionStep1,
   useAutoCategorizeTransaction,
   useEditTransaction,
 } from '../../services/trx/trxHooks.ts';
-import { useLoading } from '../../providers/LoadingProvider.tsx';
 import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../providers/SnackbarProvider.tsx';
+  Transaction,
+  TransactionType,
+} from '../../services/trx/trxServices.ts';
 import { convertDateStringToUnixTimestamp } from '../../utils/dateUtils.ts';
 import {
   inferTrxType,
   inferTrxTypeByAttributes,
 } from '../../utils/transactionUtils.ts';
-import IconButton from '@mui/material/IconButton';
-import Chip from '@mui/material/Chip';
-import { Account } from '../../services/auth/authServices.ts';
-import { NumericFormat } from 'react-number-format';
-import CurrencyIcon from '../../components/CurrencyIcon.tsx';
 
 interface Props {
   isOpen: boolean;
@@ -525,14 +525,58 @@ const AddEditTransactionDialog = (props: Props) => {
       }}
     >
       <DialogTitle>
-        {t(
-          isEditForm
-            ? 'transactions.editTransactionModalTitle'
-            : 'transactions.addNewTransaction',
-          {
-            id: props.transaction?.transaction_id,
-          },
-        )}
+        <Grid container spacing={2} rowSpacing={2}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 8,
+            }}
+          >
+            {t(
+              isEditForm
+                ? 'transactions.editTransactionModalTitle'
+                : 'transactions.addNewTransaction',
+              {
+                id: props.transaction?.transaction_id,
+              },
+            )}
+          </Grid>
+          <Grid
+            display="flex"
+            justifyContent="flex-end"
+            size={{
+              xs: 12,
+              md: 4,
+            }}
+          >
+            {/* Transaction type */}
+            <ToggleButtonGroup
+              value={transactionType}
+              exclusive
+              onChange={onTransactionTypeSelected}
+              aria-label={t('transactions.typeOfTrx')}
+            >
+              <ToggleButton
+                value={TransactionType.Expense}
+                aria-label={t('transactions.expense')}
+              >
+                {t('transactions.expense')}
+              </ToggleButton>
+              <ToggleButton
+                value={TransactionType.Transfer}
+                aria-label={t('transactions.transfer')}
+              >
+                {t('transactions.transfer')}
+              </ToggleButton>
+              <ToggleButton
+                value={TransactionType.Income}
+                aria-label={t('transactions.income')}
+              >
+                {t('transactions.income')}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
+        </Grid>
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} rowSpacing={2}>
@@ -555,41 +599,6 @@ const AddEditTransactionDialog = (props: Props) => {
                   onChange={(_e, checked) => setEssentialValue(checked)}
                 />
               </Grow>
-            </Grid>
-            <Grid
-              display="flex"
-              justifyContent="flex-end"
-              size={{
-                xs: 12,
-                md: 8,
-              }}
-            >
-              {/* Transaction type */}
-              <ToggleButtonGroup
-                value={transactionType}
-                exclusive
-                onChange={onTransactionTypeSelected}
-                aria-label={t('transactions.typeOfTrx')}
-              >
-                <ToggleButton
-                  value={TransactionType.Expense}
-                  aria-label={t('transactions.expense')}
-                >
-                  {t('transactions.expense')}
-                </ToggleButton>
-                <ToggleButton
-                  value={TransactionType.Transfer}
-                  aria-label={t('transactions.transfer')}
-                >
-                  {t('transactions.transfer')}
-                </ToggleButton>
-                <ToggleButton
-                  value={TransactionType.Income}
-                  aria-label={t('transactions.income')}
-                >
-                  {t('transactions.income')}
-                </ToggleButton>
-              </ToggleButtonGroup>
             </Grid>
           </Grid>
           {/* Value, date & description */}
@@ -622,6 +631,7 @@ const AddEditTransactionDialog = (props: Props) => {
                 /*prefix="€"*/
                 inputProps={{
                   step: 0.01,
+                  min: 0,
                 }}
                 InputProps={{
                   startAdornment: (
@@ -673,27 +683,29 @@ const AddEditTransactionDialog = (props: Props) => {
                 type="text"
                 fullWidth
                 variant="outlined"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Description />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Tooltip title={t('transactions.autoCategorize')}>
-                        <Grow in={isAutoCatVisible}>
-                          <IconButton
-                            aria-label={t('transactions.autoCategorize')}
-                            onClick={handleAutoCategorizeClick}
-                            edge="end"
-                          >
-                            <AutoAwesome color="primary" />
-                          </IconButton>
-                        </Grow>
-                      </Tooltip>
-                    </InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Description />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Tooltip title={t('transactions.autoCategorize')}>
+                          <Grow in={isAutoCatVisible}>
+                            <IconButton
+                              aria-label={t('transactions.autoCategorize')}
+                              onClick={handleAutoCategorizeClick}
+                              edge="end"
+                            >
+                              <AutoAwesome color="primary" />
+                            </IconButton>
+                          </Grow>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  },
                 }}
               />
             </Grid>
@@ -720,15 +732,17 @@ const AddEditTransactionDialog = (props: Props) => {
                     {...params}
                     fullWidth
                     required={isAccountFromRequired}
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
                     label={t('transactions.originAccount')}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircle />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
                   />
                 )}
               />
@@ -753,15 +767,17 @@ const AddEditTransactionDialog = (props: Props) => {
                     {...params}
                     fullWidth
                     required={isAccountToRequired}
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
                     label={t('transactions.destinationAccount')}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircle />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
                   />
                 )}
               />
@@ -785,15 +801,17 @@ const AddEditTransactionDialog = (props: Props) => {
                   <TextField
                     {...params}
                     fullWidth
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <FolderShared />
-                        </InputAdornment>
-                      ),
-                    }}
                     label={t('transactions.category')}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <FolderShared />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
                   />
                 )}
               />
@@ -816,15 +834,17 @@ const AddEditTransactionDialog = (props: Props) => {
                   <TextField
                     {...params}
                     fullWidth
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Business />
-                        </InputAdornment>
-                      ),
-                    }}
                     label={t('transactions.entity')}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Business />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
                   />
                 )}
               />
@@ -1132,12 +1152,14 @@ const SplitTransactionForm = ({
               type="text"
               fullWidth
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Description />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Description />
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
           </Grid>
@@ -1169,15 +1191,17 @@ const SplitTransactionForm = ({
                   name="split_account_from"
                   fullWidth
                   required={isOpen && isAccountFromRequired}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AccountCircle />
-                      </InputAdornment>
-                    ),
-                  }}
                   label={t('transactions.originAccount')}
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
               )}
             />
@@ -1203,15 +1227,17 @@ const SplitTransactionForm = ({
                   name="split_account_to"
                   fullWidth
                   required={isOpen && isAccountToRequired}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AccountCircle />
-                      </InputAdornment>
-                    ),
-                  }}
                   label={t('transactions.destinationAccount')}
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
               )}
             />
@@ -1235,15 +1261,17 @@ const SplitTransactionForm = ({
                 <TextField
                   {...params}
                   fullWidth
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <FolderShared />
-                      </InputAdornment>
-                    ),
-                  }}
                   label={t('transactions.category')}
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FolderShared />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
               )}
             />
@@ -1266,15 +1294,17 @@ const SplitTransactionForm = ({
                 <TextField
                   {...params}
                   fullWidth
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Business />
-                      </InputAdornment>
-                    ),
-                  }}
                   label={t('transactions.entity')}
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Business />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
               )}
             />

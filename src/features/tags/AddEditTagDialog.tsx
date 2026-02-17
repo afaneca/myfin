@@ -115,12 +115,14 @@ const AddEditTagDialog = (props: Props) => {
               label={t('tags.name')}
               fullWidth
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Folder />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Folder />
+                    </InputAdornment>
+                  ),
+                }
               }}
             />
           </Grid>
@@ -134,12 +136,14 @@ const AddEditTagDialog = (props: Props) => {
               label={t('common.description')}
               fullWidth
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Description />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Description />
+                    </InputAdornment>
+                  ),
+                }
               }}
             />
           </Grid>
