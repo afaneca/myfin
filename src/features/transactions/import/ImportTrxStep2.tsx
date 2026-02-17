@@ -329,11 +329,13 @@ const ImportTrxStep2 = (props: Props) => {
               });
             }}
             type="number"
-            inputProps={{
-              step: 0.01,
-            }}
             fullWidth
             variant="outlined"
+            slotProps={{
+              htmlInput: {
+                step: 0.01,
+              },
+            }}
           />
         ),
       },

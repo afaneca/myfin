@@ -1,31 +1,15 @@
 import { DialogContent, MenuItem } from '@mui/material';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../../providers/SnackbarProvider.tsx';
+import { AlertSeverity, useSnackbar } from '../../../providers/SnackbarProvider.tsx';
 import { Trans, useTranslation } from 'react-i18next';
 import React, { useEffect, useReducer } from 'react';
-import {
-  AssetType,
-  InvestAsset,
-} from '../../../services/invest/investServices.ts';
-import {
-  useAddAsset,
-  useEditAsset,
-} from '../../../services/invest/investHooks.ts';
+import { AssetType, InvestAsset } from '../../../services/invest/investServices.ts';
+import { useAddAsset, useEditAsset } from '../../../services/invest/investHooks.ts';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
-import {
-  AccountBalanceWalletOutlined,
-  Business,
-  ConfirmationNumber,
-  Folder,
-  Send,
-  Undo,
-} from '@mui/icons-material';
+import { AccountBalanceWalletOutlined, Business, ConfirmationNumber, Folder, Send, Undo } from '@mui/icons-material';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';

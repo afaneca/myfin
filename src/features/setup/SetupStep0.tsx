@@ -117,10 +117,12 @@ const SetupStep0 = (props: Props) => {
               sx={{ mb: 4, mt: 2 }}
               {...params}
               fullWidth
-              InputProps={{
-                ...params.InputProps,
-              }}
               label={t('common.currency')}
+              slotProps={{
+                input: {
+                  ...params.InputProps,
+                }
+              }}
             />
           )}
         />

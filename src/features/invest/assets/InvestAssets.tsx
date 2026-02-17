@@ -547,18 +547,20 @@ const InvestAssets = () => {
           id="search"
           label={t('common.search')}
           variant="outlined"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Search />
-              </InputAdornment>
-            ),
-          }}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             dispatch({
               type: StateActionType.SearchQueryUpdated,
               payload: event.target.value,
             });
+          }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Search />
+                </InputAdornment>
+              ),
+            }
           }}
         />
       </Grid>

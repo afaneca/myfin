@@ -94,15 +94,17 @@ const BudgetListSummaryDialog = (props: Props) => {
                 {...params}
                 fullWidth
                 required
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <InsertInvitation />
-                    </InputAdornment>
-                  ),
-                }}
                 label={t('budgetDetails.budget')}
+                slotProps={{
+                  input: {
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <InsertInvitation />
+                      </InputAdornment>
+                    ),
+                  }
+                }}
               />
             )}
           />
