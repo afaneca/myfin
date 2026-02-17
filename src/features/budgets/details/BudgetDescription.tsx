@@ -52,29 +52,31 @@ const BudgetDescription = forwardRef(({}, ref: Ref<HTMLTextAreaElement>) => {
         name="description"
         label={t('common.description')}
         placeholder={t('common.description')}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Description />
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end">
-              <Tooltip title={'Emojis'}>
-                <IconButton
-                  aria-label={'Emojis'}
-                  onClick={() => setEmojiPickerOpen(!isEmojiPickerOpen)}
-                  edge="end"
-                >
-                  {matchesSmScreen ? null : isEmojiPickerOpen ? (
-                    <AddReaction color="primary" />
-                  ) : (
-                    <AddReactionOutlined color="primary" />
-                  )}
-                </IconButton>
-              </Tooltip>
-            </InputAdornment>
-          ),
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <Description />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <Tooltip title={'Emojis'}>
+                  <IconButton
+                    aria-label={'Emojis'}
+                    onClick={() => setEmojiPickerOpen(!isEmojiPickerOpen)}
+                    edge="end"
+                  >
+                    {matchesSmScreen ? null : isEmojiPickerOpen ? (
+                      <AddReaction color="primary" />
+                    ) : (
+                      <AddReactionOutlined color="primary" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+              </InputAdornment>
+            ),
+          }
         }}
       />
       {isEmojiPickerOpen && (

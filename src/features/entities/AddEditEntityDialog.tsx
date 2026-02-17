@@ -1,14 +1,8 @@
 import { Entity } from '../../services/trx/trxServices.ts';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../providers/SnackbarProvider.tsx';
-import {
-  useAddEntity,
-  useEditEntity,
-} from '../../services/entity/entityHooks.ts';
+import { AlertSeverity, useSnackbar } from '../../providers/SnackbarProvider.tsx';
+import { useAddEntity, useEditEntity } from '../../services/entity/entityHooks.ts';
 import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';

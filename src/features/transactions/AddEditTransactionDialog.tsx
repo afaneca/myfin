@@ -673,27 +673,29 @@ const AddEditTransactionDialog = (props: Props) => {
                 type="text"
                 fullWidth
                 variant="outlined"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Description />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Tooltip title={t('transactions.autoCategorize')}>
-                        <Grow in={isAutoCatVisible}>
-                          <IconButton
-                            aria-label={t('transactions.autoCategorize')}
-                            onClick={handleAutoCategorizeClick}
-                            edge="end"
-                          >
-                            <AutoAwesome color="primary" />
-                          </IconButton>
-                        </Grow>
-                      </Tooltip>
-                    </InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Description />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Tooltip title={t('transactions.autoCategorize')}>
+                          <Grow in={isAutoCatVisible}>
+                            <IconButton
+                              aria-label={t('transactions.autoCategorize')}
+                              onClick={handleAutoCategorizeClick}
+                              edge="end"
+                            >
+                              <AutoAwesome color="primary" />
+                            </IconButton>
+                          </Grow>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  }
                 }}
               />
             </Grid>
@@ -720,15 +722,17 @@ const AddEditTransactionDialog = (props: Props) => {
                     {...params}
                     fullWidth
                     required={isAccountFromRequired}
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
                     label={t('transactions.originAccount')}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircle />
+                          </InputAdornment>
+                        ),
+                      }
+                    }}
                   />
                 )}
               />
@@ -753,15 +757,17 @@ const AddEditTransactionDialog = (props: Props) => {
                     {...params}
                     fullWidth
                     required={isAccountToRequired}
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle />
-                        </InputAdornment>
-                      ),
-                    }}
                     label={t('transactions.destinationAccount')}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircle />
+                          </InputAdornment>
+                        ),
+                      }
+                    }}
                   />
                 )}
               />
@@ -785,15 +791,17 @@ const AddEditTransactionDialog = (props: Props) => {
                   <TextField
                     {...params}
                     fullWidth
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <FolderShared />
-                        </InputAdornment>
-                      ),
-                    }}
                     label={t('transactions.category')}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <FolderShared />
+                          </InputAdornment>
+                        ),
+                      }
+                    }}
                   />
                 )}
               />
@@ -816,15 +824,17 @@ const AddEditTransactionDialog = (props: Props) => {
                   <TextField
                     {...params}
                     fullWidth
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Business />
-                        </InputAdornment>
-                      ),
-                    }}
                     label={t('transactions.entity')}
+                    slotProps={{
+                      input: {
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Business />
+                          </InputAdornment>
+                        ),
+                      }
+                    }}
                   />
                 )}
               />
@@ -1132,12 +1142,14 @@ const SplitTransactionForm = ({
               type="text"
               fullWidth
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Description />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Description />
+                    </InputAdornment>
+                  ),
+                }
               }}
             />
           </Grid>
@@ -1169,15 +1181,17 @@ const SplitTransactionForm = ({
                   name="split_account_from"
                   fullWidth
                   required={isOpen && isAccountFromRequired}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AccountCircle />
-                      </InputAdornment>
-                    ),
-                  }}
                   label={t('transactions.originAccount')}
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      ),
+                    }
+                  }}
                 />
               )}
             />
@@ -1203,15 +1217,17 @@ const SplitTransactionForm = ({
                   name="split_account_to"
                   fullWidth
                   required={isOpen && isAccountToRequired}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AccountCircle />
-                      </InputAdornment>
-                    ),
-                  }}
                   label={t('transactions.destinationAccount')}
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AccountCircle />
+                        </InputAdornment>
+                      ),
+                    }
+                  }}
                 />
               )}
             />
@@ -1235,15 +1251,17 @@ const SplitTransactionForm = ({
                 <TextField
                   {...params}
                   fullWidth
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <FolderShared />
-                      </InputAdornment>
-                    ),
-                  }}
                   label={t('transactions.category')}
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FolderShared />
+                        </InputAdornment>
+                      ),
+                    }
+                  }}
                 />
               )}
             />
@@ -1266,15 +1284,17 @@ const SplitTransactionForm = ({
                 <TextField
                   {...params}
                   fullWidth
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Business />
-                      </InputAdornment>
-                    ),
-                  }}
                   label={t('transactions.entity')}
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Business />
+                        </InputAdornment>
+                      ),
+                    }
+                  }}
                 />
               )}
             />

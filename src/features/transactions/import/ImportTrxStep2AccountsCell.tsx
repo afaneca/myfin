@@ -5,11 +5,12 @@ import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
 
 type Props = {
+  id: number;
   accounts: IdLabelPair[];
   selectedAccountFrom: IdLabelPair | null;
   selectedAccountTo: IdLabelPair | null;
-  onAccountFromChange: (input: IdLabelPair | null) => void;
-  onAccountToChange: (input: IdLabelPair | null) => void;
+  onAccountFromChange: (id: number, input: IdLabelPair | null) => void;
+  onAccountToChange: (id: number, input: IdLabelPair | null) => void;
 };
 
 function ImportTrxStep2AccountsCell(props: Props) {
@@ -21,7 +22,7 @@ function ImportTrxStep2AccountsCell(props: Props) {
         id="accountFrom"
         fullWidth
         value={props.selectedAccountFrom}
-        onChange={(_event, value) => props.onAccountFromChange(value)}
+        onChange={(_event, value) => props.onAccountFromChange(props.id, value)}
         options={props.accounts}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         renderInput={(params) => (
@@ -36,7 +37,7 @@ function ImportTrxStep2AccountsCell(props: Props) {
         id="accountTo"
         fullWidth
         value={props.selectedAccountTo}
-        onChange={(_event, value) => props.onAccountToChange(value)}
+        onChange={(_event, value) => props.onAccountToChange(props.id, value)}
         options={props.accounts}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         renderInput={(params) => (

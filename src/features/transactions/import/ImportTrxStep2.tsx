@@ -58,13 +58,15 @@ export type ImportTrxStep2Result = {
 
 const DescriptionCell = memo(
   ({
+     id,
     description,
     onInputChange,
     onBlur,
   }: {
+    id: number;
     description: string;
-    onInputChange: (input: string) => void;
-    onBlur: () => void;
+    onInputChange: (id: number, input: string) => void;
+    onBlur: (id: number, value: string) => void;
   }) => {
     const [localValue, setLocalValue] = useState(description);
 
@@ -80,10 +82,10 @@ const DescriptionCell = memo(
         value={localValue}
         onChange={(e) => {
           setLocalValue(e.target.value);
-          onInputChange(e.target.value);
+          onInputChange(id, e.target.value);
         }}
         onBlur={() => {
-          onBlur();
+          onBlur(id, localValue);
         }}
         onKeyUp={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()}
@@ -96,6 +98,159 @@ const DescriptionCell = memo(
 );
 
 DescriptionCell.displayName = 'DescriptionCell';
+
+const DateCell = memo(
+  ({
+     id,
+     value,
+     onChange,
+   }: {
+    id: number;
+    value: number;
+    onChange: (id: number, timestamp: number) => void;
+  }) => (
+    <DatePicker
+      name="date"
+      value={convertUnixTimestampToDayJs(value)}
+      onChange={(newValue) => {
+        const timestamp = convertDayJsToUnixTimestamp(newValue || dayjs());
+        onChange(id, timestamp);
+      }}
+      format="DD/MM/YYYY"
+      slotProps={{
+        textField: {
+          variant: 'outlined',
+          required: true,
+          fullWidth: true,
+          margin: 'dense',
+        },
+        inputAdornment: {
+          position: 'start',
+        },
+      }}
+    />
+  ),
+);
+DateCell.displayName = 'DateCell';
+
+const ValueCell = memo(
+  ({
+     id,
+     value,
+     onDebouncedChange,
+   }: {
+    id: number;
+    value: number;
+    onDebouncedChange: (id: number, value: number) => void;
+  }) => {
+    const [localValue, setLocalValue] = useState(value);
+
+    useEffect(() => {
+      setLocalValue(value);
+    }, [value]);
+
+    return (
+      <TextField
+        margin="dense"
+        id="amount"
+        name="amount"
+        value={localValue}
+        onChange={(e) => {
+          const newValue = Number(e.target.value);
+          setLocalValue(newValue);
+          onDebouncedChange(id, newValue);
+        }}
+        type="number"
+        fullWidth
+        variant="outlined"
+        slotProps={{
+          htmlInput: {
+            step: 0.01,
+          },
+        }}
+      />
+    );
+  },
+);
+ValueCell.displayName = 'ValueCell';
+
+const CategoryCell = memo(
+  ({
+     id,
+     category,
+     entity,
+     categories,
+     entities,
+     onCategoryChange,
+     onEntityChange,
+   }: {
+    id: number;
+    category: IdLabelPair | undefined;
+    entity: IdLabelPair | undefined;
+    categories: IdLabelPair[];
+    entities: IdLabelPair[];
+    onCategoryChange: (id: number, value: IdLabelPair | null) => void;
+    onEntityChange: (id: number, value: IdLabelPair | null) => void;
+  }) => {
+    const { t } = useTranslation();
+    return (
+      <Stack spacing={2} sx={{ mt: 2, mb: 2, width: 1 }}>
+        <Autocomplete
+          id="category"
+          fullWidth
+          value={category ?? null}
+          onChange={(_event, value) => onCategoryChange(id, value)}
+          options={categories}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={t('transactions.category')}
+              fullWidth
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+          )}
+        />
+        <Autocomplete
+          id="entity"
+          fullWidth
+          value={entity ?? null}
+          onChange={(_event, value) => onEntityChange(id, value)}
+          options={entities}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={t('transactions.entity')}
+              fullWidth
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+          )}
+        />
+      </Stack>
+    );
+  },
+);
+CategoryCell.displayName = 'CategoryCell';
+
+const CheckboxCell = memo(
+  ({
+     id,
+     checked,
+     onChange,
+   }: {
+    id: number;
+    checked: boolean;
+    onChange: (id: number, checked: boolean) => void;
+  }) => (
+    <Checkbox
+      checked={checked}
+      onChange={(_, checked) => onChange(id, checked)}
+      inputProps={{ 'aria-label': 'controlled' }}
+    />
+  ),
+);
+CheckboxCell.displayName = 'CheckboxCell';
 
 const ImportTrxStep2 = (props: Props) => {
   const { t } = useTranslation();
@@ -231,6 +386,47 @@ const ImportTrxStep2 = (props: Props) => {
     [],
   );
 
+  // Stable callbacks for memoized cell components
+  const handleSelectedChange = useCallback((id: number, checked: boolean) => {
+    updateTransactionRef.current(id, { selected: checked });
+  }, []);
+
+  const handleDateChange = useCallback((id: number, timestamp: number) => {
+    updateTransactionRef.current(id, { date: timestamp });
+  }, []);
+
+  const handleValueChange = useCallback((id: number, value: number) => {
+    debouncedUpdateTransaction(id, { value });
+  }, [debouncedUpdateTransaction]);
+
+  const handleDescriptionChange = useCallback((id: number, description: string) => {
+    debouncedUpdateTransaction(id, { description });
+  }, [debouncedUpdateTransaction]);
+
+  const handleDescriptionBlur = useCallback((id: number, description: string) => {
+    updateTransactionRef.current(id, { description });
+  }, []);
+
+  const handleCategoryChange = useCallback((id: number, category: IdLabelPair | null) => {
+    updateTransactionRef.current(id, { category: category ?? undefined });
+  }, []);
+
+  const handleEntityChange = useCallback((id: number, entity: IdLabelPair | null) => {
+    updateTransactionRef.current(id, { entity: entity ?? undefined });
+  }, []);
+
+  const handleAccountFromChange = useCallback((id: number, accountFrom: IdLabelPair | null) => {
+    updateTransactionRef.current(id, { accountFrom: accountFrom ?? undefined });
+  }, []);
+
+  const handleAccountToChange = useCallback((id: number, accountTo: IdLabelPair | null) => {
+    updateTransactionRef.current(id, { accountTo: accountTo ?? undefined });
+  }, []);
+
+  const handleEssentialChange = useCallback((id: number, essential: boolean) => {
+    updateTransactionRef.current(id, { essential });
+  }, []);
+
   const rows = useMemo(
     () =>
       transactions.map((item) => ({
@@ -262,14 +458,10 @@ const ImportTrxStep2 = (props: Props) => {
         editable: false,
         sortable: false,
         renderCell: (params) => (
-          <Checkbox
+          <CheckboxCell
+            id={params.id as number}
             checked={params.value}
-            onChange={(_, checked) => {
-              updateTransactionRef.current(params.id as number, {
-                selected: checked,
-              });
-            }}
-            inputProps={{ 'aria-label': 'controlled' }}
+            onChange={handleSelectedChange}
           />
         ),
       },
@@ -280,29 +472,10 @@ const ImportTrxStep2 = (props: Props) => {
         editable: false,
         sortable: false,
         renderCell: (params) => (
-          <DatePicker
-            name="date"
-            value={convertUnixTimestampToDayJs(params.value)}
-            onChange={(newValue) => {
-              const timestamp = convertDayJsToUnixTimestamp(
-                newValue || dayjs(),
-              );
-              updateTransactionRef.current(params.id as number, {
-                date: timestamp,
-              });
-            }}
-            format="DD/MM/YYYY"
-            slotProps={{
-              textField: {
-                variant: 'outlined',
-                required: true,
-                fullWidth: true,
-                margin: 'dense',
-              },
-              inputAdornment: {
-                position: 'start',
-              },
-            }}
+          <DateCell
+            id={params.id as number}
+            value={params.value}
+            onChange={handleDateChange}
           />
         ),
       },
@@ -313,27 +486,10 @@ const ImportTrxStep2 = (props: Props) => {
         editable: false,
         sortable: false,
         renderCell: (params) => (
-          <TextField
-            margin="dense"
-            id="amount"
-            name="amount"
+          <ValueCell
+            id={params.id as number}
             value={params.value}
-            onChange={(e) => {
-              debouncedUpdateTransaction(params.id as number, {
-                value: Number(e.target.value),
-              });
-            }}
-            onBlur={() => {
-              updateTransactionRef.current(params.id as number, {
-                value: params.value,
-              });
-            }}
-            type="number"
-            inputProps={{
-              step: 0.01,
-            }}
-            fullWidth
-            variant="outlined"
+            onDebouncedChange={handleValueChange}
           />
         ),
       },
@@ -346,17 +502,10 @@ const ImportTrxStep2 = (props: Props) => {
         minWidth: 100,
         renderCell: (params) => (
           <DescriptionCell
+            id={params.id as number}
             description={params.value}
-            onInputChange={(input) => {
-              debouncedUpdateTransaction(params.id as number, {
-                description: input,
-              });
-            }}
-            onBlur={() => {
-              updateTransactionRef.current(params.id as number, {
-                description: params.value,
-              });
-            }}
+            onInputChange={handleDescriptionChange}
+            onBlur={handleDescriptionBlur}
           />
         ),
       },
@@ -367,48 +516,15 @@ const ImportTrxStep2 = (props: Props) => {
         sortable: false,
         width: 180,
         renderCell: (params) => (
-          <Stack spacing={2} sx={{ mt: 2, mb: 2, width: 1 }}>
-            <Autocomplete
-              id="category"
-              fullWidth
-              value={params.value.category}
-              onChange={(_event, value) => {
-                updateTransactionRef.current(params.id as number, {
-                  category: value,
-                });
-              }}
-              options={categories}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t('transactions.category')}
-                  fullWidth
-                  onKeyDown={(e) => e.stopPropagation()}
-                />
-              )}
-            />
-            <Autocomplete
-              id="entity"
-              fullWidth
-              value={params.value.entity}
-              onChange={(_event, value) => {
-                updateTransactionRef.current(params.id as number, {
-                  entity: value,
-                });
-              }}
-              options={entities}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t('transactions.entity')}
-                  fullWidth
-                  onKeyDown={(e) => e.stopPropagation()}
-                />
-              )}
-            />
-          </Stack>
+          <CategoryCell
+            id={params.id as number}
+            category={params.value.category}
+            entity={params.value.entity}
+            categories={categories}
+            entities={entities}
+            onCategoryChange={handleCategoryChange}
+            onEntityChange={handleEntityChange}
+          />
         ),
       },
       {
@@ -419,19 +535,12 @@ const ImportTrxStep2 = (props: Props) => {
         width: 180,
         renderCell: (params) => (
           <ImportTrxStep2AccountsCell
+            id={params.id as number}
             accounts={accounts}
             selectedAccountFrom={params.value.from}
             selectedAccountTo={params.value.to}
-            onAccountFromChange={(input: IdLabelPair | null) => {
-              updateTransactionRef.current(params.id as number, {
-                accountFrom: input ?? undefined,
-              });
-            }}
-            onAccountToChange={(input: IdLabelPair | null) => {
-              updateTransactionRef.current(params.id as number, {
-                accountTo: input ?? undefined,
-              });
-            }}
+            onAccountFromChange={handleAccountFromChange}
+            onAccountToChange={handleAccountToChange}
           />
         ),
       },
@@ -442,19 +551,15 @@ const ImportTrxStep2 = (props: Props) => {
         sortable: false,
         width: 100,
         renderCell: (params) => (
-          <Checkbox
+          <CheckboxCell
+            id={params.id as number}
             checked={params.value}
-            onChange={(_, checked) => {
-              updateTransactionRef.current(params.id as number, {
-                essential: checked,
-              });
-            }}
-            inputProps={{ 'aria-label': 'controlled' }}
+            onChange={handleEssentialChange}
           />
         ),
       },
     ],
-    [t, categories, entities, accounts, debouncedUpdateTransaction],
+    [t, categories, entities, accounts, handleSelectedChange, handleDateChange, handleValueChange, handleDescriptionChange, handleDescriptionBlur, handleCategoryChange, handleEntityChange, handleAccountFromChange, handleAccountToChange, handleEssentialChange],
   );
 
   const handleContinueButtonClick = () => {
@@ -513,7 +618,7 @@ const ImportTrxStep2 = (props: Props) => {
             rows={rows}
             columns={columns}
             paginationModel={{
-              pageSize: 100,
+              pageSize: 50,
             }}
           />
         </Grid>

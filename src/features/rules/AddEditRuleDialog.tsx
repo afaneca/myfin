@@ -276,9 +276,6 @@ const AddEditRuleDialog = (props: Props) => {
                   id="amount-condition"
                   name="amount-condition"
                   type="number"
-                  inputProps={{
-                    step: 0.01,
-                  }}
                   disabled={
                     rule?.matcher_amount_operator ==
                     RuleMatchingOperatorType.Ignore
@@ -294,6 +291,11 @@ const AddEditRuleDialog = (props: Props) => {
                   label={t('common.amount')}
                   fullWidth
                   variant="outlined"
+                  slotProps={{
+                    htmlInput: {
+                      step: 0.01,
+                    }
+                  }}
                 />
               </Grid>
               {/* Type */}

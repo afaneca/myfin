@@ -481,15 +481,17 @@ const ImportTrxStep1 = (props: Props) => {
               <TextField
                 {...params}
                 required
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AccountCircle />
-                    </InputAdornment>
-                  ),
-                }}
                 label={t('transactions.originAccount')}
+                slotProps={{
+                  input: {
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    ),
+                  }
+                }}
               />
             )}
           />
