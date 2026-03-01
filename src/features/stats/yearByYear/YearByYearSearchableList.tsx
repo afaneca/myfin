@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import { GridColDef } from '@mui/x-data-grid';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
@@ -63,12 +63,9 @@ const YearByYearSearchableList = (props: Props) => {
     },
   ];
 
-  const handleSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSearchQuery(event.target.value);
-    },
-    [debouncedSearchQuery],
-  );
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearchQuery(event.target.value);
+  };
 
   return (
     <Grid container>

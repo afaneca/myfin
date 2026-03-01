@@ -5,7 +5,7 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
 import { useGetRules, useRemoveRule } from '../../services/rule/ruleHooks.tsx';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Rule,
   RuleMatchingOperatorType,
@@ -379,12 +379,9 @@ const Rules = () => {
     setRemoveDialogOpen(false);
   };
 
-  const handleSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSearchQuery(event.target.value);
-    },
-    [debouncedSearchQuery],
-  );
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearchQuery(event.target.value);
+  };
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>

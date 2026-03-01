@@ -13,7 +13,7 @@ import {
   useGetAccounts,
   useRemoveAccount,
 } from '../../services/account/accountHooks.ts';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Account,
   AccountStatus,
@@ -268,12 +268,9 @@ const Accounts = () => {
     setSelectedTab(newValue);
   };
 
-  const handleSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSearchQuery(event.target.value);
-    },
-    [debouncedSearchQuery],
-  );
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearchQuery(event.target.value);
+  };
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>

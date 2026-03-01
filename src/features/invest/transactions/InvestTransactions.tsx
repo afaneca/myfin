@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { useEffect, useMemo, useReducer } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
@@ -303,7 +303,7 @@ const InvestTransactions = () => {
       pageSize: number;
       page: number;
     }>
-  > = useCallback((newModel) => {
+  > = (newModel) => {
     dispatch({
       type: StateActionType.PaginationModelChanged,
       payload:
@@ -311,7 +311,7 @@ const InvestTransactions = () => {
           ? newModel(state.paginationModel)
           : newModel,
     });
-  }, []);
+  };
 
   const debouncedSearchQuery = debounce((value: string) => {
     dispatch({ type: StateActionType.SearchQueryUpdated, payload: value });

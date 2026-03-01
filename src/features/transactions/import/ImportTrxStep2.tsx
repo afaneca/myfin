@@ -1,7 +1,7 @@
 import { KeyboardDoubleArrowRight } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { Trans, useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
@@ -358,58 +358,55 @@ const ImportTrxStep2 = (props: Props) => {
     },
   );
 
-  const debouncedUpdateTransaction = useCallback(
-    (id: number, updates: Partial<ImportedTrx>) => {
-      if (updateTransactionRef.current.timeout) {
-        clearTimeout(updateTransactionRef.current.timeout);
-      }
-      updateTransactionRef.current.timeout = window.setTimeout(() => {
-        updateTransactionRef.current(id, updates);
-      }, 700) as unknown as number;
-    },
-    [],
-  );
+  const debouncedUpdateTransaction = (id: number, updates: Partial<ImportedTrx>) => {
+    if (updateTransactionRef.current.timeout) {
+      clearTimeout(updateTransactionRef.current.timeout);
+    }
+    updateTransactionRef.current.timeout = window.setTimeout(() => {
+      updateTransactionRef.current(id, updates);
+    }, 700) as unknown as number;
+  };
 
   // Stable callbacks for memoized cell components
-  const handleSelectedChange = useCallback((id: number, checked: boolean) => {
+  const handleSelectedChange = (id: number, checked: boolean) => {
     updateTransactionRef.current(id, { selected: checked });
-  }, []);
+  };
 
-  const handleDateChange = useCallback((id: number, timestamp: number) => {
+  const handleDateChange = (id: number, timestamp: number) => {
     updateTransactionRef.current(id, { date: timestamp });
-  }, []);
+  };
 
-  const handleValueChange = useCallback((id: number, value: number) => {
+  const handleValueChange = (id: number, value: number) => {
     debouncedUpdateTransaction(id, { value });
-  }, [debouncedUpdateTransaction]);
+  };
 
-  const handleDescriptionChange = useCallback((id: number, description: string) => {
+  const handleDescriptionChange = (id: number, description: string) => {
     debouncedUpdateTransaction(id, { description });
-  }, [debouncedUpdateTransaction]);
+  };
 
-  const handleDescriptionBlur = useCallback((id: number, description: string) => {
+  const handleDescriptionBlur = (id: number, description: string) => {
     updateTransactionRef.current(id, { description });
-  }, []);
+  };
 
-  const handleCategoryChange = useCallback((id: number, category: IdLabelPair | null) => {
+  const handleCategoryChange = (id: number, category: IdLabelPair | null) => {
     updateTransactionRef.current(id, { category: category ?? undefined });
-  }, []);
+  };
 
-  const handleEntityChange = useCallback((id: number, entity: IdLabelPair | null) => {
+  const handleEntityChange = (id: number, entity: IdLabelPair | null) => {
     updateTransactionRef.current(id, { entity: entity ?? undefined });
-  }, []);
+  };
 
-  const handleAccountFromChange = useCallback((id: number, accountFrom: IdLabelPair | null) => {
+  const handleAccountFromChange = (id: number, accountFrom: IdLabelPair | null) => {
     updateTransactionRef.current(id, { accountFrom: accountFrom ?? undefined });
-  }, []);
+  };
 
-  const handleAccountToChange = useCallback((id: number, accountTo: IdLabelPair | null) => {
+  const handleAccountToChange = (id: number, accountTo: IdLabelPair | null) => {
     updateTransactionRef.current(id, { accountTo: accountTo ?? undefined });
-  }, []);
+  };
 
-  const handleEssentialChange = useCallback((id: number, essential: boolean) => {
+  const handleEssentialChange = (id: number, essential: boolean) => {
     updateTransactionRef.current(id, { essential });
-  }, []);
+  };
 
   const rows = useMemo(
     () =>

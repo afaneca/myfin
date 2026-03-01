@@ -9,7 +9,7 @@ import {
   useGetCategories,
   useRemoveCategory,
 } from '../../services/category/CategoryHooks.tsx';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Category,
   CategoryStatus,
@@ -205,12 +205,9 @@ const Categories = () => {
     setRemoveDialogOpen(false);
   };
 
-  const handleSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSearchQuery(event.target.value);
-    },
-    [debouncedSearchQuery],
-  );
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearchQuery(event.target.value);
+  };
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>

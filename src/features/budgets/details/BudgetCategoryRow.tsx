@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { styled } from '@mui/material/styles';
 import {
@@ -277,17 +277,14 @@ function BudgetCategoryRow({
     [category, isDebit, month, year],
   );
 
-  const handleCategoryClick = useCallback(() => {
+  const handleCategoryClick = () => {
     onCategoryClick(category, isDebit);
-  }, [category, isDebit, onCategoryClick]);
+  };
 
-  const handleInputChange = useCallback(
-    (values: NumberFormatValues) => {
-      const { floatValue } = values;
-      onInputChange(floatValue ?? 0);
-    },
-    [onInputChange],
-  );
+  const handleInputChange = (values: NumberFormatValues) => {
+    const { floatValue } = values;
+    onInputChange(floatValue ?? 0);
+  };
 
   return (
     <Card variant="elevation" sx={{ width: '100%', pt: 1, pb: 1 }}>
