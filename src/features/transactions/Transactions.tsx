@@ -12,7 +12,7 @@ import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
 import { useGetTransactions, useRemoveTransaction } from '../../services/trx/trxHooks.ts';
 import { Tag, Transaction, TransactionType } from '../../services/trx/trxServices.ts';
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   AddCircleOutline,
   ArrowBack,
@@ -461,4 +461,4 @@ const Transactions = () => {
   );
 };
 
-export default memo(Transactions);
+export default Transactions;

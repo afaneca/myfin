@@ -1,6 +1,6 @@
 import { Checkbox, FormGroup, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import PageHeader from '../../../components/PageHeader.tsx';
@@ -421,4 +421,4 @@ const BudgetList = () => {
   );
 };
 
-export default memo(BudgetList);
+export default BudgetList;
