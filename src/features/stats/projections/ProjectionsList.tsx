@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
+
 import { GridColDef } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
@@ -13,19 +13,15 @@ type Props = {
 
 const ProjectionsList = (props: Props) => {
   const { t } = useTranslation();
-  const rows = useMemo(
-    () =>
-      props.list.map((item) => ({
-        id: `${item.year}-${item.month}`,
-        month: { month: item.month, year: item.year },
-        previousBalance: item.previousBalance,
-        finalBalance: item.finalBalance,
-        finalBalanceAssets: item.finalBalanceAssets,
-        finalBalanceOpFunds: item.finalBalanceOpFunds,
-        growthRate: item.growthRatePercentage,
-      })),
-    [props.list],
-  );
+  const rows = props.list.map((item) => ({
+    id: `${item.year}-${item.month}`,
+    month: { month: item.month, year: item.year },
+    previousBalance: item.previousBalance,
+    finalBalance: item.finalBalance,
+    finalBalanceAssets: item.finalBalanceAssets,
+    finalBalanceOpFunds: item.finalBalanceOpFunds,
+    growthRate: item.growthRatePercentage,
+  }));
 
   const columns: GridColDef[] = [
     {

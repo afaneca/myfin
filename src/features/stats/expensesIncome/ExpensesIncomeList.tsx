@@ -1,7 +1,7 @@
 import { CategoryExpensesIncomeEvolutionItem } from '../../../services/stats/statServices.ts';
 import { ExpensesIncomeStatPeriod } from './ExpensesIncomeStats.tsx';
 import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
+
 import { calculateGrowthPercentage } from '../../../utils/mathUtils.ts';
 import { GridColDef } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
@@ -16,18 +16,14 @@ type Props = {
 
 const ExpensesIncomeList = (props: Props) => {
   const { t } = useTranslation();
-  const rows = useMemo(
-    () =>
-      props.list.map((item, index, array) => ({
-        id: `${item.year}-${item.month}`,
-        period: { month: item.month, year: item.year },
-        value: item.value,
-        variation: array[index + 1]?.value
-          ? calculateGrowthPercentage(array[index + 1].value, item.value)
-          : 0,
-      })),
-    [props.list],
-  );
+  const rows = props.list.map((item, index, array) => ({
+    id: `${item.year}-${item.month}`,
+    period: { month: item.month, year: item.year },
+    value: item.value,
+    variation: array[index + 1]?.value
+      ? calculateGrowthPercentage(array[index + 1].value, item.value)
+      : 0,
+  }));
 
   const columns: GridColDef[] = [
     {
