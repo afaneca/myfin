@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Drawer, IconButton, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useGetInvestStats } from '../../../services/invest/investHooks.ts';
@@ -43,13 +43,9 @@ const AssetValueHistoryDrawer = ({
     page: 0,
   });
 
-  const { history, targetId, targetPage } = useMemo<{
-    history: HistoryRow[];
-    targetId: number | undefined;
-    targetPage: number;
-  }>(() => {
+  const { history, targetId, targetPage } = (() => {
     if (!statsData?.monthly_snapshots) {
-      return { history: [], targetId: undefined, targetPage: 0 };
+      return { history: [] as HistoryRow[], targetId: undefined, targetPage: 0 };
     }
 
     const sortedHistory: HistoryRow[] = statsData.monthly_snapshots
@@ -74,7 +70,7 @@ const AssetValueHistoryDrawer = ({
 
     const page = Math.floor(targetIndex / PAGE_SIZE);
     return { history: sortedHistory, targetId: targetIndex, targetPage: page };
-  }, [statsData, assetId, highlightMonth, highlightYear]);
+  })();
 
   // Adjust page if target changes
   useEffect(() => {
