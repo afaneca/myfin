@@ -17,8 +17,9 @@
     },
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "react", "prettier"], // prettier
+  "plugins": ["@typescript-eslint", "react", "react-compiler", "prettier"], // prettier
   "rules": {
+    "react-compiler/react-compiler": "error",
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
