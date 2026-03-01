@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { debounce } from 'lodash';
 import { GridColDef } from '@mui/x-data-grid';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
@@ -23,14 +23,12 @@ export type YearByYearSearchableListItem = {
 const YearByYearSearchableList = (props: Props) => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
-  const filteredList = useMemo(() => {
-    return props.list
-      .filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-      .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
-  }, [props.list, searchQuery]);
+  const [debouncedSearchQuery] = useState(() => debounce(setSearchQuery, 300));
+  const filteredList = props.list
+    .filter((item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
+    .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
 
   const rows = filteredList.map((item) => ({
     id: item.name + item.amount,

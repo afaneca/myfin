@@ -9,7 +9,7 @@ import {
   useGetCategories,
   useRemoveCategory,
 } from '../../services/category/CategoryHooks.tsx';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Category,
   CategoryStatus,
@@ -48,9 +48,9 @@ const Categories = () => {
   );
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isAddEditDialogOpen, setAddEditDialogOpen] = useState(false);
-  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
+  const [debouncedSearchQuery] = useState(() => debounce(setSearchQuery, 300));
 
-  const filteredCategories = useMemo(() => {
+  const filteredCategories = (() => {
     let filteredList = categories;
 
     if (searchQuery != null) {
@@ -62,7 +62,7 @@ const Categories = () => {
     }
 
     return filteredList.sort((a, b) => a.status.localeCompare(b.status));
-  }, [searchQuery, categories]);
+  })();
 
   // Loading
   useEffect(() => {
@@ -101,18 +101,14 @@ const Categories = () => {
     setAddEditDialogOpen(true);
   };
 
-  const rows = useMemo(
-    () =>
-      filteredCategories.map((category: Category) => ({
-        id: category.category_id,
-        color: category.color_gradient,
-        name: category.name,
-        description: category.description,
-        status: category.status,
-        actions: category,
-      })),
-    [filteredCategories],
-  );
+  const rows = filteredCategories.map((category: Category) => ({
+    id: category.category_id,
+    color: category.color_gradient,
+    name: category.name,
+    description: category.description,
+    status: category.status,
+    actions: category,
+  }));
 
   const columns: GridColDef[] = [
     {

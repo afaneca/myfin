@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { styled } from '@mui/material/styles';
 import {
@@ -264,17 +263,14 @@ function BudgetCategoryRow({
 }: Props) {
   const { t } = useTranslation();
 
-  const renderCategoryTooltip = useMemo(
-    () => (
-      <TooltipContent
-        category={category}
-        isDebit={isDebit}
-        month={month}
-        year={year}
-        t={t}
-      />
-    ),
-    [category, isDebit, month, year],
+  const renderCategoryTooltip = (
+    <TooltipContent
+      category={category}
+      isDebit={isDebit}
+      month={month}
+      year={year}
+      t={t}
+    />
   );
 
   const handleCategoryClick = () => {
