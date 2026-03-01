@@ -45,7 +45,7 @@ const AssetValueHistoryDrawer = ({
 
   const { history, targetId, targetPage } = (() => {
     if (!statsData?.monthly_snapshots) {
-      return { history: [] as HistoryRow[], targetId: undefined, targetPage: 0 };
+      return { history: [] satisfies HistoryRow[], targetId: undefined, targetPage: 0 };
     }
 
     const sortedHistory: HistoryRow[] = statsData.monthly_snapshots

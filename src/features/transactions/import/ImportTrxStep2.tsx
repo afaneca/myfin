@@ -352,7 +352,6 @@ const ImportTrxStep2 = (props: Props) => {
     }, 700) as unknown as number;
   };
 
-  // Stable callbacks for memoized cell components
   const handleSelectedChange = (id: number, checked: boolean) => {
     updateTransactionRef.current(id, { selected: checked });
   };
