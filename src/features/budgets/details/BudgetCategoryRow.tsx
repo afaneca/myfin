@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { styled } from '@mui/material/styles';
 import {
@@ -44,9 +44,7 @@ interface TooltipContentProps {
   year: number;
 }
 
-// Separate Tooltip Content for memoization
-const TooltipContent = memo(
-  ({ category, isDebit, t, month, year }: TooltipContentProps) => {
+const TooltipContent = ({ category, isDebit, t, month, year }: TooltipContentProps) => {
     const formatNumberAsCurrency = useFormatNumberAsCurrency();
     return (
       <>
@@ -135,9 +133,7 @@ const TooltipContent = memo(
         </Card>
       </>
     );
-  },
-);
-TooltipContent.displayName = 'TooltipContent';
+  };
 
 const TooltipBottomCard = ({
   category,
@@ -212,8 +208,7 @@ const TooltipBottomCard = ({
   );
 };
 
-const DebitBorderLinearProgress = memo(
-  styled(LinearProgress)(({ theme }) => ({
+const DebitBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,
     borderRadius: 5,
     [`&.${linearProgressClasses.colorPrimary}`]: {
@@ -224,11 +219,9 @@ const DebitBorderLinearProgress = memo(
       borderRadius: 5,
       background: cssGradients[ColorGradient.Red],
     },
-  })),
-);
+  }));
 
-const CreditBorderLinearProgress = memo(
-  styled(LinearProgress)(({ theme }) => ({
+const CreditBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,
     borderRadius: 5,
     [`&.${linearProgressClasses.colorPrimary}`]: {
@@ -239,8 +232,7 @@ const CreditBorderLinearProgress = memo(
       borderRadius: 5,
       background: cssGradients[ColorGradient.Green],
     },
-  })),
-);
+  }));
 
 function getCurrentCategoryValuePercentage(
   category: BudgetCategory,
@@ -261,7 +253,7 @@ function getCurrentCategoryValuePercentage(
   );
 }
 
-const BudgetCategoryRow = memo(function BudgetCategoryRow({
+function BudgetCategoryRow({
   isOpen,
   isDebit,
   month,
@@ -398,6 +390,6 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
       </CardActions>
     </Card>
   );
-});
+}
 
 export default BudgetCategoryRow;

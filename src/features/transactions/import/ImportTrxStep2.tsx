@@ -1,7 +1,7 @@
 import { KeyboardDoubleArrowRight } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { Trans, useTranslation } from 'react-i18next';
-import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
@@ -56,8 +56,7 @@ export type ImportTrxStep2Result = {
   accountName: string;
 };
 
-const DescriptionCell = memo(
-  ({
+const DescriptionCell = ({
      id,
     description,
     onInputChange,
@@ -94,13 +93,9 @@ const DescriptionCell = memo(
         variant="outlined"
       />
     );
-  },
-);
+  };
 
-DescriptionCell.displayName = 'DescriptionCell';
-
-const DateCell = memo(
-  ({
+const DateCell = ({
      id,
      value,
      onChange,
@@ -129,12 +124,9 @@ const DateCell = memo(
         },
       }}
     />
-  ),
-);
-DateCell.displayName = 'DateCell';
+  );
 
-const ValueCell = memo(
-  ({
+const ValueCell = ({
      id,
      value,
      onDebouncedChange,
@@ -170,12 +162,9 @@ const ValueCell = memo(
         }}
       />
     );
-  },
-);
-ValueCell.displayName = 'ValueCell';
+  };
 
-const CategoryCell = memo(
-  ({
+const CategoryCell = ({
      id,
      category,
      entity,
@@ -229,12 +218,9 @@ const CategoryCell = memo(
         />
       </Stack>
     );
-  },
-);
-CategoryCell.displayName = 'CategoryCell';
+  };
 
-const CheckboxCell = memo(
-  ({
+const CheckboxCell = ({
      id,
      checked,
      onChange,
@@ -248,9 +234,7 @@ const CheckboxCell = memo(
       onChange={(_, checked) => onChange(id, checked)}
       inputProps={{ 'aria-label': 'controlled' }}
     />
-  ),
-);
-CheckboxCell.displayName = 'CheckboxCell';
+  );
 
 const ImportTrxStep2 = (props: Props) => {
   const { t } = useTranslation();
@@ -638,4 +622,4 @@ const ImportTrxStep2 = (props: Props) => {
   );
 };
 
-export default memo(ImportTrxStep2);
+export default ImportTrxStep2;
