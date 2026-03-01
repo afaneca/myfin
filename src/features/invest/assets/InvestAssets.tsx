@@ -8,7 +8,7 @@ import {
   useGetAssets,
   useRemoveAsset,
 } from '../../../services/invest/investHooks.ts';
-import React, { useEffect, useMemo, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { InvestAsset } from '../../../services/invest/investServices.ts';
 import Grid from '@mui/material/Grid';
 import { GridColDef } from '@mui/x-data-grid';
@@ -260,26 +260,22 @@ const InvestAssets = () => {
     });
   }, [getAssetsRequest.data]);
 
-  const rows = useMemo(
-    () =>
-      state?.filteredAssets?.map((asset: InvestAsset) => ({
-        id: asset.asset_id,
-        name: { name: asset.name, broker: asset.broker, type: asset.type },
-        units: { qty: asset.units, ticker: asset.ticker },
-        investedValue: {
-          invested: asset.currently_invested_value,
-          pricePerUnit: asset.price_per_unit,
-        },
-        feesTaxes: asset.fees_taxes,
-        currentValue: asset,
-        currentRoi: {
-          absolute: asset.absolute_roi_value,
-          percentage: asset.relative_roi_percentage,
-        },
-        actions: asset,
-      })),
-    [state?.filteredAssets],
-  );
+  const rows = state?.filteredAssets?.map((asset: InvestAsset) => ({
+    id: asset.asset_id,
+    name: { name: asset.name, broker: asset.broker, type: asset.type },
+    units: { qty: asset.units, ticker: asset.ticker },
+    investedValue: {
+      invested: asset.currently_invested_value,
+      pricePerUnit: asset.price_per_unit,
+    },
+    feesTaxes: asset.fees_taxes,
+    currentValue: asset,
+    currentRoi: {
+      absolute: asset.absolute_roi_value,
+      percentage: asset.relative_roi_percentage,
+    },
+    actions: asset,
+  }));
 
   const columns: GridColDef[] = [
     {

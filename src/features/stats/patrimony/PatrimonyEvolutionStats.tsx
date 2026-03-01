@@ -4,7 +4,7 @@ import {
   useSnackbar,
 } from '../../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import Grid from '@mui/material/Grid';
 import {
   NamedBalanceSnapshot,
@@ -114,7 +114,7 @@ const PatrimonyEvolutionStats = () => {
     });
   }, [getBalanceSnapshotsRequest.data]);
 
-  const patrimonyEvoData: PatrimonyEvoChartDataItem[] = useMemo(() => {
+  const patrimonyEvoData: PatrimonyEvoChartDataItem[] = (() => {
     if (!state.snapshotData || state.snapshotData.snapshots.length < 1)
       return [];
     let prevBalance: number;
@@ -135,7 +135,7 @@ const PatrimonyEvolutionStats = () => {
       prevBalance = finalBalance;
       return data;
     });
-  }, [state.snapshotData, state.filteredAccountId]);
+  })();
 
   return (
     <Grid container spacing={2} size={12}>

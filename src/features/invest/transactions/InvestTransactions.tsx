@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useMemo, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
@@ -317,26 +317,22 @@ const InvestTransactions = () => {
     dispatch({ type: StateActionType.SearchQueryUpdated, payload: value });
   }, 300);
 
-  const rows = useMemo(
-    () =>
-      state.page?.results.map((result: InvestTransaction) => ({
-        id: result.transaction_id,
-        date: { date: result.date_timestamp, type: result.trx_type },
-        asset: {
-          name: result.name,
-          broker: result.broker,
-          type: result.asset_type,
-        },
-        units: {
-          qty: result.units,
-          ticker: result.ticker,
-        },
-        value: { price: result.total_price, feesTaxes: result.fees_taxes_amount },
-        observations: result.note,
-        actions: result,
-      })),
-    [state?.page?.results],
-  );
+  const rows = state.page?.results.map((result: InvestTransaction) => ({
+    id: result.transaction_id,
+    date: { date: result.date_timestamp, type: result.trx_type },
+    asset: {
+      name: result.name,
+      broker: result.broker,
+      type: result.asset_type,
+    },
+    units: {
+      qty: result.units,
+      ticker: result.ticker,
+    },
+    value: { price: result.total_price, feesTaxes: result.fees_taxes_amount },
+    observations: result.note,
+    actions: result,
+  }));
 
   const columns: GridColDef[] = [
     {
