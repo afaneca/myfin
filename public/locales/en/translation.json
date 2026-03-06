@@ -51,7 +51,8 @@
     "next": "Next",
     "previous": "Previous",
     "currency": "Currency",
-    "close": "Close"
+    "close": "Close",
+    "change": "Change"
   },
   "dropZone": {
     "uploadText": "Drag & drop your file here or click to select a file",
@@ -260,7 +261,14 @@
     "step0Text": "Access your bank statements or home banking app, select all the desired transactions, right-click and choose 'copy'. Then, click the button below to proceed with the import.",
     "step1Text": "Choose the account you want to import to and select one column for each field: <strong>Date</strong>, <strong>Description</strong>, <strong>Amount</strong> (and/or <strong>Type</strong>/<strong>Credit</strong>/<strong>Debit</strong>).",
     "step2Text": "Review and make final adjustments to the transactions before adding them to the account.",
-    "step3Text": "{{count}} new transactions have successfully been imported into {{accountName}}. Good job!"
+    "step3Text": "{{count}} new transactions have successfully been imported into {{accountName}}. Good job!",
+    "dateFormatDetected": "Date format detected: {{format}}",
+    "dateFormatAmbiguousTitle": "Select date format",
+    "dateFormatAmbiguousDescription": "Multiple date formats are compatible with your data. Please select the correct one.",
+    "dateFormatAmbiguousChip": "Ambiguous date format — click to select",
+    "dateFormatSampleDate": "Sample date from your data: {{date}}",
+    "dateFormatNoValidFormat": "No valid date format could be detected for your data.",
+    "dateFormatSelectAction": "Select"
   },
   "login": {
     "fillAllFields": "Fill all fields and try again.",

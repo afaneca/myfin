@@ -51,7 +51,8 @@
     "next": "Seguinte",
     "previous": "Anterior",
     "currency": "Moeda",
-    "close": "Fechar"
+    "close": "Fechar",
+    "change": "Alterar"
   },
   "dropZone": {
     "uploadText": "Arraste o seu ficheiro para aqui ou clique para selecionar um ficheiro",
@@ -260,7 +261,14 @@
     "step0Text": "Aceda aos seus extratos bancários ou à aplicação de homebanking, selecione todas as transações desejadas, clique com o botão direito do rato e escolha 'copiar'. Em seguida, clique no botão abaixo para continuar com a importação.",
     "step1Text": "Defina a conta para a qual quer realizar a importação e escolha uma coluna para cada campo: <strong>Data</strong>, <strong>Descrição</strong>, <strong>Montante</strong> (e/ou <strong>Tipo</strong>/<strong>Crédito</strong>/<strong>Débito</strong>).",
     "step2Text": "Verifique e faça os ajustes finais às transações antes de as adicionar à conta.",
-    "step3Text": "{{count}} novas transações foram importadas com sucesso para a conta {{accountName}}. Bom trabalho!"
+    "step3Text": "{{count}} novas transações foram importadas com sucesso para a conta {{accountName}}. Bom trabalho!",
+    "dateFormatDetected": "Formato de data detetado: {{format}}",
+    "dateFormatAmbiguousTitle": "Selecionar formato de data",
+    "dateFormatAmbiguousDescription": "Vários formatos de data são compatíveis com os seus dados. Por favor, selecione o correto.",
+    "dateFormatAmbiguousChip": "Formato de data ambíguo — clique para selecionar",
+    "dateFormatSampleDate": "Data exemplo dos seus dados: {{date}}",
+    "dateFormatNoValidFormat": "Não foi possível detetar um formato de data válido para os seus dados.",
+    "dateFormatSelectAction": "Selecionar"
   },
   "login": {
     "fillAllFields": "Não deixe campos em branco",
