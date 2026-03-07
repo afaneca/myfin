@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
 import { InvestAsset } from '../../../services/invest/investServices.ts';
-import { useMemo } from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
@@ -21,29 +20,23 @@ const AssetRoiList = (props: Props) => {
 
   const getLocalizedAssetType = useGetLocalizedAssetType();
 
-  const filteredAssets = useMemo(() => {
-    return props.list;
-  }, [props.list]);
+  const filteredAssets = props.list;
 
-  const rows = useMemo(
-    () =>
-      props.list.map((asset) => ({
-        id: asset.asset_id,
-        name: { name: asset.name, type: asset.type },
-        invested: {
-          invested: asset.invested_value,
-          pricePerUnit: asset.price_per_unit,
-        },
-        feesTaxes: asset.fees_taxes,
-        currentValue: asset.current_value,
-        currentYearRoi: asset,
-        globalRoi: {
-          absolute: asset.absolute_roi_value,
-          percentage: asset.relative_roi_percentage,
-        },
-      })),
-    [filteredAssets],
-  );
+  const rows = filteredAssets.map((asset) => ({
+    id: asset.asset_id,
+    name: { name: asset.name, type: asset.type },
+    invested: {
+      invested: asset.invested_value,
+      pricePerUnit: asset.price_per_unit,
+    },
+    feesTaxes: asset.fees_taxes,
+    currentValue: asset.current_value,
+    currentYearRoi: asset,
+    globalRoi: {
+      absolute: asset.absolute_roi_value,
+      percentage: asset.relative_roi_percentage,
+    },
+  }));
 
   const columns: GridColDef[] = [
     {

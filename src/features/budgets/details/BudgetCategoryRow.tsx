@@ -1,4 +1,3 @@
-import { memo, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { styled } from '@mui/material/styles';
 import {
@@ -44,9 +43,7 @@ interface TooltipContentProps {
   year: number;
 }
 
-// Separate Tooltip Content for memoization
-const TooltipContent = memo(
-  ({ category, isDebit, t, month, year }: TooltipContentProps) => {
+const TooltipContent = ({ category, isDebit, t, month, year }: TooltipContentProps) => {
     const formatNumberAsCurrency = useFormatNumberAsCurrency();
     return (
       <>
@@ -135,9 +132,7 @@ const TooltipContent = memo(
         </Card>
       </>
     );
-  },
-);
-TooltipContent.displayName = 'TooltipContent';
+  };
 
 const TooltipBottomCard = ({
   category,
@@ -212,8 +207,7 @@ const TooltipBottomCard = ({
   );
 };
 
-const DebitBorderLinearProgress = memo(
-  styled(LinearProgress)(({ theme }) => ({
+const DebitBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,
     borderRadius: 5,
     [`&.${linearProgressClasses.colorPrimary}`]: {
@@ -224,11 +218,9 @@ const DebitBorderLinearProgress = memo(
       borderRadius: 5,
       background: cssGradients[ColorGradient.Red],
     },
-  })),
-);
+  }));
 
-const CreditBorderLinearProgress = memo(
-  styled(LinearProgress)(({ theme }) => ({
+const CreditBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,
     borderRadius: 5,
     [`&.${linearProgressClasses.colorPrimary}`]: {
@@ -239,8 +231,7 @@ const CreditBorderLinearProgress = memo(
       borderRadius: 5,
       background: cssGradients[ColorGradient.Green],
     },
-  })),
-);
+  }));
 
 function getCurrentCategoryValuePercentage(
   category: BudgetCategory,
@@ -261,7 +252,7 @@ function getCurrentCategoryValuePercentage(
   );
 }
 
-const BudgetCategoryRow = memo(function BudgetCategoryRow({
+function BudgetCategoryRow({
   isOpen,
   isDebit,
   month,
@@ -272,30 +263,24 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
 }: Props) {
   const { t } = useTranslation();
 
-  const renderCategoryTooltip = useMemo(
-    () => (
-      <TooltipContent
-        category={category}
-        isDebit={isDebit}
-        month={month}
-        year={year}
-        t={t}
-      />
-    ),
-    [category, isDebit, month, year],
+  const renderCategoryTooltip = (
+    <TooltipContent
+      category={category}
+      isDebit={isDebit}
+      month={month}
+      year={year}
+      t={t}
+    />
   );
 
-  const handleCategoryClick = useCallback(() => {
+  const handleCategoryClick = () => {
     onCategoryClick(category, isDebit);
-  }, [category, isDebit, onCategoryClick]);
+  };
 
-  const handleInputChange = useCallback(
-    (values: NumberFormatValues) => {
-      const { floatValue } = values;
-      onInputChange(floatValue ?? 0);
-    },
-    [onInputChange],
-  );
+  const handleInputChange = (values: NumberFormatValues) => {
+    const { floatValue } = values;
+    onInputChange(floatValue ?? 0);
+  };
 
   return (
     <Card variant="elevation" sx={{ width: '100%', pt: 1, pb: 1 }}>
@@ -398,6 +383,6 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
       </CardActions>
     </Card>
   );
-});
+}
 
 export default BudgetCategoryRow;

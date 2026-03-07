@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
@@ -21,18 +20,14 @@ export type PatrimonyEvoChartDataItem = {
 
 const PatrimonyEvolutionList = (props: Props) => {
   const { t } = useTranslation();
-  const rows = useMemo(
-    () =>
-      props.list.toReversed().map((item) => ({
-        id: `${item.year}-${item.month}`,
-        month: { month: item.month, year: item.year },
-        previousBalance: item.previousBalance,
-        finalBalance: item.finalBalance,
-        monthBalance: item.monthBalance,
-        growthRate: item.growthRate,
-      })),
-    [props.list],
-  );
+  const rows = props.list.toReversed().map((item) => ({
+    id: `${item.year}-${item.month}`,
+    month: { month: item.month, year: item.year },
+    previousBalance: item.previousBalance,
+    finalBalance: item.finalBalance,
+    monthBalance: item.monthBalance,
+    growthRate: item.growthRate,
+  }));
 
   const columns: GridColDef[] = [
     {

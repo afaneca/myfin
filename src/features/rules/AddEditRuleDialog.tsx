@@ -9,7 +9,7 @@ import {
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import { useAddRule, useEditRule } from '../../services/rule/ruleHooks.tsx';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -116,20 +116,17 @@ const AddEditRuleDialog = (props: Props) => {
     }
   }, [addRuleRequest.isSuccess, editRuleRequest.isSuccess]);
 
-  const updateRule = useCallback(
-    (updates: Partial<Rule>) => {
-      setRule((prevRule) => {
-        if (prevRule === null) {
-          // If the previous rule was null, create a new rule object
-          return { ...updates } as Rule;
-        } else {
-          // If there was a previous rule, merge it with the updates
-          return { ...prevRule, ...updates };
-        }
-      });
-    },
-    [setRule],
-  );
+  const updateRule = (updates: Partial<Rule>) => {
+    setRule((prevRule) => {
+      if (prevRule === null) {
+        // If the previous rule was null, create a new rule object
+        return { ...updates } as Rule;
+      } else {
+        // If there was a previous rule, merge it with the updates
+        return { ...prevRule, ...updates };
+      }
+    });
+  };
 
   return (
     <Dialog

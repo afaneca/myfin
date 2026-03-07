@@ -1,7 +1,6 @@
 import { YearlyRoi } from '../../../services/invest/investServices.ts';
 import { Box, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
@@ -20,27 +19,21 @@ const CombinedRoiByYearList = (props: Props) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
-  const filteredItems = useMemo(() => {
-    return props.list;
-  }, [props.list]);
+  const filteredItems = props.list;
 
-  const rows = useMemo(
-    () =>
-      props.list
-        .sort((a, b) => b.year - a.year)
-        .map((item) => ({
-          id: item.year,
-          year: item.year,
-          inflow: item.total_inflow,
-          outflow: item.total_outflow,
-          globalValue: item.ending_value,
-          globalRoi: {
-            percentage: item.roi_percentage,
-            absolute: item.roi_value,
-          },
-        })),
-    [filteredItems],
-  );
+  const rows = filteredItems
+    .sort((a, b) => b.year - a.year)
+    .map((item) => ({
+      id: item.year,
+      year: item.year,
+      inflow: item.total_inflow,
+      outflow: item.total_outflow,
+      globalValue: item.ending_value,
+      globalRoi: {
+        percentage: item.roi_percentage,
+        absolute: item.roi_value,
+      },
+    }));
   const columns: GridColDef[] = [
     {
       field: 'year',

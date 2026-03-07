@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { DataGrid, GridSlots } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -187,4 +187,4 @@ export const NoRows = () => {
   );
 };
 
-export default memo(MyFinTable);
+export default MyFinTable;

@@ -3,7 +3,6 @@ import {
   ReactNode,
   Suspense,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 import localStore from '../data/localStore.ts';
@@ -34,26 +33,20 @@ export const ColorModeContext = createContext({} as ColorModeContextType);
 
 const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
   const [mode, setMode] = useState<PaletteMode>(localStore.getUiMode());
-  const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-        localStore.toggleUiMode();
-      },
-      setColorMode: (mode: PaletteMode) => {
-        setMode(mode);
-        localStore.setUiMode(mode);
-      },
-    }),
-    [mode],
-  );
+  const colorMode = {
+    toggleColorMode: () => {
+      setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+      localStore.toggleUiMode();
+    },
+    setColorMode: (mode: PaletteMode) => {
+      setMode(mode);
+      localStore.setUiMode(mode);
+    },
+  };
 
   const [locale, setLocale] = useState<SupportedLocales>('ptPT');
   const [dayJsLocale, setDayJsLocale] = useState<'en' | 'pt'>('pt');
-  const theme = useMemo(
-    () => createTheme(generateGlobalTheme(mode), locales[locale]),
-    [mode, locale],
-  );
+  const theme = createTheme(generateGlobalTheme(mode), locales[locale]);
   const { i18n } = useTranslation();
 
   function setAppLocale(language: string) {

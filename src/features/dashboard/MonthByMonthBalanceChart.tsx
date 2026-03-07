@@ -8,7 +8,7 @@ import {
   generateFillArrayForGradients,
 } from '../../utils/nivoUtils.ts';
 import { ColorGradient } from '../../consts';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import EmptyView from '../../components/EmptyView.tsx';
 
@@ -39,8 +39,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
   const [minValue, setMinValue] = useState<number | 'auto'>('auto');
   const [maxValue, setMaxValue] = useState<number | 'auto'>('auto');
 
-  // Memoize threshold calculation to avoid recalculating on every render
-  const threshold = useMemo(() => {
+  const threshold = (() => {
     if (data.length === 0) return 0;
     const absValues = data.map((d) => Math.abs(d.balance)).sort((a, b) => a - b);
     const mid = Math.floor(absValues.length / 2);
@@ -49,7 +48,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
         ? (absValues[mid - 1] + absValues[mid]) / 2
         : absValues[mid] || 0;
     return median * 5; // Threshold is 5x median
-  }, [data]);
+  })();
 
   useEffect(() => {
     // Show empty view if all balances equal to zero

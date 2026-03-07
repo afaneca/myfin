@@ -6,7 +6,7 @@ import { enUS, ptPT } from '@mui/x-data-grid/locales';
 import { GridRowsProp } from '@mui/x-data-grid/models';
 import type { GridColDef } from '@mui/x-data-grid/models/colDef';
 import i18next from 'i18next';
-import { memo, useEffect } from 'react';
+import { useEffect } from 'react';
 import { NoRows, StyledDataGrid } from './MyFinTable.tsx';
 
 type Props = {
@@ -104,4 +104,4 @@ const MyFinStaticTable = (props: Props) => {
   );
 };
 
-export default memo(MyFinStaticTable);
+export default MyFinStaticTable;

@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { addLeadingZero } from '../../../utils/textUtils.ts';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import { Box, List, ListItem, useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -76,7 +76,7 @@ const BudgetDetails = () => {
   const [isOpen, setOpen] = useState(false);
   const [isNew, setNew] = useState(true);
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
-  const debouncedCategories = useMemo(() => debounce(setCategories, 300), []);
+  const [debouncedCategories] = useState(() => debounce(setCategories, 300));
   const [initialBalance, setInitialBalance] = useState(0);
   const [actionableCategory, setActionableCategory] = useState<{
     category: BudgetCategory;
@@ -144,12 +144,8 @@ const BudgetDetails = () => {
       });
   };
 
-  const debitCategories = useMemo(() => {
-    return orderCategoriesByDebitAmount(categories, isOpen);
-  }, [categories, isOpen]);
-  const creditCategories = useMemo(() => {
-    return orderCategoriesByCreditAmount(categories, isOpen);
-  }, [categories, isOpen]);
+  const debitCategories = orderCategoriesByDebitAmount(categories, isOpen);
+  const creditCategories = orderCategoriesByCreditAmount(categories, isOpen);
 
   const calculateBudgetBalances = (
     categories?: BudgetCategory[],
@@ -206,10 +202,7 @@ const BudgetDetails = () => {
     );
   };
 
-  const calculatedBalances = useMemo(
-    () => calculateBudgetBalances(categories),
-    [categories],
-  );
+  const calculatedBalances = calculateBudgetBalances(categories);
 
   // Fetch
   useEffect(() => {

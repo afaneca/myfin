@@ -1,6 +1,6 @@
 import { Autocomplete, Stack } from '@mui/material';
 import { IdLabelPair } from '../AddEditTransactionDialog.tsx';
-import { memo } from 'react';
+
 import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
 
@@ -52,4 +52,4 @@ function ImportTrxStep2AccountsCell(props: Props) {
   );
 }
 
-export default memo(ImportTrxStep2AccountsCell);
+export default ImportTrxStep2AccountsCell;

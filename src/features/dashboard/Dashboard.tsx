@@ -8,7 +8,7 @@ import { PanelTitle } from '../../theme/styled.ts';
 import DashboardPieChart, { ChartDataItem } from './DashboardPieChart.tsx';
 import MonthByMonthBalanceChart, { MonthByMonthChartDataItem } from './MonthByMonthBalanceChart.tsx';
 import { useGetMonthByMonthData, useGetMonthExpensesIncomeDistributionData } from '../../services/stats/statHooks.ts';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { addLeadingZero } from '../../utils/textUtils.ts';
 
 import { AlertSeverity, useSnackbar } from '../../providers/SnackbarProvider.tsx';
@@ -63,15 +63,9 @@ const Dashboard = () => {
   const investAccounts = useGetInvestingAccounts();
   const getMonthByMonthData = useGetMonthByMonthData(MONTH_BY_MONTH_MAX_MONTHS);
 
-  const debtChartData = useMemo(
-    () => generateDebtIncomeDistributionChartData(debtAccounts),
-    [debtAccounts]
-  );
+  const debtChartData = generateDebtIncomeDistributionChartData(debtAccounts);
 
-  const investChartData = useMemo(
-    () => generateDebtIncomeDistributionChartData(investAccounts),
-    [investAccounts]
-  );
+  const investChartData = generateDebtIncomeDistributionChartData(investAccounts);
 
   useEffect(() => {
     // Show loading indicator when isLoading is true
@@ -341,4 +335,4 @@ const Dashboard = () => {
   );
 };
 
-export default memo(Dashboard);
+export default Dashboard;

@@ -1,7 +1,7 @@
 import { KeyboardDoubleArrowRight } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { Trans, useTranslation } from 'react-i18next';
-import { memo, useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLoading } from '../../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
@@ -56,8 +56,7 @@ export type ImportTrxStep2Result = {
   accountName: string;
 };
 
-const DescriptionCell = memo(
-  ({
+const DescriptionCell = ({
      id,
     description,
     onInputChange,
@@ -94,13 +93,9 @@ const DescriptionCell = memo(
         variant="outlined"
       />
     );
-  },
-);
+  };
 
-DescriptionCell.displayName = 'DescriptionCell';
-
-const DateCell = memo(
-  ({
+const DateCell = ({
      id,
      value,
      onChange,
@@ -129,12 +124,9 @@ const DateCell = memo(
         },
       }}
     />
-  ),
-);
-DateCell.displayName = 'DateCell';
+  );
 
-const ValueCell = memo(
-  ({
+const ValueCell = ({
      id,
      value,
      onDebouncedChange,
@@ -170,12 +162,9 @@ const ValueCell = memo(
         }}
       />
     );
-  },
-);
-ValueCell.displayName = 'ValueCell';
+  };
 
-const CategoryCell = memo(
-  ({
+const CategoryCell = ({
      id,
      category,
      entity,
@@ -229,12 +218,9 @@ const CategoryCell = memo(
         />
       </Stack>
     );
-  },
-);
-CategoryCell.displayName = 'CategoryCell';
+  };
 
-const CheckboxCell = memo(
-  ({
+const CheckboxCell = ({
      id,
      checked,
      onChange,
@@ -248,9 +234,7 @@ const CheckboxCell = memo(
       onChange={(_, checked) => onChange(id, checked)}
       inputProps={{ 'aria-label': 'controlled' }}
     />
-  ),
-);
-CheckboxCell.displayName = 'CheckboxCell';
+  );
 
 const ImportTrxStep2 = (props: Props) => {
   const { t } = useTranslation();
@@ -263,37 +247,22 @@ const ImportTrxStep2 = (props: Props) => {
   const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [transactions, setTransactions] = useState<ImportedTrx[]>([]);
 
-  const filteredTransactions = useMemo(
-    () => transactions.filter((trx) => trx.selected),
-    [transactions],
-  );
+  const filteredTransactions = transactions.filter((trx) => trx.selected);
 
-  const entities: IdLabelPair[] | undefined = useMemo(
-    () =>
-      props.data.entities.map((entity) => ({
-        id: entity.entity_id,
-        label: entity.name,
-      })),
-    [props.data.entities],
-  );
-  const categories: IdLabelPair[] | undefined = useMemo(
-    () =>
-      props.data.categories.map((category) => ({
-        id: category.category_id,
-        label: category.name,
-      })),
-    [props.data.categories],
-  );
-  const accounts: IdLabelPair[] | undefined = useMemo(
-    () =>
-      props.data.accounts.map((account) => ({
-        id: account.account_id,
-        label: account.name,
-      })),
-    [props.data.categories],
-  );
+  const entities: IdLabelPair[] | undefined = props.data.entities.map((entity) => ({
+    id: entity.entity_id,
+    label: entity.name,
+  }));
+  const categories: IdLabelPair[] | undefined = props.data.categories.map((category) => ({
+    id: category.category_id,
+    label: category.name,
+  }));
+  const accounts: IdLabelPair[] | undefined = props.data.accounts.map((account) => ({
+    id: account.account_id,
+    label: account.name,
+  }));
 
-  const newAccountBalance: number = useMemo(() => {
+  const newAccountBalance: number = (() => {
     const initialBalance =
       props.data.accounts.find(
         (acc) => acc.account_id == props.data.selectedAccountId,
@@ -305,7 +274,7 @@ const ImportTrxStep2 = (props: Props) => {
       }
       return acc + amount;
     }, initialBalance);
-  }, [props.data.selectedAccountId, props.data.accounts, filteredTransactions]);
+  })();
 
   useEffect(() => {
     if (importTrxStep2Request.isPending) {
@@ -374,193 +343,182 @@ const ImportTrxStep2 = (props: Props) => {
     },
   );
 
-  const debouncedUpdateTransaction = useCallback(
-    (id: number, updates: Partial<ImportedTrx>) => {
-      if (updateTransactionRef.current.timeout) {
-        clearTimeout(updateTransactionRef.current.timeout);
-      }
-      updateTransactionRef.current.timeout = window.setTimeout(() => {
-        updateTransactionRef.current(id, updates);
-      }, 700) as unknown as number;
-    },
-    [],
-  );
+  const debouncedUpdateTransaction = (id: number, updates: Partial<ImportedTrx>) => {
+    if (updateTransactionRef.current.timeout) {
+      clearTimeout(updateTransactionRef.current.timeout);
+    }
+    updateTransactionRef.current.timeout = window.setTimeout(() => {
+      updateTransactionRef.current(id, updates);
+    }, 700) as unknown as number;
+  };
 
-  // Stable callbacks for memoized cell components
-  const handleSelectedChange = useCallback((id: number, checked: boolean) => {
+  const handleSelectedChange = (id: number, checked: boolean) => {
     updateTransactionRef.current(id, { selected: checked });
-  }, []);
+  };
 
-  const handleDateChange = useCallback((id: number, timestamp: number) => {
+  const handleDateChange = (id: number, timestamp: number) => {
     updateTransactionRef.current(id, { date: timestamp });
-  }, []);
+  };
 
-  const handleValueChange = useCallback((id: number, value: number) => {
+  const handleValueChange = (id: number, value: number) => {
     debouncedUpdateTransaction(id, { value });
-  }, [debouncedUpdateTransaction]);
+  };
 
-  const handleDescriptionChange = useCallback((id: number, description: string) => {
+  const handleDescriptionChange = (id: number, description: string) => {
     debouncedUpdateTransaction(id, { description });
-  }, [debouncedUpdateTransaction]);
+  };
 
-  const handleDescriptionBlur = useCallback((id: number, description: string) => {
+  const handleDescriptionBlur = (id: number, description: string) => {
     updateTransactionRef.current(id, { description });
-  }, []);
+  };
 
-  const handleCategoryChange = useCallback((id: number, category: IdLabelPair | null) => {
+  const handleCategoryChange = (id: number, category: IdLabelPair | null) => {
     updateTransactionRef.current(id, { category: category ?? undefined });
-  }, []);
+  };
 
-  const handleEntityChange = useCallback((id: number, entity: IdLabelPair | null) => {
+  const handleEntityChange = (id: number, entity: IdLabelPair | null) => {
     updateTransactionRef.current(id, { entity: entity ?? undefined });
-  }, []);
+  };
 
-  const handleAccountFromChange = useCallback((id: number, accountFrom: IdLabelPair | null) => {
+  const handleAccountFromChange = (id: number, accountFrom: IdLabelPair | null) => {
     updateTransactionRef.current(id, { accountFrom: accountFrom ?? undefined });
-  }, []);
+  };
 
-  const handleAccountToChange = useCallback((id: number, accountTo: IdLabelPair | null) => {
+  const handleAccountToChange = (id: number, accountTo: IdLabelPair | null) => {
     updateTransactionRef.current(id, { accountTo: accountTo ?? undefined });
-  }, []);
+  };
 
-  const handleEssentialChange = useCallback((id: number, essential: boolean) => {
+  const handleEssentialChange = (id: number, essential: boolean) => {
     updateTransactionRef.current(id, { essential });
-  }, []);
+  };
 
-  const rows = useMemo(
-    () =>
-      transactions.map((item) => ({
-        id: item.tempId,
-        include: item.selected,
-        date: item.date,
-        value: item.value,
-        description: item.description,
-        category: {
-          category: item.category,
-          entity: item.entity,
-        },
-        accountFrom: item.accountFrom,
-        flow: {
-          from: item.accountFrom,
-          to: item.accountTo,
-        },
-        essential: item.essential,
-      })),
-    [transactions],
-  );
+  const rows = transactions.map((item) => ({
+    id: item.tempId,
+    include: item.selected,
+    date: item.date,
+    value: item.value,
+    description: item.description,
+    category: {
+      category: item.category,
+      entity: item.entity,
+    },
+    accountFrom: item.accountFrom,
+    flow: {
+      from: item.accountFrom,
+      to: item.accountTo,
+    },
+    essential: item.essential,
+  }));
 
-  const columns: GridColDef[] = useMemo(
-    () => [
-      {
-        field: 'include',
-        width: 100,
-        headerName: t('transactions.import'),
-        editable: false,
-        sortable: false,
-        renderCell: (params) => (
-          <CheckboxCell
-            id={params.id as number}
-            checked={params.value}
-            onChange={handleSelectedChange}
-          />
-        ),
-      },
-      {
-        field: 'date',
-        headerName: t('common.date'),
-        width: 170,
-        editable: false,
-        sortable: false,
-        renderCell: (params) => (
-          <DateCell
-            id={params.id as number}
-            value={params.value}
-            onChange={handleDateChange}
-          />
-        ),
-      },
-      {
-        field: 'value',
-        headerName: t('common.value'),
-        width: 120,
-        editable: false,
-        sortable: false,
-        renderCell: (params) => (
-          <ValueCell
-            id={params.id as number}
-            value={params.value}
-            onDebouncedChange={handleValueChange}
-          />
-        ),
-      },
-      {
-        field: 'description',
-        headerName: t('common.description'),
-        editable: false,
-        sortable: false,
-        flex: 1,
-        minWidth: 100,
-        renderCell: (params) => (
-          <DescriptionCell
-            id={params.id as number}
-            description={params.value}
-            onInputChange={handleDescriptionChange}
-            onBlur={handleDescriptionBlur}
-          />
-        ),
-      },
-      {
-        field: 'category',
-        headerName: t('transactions.category'),
-        editable: false,
-        sortable: false,
-        width: 180,
-        renderCell: (params) => (
-          <CategoryCell
-            id={params.id as number}
-            category={params.value.category}
-            entity={params.value.entity}
-            categories={categories}
-            entities={entities}
-            onCategoryChange={handleCategoryChange}
-            onEntityChange={handleEntityChange}
-          />
-        ),
-      },
-      {
-        field: 'flow',
-        headerName: t('transactions.flow'),
-        editable: false,
-        sortable: false,
-        width: 180,
-        renderCell: (params) => (
-          <ImportTrxStep2AccountsCell
-            id={params.id as number}
-            accounts={accounts}
-            selectedAccountFrom={params.value.from}
-            selectedAccountTo={params.value.to}
-            onAccountFromChange={handleAccountFromChange}
-            onAccountToChange={handleAccountToChange}
-          />
-        ),
-      },
-      {
-        field: 'essential',
-        headerName: t('transactions.essential'),
-        editable: false,
-        sortable: false,
-        width: 100,
-        renderCell: (params) => (
-          <CheckboxCell
-            id={params.id as number}
-            checked={params.value}
-            onChange={handleEssentialChange}
-          />
-        ),
-      },
-    ],
-    [t, categories, entities, accounts, handleSelectedChange, handleDateChange, handleValueChange, handleDescriptionChange, handleDescriptionBlur, handleCategoryChange, handleEntityChange, handleAccountFromChange, handleAccountToChange, handleEssentialChange],
-  );
+  const columns: GridColDef[] = [
+    {
+      field: 'include',
+      width: 100,
+      headerName: t('transactions.import'),
+      editable: false,
+      sortable: false,
+      renderCell: (params) => (
+        <CheckboxCell
+          id={params.id as number}
+          checked={params.value}
+          onChange={handleSelectedChange}
+        />
+      ),
+    },
+    {
+      field: 'date',
+      headerName: t('common.date'),
+      width: 170,
+      editable: false,
+      sortable: false,
+      renderCell: (params) => (
+        <DateCell
+          id={params.id as number}
+          value={params.value}
+          onChange={handleDateChange}
+        />
+      ),
+    },
+    {
+      field: 'value',
+      headerName: t('common.value'),
+      width: 120,
+      editable: false,
+      sortable: false,
+      renderCell: (params) => (
+        <ValueCell
+          id={params.id as number}
+          value={params.value}
+          onDebouncedChange={handleValueChange}
+        />
+      ),
+    },
+    {
+      field: 'description',
+      headerName: t('common.description'),
+      editable: false,
+      sortable: false,
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => (
+        <DescriptionCell
+          id={params.id as number}
+          description={params.value}
+          onInputChange={handleDescriptionChange}
+          onBlur={handleDescriptionBlur}
+        />
+      ),
+    },
+    {
+      field: 'category',
+      headerName: t('transactions.category'),
+      editable: false,
+      sortable: false,
+      width: 180,
+      renderCell: (params) => (
+        <CategoryCell
+          id={params.id as number}
+          category={params.value.category}
+          entity={params.value.entity}
+          categories={categories}
+          entities={entities}
+          onCategoryChange={handleCategoryChange}
+          onEntityChange={handleEntityChange}
+        />
+      ),
+    },
+    {
+      field: 'flow',
+      headerName: t('transactions.flow'),
+      editable: false,
+      sortable: false,
+      width: 180,
+      renderCell: (params) => (
+        <ImportTrxStep2AccountsCell
+          id={params.id as number}
+          accounts={accounts}
+          selectedAccountFrom={params.value.from}
+          selectedAccountTo={params.value.to}
+          onAccountFromChange={handleAccountFromChange}
+          onAccountToChange={handleAccountToChange}
+        />
+      ),
+    },
+    {
+      field: 'essential',
+      headerName: t('transactions.essential'),
+      editable: false,
+      sortable: false,
+      width: 100,
+      renderCell: (params) => (
+        <CheckboxCell
+          id={params.id as number}
+          checked={params.value}
+          onChange={handleEssentialChange}
+        />
+      ),
+    },
+  ];
 
   const handleContinueButtonClick = () => {
     setConfirmationDialogOpen(true);
@@ -638,4 +596,4 @@ const ImportTrxStep2 = (props: Props) => {
   );
 };
 
-export default memo(ImportTrxStep2);
+export default ImportTrxStep2;

@@ -38,7 +38,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { useEffect, useMemo, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { NumericFormat } from 'react-number-format';
 import CurrencyIcon from '../../components/CurrencyIcon.tsx';
@@ -254,15 +254,12 @@ const AddEditGoalDialog = (props: Props) => {
   );
 
   // Build account options for Autocomplete
-  const accountOptions: AccountOption[] = useMemo(() => {
-    return (
-      state.accounts?.map((acc) => ({
-        id: Number(acc.account_id),
-        label: acc.name,
-        balance: acc.balance,
-      })) ?? []
-    );
-  }, [state.accounts]);
+  const accountOptions: AccountOption[] =
+    state.accounts?.map((acc) => ({
+      id: Number(acc.account_id),
+      label: acc.name,
+      balance: acc.balance,
+    })) ?? [];
 
   // Validation helper for funding accounts
   const validateFundingAccount = (
@@ -289,7 +286,7 @@ const AddEditGoalDialog = (props: Props) => {
   };
 
   // Form validity check
-  const isFormValid = useMemo(() => {
+  const isFormValid = (() => {
     // Required fields
     if (!state.nameInput.trim()) return false;
     if (!state.amountInput || state.amountInput <= 0) return false;
@@ -310,7 +307,7 @@ const AddEditGoalDialog = (props: Props) => {
     }
 
     return true;
-  }, [state]);
+  })();
 
   // Loading
   useEffect(() => {

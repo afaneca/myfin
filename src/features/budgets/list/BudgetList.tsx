@@ -1,6 +1,6 @@
 import { Checkbox, FormGroup, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import PageHeader from '../../../components/PageHeader.tsx';
@@ -69,7 +69,7 @@ const BudgetList = () => {
   );
   const [actionableBudget, setActionableBudget] = useState<Budget | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
-  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
+  const [debouncedSearchQuery] = useState(() => debounce(setSearchQuery, 300));
 
   const removeBudgetRequest = useRemoveBudget();
   const formatNumberAsCurrency = useFormatNumberAsCurrency();
@@ -421,4 +421,4 @@ const BudgetList = () => {
   );
 };
 
-export default memo(BudgetList);
+export default BudgetList;

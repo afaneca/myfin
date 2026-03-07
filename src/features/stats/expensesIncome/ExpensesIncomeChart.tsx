@@ -1,6 +1,6 @@
 import { CategoryExpensesIncomeEvolutionItem } from '../../../services/stats/statServices.ts';
 import { ExpensesIncomeStatPeriod } from './ExpensesIncomeStats.tsx';
-import { useMemo } from 'react';
+
 import Grid from '@mui/material/Grid';
 import MyFinLineChart from '../../../components/MyFinLineChart.tsx';
 
@@ -10,20 +10,18 @@ type Props = {
 };
 
 const ExpensesIncomeChart = (props: Props) => {
-  const chartData = useMemo(() => {
-    return [
-      {
-        id: 'value',
-        data: props.list.toReversed().map((item) => ({
-          x:
-            props.period == ExpensesIncomeStatPeriod.Month
-              ? `${item.month}/${item.year}`
-              : item.year,
-          y: item.value,
-        })),
-      },
-    ];
-  }, [props.list]);
+  const chartData = [
+    {
+      id: 'value',
+      data: props.list.toReversed().map((item) => ({
+        x:
+          props.period == ExpensesIncomeStatPeriod.Month
+            ? `${item.month}/${item.year}`
+            : item.year,
+        y: item.value,
+      })),
+    },
+  ];
 
   return (
     <Grid height={420} size={12}>

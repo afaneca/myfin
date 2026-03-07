@@ -12,7 +12,7 @@ import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
 import { useGetTransactions, useRemoveTransaction } from '../../services/trx/trxHooks.ts';
 import { Tag, Transaction, TransactionType } from '../../services/trx/trxServices.ts';
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AddCircleOutline,
   ArrowBack,
@@ -65,7 +65,7 @@ const Transactions = () => {
     searchQuery,
   );
   const removeTransactionRequest = useRemoveTransaction();
-  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
+  const [debouncedSearchQuery] = useState(() => debounce(setSearchQuery, 300));
 
   // Show loading indicator when isLoading is true
   useEffect(() => {
@@ -461,4 +461,4 @@ const Transactions = () => {
   );
 };
 
-export default memo(Transactions);
+export default Transactions;

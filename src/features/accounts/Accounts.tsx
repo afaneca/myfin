@@ -13,7 +13,7 @@ import {
   useGetAccounts,
   useRemoveAccount,
 } from '../../services/account/accountHooks.ts';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Account,
   AccountStatus,
@@ -55,9 +55,9 @@ const Accounts = () => {
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isAddEditAccountDialogOpen, setAddEditDialogOpen] = useState(false);
   const formatStringAsCurrency = useFormatStringAsCurrency();
-  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
+  const [debouncedSearchQuery] = useState(() => debounce(setSearchQuery, 300));
 
-  const filteredAccounts = useMemo(() => {
+  const filteredAccounts = (() => {
     let filteredList = accounts;
 
     if (filter != null || searchQuery != null) {
@@ -71,7 +71,7 @@ const Accounts = () => {
     }
 
     return filteredList.sort((a, b) => a.status.localeCompare(b.status));
-  }, [filter, searchQuery, accounts]);
+  })();
 
   // Loading
   useEffect(() => {
@@ -268,12 +268,9 @@ const Accounts = () => {
     setSelectedTab(newValue);
   };
 
-  const handleSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSearchQuery(event.target.value);
-    },
-    [debouncedSearchQuery],
-  );
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearchQuery(event.target.value);
+  };
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>

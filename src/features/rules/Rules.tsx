@@ -5,7 +5,7 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
 import { useGetRules, useRemoveRule } from '../../services/rule/ruleHooks.tsx';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Rule,
   RuleMatchingOperatorType,
@@ -44,7 +44,7 @@ const Rules = () => {
   const [actionableRule, setActionableRule] = useState<Rule | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isAddEditDialogOpen, setAddEditDialogOpen] = useState(false);
-  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
+  const [debouncedSearchQuery] = useState(() => debounce(setSearchQuery, 300));
 
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -61,7 +61,7 @@ const Rules = () => {
     }
   };
 
-  const filteredRules = useMemo(() => {
+  const filteredRules = (() => {
     let filteredList = rules;
 
     if (searchQuery != null) {
@@ -106,7 +106,7 @@ const Rules = () => {
     }
 
     return filteredList;
-  }, [searchQuery, rules]);
+  })();
 
   // Loading
   useEffect(() => {
@@ -148,45 +148,41 @@ const Rules = () => {
     setAddEditDialogOpen(true);
   };
 
-  const rows = useMemo(
-    () =>
-      filteredRules.map((rule: Rule) => ({
-        id: rule.rule_id,
-        conditions: {
-          accountFromOperator: rule.matcher_account_from_id_operator,
-          accountFromValue: accounts.find(
-            (acc) => acc.account_id == rule.matcher_account_from_id_value,
-          )?.name,
-          accountToOperator: rule.matcher_account_to_id_operator,
-          accountToValue: accounts.find(
-            (acc) => acc.account_id == rule.matcher_account_to_id_value,
-          )?.name,
-          amountOperator: rule.matcher_amount_operator,
-          amountValue: rule.matcher_amount_value,
-          descriptionOperator: rule.matcher_description_operator,
-          descriptionValue: rule.matcher_description_value,
-          typeOperator: rule.matcher_type_operator,
-          typeValue: rule.matcher_type_value,
-        },
-        result: {
-          accountFrom: accounts.find(
-            (acc) => acc.account_id == rule.assign_account_from_id,
-          )?.name,
-          accountTo: accounts.find(
-            (acc) => acc.account_id == rule.assign_account_to_id,
-          )?.name,
-          category: categories.find(
-            (cat) => cat.category_id == rule.assign_category_id,
-          )?.name,
-          entity: entities.find((ent) => ent.entity_id == rule.assign_entity_id)
-            ?.name,
-          type: rule.assign_type,
-          isEssential: rule.assign_is_essential,
-        },
-        actions: rule,
-      })),
-    [filteredRules, accounts, categories, entities],
-  );
+  const rows = filteredRules.map((rule: Rule) => ({
+    id: rule.rule_id,
+    conditions: {
+      accountFromOperator: rule.matcher_account_from_id_operator,
+      accountFromValue: accounts.find(
+        (acc) => acc.account_id == rule.matcher_account_from_id_value,
+      )?.name,
+      accountToOperator: rule.matcher_account_to_id_operator,
+      accountToValue: accounts.find(
+        (acc) => acc.account_id == rule.matcher_account_to_id_value,
+      )?.name,
+      amountOperator: rule.matcher_amount_operator,
+      amountValue: rule.matcher_amount_value,
+      descriptionOperator: rule.matcher_description_operator,
+      descriptionValue: rule.matcher_description_value,
+      typeOperator: rule.matcher_type_operator,
+      typeValue: rule.matcher_type_value,
+    },
+    result: {
+      accountFrom: accounts.find(
+        (acc) => acc.account_id == rule.assign_account_from_id,
+      )?.name,
+      accountTo: accounts.find(
+        (acc) => acc.account_id == rule.assign_account_to_id,
+      )?.name,
+      category: categories.find(
+        (cat) => cat.category_id == rule.assign_category_id,
+      )?.name,
+      entity: entities.find((ent) => ent.entity_id == rule.assign_entity_id)
+        ?.name,
+      type: rule.assign_type,
+      isEssential: rule.assign_is_essential,
+    },
+    actions: rule,
+  }));
 
   const getMatchingTypeLocalizedText = (matchingType: string): string => {
     switch (matchingType) {
@@ -379,12 +375,9 @@ const Rules = () => {
     setRemoveDialogOpen(false);
   };
 
-  const handleSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSearchQuery(event.target.value);
-    },
-    [debouncedSearchQuery],
-  );
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearchQuery(event.target.value);
+  };
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>

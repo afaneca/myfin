@@ -5,7 +5,7 @@ import {
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tag } from '../../services/trx/trxServices.ts';
 import { useGetTags, useRemoveTag } from '../../services/tag/tagHooks.ts';
 import { GridColDef } from '@mui/x-data-grid';
@@ -37,9 +37,8 @@ const Tags = () => {
   const [isAddEditDialogOpen, setEditDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const debouncedSearchQuery = useMemo(
-    () => debounce((query) => setSearchQuery(query), 300),
-    [],
+  const [debouncedSearchQuery] = useState(
+    () => debounce((query: string) => setSearchQuery(query), 300),
   );
 
   const getTagsRequest = useGetTags(

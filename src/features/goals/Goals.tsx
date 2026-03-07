@@ -37,7 +37,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { GridColDef } from '@mui/x-data-grid';
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
@@ -448,36 +448,32 @@ const Goals = () => {
   };
 
   // Goals for cards: only active (non-archived), sorted by due date
-  const sortedGoalsForCards = useMemo(() => {
+  const sortedGoalsForCards = (() => {
     if (!state?.goals) return [];
     const activeGoals = state.goals.filter((g) => !g.is_archived);
     return sortGoalsByDueDate(activeGoals);
-  }, [state?.goals]);
+  })();
 
   // Goals for table: sorted (active first by due date, then archived)
-  const sortedGoalsForTable = useMemo(() => {
+  const sortedGoalsForTable = (() => {
     if (!state?.filteredGoals) return [];
     return sortGoalsForTable(state.filteredGoals);
-  }, [state?.filteredGoals]);
+  })();
 
-  const rows = useMemo(
-    () =>
-      sortedGoalsForTable.map((goal: Goal) => ({
-        id: goal.goal_id,
-        name: { name: goal.name, description: goal.description },
-        priority: goal.priority,
-        target: goal.amount,
-        dueDate: goal.due_date,
-        status: goal.is_archived,
-        progress: {
-          current: goal.currently_funded_amount,
-          target: goal.amount,
-          isUnderfunded: goal.is_underfunded,
-        },
-        actions: goal,
-      })),
-    [sortedGoalsForTable],
-  );
+  const rows = sortedGoalsForTable.map((goal: Goal) => ({
+    id: goal.goal_id,
+    name: { name: goal.name, description: goal.description },
+    priority: goal.priority,
+    target: goal.amount,
+    dueDate: goal.due_date,
+    status: goal.is_archived,
+    progress: {
+      current: goal.currently_funded_amount,
+      target: goal.amount,
+      isUnderfunded: goal.is_underfunded,
+    },
+    actions: goal,
+  }));
 
   const columns: GridColDef[] = [
     {

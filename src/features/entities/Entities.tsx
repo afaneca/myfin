@@ -9,7 +9,7 @@ import {
   useGetEntities,
   useRemoveEntity,
 } from '../../services/entity/entityHooks.ts';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 import { Entity } from '../../services/trx/trxServices.ts';
 import { GridColDef } from '@mui/x-data-grid';
@@ -40,9 +40,9 @@ const Entities = () => {
   const [actionableEntity, setActionableEntity] = useState<Entity | null>(null);
   const [isRemoveDialogOpen, setRemoveDialogOpen] = useState(false);
   const [isAddEditDialogOpen, setAddEditDialogOpen] = useState(false);
-  const debouncedSearchQuery = useMemo(() => debounce(setSearchQuery, 300), []);
+  const [debouncedSearchQuery] = useState(() => debounce(setSearchQuery, 300));
 
-  const filteredEntities = useMemo(() => {
+  const filteredEntities = (() => {
     let filteredList = entities;
 
     if (searchQuery != null) {
@@ -54,7 +54,7 @@ const Entities = () => {
     }
 
     return filteredList;
-  }, [searchQuery, entities]);
+  })();
 
   // Loading
   useEffect(() => {
@@ -93,15 +93,11 @@ const Entities = () => {
     setAddEditDialogOpen(true);
   };
 
-  const rows = useMemo(
-    () =>
-      filteredEntities.map((entity: Entity) => ({
-        id: entity.entity_id,
-        name: entity.name,
-        actions: entity,
-      })),
-    [filteredEntities],
-  );
+  const rows = filteredEntities.map((entity: Entity) => ({
+    id: entity.entity_id,
+    name: entity.name,
+    actions: entity,
+  }));
 
   const columns: GridColDef[] = [
     {
@@ -150,12 +146,9 @@ const Entities = () => {
     setRemoveDialogOpen(false);
   };
 
-  const handleSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSearchQuery(event.target.value);
-    },
-    [debouncedSearchQuery],
-  );
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearchQuery(event.target.value);
+  };
 
   return (
     <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
