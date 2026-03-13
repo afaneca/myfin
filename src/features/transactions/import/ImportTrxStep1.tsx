@@ -337,25 +337,26 @@ const ImportTrxStep1 = (props: Props) => {
       const typeColumn = getCol(FIELD_MAPPING.TYPE);
       let amount: number | undefined;
       let type: TransactionType | undefined;
-
       if (amountColumn && columns[amountColumn] && !typeColumn) {
         amount = convertStringToFloat(columns[amountColumn].replace(/ /g, ''));
         type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
       } else if (creditColumn && !typeColumn) {
         amount = convertStringToFloat(columns[creditColumn] ?? '');
-        type = TransactionType.Income;
+        type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
       }
       if (!amount && debitColumn && !typeColumn) {
         amount = convertStringToFloat(columns[debitColumn] ?? '');
-        type = TransactionType.Expense;
+        type = amount > 0 ? TransactionType.Expense : TransactionType.Income;
       } else if (!amount && amountColumn && typeColumn) {
         amount = convertStringToFloat(columns[amountColumn] ?? '');
         switch (columns[typeColumn]) {
           case FIELD_MAPPING.DEBIT:
-            type = TransactionType.Expense;
+            type =
+              amount > 0 ? TransactionType.Expense : TransactionType.Income;
             break;
           case FIELD_MAPPING.CREDIT:
-            type = TransactionType.Income;
+            type =
+              amount > 0 ? TransactionType.Income : TransactionType.Expense;
             break;
         }
       }
@@ -546,20 +547,20 @@ const ImportTrxStep1 = (props: Props) => {
       type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
     } else if (creditColumn && !typeColumn) {
       amount = convertStringToFloat(row[creditColumn] ?? '');
-      type = TransactionType.Income;
+      type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
     }
 
     if (!amount && debitColumn && !typeColumn) {
       amount = convertStringToFloat(row[debitColumn] ?? '');
-      type = TransactionType.Expense;
+      type = amount > 0 ? TransactionType.Expense : TransactionType.Income;
     } else if (!amount && amountColumn && typeColumn) {
       amount = convertStringToFloat(row[amountColumn] ?? '');
       switch (row[typeColumn]) {
         case FIELD_MAPPING.DEBIT:
-          type = TransactionType.Expense;
+          type = amount > 0 ? TransactionType.Expense : TransactionType.Income;
           break;
         case FIELD_MAPPING.CREDIT:
-          type = TransactionType.Income;
+          type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
           break;
       }
     }
