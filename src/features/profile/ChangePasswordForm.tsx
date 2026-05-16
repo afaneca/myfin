@@ -9,6 +9,9 @@ import { useChangePassword, useLogout } from '../../services/auth/authHooks.ts';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import { BusinessLogicError } from '../../data/customApiError.ts';
+
+const DEMO_PASSWORD_CHANGE_NOT_ALLOWED = 'DEMO_PASSWORD_CHANGE_NOT_ALLOWED';
 
 type UiState = {
   isLoading: boolean;
@@ -109,14 +112,21 @@ const ChangePasswordForm = () => {
 
   // Error
   useEffect(() => {
-    if (changePasswordRequest.isError) {
-      dispatch({ type: StateActionType.RequestFailure });
-      snackbar.showSnackbar(
-        t('common.somethingWentWrongTryAgain'),
-        AlertSeverity.ERROR,
-      );
+    if (!changePasswordRequest.isError) return;
+
+    dispatch({ type: StateActionType.RequestFailure });
+
+    let errorMessage = t('common.somethingWentWrongTryAgain');
+
+    if (
+      changePasswordRequest.error instanceof BusinessLogicError &&
+      changePasswordRequest.error.rationale === DEMO_PASSWORD_CHANGE_NOT_ALLOWED
+    ) {
+      errorMessage = t('profile.demoAccountFeatureUnavailableMessage');
     }
-  }, [changePasswordRequest.isError]);
+
+    snackbar.showSnackbar(errorMessage, AlertSeverity.ERROR);
+  }, [changePasswordRequest.isError, changePasswordRequest.error, snackbar, t]);
 
   // Success
   useEffect(() => {
