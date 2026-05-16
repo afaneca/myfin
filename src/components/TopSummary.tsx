@@ -12,51 +12,64 @@ const TopSummary = () => {
   return (
     <Stack
       direction="row"
-      spacing={2}
-      sx={{
-        display: { xs: 'none', sm: 'none', md: 'flex' }, // Hide on screens smaller than 'md'
-      }}
+      alignItems="center"
+      spacing={1}
+      sx={{ display: { xs: 'none', md: 'flex' } }}
     >
-      <Stack direction="column">
-        <TopSummaryLabel value={t('topBar.operatingFunds')} />
-        <TopSummaryAmount
-          value={formatNumberAsCurrency.invoke(operatingFundsSum)}
-        />
-      </Stack>
-      <Stack direction="column">
-        <TopSummaryLabel value={t('topBar.investing')} />
-        <TopSummaryAmount value={formatNumberAsCurrency.invoke(investingSum)} />
-      </Stack>
-      <Stack direction="column">
-        <TopSummaryLabel value={t('topBar.debt')} />
-        <TopSummaryAmount value={formatNumberAsCurrency.invoke(debtSum)} />
-      </Stack>
-      <Stack direction="column">
-        <TopSummaryLabel value={t('topBar.netWorth')} />
-        <TopSummaryAmount value={formatNumberAsCurrency.invoke(netWorthSum)} />
-      </Stack>
+      <TopSummaryItem
+        label={t('topBar.operatingFunds')}
+        value={formatNumberAsCurrency.invoke(operatingFundsSum)}
+      />
+      <TopSummaryItem
+        label={t('topBar.investing')}
+        value={formatNumberAsCurrency.invoke(investingSum)}
+      />
+      <TopSummaryItem
+        label={t('topBar.debt')}
+        value={formatNumberAsCurrency.invoke(debtSum)}
+      />
+      <TopSummaryItem
+        label={t('topBar.netWorth')}
+        value={formatNumberAsCurrency.invoke(netWorthSum)}
+      />
     </Stack>
   );
 };
 
-type TopSummaryLabelValueProps = {
+type TopSummaryItemProps = {
+  label: string;
   value: string;
 };
 
-const TopSummaryLabel = (props: TopSummaryLabelValueProps) => {
-  return <Typography variant="caption">{props.value}</Typography>;
-};
-
-const TopSummaryAmount = (props: TopSummaryLabelValueProps) => {
+const TopSummaryItem = ({ label, value }: TopSummaryItemProps) => {
   const theme = useTheme();
   return (
     <Box
-      bgcolor={theme.palette.background.paper}
-      sx={{ borderRadius: 2, display: 'inline-flex', width: 'fit-content' }}
+      borderRadius={1}
+      sx={{
+        px: 1.5,
+        py: 0.75,
+        background: theme.palette.background.paper,
+      }}
     >
-      <Typography p={1} variant="caption">
-        {props.value}
-      </Typography>
+      <Stack direction="column" spacing={0}>
+        <Typography
+          variant="caption"
+          sx={{ color: theme.palette.text.secondary, lineHeight: 1.3 }}
+        >
+          {label}
+        </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            color: theme.palette.text.primary,
+            fontWeight: 500,
+            lineHeight: 1.3,
+          }}
+        >
+          {value}
+        </Typography>
+      </Stack>
     </Box>
   );
 };
