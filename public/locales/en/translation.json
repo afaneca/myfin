@@ -79,7 +79,10 @@
     "operatingFunds": "Operating Funds",
     "investing": "Investing",
     "debt": "Debt",
-    "netWorth": "Net Worth"
+    "netWorth": "Net Worth",
+    "demoAccountNotice": "This is a demo account. All data is reset once a day.",
+    "demoAccountBadge": "Demo account",
+    "demoAccountResetChip": "Daily reset"
   },
   "dashboard": {
     "newTransaction": "New Transaction",
@@ -187,6 +190,7 @@
     "recalculateBalancesOfAllAccounts": "Recalculate balances of all accounts",
     "recalculateBalancesOfAllAccountsDescription": "You can try this as a last resort if you suspect of balance inaccuracies",
     "changePasswordSuccessMessage": "Password successfully updated. Please, log back in.",
+    "demoAccountFeatureUnavailableMessage": "This feature is not available for demo accounts.",
     "passwordsDoNotMatchMessage": "Passwords don't match. Please, verify your input and try again.",
     "autoPopulateDemoData": "Automatically populate with mock data",
     "autoPopulateDemoDataDescription": "Will reset all user data and re-populate with mock data",
@@ -286,7 +290,11 @@
     "otpCode": "OTP Code",
     "sendOtp": "Send OTP",
     "username": "Username",
-    "setNewPassword": "Set a new password"
+    "setNewPassword": "Set a new password",
+    "demoShortcutTitle": "Try the demo account",
+    "demoShortcutDescription": "Use the sample account to explore the main app features.",
+    "demoShortcutPrefillNotice": "For convenience, the login fields below have already been filled in for you.",
+    "demoShortcutCredentials": "Username: demo / Password: demo"
   },
   "accounts": {
     "accounts": "Accounts",

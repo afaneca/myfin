@@ -36,6 +36,7 @@ export type UserSession = {
   language: string;
   currency: CurrencyCode;
   apiVersion: string;
+  is_demo?: boolean;
 };
 
 export type AttemptLoginDto = {

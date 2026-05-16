@@ -1,11 +1,13 @@
 import { Formik, Form } from 'formik';
 import * as yup from 'yup';
-import { useTheme } from '@mui/material';
+import { alpha, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
-import { useNavigate } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   useAuthStatus,
   useLogin,
@@ -27,6 +29,7 @@ import { AxiosError } from 'axios';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useTheme();
   const loader = useLoading();
   const authStatus = useAuthStatus(true);
@@ -36,6 +39,20 @@ const Login = () => {
   const snackbar = useSnackbar();
 
   const [isLogin, setIsLogin] = useState(true);
+  const [demoCredentials] = useState(() => {
+    const hasDemoQueryParam = (search: string) => {
+      return new URLSearchParams(search).get('isDemo') === 'true';
+    };
+
+    const shouldAutofillDemoCredentials =
+      hasDemoQueryParam(location.search) || hasDemoQueryParam(window.location.search);
+
+    return {
+      username: shouldAutofillDemoCredentials ? 'demo' : '',
+      password: shouldAutofillDemoCredentials ? 'demo' : '',
+    };
+  });
+  const isDemoLoginShortcut = demoCredentials.username === 'demo';
 
   async function handleSubmit(
     username: string,
@@ -139,10 +156,56 @@ const Login = () => {
             width="65%"
             style={{ marginBottom: 20 }}
           />
+          {isDemoLoginShortcut && (
+            <Paper
+              elevation={0}
+              sx={{
+                width: '100%',
+                mb: 2,
+                p: 2,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                background: `linear-gradient(135deg, ${alpha(
+                  theme.palette.primary.main,
+                  theme.palette.mode === 'dark' ? 0.18 : 0.1,
+                )}, ${alpha(theme.palette.background.paper, 0.96)})`,
+              }}
+            >
+              <Box display="flex" justifyContent="space-between" gap={2}>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight={700} gutterBottom>
+                    {t('login.demoShortcutTitle')}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('login.demoShortcutDescription')}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box
+                mt={2}
+                px={1.5}
+                py={1.25}
+                sx={{
+                  borderRadius: 2,
+                  backgroundColor: alpha(theme.palette.background.default, 0.7),
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.14)}`,
+                }}
+              >
+                <Typography variant="body2" color="text.secondary">
+                  {t('login.demoShortcutPrefillNotice')}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ mt: 0.75 }}
+                >
+                  {t('login.demoShortcutCredentials')}
+                </Typography>
+              </Box>
+            </Paper>
+          )}
           <Formik
             initialValues={{
-              username: '',
-              password: '',
+              username: demoCredentials.username,
+              password: demoCredentials.password,
               email: '',
               showEmail: !isLogin, // Dynamically set based on isLogin
             }}
