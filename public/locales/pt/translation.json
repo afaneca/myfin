@@ -79,7 +79,10 @@
     "operatingFunds": "Fundo de Maneio",
     "investing": "Investimento",
     "debt": "Passivo",
-    "netWorth": "Património"
+    "netWorth": "Património",
+    "demoAccountNotice": "Esta é uma conta de demonstração. Todos os dados são repostos uma vez por dia.",
+    "demoAccountBadge": "Conta demo",
+    "demoAccountResetChip": "Reposição diária"
   },
   "dashboard": {
     "newTransaction": "Nova Transação",
@@ -187,6 +190,7 @@
     "recalculateBalancesOfAllAccounts": "Recalcular saldos de todas as contas",
     "recalculateBalancesOfAllAccountsDescription": "Pode tentar esta rotina se suspeitar de discrepâncias nos saldos das contas",
     "changePasswordSuccessMessage": "Password atualizada com sucesso. Por favor, volte a iniciar sessão.",
+    "demoAccountFeatureUnavailableMessage": "Esta funcionalidade não está disponível para contas de demonstração.",
     "passwordsDoNotMatchMessage": "As passwords não coincidem. Por favor, verifique o seu input e tente novamente.",
     "autoPopulateDemoData": "Popular automaticamente com dados demonstrativos",
     "autoPopulateDemoDataDescription": "Vai repôr todos os dados do utilizador e repopulá-lo com dados demonstrativos",
@@ -286,7 +290,11 @@
     "otpCode": "Código OTP",
     "sendOtp": "Enviar OTP",
     "username": "Nome de utilizador",
-    "setNewPassword": "Defina uma nova password"
+    "setNewPassword": "Defina uma nova password",
+    "demoShortcutTitle": "Experimente a conta demo",
+    "demoShortcutDescription": "Use a conta de demonstração para explorar as principais funcionalidades da aplicação.",
+    "demoShortcutPrefillNotice": "Para sua conveniência, os campos de login abaixo já foram preenchidos.",
+    "demoShortcutCredentials": "Utilizador: demo / Password: demo"
   },
   "accounts": {
     "accounts": "Contas",

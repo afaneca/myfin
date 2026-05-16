@@ -287,7 +287,7 @@ const RecoverPassword = () => {
               <Divider variant="middle" sx={{ mb: 2, mt: 2 }}>
                 <Chip label={t('login.setNewPassword')} />
               </Divider>
-              <Grid size={12}>
+              <Grid size={12} pt={1} pb={1}>
                 <TextField
                   type="text"
                   variant="outlined"
@@ -303,7 +303,7 @@ const RecoverPassword = () => {
                   }
                 />
               </Grid>
-              <Grid container>
+              <Grid container pt={1} pb={1} spacing={2}>
                 <Grid
                   size={{
                     xs: 12,
@@ -346,17 +346,19 @@ const RecoverPassword = () => {
                     }
                   />
                 </Grid>
+                <Grid offset="auto">
+                  <Button
+                    variant="contained"
+                    size="large"
+                    onClick={onButtonClick}
+                    autoFocus
+                    disabled={!state.isCtaButtonEnabled}
+                  >
+                    {t('profile.changePasswordCTA')}
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid offset="auto">
-                <Button
-                  variant="contained"
-                  onClick={onButtonClick}
-                  autoFocus
-                  disabled={!state.isCtaButtonEnabled}
-                >
-                  {t('profile.changePasswordCTA')}
-                </Button>
-              </Grid>
+
             </Grid>
           </Slide>
         </Grid>

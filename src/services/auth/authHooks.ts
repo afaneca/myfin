@@ -3,8 +3,12 @@ import AuthServices from './authServices.ts';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useUserData } from '../../providers/UserProvider.tsx';
 import i18next from 'i18next';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { CurrencyCode } from '../../consts/Currency.ts';
+import {
+  BusinessLogicError,
+  CustomApiError,
+} from '../../data/customApiError.ts';
 
 const QUERY_KEY_SESSION_VALIDITY = 'session_validity';
 
@@ -26,10 +30,15 @@ export function useLogin() {
 
   async function login(data: { username: string; password: string }) {
     const resp = await AuthServices.attemptLogin(data);
-    const { accounts, ...sessionData } = resp.data;
+    const { accounts, is_demo, ...sessionData } = resp.data;
     const language = i18next.resolvedLanguage;
     const apiVersion = resp.headers['api-version'];
-    updateUserSessionData({ ...sessionData, language, apiVersion });
+    updateUserSessionData({
+      ...sessionData,
+      language,
+      apiVersion,
+      is_demo: is_demo === 1 || is_demo === '1' || is_demo === true,
+    });
     updateUserAccounts(accounts);
     return resp;
   }
@@ -69,8 +78,24 @@ export function useChangePassword() {
     newPassword1: string;
     newPassword2: string;
   }) {
-    const resp = await AuthServices.changePassword(data);
-    return resp.data;
+    try {
+      const resp = await AuthServices.changePassword(data);
+      return resp.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorData = error.response.data as CustomApiError;
+
+        if (errorData.rationale && errorData.message) {
+          throw new BusinessLogicError(
+            errorData.rationale,
+            errorData.message,
+            error,
+          );
+        }
+      }
+
+      throw error;
+    }
   }
 
   return useMutation({
