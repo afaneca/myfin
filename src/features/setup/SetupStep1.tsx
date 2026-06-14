@@ -125,7 +125,7 @@ const SetupStep1 = (props: Props) => {
         <TextField
           id="username"
           name="username"
-          label="Username"
+          label={t('login.username')}
           margin="normal"
           fullWidth
           value={state.username}
@@ -140,7 +140,7 @@ const SetupStep1 = (props: Props) => {
         <TextField
           id="email"
           name="email"
-          label="Email"
+          label={t('login.email')}
           margin="normal"
           type="email"
           fullWidth

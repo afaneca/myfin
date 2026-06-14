@@ -72,6 +72,11 @@ const SetupStep0 = (props: Props) => {
               control={<Radio />}
               label="Português (pt-PT)"
             />
+            <FormControlLabel
+              value="fr"
+              control={<Radio />}
+              label="Français"
+            />
             <FormControlLabel value="en" control={<Radio />} label="English" />
           </RadioGroup>
         </FormControl>

@@ -290,6 +290,8 @@
     "otpCode": "Código OTP",
     "sendOtp": "Enviar OTP",
     "username": "Nome de utilizador",
+    "email": "Email",
+    "password": "Password",
     "setNewPassword": "Defina uma nova password",
     "demoShortcutTitle": "Experimente a conta demo",
     "demoShortcutDescription": "Use a conta de demonstração para explorar as principais funcionalidades da aplicação.",

@@ -290,6 +290,8 @@
     "otpCode": "OTP Code",
     "sendOtp": "Send OTP",
     "username": "Username",
+    "email": "Email",
+    "password": "Password",
     "setNewPassword": "Set a new password",
     "demoShortcutTitle": "Try the demo account",
     "demoShortcutDescription": "Use the sample account to explore the main app features.",
