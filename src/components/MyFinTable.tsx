@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import type { GridColDef } from '@mui/x-data-grid/models/colDef';
 import { GridRowsProp } from '@mui/x-data-grid/models';
 import { useTranslation } from 'react-i18next';
-import { enUS, ptPT } from '@mui/x-data-grid/locales';
+import { enUS, frFR, ptPT } from '@mui/x-data-grid/locales';
 import i18next from 'i18next';
 
 type Props = {
@@ -71,9 +71,11 @@ const MyFinTable = (props: Props) => {
   } = props;
 
   const getLocaleTextForDataGrid = () => {
-    switch (i18next.resolvedLanguage) {
+    switch (i18next.resolvedLanguage?.split('-')[0]) {
       case 'pt':
         return ptPT.components.MuiDataGrid.defaultProps.localeText;
+      case 'fr':
+        return frFR.components.MuiDataGrid.defaultProps.localeText;
       default:
         return enUS.components.MuiDataGrid.defaultProps.localeText;
     }

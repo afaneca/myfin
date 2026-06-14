@@ -147,7 +147,7 @@ const SetupStep2 = (props: Props) => {
         <TextField
           id="password"
           name="password"
-          label="Password"
+          label={t('login.password')}
           margin="normal"
           type="password"
           fullWidth

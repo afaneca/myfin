@@ -14,12 +14,21 @@ import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import i18next from 'i18next';
 
+const emojiLocales = {
+  en: 'en',
+  fr: 'fr',
+  pt: 'pt',
+} as const;
+
 const BudgetDescription = forwardRef(({}, ref: Ref<HTMLTextAreaElement>) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const matchesSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  const currentLanguage = i18next.resolvedLanguage?.split('-')[0];
+  const emojiLocale =
+    emojiLocales[currentLanguage as keyof typeof emojiLocales] ?? 'en';
 
   const handleEmojiAdded = (emojiText: string) => {
     // add the emoji text at the current caret position
@@ -96,7 +105,7 @@ const BudgetDescription = forwardRef(({}, ref: Ref<HTMLTextAreaElement>) => {
               handleEmojiAdded(emoji.native)
             }
             theme={theme.palette.mode}
-            locale={i18next.resolvedLanguage == 'pt' ? 'pt' : 'en'}
+            locale={emojiLocale}
           />
         </Box>
       )}
