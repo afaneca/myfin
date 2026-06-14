@@ -12,6 +12,8 @@ const QUERY_KEY_GET_INVEST_STATS = 'QUERY_KEY_GET_INVEST_STATS';
 const QUERY_KEY_GET_ASSETS = 'QUERY_KEY_GET_ASSETS';
 const QUERY_KEY_GET_INVEST_TRX = 'QUERY_KEY_GET_INVEST_TRX';
 const QUERY_KEY_GET_ASSETS_SUMMARY = 'QUERY_KEY_GET_ASSETS_SUMMARY';
+const QUERY_KEY_GET_ANNUAL_INVESTMENT_REPORT =
+  'QUERY_KEY_GET_ANNUAL_INVESTMENT_REPORT';
 
 export function useGetInvestStats() {
   async function getInvestStats() {
@@ -189,6 +191,20 @@ export function useGetAssetsSummary() {
   return useQuery({
     queryKey: [QUERY_KEY_GET_ASSETS_SUMMARY],
     queryFn: getAssetsSummary,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useGetAnnualInvestmentReport(year: number, enabled = true) {
+  async function getAnnualInvestmentReport() {
+    const data = await InvestServices.getAnnualInvestmentReport(year);
+    return data.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_ANNUAL_INVESTMENT_REPORT, year],
+    queryFn: getAnnualInvestmentReport,
+    enabled,
     placeholderData: keepPreviousData,
   });
 }

@@ -105,6 +105,11 @@ const Profile = () => {
                     label="Português (pt-PT)"
                   />
                   <FormControlLabel
+                    value="fr"
+                    control={<Radio />}
+                    label="Français"
+                  />
+                  <FormControlLabel
                     value="en"
                     control={<Radio />}
                     label="English"

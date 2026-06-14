@@ -1,5 +1,15 @@
 import { useEffect, useReducer } from 'react';
-import { Box, Card, CardContent, useMediaQuery, useTheme, Tooltip, IconButton } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  IconButton,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { Assessment, HelpOutline } from '@mui/icons-material';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
@@ -30,7 +40,8 @@ import Stack from '@mui/material/Stack';
 import { useGetGradientColorForAssetType } from './InvestUtilHooks.ts';
 import PercentageChip from '../../components/PercentageChip.tsx';
 import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
-import { HelpOutline } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_INVEST_REPORTS } from '../../providers/RoutesProvider.tsx';
 
 type UiState = {
   currentValue: number;
@@ -171,7 +182,13 @@ const SummaryCard = (props: {
           justifyContent: 'space-between',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <Typography sx={{ fontSize: 14 }} color="text.secondary">
             {props.title}
           </Typography>
@@ -294,6 +311,7 @@ const InvestDashboard = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const matchesLgScreen = useMediaQuery(theme.breakpoints.down('lg'));
+  const navigate = useNavigate();
 
   const getInvestStatsRequest = useGetInvestStats();
   const getGradientColorForAssetClass = useGetGradientColorForAssetType();
@@ -397,6 +415,15 @@ const InvestDashboard = () => {
         </Grid>
       </Grid>
       <Grid container alignContent="center" textAlign="center" size={12}>
+        <Grid display="flex" justifyContent="flex-end" size={12}>
+          <Button
+            variant="outlined"
+            startIcon={<Assessment />}
+            onClick={() => navigate(ROUTE_INVEST_REPORTS)}
+          >
+            {t('investments.annualReport.generateCta')}
+          </Button>
+        </Grid>
         <Grid
           size={{
             xs: 12,

@@ -221,7 +221,7 @@ const Login = () => {
                     (<TextField
                       id="email"
                       name="email"
-                      label="Email"
+                      label={t('login.email')}
                       margin="normal"
                       fullWidth
                       value={props.values.email}
@@ -248,7 +248,7 @@ const Login = () => {
                   <TextField
                     id="password"
                     name="password"
-                    label="Password"
+                    label={t('login.password')}
                     type="password"
                     margin="normal"
                     fullWidth

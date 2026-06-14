@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 import type { GridPaginationModel } from '@mui/x-data-grid';
 import { GridSlots, useGridApiRef } from '@mui/x-data-grid';
-import { enUS, ptPT } from '@mui/x-data-grid/locales';
+import { enUS, frFR, ptPT } from '@mui/x-data-grid/locales';
 import { GridRowsProp } from '@mui/x-data-grid/models';
 import type { GridColDef } from '@mui/x-data-grid/models/colDef';
 import i18next from 'i18next';
@@ -55,9 +55,11 @@ const MyFinStaticTable = (props: Props) => {
       : undefined;
 
   const getLocaleTextForDataGrid = () => {
-    switch (i18next.resolvedLanguage) {
+    switch (i18next.resolvedLanguage?.split('-')[0]) {
       case 'pt':
         return ptPT.components.MuiDataGrid.defaultProps.localeText;
+      case 'fr':
+        return frFR.components.MuiDataGrid.defaultProps.localeText;
       default:
         return enUS.components.MuiDataGrid.defaultProps.localeText;
     }

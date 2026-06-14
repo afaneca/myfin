@@ -1,18 +1,105 @@
 ::-webkit-scrollbar {
-    width: 10px;
+  width: 10px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #393737;
+  background: #393737;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #888;
+  background: #888;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+  background: #555;
+}
+
+@media print {
+  body.invest-report-printing {
+    background: #fff !important;
+  }
+
+  body.invest-report-printing * {
+    visibility: hidden;
+  }
+
+  body.invest-report-printing .invest-report-print-area,
+  body.invest-report-printing .invest-report-print-area * {
+    visibility: visible;
+  }
+
+  body.invest-report-printing .invest-report-print-area {
+    color: #000 !important;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  body.invest-report-printing .invest-report-print-area,
+  body.invest-report-printing .invest-report-print-area .MuiTypography-root,
+  body.invest-report-printing .invest-report-print-area .MuiTableCell-root,
+  body.invest-report-printing .invest-report-print-area .MuiButtonBase-root,
+  body.invest-report-printing .invest-report-print-area .MuiSvgIcon-root,
+  body.invest-report-printing .invest-report-print-area .MuiChip-label {
+    color: #000 !important;
+  }
+
+  body.invest-report-printing .invest-report-print-area .MuiPaper-root,
+  body.invest-report-printing .invest-report-print-area .MuiCard-root,
+  body.invest-report-printing .invest-report-print-area .MuiAccordion-root,
+  body.invest-report-printing
+    .invest-report-print-area
+    .MuiAccordionSummary-root,
+  body.invest-report-printing
+    .invest-report-print-area
+    .MuiAccordionDetails-root,
+  body.invest-report-printing .invest-report-print-area .MuiAlert-root,
+  body.invest-report-printing .invest-report-print-area .MuiTableCell-head,
+  body.invest-report-printing .invest-report-print-area .MuiTableCell-body {
+    background-color: #fff !important;
+  }
+
+  body.invest-report-printing .invest-report-print-area .MuiChip-root {
+    border-color: #000 !important;
+  }
+
+  body.invest-report-printing .invest-app-controls,
+  body.invest-report-printing .invest-report-controls,
+  body.invest-report-printing .invest-report-help-icon,
+  body.invest-report-printing .MuiDrawer-root,
+  body.invest-report-printing .MuiAppBar-root,
+  body.invest-report-printing .MuiBackdrop-root {
+    display: none !important;
+  }
+
+  body.invest-report-printing .invest-report-print-area .MuiCollapse-root {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    visibility: visible !important;
+  }
+
+  body.invest-report-printing .invest-report-print-area .MuiCollapse-wrapper,
+  body.invest-report-printing
+    .invest-report-print-area
+    .MuiCollapse-wrapperInner {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    visibility: visible !important;
+  }
+
+  body.invest-report-printing .invest-report-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  body.invest-report-printing .MuiPaper-root,
+  body.invest-report-printing .MuiCard-root {
+    box-shadow: none !important;
+  }
 }

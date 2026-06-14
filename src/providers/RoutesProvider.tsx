@@ -37,6 +37,7 @@ export const ROUTE_INVEST_DASHBOARD = '/invest/dashboard';
 export const ROUTE_INVEST_ASSETS = '/invest/assets';
 export const ROUTE_INVEST_TRANSACTIONS = '/invest/transactions';
 export const ROUTE_INVEST_STATS = '/invest/stats';
+export const ROUTE_INVEST_REPORTS = '/invest/reports';
 export const ROUTE_STATS = '/stats';
 export const ROUTE_STATS_PATRIMONY_EVO = '/stats/patrimony';
 export const ROUTE_STATS_PROJECTIONS = '/stats/projections';
@@ -83,6 +84,10 @@ const RoutesProvider = () => {
           />
           <Route
             path={ROUTE_INVEST_STATS}
+            element={<Invest defaultTab={InvestTab.Stats} />}
+          />
+          <Route
+            path={ROUTE_INVEST_REPORTS}
             element={<Invest defaultTab={InvestTab.Reports} />}
           />
           <Route path={ROUTE_STATS} element={<Stats />} />

@@ -211,6 +211,81 @@ const getAssetsSummary = () => {
   return axios.get<AssetSummary[]>(`/invest/assets/summary`);
 };
 
+export type AnnualReportWarning = {
+  amount?: number;
+  asset_id?: number;
+  code: string;
+  message: string;
+  transaction_id?: number;
+  units?: number;
+};
+
+export type AnnualReportBaseTransaction = {
+  date_timestamp: number;
+  fees_amount: number;
+  fees_units: number;
+  note: string;
+  total_price: number;
+  transaction_id: number;
+  units: number;
+};
+
+export type AnnualReportFifoMatch = {
+  acquisition_cost: number;
+  acquisition_fees: number;
+  allocated_fees: number;
+  buy_transaction: AnnualReportBaseTransaction;
+  gain_loss: number;
+  matched_units: number;
+  proceeds: number;
+  sell_fees: number;
+};
+
+export type AnnualReportSell = AnnualReportBaseTransaction & {
+  fifo_matches: AnnualReportFifoMatch[];
+  internal_fee_units: number;
+  unmatched_units: number;
+};
+
+export type AnnualReportAsset = {
+  asset_id: number;
+  broker: string;
+  buys: AnnualReportBaseTransaction[];
+  name: string;
+  sells: AnnualReportSell[];
+  summary: {
+    fees: number;
+    internal_fee_units: number;
+    realized_gain_loss: number;
+    total_invested: number;
+    total_withdrawn: number;
+  };
+  ticker: string;
+  type: AssetType;
+  warnings: AnnualReportWarning[];
+};
+
+export type AnnualInvestmentReport = {
+  assets: AnnualReportAsset[];
+  generated_at: string;
+  summary: {
+    annual_roi_percentage: number;
+    annual_roi_value: number;
+    beginning_value: number;
+    ending_value: number;
+    fees: number;
+    realized_gain_loss: number;
+    total_invested: number;
+    total_withdrawn: number;
+  };
+  warnings: AnnualReportWarning[];
+  year: number;
+};
+
+const getAnnualInvestmentReport = (year: number) => {
+  return axios.get<AnnualInvestmentReport>(`/invest/reports/annual/${year}`);
+};
+
 export default {
   getInvestStats,
   getAssets,
@@ -223,4 +298,5 @@ export default {
   editTransaction,
   removeTransaction,
   getAssetsSummary,
+  getAnnualInvestmentReport,
 };
