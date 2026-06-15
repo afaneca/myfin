@@ -19,7 +19,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'
         cache: 'npm'
     
     # Step 3: Install dependencies
@@ -43,3 +43,5 @@ jobs:
         source: "dist/"
         target: ${{ secrets.MYFIN_WEB_PUBLIC_DIRECTORY_PATH }}
         overwrite: true
+        timeout: 120s
+        command_timeout: 10m
