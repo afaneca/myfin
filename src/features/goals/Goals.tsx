@@ -1,4 +1,5 @@
 import {
+  AccountBalanceWallet,
   AddCircleOutline,
   CheckCircle,
   Delete,
@@ -47,10 +48,13 @@ import {
   AlertSeverity,
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
+import { useGetAccounts } from '../../services/account/accountHooks.ts';
 import { useDeleteGoal, useGetGoals } from '../../services/goal/goalHooks.ts';
-import { Goal } from '../../services/goal/goalServices.ts';
+import { Goal, GoalFundingSummary } from '../../services/goal/goalServices.ts';
 import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
 import AddEditGoalDialog from './AddEditGoalDialog.tsx';
+
+type UnallocatedFunding = GoalFundingSummary['unallocated_funding'];
 
 type UiState = {
   goals?: Goal[];
@@ -401,6 +405,100 @@ const GoalCard = ({
   );
 };
 
+const UnallocatedFundingCard = ({
+  unallocatedFunding,
+  accountNameLookup,
+  formatCurrency,
+}: {
+  unallocatedFunding: UnallocatedFunding;
+  accountNameLookup: Map<number, string>;
+  formatCurrency: (value: number) => string;
+}) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  if (unallocatedFunding.total_amount <= 0) return null;
+
+  const accountBreakdown = unallocatedFunding.accounts
+    .map((account) => {
+      const accountName =
+        accountNameLookup.get(account.account_id) ||
+        t('goals.accountFallback', { id: account.account_id });
+
+      return `${accountName}: ${formatCurrency(account.amount)}`;
+    })
+    .join('\n');
+
+  return (
+    <Card
+      sx={{
+        height: '100%',
+        minHeight: 280,
+        display: 'flex',
+        flexDirection: 'column',
+        borderTop: `4px solid ${theme.palette.info.main}`,
+        backgroundColor: alpha(theme.palette.info.main, 0.04),
+      }}
+    >
+      <CardContent
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          gap: 2,
+        }}
+      >
+        <Box>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+            <AccountBalanceWallet color="info" />
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              {t('goals.unallocatedFunding')}
+            </Typography>
+          </Stack>
+          <Typography variant="body2" color="text.secondary">
+            {t('goals.unallocatedFundingDescription')}
+          </Typography>
+        </Box>
+
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>
+            {formatCurrency(unallocatedFunding.total_amount)}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {t('goals.availableToAllocate')}
+          </Typography>
+        </Box>
+
+        <Tooltip
+          title={
+            <span style={{ whiteSpace: 'pre-line' }}>{accountBreakdown}</span>
+          }
+        >
+          <Stack direction="row" flexWrap="wrap" gap={1}>
+            {unallocatedFunding.accounts.map((account) => {
+              const accountName =
+                accountNameLookup.get(account.account_id) ||
+                t('goals.accountFallback', { id: account.account_id });
+
+              return (
+                <Chip
+                  key={account.account_id}
+                  size="small"
+                  color="info"
+                  variant="outlined"
+                  label={`${accountName}: ${formatCurrency(account.amount)}`}
+                  sx={{ maxWidth: '100%' }}
+                />
+              );
+            })}
+          </Stack>
+        </Tooltip>
+      </CardContent>
+    </Card>
+  );
+};
+
 const Goals = () => {
   const theme = useTheme();
   const loader = useLoading();
@@ -409,37 +507,64 @@ const Goals = () => {
 
   const [showArchived, setShowArchived] = useState(false);
   const getGoalsRequest = useGetGoals(!showArchived);
+  const getAccountsRequest = useGetAccounts();
   const deleteGoalRequest = useDeleteGoal();
   const formatNumberAsCurrency = useFormatNumberAsCurrency();
   const [state, dispatch] = useReducer(reduceState, null, createInitialState);
 
   // Loading
   useEffect(() => {
-    if (getGoalsRequest.isFetching || deleteGoalRequest.isPending) {
+    if (
+      getGoalsRequest.isFetching ||
+      getAccountsRequest.isFetching ||
+      deleteGoalRequest.isPending
+    ) {
       loader.showLoading();
     } else {
       loader.hideLoading();
     }
-  }, [getGoalsRequest.isFetching, deleteGoalRequest.isPending]);
+  }, [
+    getGoalsRequest.isFetching,
+    getAccountsRequest.isFetching,
+    deleteGoalRequest.isPending,
+  ]);
 
   // Error
   useEffect(() => {
-    if (getGoalsRequest.isError || deleteGoalRequest.isError) {
+    if (
+      getGoalsRequest.isError ||
+      getAccountsRequest.isError ||
+      deleteGoalRequest.isError
+    ) {
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
       );
     }
-  }, [getGoalsRequest.isError, deleteGoalRequest.isError]);
+  }, [
+    getGoalsRequest.isError,
+    getAccountsRequest.isError,
+    deleteGoalRequest.isError,
+  ]);
 
   // Success
   useEffect(() => {
     if (!getGoalsRequest.data) return;
     dispatch({
       type: StateActionType.DataLoaded,
-      payload: getGoalsRequest.data,
+      payload: getGoalsRequest.data.goals,
     });
   }, [getGoalsRequest.data]);
+
+  const unallocatedFunding = getGoalsRequest.data?.unallocated_funding;
+  const accountNameLookup = useMemo(() => {
+    return new Map(
+      (getAccountsRequest.data || []).map((account) => [
+        Number(account.account_id),
+        account.name,
+      ]),
+    );
+  }, [getAccountsRequest.data]);
 
   const formatDueDate = (timestamp: number | null) => {
     if (!timestamp) return '-';
@@ -713,6 +838,15 @@ const Goals = () => {
       {/* Visual Goal Cards Section - Only active goals, sorted by due date */}
       <Box sx={{ mb: 3 }}>
         <Grid container spacing={2}>
+          {unallocatedFunding && unallocatedFunding.total_amount > 0 && (
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+              <UnallocatedFundingCard
+                unallocatedFunding={unallocatedFunding}
+                accountNameLookup={accountNameLookup}
+                formatCurrency={formatNumberAsCurrency.invoke}
+              />
+            </Grid>
+          )}
           {sortedGoalsForCards.map((goal) => (
             <Grid
               key={String(goal.goal_id)}
