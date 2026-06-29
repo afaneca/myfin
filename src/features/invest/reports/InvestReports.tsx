@@ -42,6 +42,7 @@ import {
   AnnualReportSell,
   AnnualReportWarning,
   AssetType,
+  PeriodReturnMetrics,
 } from '../../../services/invest/investServices.ts';
 import {
   convertUnixTimestampToDateString,
@@ -52,6 +53,7 @@ import {
   formatNumberAsPercentage,
 } from '../../../utils/textUtils.ts';
 import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
+import ReturnMetricsDetails from '../ReturnMetricsDetails.tsx';
 
 const MIN_REPORT_YEAR = 1900;
 
@@ -70,6 +72,11 @@ const formatGeneratedAt = (generatedAt: string) => {
   return date.toLocaleString();
 };
 
+const formatOptionalPercentage = (value: number | null) => {
+  if (value === null || !Number.isFinite(value)) return '-';
+  return formatNumberAsPercentage(value, true);
+};
+
 const getValueColor = (value: number) => {
   if (value > 0) return 'success.main';
   if (value < 0) return 'warning.main';
@@ -78,6 +85,7 @@ const getValueColor = (value: number) => {
 
 const SummaryCard = (props: {
   helpText: string;
+  metrics?: PeriodReturnMetrics;
   secondaryValue?: string;
   title: string;
   value: string;
@@ -90,16 +98,24 @@ const SummaryCard = (props: {
           <Typography color="text.secondary" variant="body2">
             {props.title}
           </Typography>
-          <Tooltip title={props.helpText}>
-            <IconButton
-              aria-label={props.helpText}
-              className="invest-report-help-icon"
-              size="small"
-              sx={{ color: 'text.secondary', p: 0.25 }}
-            >
-              <HelpOutline sx={{ fontSize: 16 }} />
-            </IconButton>
-          </Tooltip>
+          {props.metrics ? (
+            <ReturnMetricsDetails
+              ariaLabel={props.helpText}
+              metrics={props.metrics}
+              title={props.title}
+            />
+          ) : (
+            <Tooltip title={props.helpText}>
+              <IconButton
+                aria-label={props.helpText}
+                className="invest-report-help-icon"
+                size="small"
+                sx={{ color: 'text.secondary', p: 0.25 }}
+              >
+                <HelpOutline sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Stack>
         <Typography
           color={props.valueColor ?? 'text.primary'}
@@ -567,14 +583,23 @@ const ReportContent = (props: { report: AnnualInvestmentReport }) => {
         value: formatNumberAsCurrency(props.report.summary.total_withdrawn),
       },
       {
-        helpText: t('investments.annualReport.summaryHelp.annualRoi'),
-        title: t('investments.annualReport.annualRoi'),
-        value: formatNumberAsCurrency(props.report.summary.annual_roi_value),
-        secondaryValue: formatNumberAsPercentage(
-          props.report.summary.annual_roi_percentage,
-          true,
+        helpText: t(
+          'investments.annualReport.summaryHelp.annualPortfolioReturn',
         ),
-        valueColor: getValueColor(props.report.summary.annual_roi_value),
+        metrics: props.report.summary.return_metrics,
+        title: t('investments.annualReport.annualPortfolioReturn', {
+          year: props.report.year,
+        }),
+        value: formatNumberAsCurrency(
+          props.report.summary.return_metrics.absolute_return_value,
+        ),
+        secondaryValue: formatOptionalPercentage(
+          props.report.summary.return_metrics.portfolio_return
+            .cumulative_percentage,
+        ),
+        valueColor: getValueColor(
+          props.report.summary.return_metrics.absolute_return_value,
+        ),
       },
       {
         helpText: t('investments.annualReport.summaryHelp.realizedGainLoss'),
@@ -600,7 +625,7 @@ const ReportContent = (props: { report: AnnualInvestmentReport }) => {
         }),
       },
     ],
-    [props.report.summary, t],
+    [props.report.summary, props.report.year, t],
   );
 
   return (

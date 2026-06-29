@@ -1,12 +1,13 @@
-import { YearlyRoi } from '../../../services/invest/investServices.ts';
 import { Box, useTheme } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
-import { GridColDef } from '@mui/x-data-grid';
-import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
-import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import Typography from '@mui/material/Typography';
+import { GridColDef } from '@mui/x-data-grid';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
 import PercentageChip from '../../../components/PercentageChip.tsx';
+import { YearlyRoi } from '../../../services/invest/investServices.ts';
+import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
+import ReturnMetricsDetails from '../ReturnMetricsDetails.tsx';
 
 export type CombinedRoiByYearData = {
   year: number;
@@ -31,12 +32,22 @@ const CombinedRoiByYearList = (props: Props) => {
         .map((item) => ({
           id: item.year,
           year: item.year,
-          inflow: item.total_inflow,
-          outflow: item.total_outflow,
+          contributions:
+            item.return_metrics?.cash_flows.contributions ??
+            item.contributions ??
+            item.total_inflow,
+          withdrawals:
+            item.return_metrics?.cash_flows.withdrawals ??
+            item.withdrawals ??
+            item.total_outflow,
           globalValue: item.ending_value,
-          globalRoi: {
-            percentage: item.roi_percentage,
-            absolute: item.roi_value,
+          portfolioReturn: {
+            percentage:
+              item.return_metrics?.portfolio_return.cumulative_percentage ??
+              item.roi_percentage,
+            absolute:
+              item.return_metrics?.absolute_return_value ?? item.roi_value,
+            metrics: item.return_metrics,
           },
         })),
     [filteredItems],
@@ -60,8 +71,8 @@ const CombinedRoiByYearList = (props: Props) => {
       ),
     },
     {
-      field: 'inflow',
-      headerName: t('investments.inflow'),
+      field: 'contributions',
+      headerName: t('investments.contributions'),
       minWidth: 100,
       flex: 1,
       editable: false,
@@ -69,8 +80,8 @@ const CombinedRoiByYearList = (props: Props) => {
       renderCell: (params) => `${formatNumberAsCurrency(params.value)}`,
     },
     {
-      field: 'outflow',
-      headerName: t('investments.outflow'),
+      field: 'withdrawals',
+      headerName: t('investments.withdrawals'),
       minWidth: 100,
       flex: 1,
       editable: false,
@@ -87,9 +98,9 @@ const CombinedRoiByYearList = (props: Props) => {
       renderCell: (params) => `${formatNumberAsCurrency(params.value)}`,
     },
     {
-      field: 'globalRoi',
-      headerName: t('investments.globalROI'),
-      minWidth: 120,
+      field: 'portfolioReturn',
+      headerName: t('investments.returnMetrics.return'),
+      minWidth: 160,
       editable: false,
       sortable: false,
       renderCell: (params) => (
@@ -102,11 +113,30 @@ const CombinedRoiByYearList = (props: Props) => {
             flexDirection: 'column',
           }}
         >
-          {formatNumberAsCurrency(params.value.absolute)} <br />
-          <PercentageChip
-            percentage={params.value.percentage}
-            sx={{ mt: 0.2, '& .MuiChip-label': { fontSize: '0.9em' } }}
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
+            {formatNumberAsCurrency(params.value.absolute)}
+            {params.value.metrics && (
+              <ReturnMetricsDetails
+                ariaLabel={t('investments.returnMetrics.detailsAriaLabel', {
+                  year: params.row.year,
+                })}
+                metrics={params.value.metrics}
+                title={t('investments.returnMetrics.detailsForYear', {
+                  year: params.row.year,
+                })}
+              />
+            )}
+          </Box>
+          {params.value.percentage !== null ? (
+            <PercentageChip
+              percentage={params.value.percentage}
+              sx={{ mt: 0.2, '& .MuiChip-label': { fontSize: '0.9em' } }}
+            />
+          ) : (
+            <Typography color="text.secondary" variant="caption">
+              -
+            </Typography>
+          )}
         </Box>
       ),
     },

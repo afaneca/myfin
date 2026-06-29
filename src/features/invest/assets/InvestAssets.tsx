@@ -1,20 +1,3 @@
-import { useLoading } from '../../../providers/LoadingProvider.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../../providers/SnackbarProvider.tsx';
-import { useTranslation } from 'react-i18next';
-import {
-  useGetAssets,
-  useRemoveAsset,
-} from '../../../services/invest/investHooks.ts';
-import React, { useEffect, useMemo, useReducer } from 'react';
-import { InvestAsset } from '../../../services/invest/investServices.ts';
-import Grid from '@mui/material/Grid';
-import { GridColDef } from '@mui/x-data-grid';
-import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
-import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
-import Button from '@mui/material/Button';
 import {
   AddCircleOutline,
   Delete,
@@ -22,19 +5,37 @@ import {
   MonetizationOn,
   Search,
 } from '@mui/icons-material';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
 import { Box, Checkbox, FormGroup, Tooltip, useTheme } from '@mui/material';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { GridColDef } from '@mui/x-data-grid';
+import React, { useEffect, useMemo, useReducer } from 'react';
+import { useTranslation } from 'react-i18next';
 import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
-import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
+import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
+import PercentageChip from '../../../components/PercentageChip.tsx';
+import { useLoading } from '../../../providers/LoadingProvider.tsx';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../../providers/SnackbarProvider.tsx';
+import {
+  useGetAssets,
+  useRemoveAsset,
+} from '../../../services/invest/investHooks.ts';
+import { InvestAsset } from '../../../services/invest/investServices.ts';
+import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
+import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
+import ReturnMetricsDetails from '../ReturnMetricsDetails.tsx';
 import AddEditInvestAssetDialog from './AddEditInvestAssetDialog.tsx';
 import AssetValueHistoryDrawer from './AssetValueHistoryDrawer.tsx';
-import PercentageChip from '../../../components/PercentageChip.tsx';
-import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
+import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
 
 type UiState = {
   assets?: InvestAsset[];
@@ -274,6 +275,8 @@ const InvestAssets = () => {
         currentValue: asset,
         currentRoi: {
           absolute: asset.absolute_roi_value,
+          assetName: asset.name,
+          metrics: asset.return_metrics?.global,
           percentage: asset.relative_roi_percentage,
         },
         actions: asset,
@@ -378,28 +381,59 @@ const InvestAssets = () => {
     },
     {
       field: 'currentRoi',
-      headerName: t('investments.currentROI'),
-      minWidth: 120,
+      headerName: t('investments.returnMetrics.returnSinceStart'),
+      minWidth: 150,
       editable: false,
       sortable: false,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-          }}
-        >
-          {formatNumberAsCurrency.invoke(params.value.absolute)} <br />
-          <PercentageChip
-            percentage={params.value.percentage}
-            hideIcon
+      renderCell: (params) => {
+        const personalReturn =
+          params.value.metrics?.personal_return.annualized_percentage;
+        return (
+          <Box
             sx={{
-              '& .MuiChip-label': { fontSize: '0.9em' },
+              display: 'flex',
+              justifyContent: 'center',
+              flexDirection: 'column',
             }}
-          />
-        </Box>
-      ),
+          >
+            <Box>
+              {formatNumberAsCurrency.invoke(
+                params.value.metrics?.absolute_return_value ??
+                  params.value.absolute,
+              )}
+              {params.value.metrics && (
+                <ReturnMetricsDetails
+                  ariaLabel={t(
+                    'investments.returnMetrics.assetDetailsAriaLabel',
+                    {
+                      name: params.value.assetName,
+                    },
+                  )}
+                  metrics={params.value.metrics}
+                  performanceReturnHelp={t(
+                    'investments.returnMetrics.assetReturnHelp',
+                  )}
+                  performanceReturnLabel={t(
+                    'investments.returnMetrics.assetReturnTwr',
+                  )}
+                  title={t('investments.returnMetrics.assetDetailsTitle', {
+                    name: params.value.assetName,
+                  })}
+                />
+              )}
+            </Box>
+            {personalReturn !== null && personalReturn !== undefined && (
+              <PercentageChip
+                percentage={personalReturn}
+                hideIcon
+                sx={{
+                  '& .MuiChip-label': { fontSize: '0.9em' },
+                }}
+              />
+            )}
+          </Box>
+        );
+      },
     },
     {
       field: 'actions',
@@ -560,7 +594,7 @@ const InvestAssets = () => {
                   <Search />
                 </InputAdornment>
               ),
-            }
+            },
           }}
         />
       </Grid>
