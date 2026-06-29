@@ -20,6 +20,17 @@ export type Goal = {
   funding_accounts: FundingAccount[];
 };
 
+export type GoalFundingSummary = {
+  goals: Goal[];
+  unallocated_funding: {
+    total_amount: number;
+    accounts: Array<{
+      account_id: number;
+      amount: number;
+    }>;
+  };
+};
+
 export type CreateGoalRequest = {
   name: string;
   description: string;
@@ -34,7 +45,7 @@ export type UpdateGoalRequest = CreateGoalRequest & {
 };
 
 const getGoals = (onlyActive: boolean = false) => {
-  return axios.get<Goal[]>(`/goals`, {
+  return axios.get<GoalFundingSummary>(`/goals`, {
     params: onlyActive ? { only_active: true } : undefined,
   });
 };
