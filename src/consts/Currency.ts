@@ -100,6 +100,56 @@ const CURRENCIES: Record<string, Currency> = {
     code: 'CNY',
     name: '人民币 (Chinese Yuan)',
   },
+  SGD: {
+    symbol: 'S$',
+    code: 'SGD',
+    name: 'Singapore Dollar',
+  },
+  MYR: {
+    symbol: 'RM',
+    code: 'MYR',
+    name: 'Ringgit Malaysia',
+  },
+  IDR: {
+    symbol: 'Rp',
+    code: 'IDR',
+    name: 'Rupiah Indonesia',
+  },
+  THB: {
+    symbol: '฿',
+    code: 'THB',
+    name: 'บาทไทย (Thai Baht)',
+  },
+  PHP: {
+    symbol: '₱',
+    code: 'PHP',
+    name: 'Philippine Peso',
+  },
+  VND: {
+    symbol: '₫',
+    code: 'VND',
+    name: 'Đồng Việt Nam',
+  },
+  MMK: {
+    symbol: 'K',
+    code: 'MMK',
+    name: 'Myanmar Kyat',
+  },
+  KHR: {
+    symbol: '៛',
+    code: 'KHR',
+    name: 'Cambodian Riel',
+  },
+  LAK: {
+    symbol: '₭',
+    code: 'LAK',
+    name: 'Lao Kip',
+  },
+  BND: {
+    symbol: 'B$',
+    code: 'BND',
+    name: 'Brunei Dollar',
+  },
 };
 
 export type CurrencyCode = keyof typeof CURRENCIES;
