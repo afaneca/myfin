@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { Assessment, HelpOutline } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -9,50 +9,52 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { Assessment, HelpOutline } from '@mui/icons-material';
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { TFunction } from 'i18next';
+import { useEffect, useReducer } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import EmptyView from '../../components/EmptyView.tsx';
+import PercentageChip from '../../components/PercentageChip.tsx';
+import { ColorGradient } from '../../consts';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
+import { ROUTE_INVEST_REPORTS } from '../../providers/RoutesProvider.tsx';
 import {
   AlertSeverity,
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
-import { useTranslation } from 'react-i18next';
-import Grid from '@mui/material/Grid';
 import { useGetInvestStats } from '../../services/invest/investHooks.ts';
 import {
   AssetType,
   GetInvestStatsResponse,
   InvestAsset,
+  PeriodReturnMetrics,
 } from '../../services/invest/investServices.ts';
+import { getCurrentYear } from '../../utils/dateUtils.ts';
+import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
 import {
   formatNumberAsCurrency,
   formatNumberAsPercentage,
 } from '../../utils/textUtils.ts';
-import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import { getCurrentYear } from '../../utils/dateUtils.ts';
 import DashboardPieChart, {
   ChartDataItem,
 } from '../dashboard/DashboardPieChart.tsx';
-import EmptyView from '../../components/EmptyView.tsx';
-import { TFunction } from 'i18next';
-import { ColorGradient } from '../../consts';
-import Stack from '@mui/material/Stack';
 import { useGetGradientColorForAssetType } from './InvestUtilHooks.ts';
-import PercentageChip from '../../components/PercentageChip.tsx';
-import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
-import { useNavigate } from 'react-router-dom';
-import { ROUTE_INVEST_REPORTS } from '../../providers/RoutesProvider.tsx';
+import ReturnMetricsDetails from './ReturnMetricsDetails.tsx';
 
 type UiState = {
   currentValue: number;
   totalInvestedFormatted: string;
   currentValueFormatted: string;
   currentYearRoiValueFormatted: string;
-  currentYearRoiPercentageFormatted: string;
-  currentYearRoiPercentageValue: number;
+  currentYearRoiPercentageValue: number | null;
+  currentYearReturnMetrics: PeriodReturnMetrics;
   globalRoiValueFormatted: string;
-  globalRoiPercentageFormatted: string;
-  globalRoiPercentageValue: number;
+  globalRoiPercentageValue: number | null;
+  globalReturnMetrics: PeriodReturnMetrics;
   assetDistributionPieChartData?: ChartDataItem[];
   topPerformingAssets?: InvestAsset[];
 } | null;
@@ -159,9 +161,10 @@ const TopPerformerCard = (props: {
 const SummaryCard = (props: {
   title: string;
   absoluteValue: string;
-  percentageValue?: number;
+  percentageValue?: number | null;
   helpKey?: string;
   helpAriaLabel?: string;
+  returnMetrics?: PeriodReturnMetrics;
 }) => {
   const theme = useTheme();
   return (
@@ -192,7 +195,13 @@ const SummaryCard = (props: {
           <Typography sx={{ fontSize: 14 }} color="text.secondary">
             {props.title}
           </Typography>
-          {props.helpKey && (
+          {props.returnMetrics ? (
+            <ReturnMetricsDetails
+              ariaLabel={props.helpAriaLabel ?? props.title}
+              metrics={props.returnMetrics}
+              title={props.title}
+            />
+          ) : props.helpKey ? (
             <Tooltip title={props.helpKey} placement="top">
               <IconButton
                 aria-label={props.helpAriaLabel}
@@ -202,7 +211,7 @@ const SummaryCard = (props: {
                 <HelpOutline sx={{ fontSize: 16 }} />
               </IconButton>
             </Tooltip>
-          )}
+          ) : null}
         </Box>
 
         <div
@@ -216,12 +225,13 @@ const SummaryCard = (props: {
           <Typography variant="h5" component="div">
             {props.absoluteValue}
           </Typography>
-          {props.percentageValue && (
-            <PercentageChip
-              percentage={Number(props.percentageValue)}
-              sx={{ mt: 1, alignSelf: 'center' }}
-            />
-          )}
+          {props.percentageValue !== undefined &&
+            props.percentageValue !== null && (
+              <PercentageChip
+                percentage={Number(props.percentageValue)}
+                sx={{ mt: 1, alignSelf: 'center' }}
+              />
+            )}
         </div>
       </CardContent>
     </Card>
@@ -282,22 +292,19 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
           action.payload.total_current_value,
         ),
         currentYearRoiValueFormatted: formatNumberAsCurrency(
-          action.payload.current_year_roi_value,
-        ),
-        currentYearRoiPercentageFormatted: formatNumberAsPercentage(
-          action.payload.current_year_roi_percentage,
-          true,
+          action.payload.return_metrics.current_year.absolute_return_value,
         ),
         currentYearRoiPercentageValue:
-          action.payload.current_year_roi_percentage,
+          action.payload.return_metrics.current_year.portfolio_return
+            .cumulative_percentage,
+        currentYearReturnMetrics: action.payload.return_metrics.current_year,
         globalRoiValueFormatted: formatNumberAsCurrency(
-          action.payload.global_roi_value,
+          action.payload.return_metrics.global.absolute_return_value,
         ),
-        globalRoiPercentageFormatted: formatNumberAsPercentage(
-          action.payload.global_roi_percentage,
-          true,
-        ),
-        globalRoiPercentageValue: action.payload.global_roi_percentage,
+        globalRoiPercentageValue:
+          action.payload.return_metrics.global.portfolio_return
+            .annualized_percentage,
+        globalReturnMetrics: action.payload.return_metrics.global,
         assetDistributionPieChartData: chartData,
         topPerformingAssets: action.payload.top_performing_assets,
       };
@@ -457,11 +464,13 @@ const InvestDashboard = () => {
           }}
         >
           <SummaryCard
-            title={`ROI ${getCurrentYear()}`}
+            title={t('investments.portfolioReturnYear', {
+              year: getCurrentYear(),
+            })}
             absoluteValue={state.currentYearRoiValueFormatted}
             percentageValue={state.currentYearRoiPercentageValue}
-            helpKey={t('investments.summaryHelp.currentYearROI')}
             helpAriaLabel={t('investments.summaryHelp.currentYearROIAriaLabel')}
+            returnMetrics={state.currentYearReturnMetrics}
           />
         </Grid>
         <Grid
@@ -471,11 +480,11 @@ const InvestDashboard = () => {
           }}
         >
           <SummaryCard
-            title={t('investments.globalROI')}
+            title={t('investments.globalPortfolioReturn')}
             absoluteValue={state.globalRoiValueFormatted}
             percentageValue={state.globalRoiPercentageValue}
-            helpKey={t('investments.summaryHelp.globalROI')}
             helpAriaLabel={t('investments.summaryHelp.globalROIAriaLabel')}
+            returnMetrics={state.globalReturnMetrics}
           />
         </Grid>
       </Grid>

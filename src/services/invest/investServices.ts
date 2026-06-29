@@ -12,14 +12,48 @@ export enum AssetType {
 }
 
 export type YearlyRoi = {
-  fees_taxes: number;
-  total_inflow: number;
-  total_outflow: number;
+  beginning_value: number;
+  contributions: number;
   ending_value: number;
+  fees_taxes: number;
   roi_amount: number;
   roi_value: number;
   roi_percentage: number;
+  return_metrics: PeriodReturnMetrics;
+  total_inflow: number;
   total_net_flows: number;
+  total_outflow: number;
+  value_total_amount: number;
+  withdrawals: number;
+};
+
+export type ReturnMetricStatus = 'ok' | 'insufficient_data' | 'no_solution';
+
+export type PeriodReturnMetrics = {
+  absolute_return_value: number;
+  cash_flows: {
+    contributions: number;
+    withdrawals: number;
+    net: number;
+    external_income: number;
+    fees_and_costs: number;
+  };
+  simple_roi: {
+    percentage: number | null;
+    denominator: number | null;
+    status: ReturnMetricStatus;
+  };
+  portfolio_return: {
+    cumulative_percentage: number | null;
+    annualized_percentage: number | null;
+    method: 'linked_monthly_modified_dietz';
+    status: ReturnMetricStatus;
+  };
+  personal_return: {
+    annualized_percentage: number | null;
+    method: 'xirr';
+    status: ReturnMetricStatus;
+  };
 };
 
 export type MonthlySnapshot = {
@@ -47,6 +81,10 @@ export type InvestAsset = {
   name: string;
   price_per_unit: string;
   relative_roi_percentage: number | string;
+  return_metrics?: {
+    current_year: PeriodReturnMetrics;
+    global: PeriodReturnMetrics;
+  };
   ticker: string;
   type: AssetType;
   units: number;
@@ -68,6 +106,11 @@ export type GetInvestStatsResponse = {
   global_roi_percentage: number;
   global_roi_value: number;
   monthly_snapshots: MonthlySnapshot[];
+  return_metrics: {
+    by_year: { [year: string]: PeriodReturnMetrics };
+    current_year: PeriodReturnMetrics;
+    global: PeriodReturnMetrics;
+  };
   top_performing_assets: InvestAsset[];
   total_current_value: number;
   total_currently_invested_value: number;
@@ -275,6 +318,7 @@ export type AnnualInvestmentReport = {
     ending_value: number;
     fees: number;
     realized_gain_loss: number;
+    return_metrics: PeriodReturnMetrics;
     total_invested: number;
     total_withdrawn: number;
   };
