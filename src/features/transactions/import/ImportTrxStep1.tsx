@@ -51,6 +51,7 @@ import {
   convertStringToFloat,
 } from '../../../utils/textUtils.ts';
 import { IdLabelPair } from '../AddEditTransactionDialog.tsx';
+import { parseClipboardText } from './clipboardParser.ts';
 
 const IMPORT_TRX_FIELD_HEADER_VARIATIONS = {
   DATE: [
@@ -186,7 +187,7 @@ const ImportTrxStep1 = (props: Props) => {
   const [selectedAccount, setSelectedAccount] = useState<IdLabelPair | null>(
     null,
   );
-  const [rows, setRows] = useState<string[]>([]);
+  const [rows, setRows] = useState<string[][]>([]);
   const [columnMappings, setColumnMappings] = useState<
     Record<string, FIELD_MAPPING>
   >({});
@@ -265,7 +266,7 @@ const ImportTrxStep1 = (props: Props) => {
 
     const colIndex = parseInt(dateColumnKey.split('-')[1]);
     const dateStrings = rows
-      .map((row) => row.split('\t')[colIndex]?.trim())
+      .map((row) => row[colIndex]?.trim())
       .filter((s): s is string => !!s && s.length > 0);
 
     if (dateStrings.length === 0) {
@@ -293,7 +294,7 @@ const ImportTrxStep1 = (props: Props) => {
     const colIndex = parseInt(dateColumnKey.split('-')[1]);
     return (
       rows
-        .map((row) => row.split('\t')[colIndex]?.trim())
+        .map((row) => row[colIndex]?.trim())
         .find((s) => !!s && s.length > 0) || null
     );
   }, [columnMappings, rows]);
@@ -320,13 +321,13 @@ const ImportTrxStep1 = (props: Props) => {
       const column = Object.entries(columnMappings)
         .find(([_, value]) => value === field)?.[0]
         ?.split('-')[1];
-      if (column) return parseInt(column);
+      if (column !== undefined) return parseInt(column);
       return null;
     };
 
     const trxs: ExportedTransactionItem[] = [];
     rows.forEach((row) => {
-      const columns = row.split('\t');
+      const columns = row;
       const date = columns[getCol(FIELD_MAPPING.DATE) ?? -1];
       const description = columns[getCol(FIELD_MAPPING.DESCRIPTION) ?? -1];
 
@@ -337,17 +338,21 @@ const ImportTrxStep1 = (props: Props) => {
       const typeColumn = getCol(FIELD_MAPPING.TYPE);
       let amount: number | undefined;
       let type: TransactionType | undefined;
-      if (amountColumn && columns[amountColumn] && !typeColumn) {
-        amount = convertStringToFloat(columns[amountColumn].replace(/ /g, ''));
+      if (
+        amountColumn !== null &&
+        columns[amountColumn] &&
+        typeColumn === null
+      ) {
+        amount = convertStringToFloat(columns[amountColumn]);
         type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
-      } else if (creditColumn && !typeColumn) {
+      } else if (creditColumn !== null && typeColumn === null) {
         amount = convertStringToFloat(columns[creditColumn] ?? '');
         type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
       }
-      if (!amount && debitColumn && !typeColumn) {
+      if (!amount && debitColumn !== null && typeColumn === null) {
         amount = convertStringToFloat(columns[debitColumn] ?? '');
         type = amount > 0 ? TransactionType.Expense : TransactionType.Income;
-      } else if (!amount && amountColumn && typeColumn) {
+      } else if (!amount && amountColumn !== null && typeColumn !== null) {
         amount = convertStringToFloat(columns[amountColumn] ?? '');
         switch (columns[typeColumn]) {
           case FIELD_MAPPING.DEBIT:
@@ -417,10 +422,8 @@ const ImportTrxStep1 = (props: Props) => {
   };
 
   const parseClipboardData = (data: string) => {
-    const allRows = data.split('\n');
-
-    // Filter out empty/blank rows
-    const nonEmptyRows = allRows.filter((row) => row.trim().length > 0);
+    const parsedClipboard = parseClipboardText(data);
+    const nonEmptyRows = parsedClipboard.rows;
 
     if (nonEmptyRows.length === 0) {
       setRows([]);
@@ -428,7 +431,7 @@ const ImportTrxStep1 = (props: Props) => {
     }
 
     // Try to detect headers from first row
-    const firstRowIsHeader = tryToPrefillHeaders(nonEmptyRows[0].split('\t'));
+    const firstRowIsHeader = tryToPrefillHeaders(nonEmptyRows[0]);
 
     // If first row matched as headers, exclude it from data rows
     const dataRows = firstRowIsHeader ? nonEmptyRows.slice(1) : nonEmptyRows;
@@ -441,10 +444,10 @@ const ImportTrxStep1 = (props: Props) => {
     [key: string]: string; // This allows for additional string properties
   }
 
-  const buildRowsForTable = (rows: string[]): GridValidRowModel[] => {
+  const buildRowsForTable = (rows: string[][]): GridValidRowModel[] => {
     return rows.map(
       (row, j) =>
-        row.split('\t').reduce((acc: GridValidRowModel, row, i) => {
+        row.reduce((acc: GridValidRowModel, row, i) => {
           acc.id = j + '+' + i;
           acc[`${i}`] = row; // Cast i to string for indexing
           return acc;
@@ -452,10 +455,10 @@ const ImportTrxStep1 = (props: Props) => {
     );
   };
 
-  const buildColumnsForTable = (rows: string[]): GridColDef[] => {
-    const nColumns = rows[0]?.split('\t').length || 0;
+  const buildColumnsForTable = (rows: string[][]): GridColDef[] => {
+    const nColumns = Math.max(...rows.map((row) => row.length), 0);
     if (nColumns < 1) return [];
-    return rows[0].split('\t').map((_row, i) => ({
+    return Array.from({ length: nColumns }, (_row, i) => ({
       field: `column-${i}`,
       renderHeader: (_params) => {
         return (
@@ -497,7 +500,7 @@ const ImportTrxStep1 = (props: Props) => {
     const column = Object.entries(columnMappings)
       .find(([_, value]) => value === field)?.[0]
       ?.split('-')[1];
-    if (column) return parseInt(column);
+    if (column !== undefined) return parseInt(column);
     return null;
   };
 
@@ -505,7 +508,7 @@ const ImportTrxStep1 = (props: Props) => {
     const trxs: ExportedTransactionItem[] = [];
     const dateFormat = detectedDateFormat || undefined;
     rows.forEach((row) => {
-      const columns = row.split('\t');
+      const columns = row;
       const amountAndTypeInferred = inferTrxAmountAndType(columns);
       const date = columns[getColumnNumberForMapping(FIELD_MAPPING.DATE) ?? -1];
       const description =
@@ -539,21 +542,21 @@ const ImportTrxStep1 = (props: Props) => {
     const debitColumn = getColumnNumberForMapping(FIELD_MAPPING.DEBIT);
     const typeColumn = getColumnNumberForMapping(FIELD_MAPPING.TYPE);
 
-    let amount;
-    let type;
+    let amount: number | undefined;
+    let type: TransactionType | undefined;
 
-    if (amountColumn && row[amountColumn] && amountColumn && !typeColumn) {
-      amount = convertStringToFloat(row[amountColumn].replace(/ /g, ''));
+    if (amountColumn !== null && row[amountColumn] && typeColumn === null) {
+      amount = convertStringToFloat(row[amountColumn]);
       type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
-    } else if (creditColumn && !typeColumn) {
+    } else if (creditColumn !== null && typeColumn === null) {
       amount = convertStringToFloat(row[creditColumn] ?? '');
       type = amount > 0 ? TransactionType.Income : TransactionType.Expense;
     }
 
-    if (!amount && debitColumn && !typeColumn) {
+    if (!amount && debitColumn !== null && typeColumn === null) {
       amount = convertStringToFloat(row[debitColumn] ?? '');
       type = amount > 0 ? TransactionType.Expense : TransactionType.Income;
-    } else if (!amount && amountColumn && typeColumn) {
+    } else if (!amount && amountColumn !== null && typeColumn !== null) {
       amount = convertStringToFloat(row[amountColumn] ?? '');
       switch (row[typeColumn]) {
         case FIELD_MAPPING.DEBIT:

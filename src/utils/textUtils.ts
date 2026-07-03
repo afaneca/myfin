@@ -42,12 +42,26 @@ export const checkIfFieldsAreFilled = (
 };
 
 export const convertStringToFloat = (str: string): number => {
-  if (str.includes(',')) {
-    // It's a PT-pt currency format
-    return parseFloat(str.replace('.', '').replace(',', '.'));
-  } else {
-    return parseFloat(str);
+  const sanitized = str
+    .trim()
+    .replace(/\s/g, '')
+    .replace(/[^\d,.\-+]/g, '');
+  const lastCommaIndex = sanitized.lastIndexOf(',');
+  const lastDotIndex = sanitized.lastIndexOf('.');
+
+  if (lastCommaIndex > -1 && lastDotIndex > -1) {
+    if (lastCommaIndex > lastDotIndex) {
+      return parseFloat(sanitized.replace(/\./g, '').replace(',', '.'));
+    }
+
+    return parseFloat(sanitized.replace(/,/g, ''));
   }
+
+  if (lastCommaIndex > -1) {
+    return parseFloat(sanitized.replace(/\./g, '').replace(',', '.'));
+  }
+
+  return parseFloat(sanitized.replace(/,/g, ''));
 };
 
 export default {
