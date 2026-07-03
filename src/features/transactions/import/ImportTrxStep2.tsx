@@ -235,22 +235,28 @@ CategoryCell.displayName = 'CategoryCell';
 
 const CheckboxCell = memo(
   ({
-     id,
-     checked,
-     onChange,
-   }: {
+    id,
+    checked,
+    disabled = false,
+    onChange,
+  }: {
     id: number;
     checked: boolean;
+    disabled?: boolean;
     onChange: (id: number, checked: boolean) => void;
   }) => (
     <Checkbox
       checked={checked}
+      disabled={disabled}
       onChange={(_, checked) => onChange(id, checked)}
       inputProps={{ 'aria-label': 'controlled' }}
     />
   ),
 );
 CheckboxCell.displayName = 'CheckboxCell';
+
+const canMarkAsEssential = (trx: Pick<ImportedTrx, 'accountFrom' | 'accountTo'>) =>
+  !!trx.accountFrom && !trx.accountTo;
 
 const ImportTrxStep2 = (props: Props) => {
   const { t } = useTranslation();
@@ -353,7 +359,16 @@ const ImportTrxStep2 = (props: Props) => {
       accountTo: accounts.find(
         (account) => account.id == item.selectedAccountToID,
       ),
-      essential: item.isEssential == true,
+      essential:
+        item.isEssential == true &&
+        canMarkAsEssential({
+          accountFrom: accounts.find(
+            (account) => account.id == item.selectedAccountFromID,
+          ),
+          accountTo: accounts.find(
+            (account) => account.id == item.selectedAccountToID,
+          ),
+        }),
     }));
 
     setTransactions(trx);
@@ -415,17 +430,49 @@ const ImportTrxStep2 = (props: Props) => {
     updateTransactionRef.current(id, { entity: entity ?? undefined });
   }, []);
 
-  const handleAccountFromChange = useCallback((id: number, accountFrom: IdLabelPair | null) => {
-    updateTransactionRef.current(id, { accountFrom: accountFrom ?? undefined });
-  }, []);
+  const handleAccountFromChange = useCallback(
+    (id: number, accountFrom: IdLabelPair | null) => {
+      const currentTransaction = transactions.find((trx) => trx.tempId === id);
+      const nextAccountFrom = accountFrom ?? undefined;
+      const nextAccountTo = currentTransaction?.accountTo;
+      updateTransactionRef.current(id, {
+        accountFrom: nextAccountFrom,
+        ...(!canMarkAsEssential({
+          accountFrom: nextAccountFrom,
+          accountTo: nextAccountTo,
+        })
+          ? { essential: false }
+          : {}),
+      });
+    },
+    [transactions],
+  );
 
-  const handleAccountToChange = useCallback((id: number, accountTo: IdLabelPair | null) => {
-    updateTransactionRef.current(id, { accountTo: accountTo ?? undefined });
-  }, []);
+  const handleAccountToChange = useCallback(
+    (id: number, accountTo: IdLabelPair | null) => {
+      const currentTransaction = transactions.find((trx) => trx.tempId === id);
+      const nextAccountFrom = currentTransaction?.accountFrom;
+      const nextAccountTo = accountTo ?? undefined;
+      updateTransactionRef.current(id, {
+        accountTo: nextAccountTo,
+        ...(!canMarkAsEssential({
+          accountFrom: nextAccountFrom,
+          accountTo: nextAccountTo,
+        })
+          ? { essential: false }
+          : {}),
+      });
+    },
+    [transactions],
+  );
 
   const handleEssentialChange = useCallback((id: number, essential: boolean) => {
-    updateTransactionRef.current(id, { essential });
-  }, []);
+    const currentTransaction = transactions.find((trx) => trx.tempId === id);
+    updateTransactionRef.current(id, {
+      essential:
+        essential && !!currentTransaction && canMarkAsEssential(currentTransaction),
+    });
+  }, [transactions]);
 
   const rows = useMemo(
     () =>
@@ -444,7 +491,10 @@ const ImportTrxStep2 = (props: Props) => {
           from: item.accountFrom,
           to: item.accountTo,
         },
-        essential: item.essential,
+        essential: {
+          checked: item.essential && canMarkAsEssential(item),
+          disabled: !canMarkAsEssential(item),
+        },
       })),
     [transactions],
   );
@@ -553,7 +603,8 @@ const ImportTrxStep2 = (props: Props) => {
         renderCell: (params) => (
           <CheckboxCell
             id={params.id as number}
-            checked={params.value}
+            checked={params.value.checked}
+            disabled={params.value.disabled}
             onChange={handleEssentialChange}
           />
         ),
@@ -575,7 +626,7 @@ const ImportTrxStep2 = (props: Props) => {
         amount: trx.value,
         date_timestamp: trx.date,
         description: trx.description,
-        is_essential: trx.essential,
+        is_essential: trx.essential && canMarkAsEssential(trx),
         type:
           inferTrxTypeByAttributes(trx.accountFrom?.id, trx.accountTo?.id) ||
           TransactionType.Transfer,
