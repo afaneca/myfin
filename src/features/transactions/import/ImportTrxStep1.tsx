@@ -30,7 +30,7 @@ import {
   AlertSeverity,
   useSnackbar,
 } from '../../../providers/SnackbarProvider.tsx';
-import { Account } from '../../../services/auth/authServices.ts';
+import { Account, AccountStatus } from '../../../services/auth/authServices.ts';
 import {
   useImportTransactionsStep0,
   useImportTransactionsStep1,
@@ -171,6 +171,7 @@ export type Props = {
 
 export type ImportTrxStep1Result = ImportTransactionsStep1Response & {
   selectedAccountId: bigint;
+  activeAccounts: Account[];
 };
 
 const ImportTrxStep1 = (props: Props) => {
@@ -241,6 +242,9 @@ const ImportTrxStep1 = (props: Props) => {
       props.onNext({
         ...importTrxStep1Request.data,
         selectedAccountId: selectedAccount?.id || -1n,
+        activeAccounts: accounts.filter(
+          (acc) => acc.status === AccountStatus.Active,
+        ),
       });
     }
   }, [importTrxStep1Request.data]);
@@ -396,10 +400,12 @@ const ImportTrxStep1 = (props: Props) => {
   }, [detectedDateFormat, pendingContinue]);
 
   const transformUserAccountsIntoIdLabelPair = (userAccounts: Account[]) => {
-    return userAccounts.map((acc) => ({
-      id: acc.account_id,
-      label: acc.name,
-    }));
+    return userAccounts
+      .filter((acc) => acc.status === AccountStatus.Active)
+      .map((acc) => ({
+        id: acc.account_id,
+        label: acc.name,
+      }));
   };
 
   if (importTrxStep0Request.isPending || !importTrxStep0Request.data) {

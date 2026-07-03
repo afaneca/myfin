@@ -292,16 +292,16 @@ const ImportTrxStep2 = (props: Props) => {
   );
   const accounts: IdLabelPair[] | undefined = useMemo(
     () =>
-      props.data.accounts.map((account) => ({
+      props.data.activeAccounts.map((account) => ({
         id: account.account_id,
         label: account.name,
       })),
-    [props.data.categories],
+    [props.data.activeAccounts],
   );
 
   const newAccountBalance: number = useMemo(() => {
     const initialBalance =
-      props.data.accounts.find(
+      props.data.activeAccounts.find(
         (acc) => acc.account_id == props.data.selectedAccountId,
       )?.balance || 0;
     return filteredTransactions.reduce((acc, row) => {
@@ -311,7 +311,11 @@ const ImportTrxStep2 = (props: Props) => {
       }
       return acc + amount;
     }, initialBalance);
-  }, [props.data.selectedAccountId, props.data.accounts, filteredTransactions]);
+  }, [
+    props.data.selectedAccountId,
+    props.data.activeAccounts,
+    filteredTransactions,
+  ]);
 
   useEffect(() => {
     if (importTrxStep2Request.isPending) {

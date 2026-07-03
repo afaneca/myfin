@@ -45,7 +45,7 @@ import {
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import { useUserData } from '../../providers/UserProvider.tsx';
-import { Account } from '../../services/auth/authServices.ts';
+import { Account, AccountStatus } from '../../services/auth/authServices.ts';
 import {
   useAddTransactionStep0,
   useAddTransactionStep1,
@@ -258,23 +258,31 @@ const AddEditTransactionDialog = (props: Props) => {
     }));
   }, [transactionType, accountFromValue, accountToValue]);
 
-  const transformUserAccountsIntoIdLabelPair = (userAccounts: Account[]) => {
-    return userAccounts.map((acc) => ({
-      id: acc.account_id,
-      label: acc.name,
-    }));
+  const transformUserAccountsIntoIdLabelPair = (
+    userAccounts: Account[],
+    includeInactive = false,
+  ) => {
+    return userAccounts
+      .filter((acc) => includeInactive || acc.status === AccountStatus.Active)
+      .map((acc) => ({
+        id: acc.account_id,
+        label: acc.name,
+      }));
   };
 
   useEffect(() => {
     if (userAccounts) {
-      const accounts = transformUserAccountsIntoIdLabelPair(userAccounts);
+      const accounts = transformUserAccountsIntoIdLabelPair(
+        userAccounts,
+        isEditForm,
+      );
       setAccountOptionsValue(accounts);
       setSplitTransactionFormState((prevState) => ({
         ...prevState,
         accountOptions: accounts,
       }));
     }
-  }, [userAccounts]);
+  }, [userAccounts, isEditForm]);
 
   useEffect(() => {
     if (!addTransactionStep0Request.isSuccess) return;
