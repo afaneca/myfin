@@ -258,6 +258,11 @@ CheckboxCell.displayName = 'CheckboxCell';
 const canMarkAsEssential = (trx: Pick<ImportedTrx, 'accountFrom' | 'accountTo'>) =>
   !!trx.accountFrom && !trx.accountTo;
 
+const toFiniteNumber = (value: unknown): number => {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : 0;
+};
+
 const ImportTrxStep2 = (props: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -300,12 +305,13 @@ const ImportTrxStep2 = (props: Props) => {
   );
 
   const newAccountBalance: number = useMemo(() => {
-    const initialBalance =
+    const initialBalance = toFiniteNumber(
       props.data.activeAccounts.find(
         (acc) => acc.account_id == props.data.selectedAccountId,
-      )?.balance || 0;
+      )?.balance,
+    );
     return filteredTransactions.reduce((acc, row) => {
-      let amount = row.value;
+      let amount = toFiniteNumber(row.value);
       if (row.accountFrom?.id == props.data.selectedAccountId) {
         amount *= -1;
       }
@@ -352,7 +358,7 @@ const ImportTrxStep2 = (props: Props) => {
       selected: true,
       date: item.date || 0,
       description: item.description || '',
-      value: item.amount || 0,
+      value: toFiniteNumber(item.amount),
       entity: entities.find((entity) => entity.id == item.selectedEntityID),
       category: categories.find(
         (category) => category.id == item.selectedCategoryID,
