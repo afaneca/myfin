@@ -54,9 +54,12 @@ import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { ROUTE_IMPORT_TRX } from '../../providers/RoutesProvider.tsx';
 import { CategoryIcon } from '../../services/category/categoryIcons.tsx';
+import AccountIconBadge from '../../services/account/AccountIconBadge.tsx';
+import { useUserData } from '../../providers/UserProvider.tsx';
 
 const Transactions = () => {
   const theme = useTheme();
+  const { userAccounts } = useUserData();
   const loader = useLoading();
   const snackbar = useSnackbar();
   const { t } = useTranslation();
@@ -190,14 +193,32 @@ const Transactions = () => {
             <ArrowBack
               fontSize="small"
               color={params.value.acc_from_name ? 'primary' : 'secondary'}
-            />{' '}
+            />
+            {params.value.acc_from ? (
+              <AccountIconBadge
+                accountType={params.value.acc_from.type}
+                colorGradient={params.value.acc_from.color_gradient}
+                size="small"
+              />
+            ) : (
+              <AccountIconBadge external size="small" />
+            )}{' '}
             {params.value.acc_from_name ?? t('common.externalAccount')}
           </Stack>
           <Stack direction="row" alignItems="center" gap={0.5}>
             <ArrowForward
               fontSize="small"
               color={params.value.acc_to_name ? 'secondary' : 'primary'}
-            />{' '}
+            />
+            {params.value.acc_to ? (
+              <AccountIconBadge
+                accountType={params.value.acc_to.type}
+                colorGradient={params.value.acc_to.color_gradient}
+                size="small"
+              />
+            ) : (
+              <AccountIconBadge external size="small" />
+            )}{' '}
             {params.value.acc_to_name ?? t('common.externalAccount')}
           </Stack>
         </Stack>
@@ -350,6 +371,12 @@ const Transactions = () => {
         flow: {
           acc_from_name: result.account_from_name,
           acc_to_name: result.account_to_name,
+          acc_from: userAccounts?.find(
+            (account) => account.account_id === result.accounts_account_from_id,
+          ),
+          acc_to: userAccounts?.find(
+            (account) => account.account_id === result.accounts_account_to_id,
+          ),
         },
         description: {
           description: result.description,

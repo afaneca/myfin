@@ -23,16 +23,15 @@ import { GridColDef } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import { AddCircleOutline, Delete, Edit, Search } from '@mui/icons-material';
 import Stack from '@mui/material/Stack';
-import { cssGradients } from '../../utils/gradientUtils.ts';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
-import { ColorGradient } from '../../consts';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import AddEditAccountDialog from './AddEditAccountDialog.tsx';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import { debounce } from 'lodash';
 import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
+import AccountIconBadge from '../../services/account/AccountIconBadge.tsx';
 import Typography from '@mui/material/Typography';
 import { useFormatStringAsCurrency } from '../../utils/textHooks.ts';
 
@@ -139,7 +138,10 @@ const Accounts = () => {
 
   const rows = filteredAccounts.map((account: Account) => ({
     id: account.account_id,
-    color: account.color_gradient,
+    color: {
+      accountType: account.type,
+      colorGradient: account.color_gradient,
+    },
     name: { name: account.name, status: account.status, type: account.type },
     balance: account.balance,
     status: account.status,
@@ -154,15 +156,10 @@ const Accounts = () => {
       editable: false,
       sortable: false,
       renderCell: (params) => (
-        <div
-          style={{
-            margin: 10,
-            background: cssGradients[params.value as ColorGradient] ?? '',
-            width: 30,
-            height: 30,
-            borderRadius: 20,
-          }}
-        ></div>
+        <AccountIconBadge
+          accountType={params.value.accountType}
+          colorGradient={params.value.colorGradient}
+        />
       ),
     },
     {

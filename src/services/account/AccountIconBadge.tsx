@@ -1,22 +1,30 @@
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
+import { Public } from '@mui/icons-material';
 import { ColorGradient } from '../../consts';
-import { CategoryIcon } from './categoryIcons.tsx';
 import { cssGradients } from '../../utils/gradientUtils.ts';
+import { AccountType } from '../auth/authServices.ts';
+import { AccountIcon } from './accountIcons.tsx';
 
 type Props = {
-  iconKey?: string | null;
+  accountType?: AccountType | null;
   colorGradient?: string | null;
   size?: 'small' | 'compact' | 'medium';
+  external?: boolean;
 };
 
-const CategoryIconBadge = ({
-  iconKey,
+const AccountIconBadge = ({
+  accountType,
   colorGradient,
   size = 'medium',
+  external = false,
 }: Props) => {
   const theme = useTheme();
-  const colorBackground = cssGradients[colorGradient as ColorGradient] ?? '';
+  const colorBackground =
+    cssGradients[
+      (colorGradient ??
+        (external ? ColorGradient.DarkGray : '')) as ColorGradient
+    ] ?? '';
   const isSmall = size === 'small';
   const isCompact = size === 'compact';
   const boxSize = isSmall ? 22 : isCompact ? 26 : 30;
@@ -44,15 +52,26 @@ const CategoryIconBadge = ({
         flexShrink: 0,
       }}
     >
-      <CategoryIcon
-        iconKey={iconKey}
-        sx={{
-          color: theme.palette.text.primary,
-          fontSize: iconSize,
-          zIndex: 1,
-          mb: iconMarginBottom,
-        }}
-      />
+      {external ? (
+        <Public
+          sx={{
+            color: theme.palette.text.primary,
+            fontSize: iconSize,
+            zIndex: 1,
+            mb: iconMarginBottom,
+          }}
+        />
+      ) : (
+        <AccountIcon
+          accountType={accountType}
+          sx={{
+            color: theme.palette.text.primary,
+            fontSize: iconSize,
+            zIndex: 1,
+            mb: iconMarginBottom,
+          }}
+        />
+      )}
       <Box
         aria-hidden="true"
         sx={{
@@ -69,4 +88,4 @@ const CategoryIconBadge = ({
   );
 };
 
-export default CategoryIconBadge;
+export default AccountIconBadge;
