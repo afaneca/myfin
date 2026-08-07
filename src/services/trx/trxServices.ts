@@ -18,6 +18,7 @@ export type Transaction = {
   amount: number;
   categories_category_id?: bigint;
   category_name?: string;
+  category_icon_key?: string;
   date_timestamp?: number;
   description?: string;
   entity_id?: bigint;

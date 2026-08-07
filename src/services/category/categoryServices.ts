@@ -1,4 +1,5 @@
 import { axios } from '../../data/axios.ts';
+import type { CategoryIconKey } from './categoryIcons.ts';
 
 export enum CategoryStatus {
   Active = 'Ativa',
@@ -8,6 +9,7 @@ export enum CategoryStatus {
 export type Category = {
   category_id: bigint;
   color_gradient: string;
+  icon_key: string;
   description?: string;
   exclude_from_budgets: 0 | 1;
   name: string;
@@ -23,6 +25,7 @@ const getCategories = () => {
 export type AddCategoryRequest = {
   name: string;
   description?: string;
+  icon_key: CategoryIconKey;
   color_gradient: string;
   status: CategoryStatus;
   exclude_from_budgets: boolean;
@@ -35,6 +38,7 @@ const addCategory = (request: AddCategoryRequest) => {
 export type EditCategoryRequest = {
   category_id: bigint;
   new_name: string;
+  new_icon_key: CategoryIconKey;
   new_description?: string;
   new_color_gradient: string;
   new_status: CategoryStatus;
