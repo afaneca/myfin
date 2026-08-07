@@ -45,7 +45,11 @@ import {
   useSnackbar,
 } from '../../providers/SnackbarProvider.tsx';
 import { useUserData } from '../../providers/UserProvider.tsx';
-import { Account, AccountStatus } from '../../services/auth/authServices.ts';
+import {
+  Account,
+  AccountStatus,
+  AccountType,
+} from '../../services/auth/authServices.ts';
 import {
   useAddTransactionStep0,
   useAddTransactionStep1,
@@ -57,6 +61,8 @@ import {
   TransactionType,
 } from '../../services/trx/trxServices.ts';
 import { convertDateStringToUnixTimestamp } from '../../utils/dateUtils.ts';
+import CategoryIconBadge from '../../services/category/CategoryIconBadge.tsx';
+import AccountIconBadge from '../../services/account/AccountIconBadge.tsx';
 import {
   inferTrxType,
   inferTrxTypeByAttributes,
@@ -73,7 +79,54 @@ interface Props {
 export type IdLabelPair = {
   id: bigint;
   label: string;
+  iconKey?: string;
+  colorGradient?: string;
+  accountType?: AccountType;
 };
+
+const renderCategoryOption = (
+  props: React.HTMLAttributes<HTMLLIElement>,
+  option: IdLabelPair,
+) => (
+  <li
+    {...props}
+    style={{
+      ...props.style,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+    }}
+  >
+    <CategoryIconBadge
+      iconKey={option.iconKey}
+      colorGradient={option.colorGradient}
+      size="compact"
+    />
+    <span>{option.label}</span>
+  </li>
+);
+
+const renderAccountOption = (
+  props: React.HTMLAttributes<HTMLLIElement>,
+  option: IdLabelPair,
+) => (
+  <li
+    {...props}
+    style={{
+      ...props.style,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+    }}
+  >
+    <AccountIconBadge
+      accountType={option.accountType}
+      colorGradient={option.colorGradient}
+      size="compact"
+    />
+    <span>{option.label}</span>
+  </li>
+);
 
 const AddEditTransactionDialog = (props: Props) => {
   const isEditForm = props.transaction !== null;
@@ -267,6 +320,8 @@ const AddEditTransactionDialog = (props: Props) => {
       .map((acc) => ({
         id: acc.account_id,
         label: acc.name,
+        accountType: acc.type,
+        colorGradient: acc.color_gradient,
       }));
   };
 
@@ -277,6 +332,14 @@ const AddEditTransactionDialog = (props: Props) => {
         isEditForm,
       );
       setAccountOptionsValue(accounts);
+      setAccountFromValue((current) => {
+        if (!current) return current;
+        return accounts.find((account) => account.id === current.id) ?? current;
+      });
+      setAccountToValue((current) => {
+        if (!current) return current;
+        return accounts.find((account) => account.id === current.id) ?? current;
+      });
       setSplitTransactionFormState((prevState) => ({
         ...prevState,
         accountOptions: accounts,
@@ -289,10 +352,18 @@ const AddEditTransactionDialog = (props: Props) => {
     const categories = addTransactionStep0Request.data.categories.map(
       (category) => ({
         id: category.category_id || 0n,
+        iconKey: category.icon_key,
+        colorGradient: category.color_gradient,
         label: category.name || '',
       }),
     );
     setCategoryOptionsValue(categories);
+    setCategoryValue((current) => {
+      if (!current) return current;
+      return (
+        categories.find((category) => category.id === current.id) ?? current
+      );
+    });
     setSplitTransactionFormState((prevState) => ({
       ...prevState,
       categoryOptions: categories,
@@ -735,6 +806,7 @@ const AddEditTransactionDialog = (props: Props) => {
                   setAccountFromValue(value as IdLabelPair);
                 }}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderOption={renderAccountOption}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -746,7 +818,15 @@ const AddEditTransactionDialog = (props: Props) => {
                         ...params.InputProps,
                         startAdornment: (
                           <InputAdornment position="start">
-                            <AccountCircle />
+                            {accountFromValue?.accountType ? (
+                              <AccountIconBadge
+                                accountType={accountFromValue.accountType}
+                                colorGradient={accountFromValue.colorGradient}
+                                size="compact"
+                              />
+                            ) : (
+                              <AccountCircle />
+                            )}
                           </InputAdornment>
                         ),
                       },
@@ -770,6 +850,7 @@ const AddEditTransactionDialog = (props: Props) => {
                   setAccountToValue(value as IdLabelPair);
                 }}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderOption={renderAccountOption}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -781,7 +862,15 @@ const AddEditTransactionDialog = (props: Props) => {
                         ...params.InputProps,
                         startAdornment: (
                           <InputAdornment position="start">
-                            <AccountCircle />
+                            {accountToValue?.accountType ? (
+                              <AccountIconBadge
+                                accountType={accountToValue.accountType}
+                                colorGradient={accountToValue.colorGradient}
+                                size="compact"
+                              />
+                            ) : (
+                              <AccountCircle />
+                            )}
                           </InputAdornment>
                         ),
                       },
@@ -804,6 +893,7 @@ const AddEditTransactionDialog = (props: Props) => {
                   setCategoryValue(value as IdLabelPair);
                 }}
                 options={categoryOptionsValue}
+                renderOption={renderCategoryOption}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField
@@ -815,7 +905,15 @@ const AddEditTransactionDialog = (props: Props) => {
                         ...params.InputProps,
                         startAdornment: (
                           <InputAdornment position="start">
-                            <FolderShared />
+                            {categoryValue?.iconKey ? (
+                              <CategoryIconBadge
+                                iconKey={categoryValue.iconKey}
+                                colorGradient={categoryValue.colorGradient}
+                                size="compact"
+                              />
+                            ) : (
+                              <FolderShared />
+                            )}
                           </InputAdornment>
                         ),
                       },
@@ -1193,6 +1291,7 @@ const SplitTransactionForm = ({
                 handleAccountFromChange(value as IdLabelPair);
               }}
               isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderOption={renderAccountOption}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -1205,7 +1304,15 @@ const SplitTransactionForm = ({
                       ...params.InputProps,
                       startAdornment: (
                         <InputAdornment position="start">
-                          <AccountCircle />
+                          {state?.accountFrom?.accountType ? (
+                            <AccountIconBadge
+                              accountType={state.accountFrom.accountType}
+                              colorGradient={state.accountFrom.colorGradient}
+                              size="compact"
+                            />
+                          ) : (
+                            <AccountCircle />
+                          )}
                         </InputAdornment>
                       ),
                     },
@@ -1229,6 +1336,7 @@ const SplitTransactionForm = ({
                 handleAccountToChange(value as IdLabelPair);
               }}
               isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderOption={renderAccountOption}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -1241,7 +1349,15 @@ const SplitTransactionForm = ({
                       ...params.InputProps,
                       startAdornment: (
                         <InputAdornment position="start">
-                          <AccountCircle />
+                          {state?.accountTo?.accountType ? (
+                            <AccountIconBadge
+                              accountType={state.accountTo.accountType}
+                              colorGradient={state.accountTo.colorGradient}
+                              size="compact"
+                            />
+                          ) : (
+                            <AccountCircle />
+                          )}
                         </InputAdornment>
                       ),
                     },
@@ -1264,6 +1380,7 @@ const SplitTransactionForm = ({
                 handleCategoryChange(value as IdLabelPair);
               }}
               options={state?.categoryOptions ?? []}
+              renderOption={renderCategoryOption}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
                 <TextField
@@ -1275,7 +1392,15 @@ const SplitTransactionForm = ({
                       ...params.InputProps,
                       startAdornment: (
                         <InputAdornment position="start">
-                          <FolderShared />
+                          {state?.category?.iconKey ? (
+                            <CategoryIconBadge
+                              iconKey={state.category.iconKey}
+                              colorGradient={state.category.colorGradient}
+                              size="compact"
+                            />
+                          ) : (
+                            <FolderShared />
+                          )}
                         </InputAdornment>
                       ),
                     },

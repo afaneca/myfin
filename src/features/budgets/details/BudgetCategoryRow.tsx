@@ -17,6 +17,7 @@ import {
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
+import CategoryIconBadge from '../../../services/category/CategoryIconBadge.tsx';
 import { ColorGradient } from '../../../consts';
 import { getMonthsFullName } from '../../../utils/dateUtils.ts';
 import Container from '@mui/material/Container';
@@ -57,7 +58,8 @@ const TooltipContent = memo(
             </strong>
           </Typography>
           {category.exclude_from_budgets === 1 && (
-            <Chip size="small"
+            <Chip
+              size="small"
               label={t('categories.excludedFromBudgets')}
               sx={{ mt: 1, display: 'flex' }}
             />
@@ -71,7 +73,8 @@ const TooltipContent = memo(
             </Typography>
           </Grid>
           <Grid sx={{ textAlign: 'right' }} size={6}>
-            <Chip size="small"
+            <Chip
+              size="small"
               label={formatNumberAsCurrency.invoke(
                 isDebit
                   ? category.avg_same_month_previous_year_debit
@@ -87,7 +90,8 @@ const TooltipContent = memo(
             </Typography>
           </Grid>
           <Grid sx={{ textAlign: 'right' }} size={6}>
-            <Chip size="small"
+            <Chip
+              size="small"
               label={formatNumberAsCurrency.invoke(
                 isDebit
                   ? category.avg_previous_month_debit
@@ -103,7 +107,8 @@ const TooltipContent = memo(
             </Typography>
           </Grid>
           <Grid sx={{ textAlign: 'right' }} size={6}>
-            <Chip size="small"
+            <Chip
+              size="small"
               label={formatNumberAsCurrency.invoke(
                 isDebit
                   ? category.avg_12_months_debit
@@ -119,7 +124,8 @@ const TooltipContent = memo(
             </Typography>
           </Grid>
           <Grid sx={{ textAlign: 'right' }} size={6}>
-            <Chip size="small"
+            <Chip
+              size="small"
               label={formatNumberAsCurrency.invoke(
                 isDebit
                   ? category.avg_lifetime_debit
@@ -308,7 +314,17 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
         >
           <Tooltip title={renderCategoryTooltip}>
             <ListItemText
-              primary={category.name}
+              primary={
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <CategoryIconBadge
+                    iconKey={category.icon_key}
+                    colorGradient={category.color_gradient}
+                  />
+                  <Typography component="span">
+                    {category.name}
+                  </Typography>
+                </Stack>
+              }
               sx={{ cursor: 'pointer' }}
               onClick={handleCategoryClick}
             />

@@ -1,12 +1,29 @@
 import { Category, CategoryStatus } from './categoryServices.ts';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
-import { AlertSeverity, useSnackbar } from '../../providers/SnackbarProvider.tsx';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../providers/SnackbarProvider.tsx';
 import { useAddCategory, useEditCategory } from './CategoryHooks.tsx';
 import React, { useEffect, useState } from 'react';
 import { ColorGradient } from '../../consts';
+import {
+  CATEGORY_ICON_OPTIONS,
+  CategoryIcon,
+  DEFAULT_CATEGORY_ICON_KEY,
+} from './categoryIcons.tsx';
+import type { CategoryIconKey } from './categoryIcons.tsx';
 import TextField from '@mui/material/TextField';
-import { Checkbox, MenuItem, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@mui/material';
+import {
+  Checkbox,
+  ListItemIcon,
+  MenuItem,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { cssGradients } from '../../utils/gradientUtils.ts';
 import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
@@ -52,6 +69,9 @@ const AddEditCategoryDialog = (props: Props) => {
   const colorOptions = Object.values(ColorGradient);
   const [colorValue, setColorValue] = useState<string>(
     props.category?.color_gradient || colorOptions[0],
+  );
+  const [iconValue, setIconValue] = useState<CategoryIconKey>(
+    (props.category?.icon_key as CategoryIconKey) || DEFAULT_CATEGORY_ICON_KEY,
   );
   const [statusValue, setStatusValue] = useState<CategoryStatus>(
     props.category?.status || CategoryStatus.Active,
@@ -110,18 +130,107 @@ const AddEditCategoryDialog = (props: Props) => {
       value={selectedColor}
       onChange={(event) => setColorValue(event.target.value)}
       label={t('categories.color')}
+      SelectProps={{
+        renderValue: (value) => (
+          <div
+            style={{
+              margin: '0 auto',
+              background: cssGradients[value as ColorGradient] ?? '',
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+            }}
+          />
+        ),
+        MenuProps: {
+          PaperProps: {
+            sx: {
+              width: 264,
+              maxWidth: 'calc(100vw - 32px)',
+              '& .MuiList-root': {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(36px, 1fr))',
+                gap: 0.5,
+                p: 1,
+              },
+              '& .MuiMenuItem-root': {
+                minHeight: 36,
+                p: 0,
+                borderRadius: 1,
+                justifyContent: 'center',
+              },
+            },
+          },
+        },
+      }}
     >
       {colorOptions.map((color) => (
         <MenuItem key={color} value={color}>
           <div
             style={{
-              margin: '0 auto',
               background: cssGradients[color] ?? '',
-              width: 60,
-              height: 20,
-              borderRadius: 20,
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
             }}
-          ></div>
+          />
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+
+  const IconOptionsSelect = () => (
+    <TextField
+      fullWidth
+      select
+      margin="dense"
+      id="icon-select"
+      value={iconValue}
+      onChange={(event) => setIconValue(event.target.value as CategoryIconKey)}
+      label={t('categories.icon')}
+      SelectProps={{
+        renderValue: (value) => {
+          const option = CATEGORY_ICON_OPTIONS.find(
+            (item) => item.key === value,
+          );
+          return (
+            <Stack direction="row" justifyContent="center">
+              <CategoryIcon iconKey={option?.key} fontSize="small" />
+            </Stack>
+          );
+        },
+        MenuProps: {
+          PaperProps: {
+            sx: {
+              width: 264,
+              maxWidth: 'calc(100vw - 32px)',
+              '& .MuiList-root': {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(36px, 1fr))',
+                gap: 0.5,
+                p: 1,
+              },
+              '& .MuiMenuItem-root': {
+                minHeight: 36,
+                p: 0,
+                borderRadius: 1,
+              },
+            },
+          },
+        },
+      }}
+    >
+      {CATEGORY_ICON_OPTIONS.map((option) => (
+        <MenuItem key={option.key} value={option.key} aria-label={option.label}>
+          <ListItemIcon
+            sx={{ minWidth: 0, justifyContent: 'center', width: '100%' }}
+          >
+            <CategoryIcon
+              iconKey={option.key}
+              fontSize="small"
+              color="action"
+            />
+          </ListItemIcon>
         </MenuItem>
       ))}
     </TextField>
@@ -173,6 +282,7 @@ const AddEditCategoryDialog = (props: Props) => {
                 new_name: nameValue,
                 new_status: statusValue,
                 new_color_gradient: colorValue,
+                new_icon_key: iconValue,
                 new_description: descriptionValue,
                 new_exclude_from_budgets: excludeFromBudgetsValue,
               });
@@ -182,6 +292,7 @@ const AddEditCategoryDialog = (props: Props) => {
                 name: nameValue,
                 status: statusValue,
                 color_gradient: colorValue,
+                icon_key: iconValue,
                 description: descriptionValue,
                 exclude_from_budgets: excludeFromBudgetsValue,
               });
@@ -191,70 +302,49 @@ const AddEditCategoryDialog = (props: Props) => {
       }}
     >
       <DialogTitle>
-        <Grid container>
-          <Grid
-            size={{
-              xs: 12,
-              md: 10,
-            }}
-          >
-            <Stack>
-              <Trans
-                i18nKey={
-                  isEditForm
-                    ? 'categories.editCategoryModalTitle'
-                    : 'categories.addCategoryCTA'
-                }
-              />
-              {/* Exclude from budgets */}
-              <Tooltip
-                title={t('categories.excludeFromBudgetsTooltip')}
-                placement="right"
-              >
-                <FormControlLabel
-                  sx={{ width: 'fit-content' }}
-                  control={
-                    <Checkbox
-                      icon={<RemoveCircleOutline />}
-                      checkedIcon={<RemoveCircle />}
-                    />
-                  }
-                  checked={excludeFromBudgetsValue}
-                  label={t('common.excludeFromBudgets')}
-                  name="exclude_from_budgets"
-                  onChange={(_e, checked) =>
-                    setExcludeFromBudgetsValue(checked)
-                  }
-                />
-              </Tooltip>
-            </Stack>
-          </Grid>
-          <Grid
-            display="flex"
-            justifyContent="flex-end"
-            sx={{ height: 'fit-content' }}
-            size={{
-              xs: 12,
-              md: 2,
-            }}
-          >
-            <CategoryStatusToggle
-              selectedStatus={statusValue}
-              onChange={onCategoryStatusSelected}
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+          spacing={2}
+        >
+          <Stack>
+            <Trans
+              i18nKey={
+                isEditForm
+                  ? 'categories.editCategoryModalTitle'
+                  : 'categories.addCategoryCTA'
+              }
             />
-          </Grid>
-        </Grid>
+            {/* Exclude from budgets */}
+            <Tooltip
+              title={t('categories.excludeFromBudgetsTooltip')}
+              placement="right"
+            >
+              <FormControlLabel
+                sx={{ width: 'fit-content' }}
+                control={
+                  <Checkbox
+                    icon={<RemoveCircleOutline />}
+                    checkedIcon={<RemoveCircle />}
+                  />
+                }
+                checked={excludeFromBudgetsValue}
+                label={t('common.excludeFromBudgets')}
+                name="exclude_from_budgets"
+                onChange={(_e, checked) => setExcludeFromBudgetsValue(checked)}
+              />
+            </Tooltip>
+          </Stack>
+          <CategoryStatusToggle
+            selectedStatus={statusValue}
+            onChange={onCategoryStatusSelected}
+          />
+        </Stack>
       </DialogTitle>
       <DialogContent>
-        <Grid container spacing={0} size={12}>
-          <Grid
-            pr={2}
-            pb={1}
-            size={{
-              xs: 12,
-              md: 10,
-            }}
-          >
+        <Grid container spacing={2} alignItems="center">
+          <Grid size={{ xs: 12, md: 8 }}>
             <TextField
               margin="dense"
               id="name"
@@ -273,15 +363,11 @@ const AddEditCategoryDialog = (props: Props) => {
               }}
             />
           </Grid>
-          <Grid
-            display="flex"
-            justifyContent="flex-end"
-            size={{
-              xs: 12,
-              md: 2,
-            }}
-          >
+          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
             <ColorOptionsSelect selectedColor={colorValue} />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+            <IconOptionsSelect />
           </Grid>
           <Grid size={12}>
             <TextField

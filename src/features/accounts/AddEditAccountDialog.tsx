@@ -129,18 +129,50 @@ const AddEditAccountDialog = (props: Props) => {
       value={selectedColor}
       onChange={(event) => setColorValue(event.target.value)}
       label={t('accounts.color')}
+      SelectProps={{
+        renderValue: (value) => (
+          <div
+            style={{
+              margin: '0 auto',
+              background: cssGradients[value as ColorGradient] ?? '',
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+            }}
+          />
+        ),
+        MenuProps: {
+          PaperProps: {
+            sx: {
+              width: 264,
+              maxWidth: 'calc(100vw - 32px)',
+              '& .MuiList-root': {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(36px, 1fr))',
+                gap: 0.5,
+                p: 1,
+              },
+              '& .MuiMenuItem-root': {
+                minHeight: 36,
+                p: 0,
+                borderRadius: 1,
+                justifyContent: 'center',
+              },
+            },
+          },
+        },
+      }}
     >
       {colorOptions.map((color) => (
         <MenuItem key={color} value={color}>
           <div
             style={{
-              margin: '0 auto',
               background: cssGradients[color] ?? '',
-              width: 60,
-              height: 20,
-              borderRadius: 20,
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
             }}
-          ></div>
+          />
         </MenuItem>
       ))}
     </TextField>
