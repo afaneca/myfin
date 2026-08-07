@@ -10,8 +10,15 @@ import Typography from '@mui/material/Typography';
 import { GridColDef } from '@mui/x-data-grid';
 import PageHeader from '../../components/PageHeader';
 import { useLoading } from '../../providers/LoadingProvider';
-import { useGetTransactions, useRemoveTransaction } from '../../services/trx/trxHooks.ts';
-import { Tag, Transaction, TransactionType } from '../../services/trx/trxServices.ts';
+import {
+  useGetTransactions,
+  useRemoveTransaction,
+} from '../../services/trx/trxHooks.ts';
+import {
+  Tag,
+  Transaction,
+  TransactionType,
+} from '../../services/trx/trxServices.ts';
 import React, { memo, useEffect, useMemo, useState } from 'react';
 import {
   AddCircleOutline,
@@ -34,7 +41,10 @@ import {
   getShortYearFromUnixTimestamp,
 } from '../../utils/dateUtils';
 import MyFinTable from '../../components/MyFinTable.tsx';
-import { AlertSeverity, useSnackbar } from '../../providers/SnackbarProvider.tsx';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../providers/SnackbarProvider.tsx';
 import Button from '@mui/material/Button';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import AddEditTransactionDialog from './AddEditTransactionDialog.tsx';
@@ -43,6 +53,7 @@ import { inferTrxType } from '../../utils/transactionUtils.ts';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { ROUTE_IMPORT_TRX } from '../../providers/RoutesProvider.tsx';
+import { CategoryIcon } from '../../services/category/categoryIcons.tsx';
 
 const Transactions = () => {
   const theme = useTheme();
@@ -127,7 +138,9 @@ const Transactions = () => {
       sortable: false,
       renderCell: (params) => {
         const textColor =
-          (params.value.first == true) ? theme.palette.text.primary : theme.palette.text.disabled;
+          params.value.first == true
+            ? theme.palette.text.primary
+            : theme.palette.text.disabled;
         return (
           <Stack direction="column" alignItems="center" gap={0.5}>
             <Box
@@ -137,20 +150,19 @@ const Transactions = () => {
               justifyContent="center"
               height="100%"
             >
-
-            <span style={{ textAlign: 'center', color: textColor }}>
-              <b>
-                {getDayNumberFromUnixTimestamp(params.value.date_timestamp)}
-              </b>{' '}
-              {/*<br />*/}
-              <span>
-                {getMonthShortStringFromUnixTimestamp(
-                  params.value.date_timestamp,
-                )}
-                {' \''}
-                {getShortYearFromUnixTimestamp(params.value.date_timestamp)}
+              <span style={{ textAlign: 'center', color: textColor }}>
+                <b>
+                  {getDayNumberFromUnixTimestamp(params.value.date_timestamp)}
+                </b>{' '}
+                {/*<br />*/}
+                <span>
+                  {getMonthShortStringFromUnixTimestamp(
+                    params.value.date_timestamp,
+                  )}
+                  {" '"}
+                  {getShortYearFromUnixTimestamp(params.value.date_timestamp)}
+                </span>
               </span>
-            </span>
             </Box>
             <Tooltip title={t('transactions.essential')}>
               <IconButton
@@ -204,7 +216,15 @@ const Transactions = () => {
             {params.value.description ?? t('common.externalAccount')}
           </Stack>
           <Stack direction="row" alignItems="center" gap={0.5}>
-            <FolderShared fontSize="small" color="primary" />{' '}
+            {params.value.category_icon_key ? (
+              <CategoryIcon
+                iconKey={params.value.category_icon_key}
+                fontSize="small"
+                color="primary"
+              />
+            ) : (
+              <FolderShared fontSize="small" color="primary" />
+            )}{' '}
             {params.value.category ?? t('common.noCategory')}
             {'     '}
             <Business fontSize="small" color="primary" />{' '}
@@ -232,8 +252,7 @@ const Transactions = () => {
                         variant="outlined"
                         size="small"
                         color="primary"
-                        onClick={() => {
-                        }}
+                        onClick={() => {}}
                       />
                     </ListItem>
                   );
@@ -312,39 +331,40 @@ const Transactions = () => {
   const rows = (() => {
     const seenDates = new Set();
 
-    return getTransactionsRequest.data.results.map(
-      (result: Transaction) => {
-        const dateKey = convertUnixTimestampToDateString(result.date_timestamp || 0);
-        const isFirstOfDay = !seenDates.has(dateKey);
-        if (isFirstOfDay) {
-          seenDates.add(dateKey);
-        }
+    return getTransactionsRequest.data.results.map((result: Transaction) => {
+      const dateKey = convertUnixTimestampToDateString(
+        result.date_timestamp || 0,
+      );
+      const isFirstOfDay = !seenDates.has(dateKey);
+      if (isFirstOfDay) {
+        seenDates.add(dateKey);
+      }
 
-        return {
-          id: result.transaction_id,
-          date: {
-            date_timestamp: result.date_timestamp,
-            essential: result.is_essential,
-            first: isFirstOfDay,
-          },
-          flow: {
-            acc_from_name: result.account_from_name,
-            acc_to_name: result.account_to_name,
-          },
-          description: {
-            description: result.description,
-            entity: result.entity_name,
-            category: result.category_name,
-            tags: result.tags,
-          },
-          value: {
-            amount: formatNumberAsCurrency(result.amount),
-            chipColor: getChipColorForAmount(result),
-          },
-          actions: result,
-        };
-      },
-    );
+      return {
+        id: result.transaction_id,
+        date: {
+          date_timestamp: result.date_timestamp,
+          essential: result.is_essential,
+          first: isFirstOfDay,
+        },
+        flow: {
+          acc_from_name: result.account_from_name,
+          acc_to_name: result.account_to_name,
+        },
+        description: {
+          description: result.description,
+          entity: result.entity_name,
+          category: result.category_name,
+          category_icon_key: result.category_icon_key,
+          tags: result.tags,
+        },
+        value: {
+          amount: formatNumberAsCurrency(result.amount),
+          chipColor: getChipColorForAmount(result),
+        },
+        actions: result,
+      };
+    });
   })();
 
   return (
@@ -434,7 +454,7 @@ const Transactions = () => {
                     <Search />
                   </InputAdornment>
                 ),
-              }
+              },
             }}
           />
         </Grid>

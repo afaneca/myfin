@@ -14,10 +14,9 @@ import {
   Category,
   CategoryStatus,
 } from '../../services/category/categoryServices.ts';
+import CategoryIconBadge from '../../services/category/CategoryIconBadge.tsx';
 import { debounce } from 'lodash';
 import { GridColDef } from '@mui/x-data-grid';
-import { cssGradients } from '../../utils/gradientUtils.ts';
-import { ColorGradient } from '../../consts';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -105,6 +104,7 @@ const Categories = () => {
     () =>
       filteredCategories.map((category: Category) => ({
         id: category.category_id,
+        icon: category.icon_key,
         color: category.color_gradient,
         name: category.name,
         description: category.description,
@@ -118,20 +118,17 @@ const Categories = () => {
     {
       field: 'color',
       headerName: t('categories.color'),
-      minWidth: 40,
+      minWidth: 56,
       editable: false,
       sortable: false,
-      renderCell: (params) => (
-        <div
-          style={{
-            margin: 10,
-            background: cssGradients[params.value as ColorGradient] ?? '',
-            width: 30,
-            height: 30,
-            borderRadius: 20,
-          }}
-        ></div>
-      ),
+      renderCell: (params) => {
+        return (
+          <CategoryIconBadge
+            iconKey={params.row.icon as string}
+            colorGradient={params.value as string}
+          />
+        );
+      },
     },
     {
       field: 'name',
@@ -283,7 +280,7 @@ const Categories = () => {
                     <Search />
                   </InputAdornment>
                 ),
-              }
+              },
             }}
           />
         </Grid>

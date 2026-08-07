@@ -95,3 +95,41 @@ export const cssGradients = {
   [ColorGradient.RedColor]: '#ff596f',
   [ColorGradient.None]: 'transparent',
 };
+
+const getRelativeLuminance = (hexColor: string) => {
+  const channels = [0, 2, 4].map((offset) =>
+    Number.parseInt(hexColor.slice(offset, offset + 2), 16) / 255,
+  );
+  const linearChannels = channels.map((channel) =>
+    channel <= 0.03928
+      ? channel / 12.92
+      : ((channel + 0.055) / 1.055) ** 2.4,
+  );
+
+  return (
+    linearChannels[0] * 0.2126 +
+    linearChannels[1] * 0.7152 +
+    linearChannels[2] * 0.0722
+  );
+};
+
+export const getContrastingTextColor = (background: string) => {
+  const colors = background.match(/#[0-9a-f]{6}/gi)?.map((color) =>
+    getRelativeLuminance(color.slice(1)),
+  );
+  if (!colors?.length) return '#1f2937';
+
+  const darkTextLuminance = getRelativeLuminance('1f2937');
+  const getContrastRatio = (backgroundLuminance: number, textLuminance: number) =>
+    (Math.max(backgroundLuminance, textLuminance) + 0.05) /
+    (Math.min(backgroundLuminance, textLuminance) + 0.05);
+
+  const darkContrast = Math.min(
+    ...colors.map((color) => getContrastRatio(color, darkTextLuminance)),
+  );
+  const lightContrast = Math.min(
+    ...colors.map((color) => getContrastRatio(color, 1)),
+  );
+
+  return darkContrast >= lightContrast ? '#1f2937' : '#fff';
+};

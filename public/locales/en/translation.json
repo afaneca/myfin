@@ -343,6 +343,7 @@
     "strapLine": "Manage your categories list",
     "addCategoryCTA": "Add Category",
     "color": "Color",
+    "icon": "Icon",
     "name": "Name",
     "description": "Description",
     "status": "Status",
