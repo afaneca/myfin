@@ -23,7 +23,7 @@ FROM nginx:alpine
 
 WORKDIR /usr/share/nginx/html
 
-ARG VERSION="10.1.1"
+ARG VERSION="10.2.0"
 
 # Add metadata
 LABEL maintainer="José Valdiviesso <me@zmiguel.me>"
