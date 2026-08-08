@@ -209,6 +209,8 @@ const AddEditCategoryDialog = (props: Props) => {
                 gridTemplateColumns: 'repeat(auto-fit, minmax(36px, 1fr))',
                 gap: 0.5,
                 p: 1,
+                maxHeight: 212,
+                overflowY: 'auto',
               },
               '& .MuiMenuItem-root': {
                 minHeight: 36,
