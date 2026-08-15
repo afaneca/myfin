@@ -394,7 +394,13 @@ const GoalCard = ({
               <Box />
             )}
             {goal.is_underfunded && !isComplete && (
-              <Tooltip title={t('goals.underfundedTooltip')}>
+              <Tooltip
+                title={t(
+                  goal.is_underfunded_by_priority
+                    ? 'goals.underfundedByPriorityTooltip'
+                    : 'goals.underfundedTooltip',
+                )}
+              >
                 <Warning color="warning" fontSize="small" />
               </Tooltip>
             )}
@@ -598,6 +604,7 @@ const Goals = () => {
           current: goal.currently_funded_amount,
           target: goal.amount,
           isUnderfunded: goal.is_underfunded,
+          isUnderfundedByPriority: goal.is_underfunded_by_priority,
         },
         actions: goal,
       })),
@@ -722,7 +729,13 @@ const Goals = () => {
               </Typography>
             </Box>
             {params.value.isUnderfunded && (
-              <Tooltip title={t('goals.underfundedTooltip')}>
+              <Tooltip
+                title={t(
+                  params.value.isUnderfundedByPriority
+                    ? 'goals.underfundedByPriorityTooltip'
+                    : 'goals.underfundedTooltip',
+                )}
+              >
                 <Warning color="warning" fontSize="small" />
               </Tooltip>
             )}
