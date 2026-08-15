@@ -529,30 +529,22 @@ const BudgetDetails = () => {
             md: 6,
           }}
         >
-          <Grid container>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6,
-              }}
-            >
-              <Typography variant="h4">{t('common.debit')}</Typography>
-            </Grid>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6,
-              }}
-              offset="auto"
-            >
-              <Chip
-                label={`${t('budgetDetails.essentialExpenses')}: ${formatNumberAsCurrency.invoke(getBudgetRequest?.data?.debit_essential_trx_total || 0)}`}
-                variant="filled"
-                size="medium"
-                color="default"
-              />
-            </Grid>
-          </Grid>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={1}
+            sx={{ flexWrap: 'wrap' }}
+          >
+            <Typography variant="h4">{t('common.debit')}</Typography>
+            <Chip
+              label={`${t('budgetDetails.essentialExpenses')}: ${formatNumberAsCurrency.invoke(getBudgetRequest?.data?.debit_essential_trx_total || 0)}`}
+              variant="filled"
+              size="medium"
+              color="default"
+              sx={{ ml: 'auto' }}
+            />
+          </Stack>
           <List>
             {debitCategories.map((category) => (
               <React.Fragment key={category.category_id}>

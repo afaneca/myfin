@@ -19,8 +19,8 @@ export function generateNivoTheme(
     },
     tooltip: {
       container: {
-        background: '#ffffff',
-        color: '#333333',
+        background: palette.background?.paper || '#ffffff',
+        color: palette.text?.primary || '#333333',
         fontSize: 12,
       },
       basic: {},

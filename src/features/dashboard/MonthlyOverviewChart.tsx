@@ -84,8 +84,8 @@ const MonthlyOverviewChart = ({ data }: Props) => {
             <Paper
               sx={{
                 fontSize: '12px',
-                background: 'white',
-                color: 'black',
+                background: theme.palette.background.paper,
+                color: theme.palette.text.primary,
                 p: theme.spacing(1),
                 whiteSpace: 'nowrap',
               }}

@@ -153,8 +153,8 @@ const MonthlyOverviewChart = ({ data }: Props) => {
               <Paper
                 sx={{
                   fontSize: '12px',
-                  background: 'white',
-                  color: 'black',
+                  background: theme.palette.background.paper,
+                  color: theme.palette.text.primary,
                   p: theme.spacing(1),
                   whiteSpace: 'nowrap',
                 }}
@@ -163,7 +163,7 @@ const MonthlyOverviewChart = ({ data }: Props) => {
                   <>
                     <strong>{formatNumberAsCurrency(actualBalance)}</strong>
                     <br />
-                    <span style={{ fontSize: '11px', color: '#666', fontStyle: 'italic' }}>
+                    <span style={{ fontSize: '11px', color: theme.palette.text.secondary, fontStyle: 'italic' }}>
                       {t('dashboard.chartValueAdjusted')}
                     </span>
                   </>

@@ -196,12 +196,14 @@ const MetricCard = ({
           <Typography variant="caption" color="text.secondary">
             {label}
           </Typography>
-          <Typography variant="h5" fontWeight={700} noWrap>
-            {value}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" noWrap>
-            {subtitle}
-          </Typography>
+          <Stack direction="row" alignItems="baseline" gap={1} minWidth={0}>
+            <Typography variant="h5" fontWeight={700} noWrap>
+              {value}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" noWrap>
+              {subtitle}
+            </Typography>
+          </Stack>
         </Box>
       </CardContent>
     </Card>
@@ -837,7 +839,7 @@ const Goals = () => {
           icon={<TrackChanges />}
           label={t('goals.inProgress')}
           value={inProgressGoals.length}
-          subtitle={t('goals.goalCount', { count: inProgressGoals.length })}
+          subtitle={t('goals.activeGoals')}
           accentColor={theme.palette.primary.main}
         />
         <MetricCard
@@ -974,7 +976,7 @@ const Goals = () => {
           >
             {t('goals.underfundedOnly')}
           </Button>
-          <FormControl size="small" sx={{ minWidth: 180 }}>
+          <FormControl sx={{ minWidth: 180 }}>
             <InputLabel id="goal-sort-label">{t('goals.sortBy')}</InputLabel>
             <Select
               labelId="goal-sort-label"
@@ -989,7 +991,6 @@ const Goals = () => {
             </Select>
           </FormControl>
           <TextField
-            size="small"
             value={state.searchQuery}
             placeholder={t('goals.searchGoals')}
             onChange={(event) =>
