@@ -1,48 +1,46 @@
 import {
   AccountBalanceWallet,
-  AddCircleOutline,
+  Add,
+  Archive,
   CheckCircle,
   Delete,
   Edit,
-  ExpandMore,
-  Flag,
+  FilterList,
+  MoneyOff,
   Schedule,
   Search,
-  Warning,
+  TrackChanges,
 } from '@mui/icons-material';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Alert,
-  AlertTitle,
   alpha,
   Box,
+  Button,
   Card,
-  CardActionArea,
   CardContent,
-  Checkbox,
   Chip,
   CircularProgress,
-  FormControlLabel,
-  Link,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
   Tooltip,
+  Typography,
+  useMediaQuery,
   useTheme,
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import { GridColDef } from '@mui/x-data-grid';
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import type { GridColDef } from '@mui/x-data-grid';
+import type { KeyboardEvent, ReactNode } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import GenericConfirmationDialog from '../../components/GenericConfirmationDialog.tsx';
 import MyFinStaticTable from '../../components/MyFinStaticTable.tsx';
-import PageHeader from '../../components/PageHeader.tsx';
 import { useLoading } from '../../providers/LoadingProvider.tsx';
 import {
   AlertSeverity,
@@ -50,15 +48,16 @@ import {
 } from '../../providers/SnackbarProvider.tsx';
 import { useGetAccounts } from '../../services/account/accountHooks.ts';
 import { useDeleteGoal, useGetGoals } from '../../services/goal/goalHooks.ts';
-import { Goal, GoalFundingSummary } from '../../services/goal/goalServices.ts';
+import type { Goal } from '../../services/goal/goalServices.ts';
 import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
 import AddEditGoalDialog from './AddEditGoalDialog.tsx';
+import { GoalPriorityChip, UnderfundedIndicator } from './GoalIndicators.tsx';
 
-type UnallocatedFunding = GoalFundingSummary['unallocated_funding'];
+type GoalView = 'inProgress' | 'completed' | 'archived' | 'all';
+type GoalSort = 'dueDate' | 'priority' | 'progress' | 'name';
 
 type UiState = {
   goals?: Goal[];
-  filteredGoals?: Goal[];
   searchQuery: string;
   actionableGoal?: Goal;
   isEditDialogOpen: boolean;
@@ -75,81 +74,25 @@ const enum StateActionType {
 }
 
 type StateAction =
-  | {
-      type: StateActionType.DataLoaded;
-      payload: Goal[];
-    }
+  | { type: StateActionType.DataLoaded; payload: Goal[] }
   | { type: StateActionType.SearchQueryUpdated; payload: string }
   | { type: StateActionType.DialogDismissed }
   | { type: StateActionType.AddClick }
   | { type: StateActionType.EditClick; payload: Goal }
   | { type: StateActionType.RemoveClick; payload: Goal };
 
-const createInitialState = (): UiState => {
-  return {
-    searchQuery: '',
-    isEditDialogOpen: false,
-    isRemoveDialogOpen: false,
-  };
-};
-
-const filterItems = (list: Goal[], searchQuery: string) => {
-  return list.filter((goal) =>
-    JSON.stringify(goal).toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-};
-
-// Helper to calculate goal sort priority for due date ordering
-// Overdue first, then by nearest due date, no due date after, completed at the end
-const getGoalSortPriority = (goal: Goal): number => {
-  const percentage =
-    goal.amount > 0
-      ? Math.min(100, (goal.currently_funded_amount / goal.amount) * 100)
-      : 0;
-  const isComplete = percentage >= 100;
-
-  // Completed goals go to the end
-  if (isComplete) return Number.MAX_SAFE_INTEGER;
-
-  // No due date goes after goals with due dates
-  if (!goal.due_date) return Number.MAX_SAFE_INTEGER - 1;
-
-  const now = Date.now() / 1000; // Current timestamp in seconds
-  const dueDate = goal.due_date;
-
-  // Overdue goals (negative diff) will have lower values, so they come first
-  return dueDate - now;
-};
-
-// Sort goals: overdue first, then by nearest due date, no due date after, completed at end
-const sortGoalsByDueDate = (goals: Goal[]): Goal[] => {
-  return [...goals].sort(
-    (a, b) => getGoalSortPriority(a) - getGoalSortPriority(b),
-  );
-};
-
-// Sort goals for table: active first (sorted by due date), then archived
-const sortGoalsForTable = (goals: Goal[]): Goal[] => {
-  const activeGoals = goals.filter((g) => !g.is_archived);
-  const archivedGoals = goals.filter((g) => g.is_archived);
-
-  return [...sortGoalsByDueDate(activeGoals), ...archivedGoals];
-};
+const createInitialState = (): UiState => ({
+  searchQuery: '',
+  isEditDialogOpen: false,
+  isRemoveDialogOpen: false,
+});
 
 const reduceState = (prevState: UiState, action: StateAction): UiState => {
   switch (action.type) {
     case StateActionType.DataLoaded:
-      return {
-        ...prevState,
-        goals: action.payload,
-        filteredGoals: filterItems(action.payload, prevState?.searchQuery),
-      };
+      return { ...prevState, goals: action.payload };
     case StateActionType.SearchQueryUpdated:
-      return {
-        ...prevState,
-        searchQuery: action.payload,
-        filteredGoals: filterItems(prevState.goals || [], action.payload),
-      };
+      return { ...prevState, searchQuery: action.payload };
     case StateActionType.DialogDismissed:
       return {
         ...prevState,
@@ -181,7 +124,92 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
   }
 };
 
-// Visual Goal Card Component
+const getGoalProgress = (goal: Goal) =>
+  goal.amount > 0
+    ? Math.min(100, (goal.currently_funded_amount / goal.amount) * 100)
+    : 0;
+
+const isGoalComplete = (goal: Goal) => getGoalProgress(goal) >= 100;
+
+const sortGoals = (goals: Goal[], sort: GoalSort) =>
+  [...goals].sort((first, second) => {
+    switch (sort) {
+      case 'priority':
+        return second.priority - first.priority;
+      case 'progress':
+        return getGoalProgress(second) - getGoalProgress(first);
+      case 'name':
+        return first.name.localeCompare(second.name);
+      case 'dueDate':
+        return (
+          (first.due_date || Number.MAX_SAFE_INTEGER) -
+          (second.due_date || Number.MAX_SAFE_INTEGER)
+        );
+    }
+  });
+
+const MetricCard = ({
+  icon,
+  label,
+  value,
+  subtitle,
+  accentColor,
+  tooltip,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string | number;
+  subtitle: string;
+  accentColor: string;
+  tooltip?: ReactNode;
+}) => {
+  const content = (
+    <Card
+      variant="outlined"
+      tabIndex={tooltip ? 0 : undefined}
+      sx={{
+        height: '100%',
+        backgroundImage: 'none',
+        transition: 'border-color 0.2s, transform 0.2s',
+        '&:hover': {
+          borderColor: alpha(accentColor, 0.7),
+          transform: 'translateY(-2px)',
+        },
+      }}
+    >
+      <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box
+          sx={{
+            width: 48,
+            height: 48,
+            borderRadius: '50%',
+            display: 'grid',
+            placeItems: 'center',
+            color: accentColor,
+            backgroundColor: alpha(accentColor, 0.16),
+            flexShrink: 0,
+          }}
+        >
+          {icon}
+        </Box>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="caption" color="text.secondary">
+            {label}
+          </Typography>
+          <Typography variant="h5" fontWeight={700} noWrap>
+            {value}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" noWrap>
+            {subtitle}
+          </Typography>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+
+  return tooltip ? <Tooltip title={tooltip}>{content}</Tooltip> : content;
+};
+
 const GoalCard = ({
   goal,
   onClick,
@@ -193,251 +221,52 @@ const GoalCard = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-
-  const percentage =
-    goal.amount > 0
-      ? Math.min(100, (goal.currently_funded_amount / goal.amount) * 100)
-      : 0;
-  const isComplete = percentage >= 100;
-
-  const formatDueDate = (timestamp: number | null) => {
-    if (!timestamp) return null;
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString();
-  };
-
-  const getDaysUntilDue = (timestamp: number | null) => {
-    if (!timestamp) return null;
-    const now = new Date();
-    const dueDate = new Date(timestamp * 1000);
-    const diffTime = dueDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const daysUntilDue = getDaysUntilDue(goal.due_date);
-  const isOverdue = daysUntilDue !== null && daysUntilDue < 0;
+  const percentage = getGoalProgress(goal);
+  const isComplete = isGoalComplete(goal);
+  const daysUntilDue = goal.due_date
+    ? Math.ceil((goal.due_date - Date.now() / 1000) / (60 * 60 * 24))
+    : null;
+  const isOverdue = !isComplete && daysUntilDue !== null && daysUntilDue < 0;
   const isDueSoon =
-    daysUntilDue !== null && daysUntilDue >= 0 && daysUntilDue <= 30;
+    !isComplete &&
+    daysUntilDue !== null &&
+    daysUntilDue >= 0 &&
+    daysUntilDue <= 30;
+  const accentColor = isComplete
+    ? theme.palette.success.main
+    : isOverdue
+      ? theme.palette.error.main
+      : goal.is_underfunded
+        ? theme.palette.warning.main
+        : theme.palette.primary.main;
 
-  // Determine card accent color based on status
-  const getAccentColor = () => {
-    if (isComplete) return theme.palette.success.main;
-    if (isOverdue) return theme.palette.error.main;
-    if (isDueSoon) return theme.palette.warning.main;
-    if (goal.is_underfunded) return theme.palette.warning.light;
-    return theme.palette.primary.main;
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick();
+    }
   };
 
   return (
     <Card
+      variant="outlined"
+      role="button"
+      tabIndex={0}
+      aria-label={`${t('common.edit')} ${goal.name}`}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
       sx={{
+        minHeight: 210,
         height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflow: 'visible',
-        borderTop: `4px solid ${getAccentColor()}`,
+        cursor: 'pointer',
+        backgroundImage: 'none',
+        borderTop: `3px solid ${accentColor}`,
         transition: 'transform 0.2s, box-shadow 0.2s',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: theme.shadows[8],
+        '&:hover, &:focus-visible': {
+          transform: 'translateY(-3px)',
+          boxShadow: theme.shadows[6],
+          outline: 'none',
         },
-      }}
-    >
-      <CardActionArea onClick={onClick} sx={{ flexGrow: 1 }}>
-        <CardContent sx={{ pb: 2 }}>
-          {/* Header with Priority Badge */}
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              mb: 1,
-            }}
-          >
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                fontWeight: 600,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                flex: 1,
-                mr: 1,
-              }}
-            >
-              {goal.name}
-            </Typography>
-            <Chip
-              icon={<Flag fontSize="small" />}
-              label={goal.priority}
-              size="small"
-              variant="outlined"
-              sx={{ minWidth: 50 }}
-            />
-          </Box>
-
-          {/* Description */}
-          {goal.description && (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                mb: 2,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                minHeight: 40,
-              }}
-            >
-              {goal.description}
-            </Typography>
-          )}
-
-          {/* Circular Progress with Amount */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              my: 2,
-            }}
-          >
-            <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-              <CircularProgress
-                variant="determinate"
-                value={100}
-                size={100}
-                thickness={4}
-                sx={{
-                  color: alpha(theme.palette.grey[300], 0.5),
-                  position: 'absolute',
-                }}
-              />
-              <CircularProgress
-                variant="determinate"
-                value={percentage}
-                size={100}
-                thickness={4}
-                sx={{
-                  color: getAccentColor(),
-                  '& .MuiCircularProgress-circle': {
-                    strokeLinecap: 'round',
-                  },
-                }}
-              />
-              <Box
-                sx={{
-                  top: 0,
-                  left: 0,
-                  bottom: 0,
-                  right: 0,
-                  position: 'absolute',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                }}
-              >
-                {isComplete ? (
-                  <CheckCircle
-                    sx={{ color: theme.palette.success.main, fontSize: 32 }}
-                  />
-                ) : (
-                  <>
-                    <Typography variant="h6" component="div" fontWeight="bold">
-                      {percentage.toFixed(0)}%
-                    </Typography>
-                  </>
-                )}
-              </Box>
-            </Box>
-          </Box>
-
-          {/* Amount Details */}
-          <Box sx={{ textAlign: 'center', mb: 2 }}>
-            <Typography
-              variant="h6"
-              color="text.secondary"
-              sx={{ fontWeight: 'bold' }}
-            >
-              {formatCurrency(goal.currently_funded_amount)}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {t('goals.of')} {formatCurrency(goal.amount)}
-            </Typography>
-          </Box>
-
-          {/* Footer with Due Date and Status */}
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              pt: 1,
-              borderTop: `1px solid ${theme.palette.divider}`,
-            }}
-          >
-            {goal.due_date ? (
-              <Chip
-                icon={<Schedule fontSize="small" />}
-                label={formatDueDate(goal.due_date)}
-                size="small"
-                color={isOverdue ? 'error' : isDueSoon ? 'warning' : 'default'}
-                variant={isOverdue || isDueSoon ? 'filled' : 'outlined'}
-              />
-            ) : (
-              <Box />
-            )}
-            {goal.is_underfunded && !isComplete && (
-              <Tooltip title={t('goals.underfundedTooltip')}>
-                <Warning color="warning" fontSize="small" />
-              </Tooltip>
-            )}
-          </Box>
-        </CardContent>
-      </CardActionArea>
-    </Card>
-  );
-};
-
-const UnallocatedFundingCard = ({
-  unallocatedFunding,
-  accountNameLookup,
-  formatCurrency,
-}: {
-  unallocatedFunding: UnallocatedFunding;
-  accountNameLookup: Map<number, string>;
-  formatCurrency: (value: number) => string;
-}) => {
-  const theme = useTheme();
-  const { t } = useTranslation();
-
-  if (unallocatedFunding.total_amount <= 0) return null;
-
-  const accountBreakdown = unallocatedFunding.accounts
-    .map((account) => {
-      const accountName =
-        accountNameLookup.get(account.account_id) ||
-        t('goals.accountFallback', { id: account.account_id });
-
-      return `${accountName}: ${formatCurrency(account.amount)}`;
-    })
-    .join('\n');
-
-  return (
-    <Card
-      sx={{
-        height: '100%',
-        minHeight: 280,
-        display: 'flex',
-        flexDirection: 'column',
-        borderTop: `4px solid ${theme.palette.info.main}`,
-        backgroundColor: alpha(theme.palette.info.main, 0.04),
       }}
     >
       <CardContent
@@ -445,55 +274,124 @@ const UnallocatedFundingCard = ({
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          gap: 2,
+          gap: 1.5,
         }}
       >
-        <Box>
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-            <AccountBalanceWallet color="info" />
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              {t('goals.unallocatedFunding')}
+        <Stack direction="row" alignItems="flex-start" gap={1}>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography variant="subtitle1" fontWeight={700} noWrap>
+              {goal.name}
             </Typography>
-          </Stack>
-          <Typography variant="body2" color="text.secondary">
-            {t('goals.unallocatedFundingDescription')}
-          </Typography>
-        </Box>
+            {goal.description && (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                noWrap
+                display="block"
+              >
+                {goal.description}
+              </Typography>
+            )}
+          </Box>
+          <GoalPriorityChip priority={goal.priority} />
+        </Stack>
 
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="h4" sx={{ fontWeight: 700 }}>
-            {formatCurrency(unallocatedFunding.total_amount)}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {t('goals.availableToAllocate')}
-          </Typography>
-        </Box>
+        <Stack direction="row" alignItems="center" gap={2} sx={{ flex: 1 }}>
+          <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+            <CircularProgress
+              variant="determinate"
+              value={100}
+              size={72}
+              thickness={4}
+              sx={{
+                color: alpha(theme.palette.text.secondary, 0.16),
+                position: 'absolute',
+              }}
+            />
+            <CircularProgress
+              variant="determinate"
+              value={percentage}
+              size={72}
+              thickness={4}
+              sx={{
+                color: accentColor,
+                '& .MuiCircularProgress-circle': { strokeLinecap: 'round' },
+              }}
+            />
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                display: 'grid',
+                placeItems: 'center',
+              }}
+            >
+              {isComplete ? (
+                <CheckCircle sx={{ color: 'success.main', fontSize: 30 }} />
+              ) : (
+                <Typography variant="subtitle2" fontWeight={700}>
+                  {percentage.toFixed(0)}%
+                </Typography>
+              )}
+            </Box>
+          </Box>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="h6" fontWeight={700} noWrap>
+              {formatCurrency(goal.currently_funded_amount)}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" noWrap>
+              {t('goals.of')} {formatCurrency(goal.amount)}
+            </Typography>
+          </Box>
+        </Stack>
 
-        <Tooltip
-          title={
-            <span style={{ whiteSpace: 'pre-line' }}>{accountBreakdown}</span>
-          }
+        <Stack
+          direction="row"
+          alignItems="center"
+          gap={1}
+          sx={{ pt: 1.25, borderTop: `1px solid ${theme.palette.divider}` }}
         >
-          <Stack direction="row" flexWrap="wrap" gap={1}>
-            {unallocatedFunding.accounts.map((account) => {
-              const accountName =
-                accountNameLookup.get(account.account_id) ||
-                t('goals.accountFallback', { id: account.account_id });
-
-              return (
-                <Chip
-                  key={account.account_id}
-                  size="small"
-                  color="info"
-                  variant="outlined"
-                  label={`${accountName}: ${formatCurrency(account.amount)}`}
-                  sx={{ maxWidth: '100%' }}
-                />
-              );
-            })}
-          </Stack>
-        </Tooltip>
+          {goal.due_date ? (
+            <Stack direction="row" alignItems="center" gap={0.5}>
+              <Schedule sx={{ fontSize: 16, color: 'text.secondary' }} />
+              <Typography variant="caption" color="text.secondary">
+                {new Date(goal.due_date * 1000).toLocaleDateString()}
+              </Typography>
+            </Stack>
+          ) : (
+            <Typography variant="caption" color="text.secondary">
+              {t('goals.noDueDate')}
+            </Typography>
+          )}
+          <Box sx={{ flex: 1 }} />
+          {goal.is_underfunded && (
+            <UnderfundedIndicator
+              isUnderfundedByPriority={goal.is_underfunded_by_priority}
+            />
+          )}
+          <Chip
+            size="small"
+            variant="outlined"
+            color={
+              isComplete
+                ? 'success'
+                : isOverdue
+                  ? 'error'
+                  : isDueSoon
+                    ? 'warning'
+                    : 'primary'
+            }
+            label={t(
+              isComplete
+                ? 'goals.completed'
+                : isOverdue
+                  ? 'goals.overdue'
+                  : isDueSoon
+                    ? 'goals.dueSoon'
+                    : 'goals.inProgress',
+            )}
+          />
+        </Stack>
       </CardContent>
     </Card>
   );
@@ -501,21 +399,24 @@ const UnallocatedFundingCard = ({
 
 const Goals = () => {
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const loader = useLoading();
   const snackbar = useSnackbar();
   const { t } = useTranslation();
-
-  const [showArchived, setShowArchived] = useState(false);
-  const getGoalsRequest = useGetGoals(!showArchived);
+  const getActiveGoalsRequest = useGetGoals(true);
+  const getAllGoalsRequest = useGetGoals(false);
   const getAccountsRequest = useGetAccounts();
   const deleteGoalRequest = useDeleteGoal();
   const formatNumberAsCurrency = useFormatNumberAsCurrency();
   const [state, dispatch] = useReducer(reduceState, null, createInitialState);
+  const [goalView, setGoalView] = useState<GoalView>('inProgress');
+  const [goalSort, setGoalSort] = useState<GoalSort>('dueDate');
+  const [underfundedOnly, setUnderfundedOnly] = useState(false);
 
-  // Loading
   useEffect(() => {
     if (
-      getGoalsRequest.isFetching ||
+      getActiveGoalsRequest.isFetching ||
+      getAllGoalsRequest.isFetching ||
       getAccountsRequest.isFetching ||
       deleteGoalRequest.isPending
     ) {
@@ -524,15 +425,16 @@ const Goals = () => {
       loader.hideLoading();
     }
   }, [
-    getGoalsRequest.isFetching,
+    getActiveGoalsRequest.isFetching,
+    getAllGoalsRequest.isFetching,
     getAccountsRequest.isFetching,
     deleteGoalRequest.isPending,
   ]);
 
-  // Error
   useEffect(() => {
     if (
-      getGoalsRequest.isError ||
+      getActiveGoalsRequest.isError ||
+      getAllGoalsRequest.isError ||
       getAccountsRequest.isError ||
       deleteGoalRequest.isError
     ) {
@@ -542,83 +444,156 @@ const Goals = () => {
       );
     }
   }, [
-    getGoalsRequest.isError,
+    getActiveGoalsRequest.isError,
+    getAllGoalsRequest.isError,
     getAccountsRequest.isError,
     deleteGoalRequest.isError,
   ]);
 
-  // Success
   useEffect(() => {
-    if (!getGoalsRequest.data) return;
+    if (!getActiveGoalsRequest.data || !getAllGoalsRequest.data) return;
+
+    const archivedGoals = getAllGoalsRequest.data.goals.filter(
+      (goal) => goal.is_archived,
+    );
     dispatch({
       type: StateActionType.DataLoaded,
-      payload: getGoalsRequest.data.goals,
+      payload: [...getActiveGoalsRequest.data.goals, ...archivedGoals],
     });
-  }, [getGoalsRequest.data]);
+  }, [getActiveGoalsRequest.data, getAllGoalsRequest.data]);
 
-  const unallocatedFunding = getGoalsRequest.data?.unallocated_funding;
-  const accountNameLookup = useMemo(() => {
-    return new Map(
-      (getAccountsRequest.data || []).map((account) => [
-        Number(account.account_id),
-        account.name,
-      ]),
+  const allGoals = state.goals || [];
+  const inProgressGoals = useMemo(
+    () => allGoals.filter((goal) => !goal.is_archived),
+    [allGoals],
+  );
+  const completedGoals = useMemo(
+    () => allGoals.filter((goal) => !goal.is_archived && isGoalComplete(goal)),
+    [allGoals],
+  );
+  const archivedGoals = useMemo(
+    () => allGoals.filter((goal) => goal.is_archived),
+    [allGoals],
+  );
+  const underfundedGoals = useMemo(
+    () => inProgressGoals.filter((goal) => goal.is_underfunded),
+    [inProgressGoals],
+  );
+  const goalCards = useMemo(
+    () =>
+      [...inProgressGoals].sort((first, second) => {
+        const completionOrder =
+          Number(isGoalComplete(first)) - Number(isGoalComplete(second));
+        if (completionOrder !== 0) return completionOrder;
+
+        const priorityOrder = second.priority - first.priority;
+        if (priorityOrder !== 0) return priorityOrder;
+
+        return (
+          (first.due_date || Number.MAX_SAFE_INTEGER) -
+          (second.due_date || Number.MAX_SAFE_INTEGER)
+        );
+      }),
+    [inProgressGoals],
+  );
+  const unallocatedFunding = getActiveGoalsRequest.data?.unallocated_funding;
+  const accountNameLookup = useMemo(
+    () =>
+      new Map(
+        (getAccountsRequest.data || []).map((account) => [
+          Number(account.account_id),
+          account.name,
+        ]),
+      ),
+    [getAccountsRequest.data],
+  );
+  const unallocatedBreakdown = useMemo(() => {
+    if (!unallocatedFunding?.accounts.length) {
+      return t('goals.noUnallocatedFunding');
+    }
+    return unallocatedFunding.accounts
+      .map((account) => {
+        const accountName =
+          accountNameLookup.get(account.account_id) ||
+          t('goals.accountFallback', { id: account.account_id });
+        return `${accountName}: ${formatNumberAsCurrency.invoke(account.amount)}`;
+      })
+      .join('\n');
+  }, [unallocatedFunding, accountNameLookup, formatNumberAsCurrency, t]);
+
+  const visibleGoals = useMemo(() => {
+    const viewGoals = (() => {
+      switch (goalView) {
+        case 'inProgress':
+          return inProgressGoals;
+        case 'completed':
+          return completedGoals;
+        case 'archived':
+          return archivedGoals;
+        case 'all':
+          return allGoals;
+      }
+    })();
+    const searchQuery = state.searchQuery.trim().toLowerCase();
+    return sortGoals(
+      viewGoals.filter((goal) => {
+        if (underfundedOnly && !goal.is_underfunded) return false;
+        if (!searchQuery) return true;
+        return `${goal.name} ${goal.description || ''}`
+          .toLowerCase()
+          .includes(searchQuery);
+      }),
+      goalSort,
     );
-  }, [getAccountsRequest.data]);
-
-  const formatDueDate = (timestamp: number | null) => {
-    if (!timestamp) return '-';
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString();
-  };
-
-  // Goals for cards: only active (non-archived), sorted by due date
-  const sortedGoalsForCards = useMemo(() => {
-    if (!state?.goals) return [];
-    const activeGoals = state.goals.filter((g) => !g.is_archived);
-    return sortGoalsByDueDate(activeGoals);
-  }, [state?.goals]);
-
-  // Goals for table: sorted (active first by due date, then archived)
-  const sortedGoalsForTable = useMemo(() => {
-    if (!state?.filteredGoals) return [];
-    return sortGoalsForTable(state.filteredGoals);
-  }, [state?.filteredGoals]);
+  }, [
+    goalView,
+    goalSort,
+    underfundedOnly,
+    state.searchQuery,
+    allGoals,
+    inProgressGoals,
+    completedGoals,
+    archivedGoals,
+  ]);
 
   const rows = useMemo(
     () =>
-      sortedGoalsForTable.map((goal: Goal) => ({
+      visibleGoals.map((goal) => ({
         id: goal.goal_id,
         name: { name: goal.name, description: goal.description },
         priority: goal.priority,
         target: goal.amount,
         dueDate: goal.due_date,
-        status: goal.is_archived,
+        status: {
+          isArchived: goal.is_archived,
+          isComplete: isGoalComplete(goal),
+          isUnderfunded: goal.is_underfunded,
+        },
         progress: {
           current: goal.currently_funded_amount,
           target: goal.amount,
           isUnderfunded: goal.is_underfunded,
+          isUnderfundedByPriority: goal.is_underfunded_by_priority,
         },
         actions: goal,
       })),
-    [sortedGoalsForTable],
+    [visibleGoals],
   );
 
   const columns: GridColDef[] = [
     {
       field: 'name',
       headerName: t('goals.name'),
-      minWidth: 200,
+      minWidth: 210,
       flex: 1,
-      editable: false,
       sortable: false,
       renderCell: (params) => (
-        <Stack>
-          <Typography variant="body1" color={theme.palette.text.primary}>
+        <Stack sx={{ minWidth: 0 }}>
+          <Typography variant="body2" fontWeight={600} noWrap>
             {params.value.name}
           </Typography>
           {params.value.description && (
-            <Typography variant="caption" color={theme.palette.text.secondary}>
+            <Typography variant="caption" color="text.secondary" noWrap>
               {params.value.description}
             </Typography>
           )}
@@ -628,21 +603,18 @@ const Goals = () => {
     {
       field: 'priority',
       headerName: t('goals.priority'),
-      minWidth: 100,
-      editable: false,
+      description: t('goals.priorityHelp'),
+      minWidth: 105,
       sortable: false,
-      renderCell: (params) => (
-        <Chip label={params.value} size="small" variant="outlined" />
-      ),
+      renderCell: (params) => <GoalPriorityChip priority={params.value} />,
     },
     {
       field: 'target',
       headerName: t('goals.targetAmount'),
-      minWidth: 130,
-      editable: false,
+      minWidth: 135,
       sortable: false,
       renderCell: (params) => (
-        <Typography variant="body1">
+        <Typography variant="body2">
           {formatNumberAsCurrency.invoke(params.value)}
         </Typography>
       ),
@@ -650,26 +622,43 @@ const Goals = () => {
     {
       field: 'dueDate',
       headerName: t('goals.dueDate'),
-      minWidth: 120,
-      editable: false,
+      minWidth: 125,
       sortable: false,
       renderCell: (params) => (
-        <Typography variant="body2">{formatDueDate(params.value)}</Typography>
+        <Typography variant="body2">
+          {params.value
+            ? new Date(params.value * 1000).toLocaleDateString()
+            : '-'}
+        </Typography>
       ),
     },
     {
       field: 'status',
       headerName: t('goals.status'),
-      minWidth: 100,
-      editable: false,
+      minWidth: 125,
       sortable: false,
       renderCell: (params) => {
-        const isArchived = params.value;
+        const status = params.value;
+        const translationKey = status.isArchived
+          ? 'goals.archived'
+          : status.isComplete
+            ? 'goals.completed'
+            : status.isUnderfunded
+              ? 'goals.underfunded'
+              : 'goals.inProgress';
+        const color = status.isArchived
+          ? 'default'
+          : status.isComplete
+            ? 'success'
+            : status.isUnderfunded
+              ? 'warning'
+              : 'primary';
         return (
           <Chip
-            label={t(isArchived ? 'goals.archived' : 'goals.active')}
+            label={t(translationKey)}
             variant="outlined"
-            color={isArchived ? 'warning' : 'success'}
+            color={color}
+            size="small"
           />
         );
       },
@@ -677,56 +666,41 @@ const Goals = () => {
     {
       field: 'progress',
       headerName: t('goals.progress'),
-      minWidth: 200,
+      minWidth: 235,
       flex: 1,
-      editable: false,
       sortable: false,
       renderCell: (params) => {
-        const percentage =
-          params.value.target > 0
-            ? Math.min(100, (params.value.current / params.value.target) * 100)
-            : 0;
+        const percentage = params.value.target
+          ? Math.min(100, (params.value.current / params.value.target) * 100)
+          : 0;
         const isComplete = percentage >= 100;
         return (
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-            }}
-          >
+          <Stack direction="row" alignItems="center" gap={1} width="100%">
             <Box sx={{ flex: 1 }}>
               <LinearProgress
                 variant="determinate"
                 value={percentage}
-                sx={{
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: theme.palette.grey[300],
-                  '& .MuiLinearProgress-bar': {
-                    backgroundColor: isComplete
-                      ? theme.palette.success.main
-                      : theme.palette.primary.main,
-                    borderRadius: 4,
-                  },
-                }}
+                color={
+                  isComplete
+                    ? 'success'
+                    : params.value.isUnderfunded
+                      ? 'warning'
+                      : 'primary'
+                }
+                sx={{ height: 6, borderRadius: 3 }}
               />
-              <Typography
-                variant="caption"
-                color={theme.palette.text.secondary}
-              >
+              <Typography variant="caption" color="text.secondary">
                 {formatNumberAsCurrency.invoke(params.value.current)} /{' '}
-                {formatNumberAsCurrency.invoke(params.value.target)} (
-                {percentage.toFixed(0)}%)
+                {formatNumberAsCurrency.invoke(params.value.target)} ·{' '}
+                {percentage.toFixed(0)}%
               </Typography>
             </Box>
             {params.value.isUnderfunded && (
-              <Tooltip title={t('goals.underfundedTooltip')}>
-                <Warning color="warning" fontSize="small" />
-              </Tooltip>
+              <UnderfundedIndicator
+                isUnderfundedByPriority={params.value.isUnderfundedByPriority}
+              />
             )}
-          </Box>
+          </Stack>
         );
       },
     },
@@ -734,20 +708,20 @@ const Goals = () => {
       field: 'actions',
       headerName: t('common.actions'),
       minWidth: 100,
-      editable: false,
       sortable: false,
       renderCell: (params) => (
-        <Stack direction="row" gap={0}>
+        <Stack direction="row">
           <IconButton
             aria-label={t('common.edit')}
-            onClick={() =>
+            onClick={(event) => {
+              event.stopPropagation();
               dispatch({
                 type: StateActionType.EditClick,
                 payload: params.value,
-              })
-            }
+              });
+            }}
           >
-            <Edit fontSize="medium" color="action" />
+            <Edit fontSize="small" />
           </IconButton>
           <IconButton
             aria-label={t('common.delete')}
@@ -759,16 +733,15 @@ const Goals = () => {
               });
             }}
           >
-            <Delete fontSize="medium" color="action" />
+            <Delete fontSize="small" />
           </IconButton>
         </Stack>
       ),
     },
   ];
 
-  if (!state) return null;
   return (
-    <Paper elevation={0} sx={{ p: theme.spacing(2), m: theme.spacing(2) }}>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
       {state.isEditDialogOpen && (
         <AddEditGoalDialog
           isOpen={true}
@@ -808,314 +781,254 @@ const Goals = () => {
           positiveText={t('common.delete')}
         />
       )}
-      <Box display="flex" justifyContent="space-between" flexDirection="column">
-        <PageHeader
-          title={t('goals.goals')}
-          subtitle={t('goals.strapLine')}
-          titleChipText={'Beta'}
-        />
-        <Alert severity="info" variant="outlined" sx={{ mb: 2 }}>
-          <AlertTitle>{t('goals.betaAlertTitle')}</AlertTitle>
-          {t('goals.betaAlertIntro')}{' '}
-          <Link
-            href="https://myfinbudget.com/goto/wiki-goals"
-            target="_blank"
-            rel="noopener"
-          >
-            {t('goals.betaAlertDocText')}
-          </Link>{' '}
-          {t('goals.betaAlertPostDoc')}{' '}
-          <Link
-            href="https://myfinbudget.com/goto/gh-discussions"
-            target="_blank"
-            rel="noopener"
-          >
-            {t('goals.betaAlertContactText')}
-          </Link>
-          .
-        </Alert>
-      </Box>
-      {/* Visual Goal Cards Section - Only active goals, sorted by due date */}
-      <Box sx={{ mb: 3 }}>
-        <Grid container spacing={2}>
-          {unallocatedFunding && unallocatedFunding.total_amount > 0 && (
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-              <UnallocatedFundingCard
-                unallocatedFunding={unallocatedFunding}
-                accountNameLookup={accountNameLookup}
-                formatCurrency={formatNumberAsCurrency.invoke}
-              />
-            </Grid>
-          )}
-          {sortedGoalsForCards.map((goal) => (
-            <Grid
-              key={String(goal.goal_id)}
-              size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
-            >
-              <GoalCard
-                goal={goal}
-                onClick={() =>
-                  dispatch({ type: StateActionType.EditClick, payload: goal })
-                }
-                formatCurrency={formatNumberAsCurrency.invoke}
-              />
-            </Grid>
-          ))}
-          {/* Add New Goal Card */}
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Card
-              sx={{
-                height: '100%',
-                minHeight: 280,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: `2px dashed ${theme.palette.divider}`,
-                backgroundColor: 'transparent',
-                transition: 'border-color 0.2s, background-color 0.2s',
-                '&:hover': {
-                  borderColor: theme.palette.primary.main,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.04),
-                },
-              }}
-            >
-              <CardActionArea
-                onClick={() => dispatch({ type: StateActionType.AddClick })}
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <AddCircleOutline
-                  sx={{
-                    fontSize: 48,
-                    color: theme.palette.text.secondary,
-                    mb: 1,
-                  }}
-                />
-                <Typography variant="body1" color="text.secondary">
-                  {t('goals.addGoalCTA')}
-                </Typography>
-              </CardActionArea>
-            </Card>
-          </Grid>
-        </Grid>
-      </Box>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMore />}>
-          <Typography>{t('goals.fullList')}</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Grid container spacing={2} sx={{ mb: 2 }}>
-            <Grid
-              size={{ xs: 12, md: 8 }}
-              sx={{ display: 'flex', alignItems: 'center' }}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showArchived}
-                    onChange={(e) => setShowArchived(e.target.checked)}
-                  />
-                }
-                label={t('goals.showArchived')}
-              />
-            </Grid>
-            <Grid
-              sx={{ display: 'flex', justifyContent: 'flex-end' }}
-              size={{ xs: 12, md: 4 }}
-            >
-              <TextField
-                id="search"
-                label={t('common.search')}
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'stretch', sm: 'flex-start' }}
+        gap={2}
+        sx={{ mb: 2.5 }}
+      >
+        <Box>
+          <Stack direction="row" alignItems="center" gap={1}>
+            <Typography variant="h5" fontWeight={700}>
+              {t('goals.goals')}
+            </Typography>
+            <Tooltip title={t('goals.betaAlertTitle')}>
+              <Chip
+                component="a"
+                href="https://myfinbudget.com/goto/wiki-goals"
+                target="_blank"
+                rel="noopener"
+                label="Beta"
+                size="small"
+                color="success"
                 variant="outlined"
-                margin="dense"
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  dispatch({
-                    type: StateActionType.SearchQueryUpdated,
-                    payload: event.target.value,
-                  });
-                }}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Search />
-                      </InputAdornment>
-                    ),
-                  },
-                }}
+                clickable
               />
-            </Grid>
-          </Grid>
-          <Grid size={12}>
-            <MyFinStaticTable
-              isRefetching={getGoalsRequest.isRefetching}
-              rows={rows || []}
-              columns={columns}
-              paginationModel={{ pageSize: 20 }}
-              onRowClicked={(id) => {
-                const goal = state.goals?.find((goal) => goal.goal_id == id);
-                if (!goal) return;
-                dispatch({ type: StateActionType.EditClick, payload: goal });
-              }}
-            />
-          </Grid>
-        </AccordionDetails>
-      </Accordion>
-    </Paper>
-
-    /*<Box sx={{ p: { xs: 2, md: 4 }, pt: { xs: 2, md: 3 } }}>
-      <PageHeader title={t('goals.goals')} subtitle={t('goals.strapLine')} />
-
-      {/!* Visual Goal Cards Section *!/}
-      {state.goals && state.goals.length > 0 && (
-        <Box sx={{ mb: 3 }}>
-          <Grid container spacing={2}>
-            {state.goals.map((goal) => (
-              <Grid key={String(goal.goal_id)} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                <GoalCard
-                  goal={goal}
-                  onClick={() =>
-                    dispatch({ type: StateActionType.EditClick, payload: goal })
-                  }
-                  formatCurrency={formatNumberAsCurrency.invoke}
-                />
-              </Grid>
-            ))}
-            {/!* Add New Goal Card *!/}
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-              <Card
-                sx={{
-                  height: '100%',
-                  minHeight: 280,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: `2px dashed ${theme.palette.divider}`,
-                  backgroundColor: 'transparent',
-                  transition: 'border-color 0.2s, background-color 0.2s',
-                  '&:hover': {
-                    borderColor: theme.palette.primary.main,
-                    backgroundColor: alpha(theme.palette.primary.main, 0.04),
-                  },
-                }}
-              >
-                <CardActionArea
-                  onClick={() => dispatch({ type: StateActionType.AddClick })}
-                  sx={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <AddCircleOutline
-                    sx={{ fontSize: 48, color: theme.palette.text.secondary, mb: 1 }}
-                  />
-                  <Typography variant="body1" color="text.secondary">
-                    {t('goals.addGoalCTA')}
-                  </Typography>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          </Grid>
+            </Tooltip>
+          </Stack>
+          <Typography variant="body2" color="text.secondary">
+            {t('goals.strapLine')}
+          </Typography>
         </Box>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={() => dispatch({ type: StateActionType.AddClick })}
+        >
+          {t('goals.newGoal')}
+        </Button>
+      </Stack>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, minmax(0, 1fr))',
+            xl: 'repeat(4, minmax(0, 1fr))',
+          },
+          gap: 1.5,
+          mb: 3,
+        }}
+      >
+        <MetricCard
+          icon={<TrackChanges />}
+          label={t('goals.inProgress')}
+          value={inProgressGoals.length}
+          subtitle={t('goals.goalCount', { count: inProgressGoals.length })}
+          accentColor={theme.palette.primary.main}
+        />
+        <MetricCard
+          icon={<CheckCircle />}
+          label={t('goals.completed')}
+          value={completedGoals.length}
+          subtitle={t('goals.currentlyCompleted')}
+          accentColor={theme.palette.success.main}
+        />
+        <MetricCard
+          icon={<MoneyOff />}
+          label={t('goals.underfunded')}
+          value={underfundedGoals.length}
+          subtitle={t('goals.needAttention')}
+          accentColor={theme.palette.warning.main}
+        />
+        <MetricCard
+          icon={<AccountBalanceWallet />}
+          label={t('goals.unallocatedFunding')}
+          value={formatNumberAsCurrency.invoke(
+            unallocatedFunding?.total_amount || 0,
+          )}
+          subtitle={t('goals.availableToAllocate')}
+          accentColor={theme.palette.info.main}
+          tooltip={
+            <Box component="span" sx={{ whiteSpace: 'pre-line' }}>
+              {unallocatedBreakdown}
+            </Box>
+          }
+        />
+      </Box>
+
+      <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1.5 }}>
+        <Typography variant="h6" fontWeight={700}>
+          {t('goals.inProgressGoals')}
+        </Typography>
+        <Chip label={inProgressGoals.length} size="small" />
+      </Stack>
+
+      {goalCards.length > 0 ? (
+        <Box
+          sx={{
+            display: 'grid',
+            gridAutoFlow: { xs: 'column', md: 'row' },
+            gridAutoColumns: { xs: 'minmax(280px, 86vw)', md: 'auto' },
+            gridTemplateColumns: {
+              md: 'repeat(2, minmax(0, 1fr))',
+              lg: 'repeat(4, minmax(0, 1fr))',
+            },
+            gap: 1.5,
+            overflowX: { xs: 'auto', md: 'visible' },
+            pb: { xs: 1, md: 0 },
+            mb: 3,
+            scrollSnapType: { xs: 'x mandatory', md: 'none' },
+            '& > *': { scrollSnapAlign: 'start' },
+          }}
+        >
+          {goalCards.map((goal) => (
+            <GoalCard
+              key={String(goal.goal_id)}
+              goal={goal}
+              onClick={() =>
+                dispatch({ type: StateActionType.EditClick, payload: goal })
+              }
+              formatCurrency={formatNumberAsCurrency.invoke}
+            />
+          ))}
+        </Box>
+      ) : (
+        <Card
+          variant="outlined"
+          sx={{
+            py: 4,
+            px: 2,
+            mb: 3,
+            textAlign: 'center',
+            borderStyle: 'dashed',
+            backgroundImage: 'none',
+          }}
+        >
+          <TrackChanges color="disabled" sx={{ fontSize: 40, mb: 1 }} />
+          <Typography fontWeight={600}>
+            {t('goals.noGoalsInProgress')}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            {t('goals.createGoalPrompt')}
+          </Typography>
+          <Button
+            variant="outlined"
+            startIcon={<Add />}
+            onClick={() => dispatch({ type: StateActionType.AddClick })}
+          >
+            {t('goals.newGoal')}
+          </Button>
+        </Card>
       )}
 
-      {/!* Table Section *!/}
-      <Paper elevation={0} sx={{ p: 2, backgroundColor: 'background.paper' }}>
-        <Grid container spacing={2}>
-          {state.isEditDialogOpen && (
-            <AddEditGoalDialog
-              isOpen={true}
-              onClose={() => dispatch({ type: StateActionType.DialogDismissed })}
-              onSuccess={() => dispatch({ type: StateActionType.DialogDismissed })}
-              onNegativeClick={() =>
-                dispatch({ type: StateActionType.DialogDismissed })
-              }
-              goal={state.actionableGoal}
-            />
-          )}
-          {state.isRemoveDialogOpen && (
-            <GenericConfirmationDialog
-              isOpen={true}
-              onClose={() => dispatch({ type: StateActionType.DialogDismissed })}
-              onPositiveClick={() => {
-                deleteGoalRequest.mutate(state.actionableGoal?.goal_id || -1n);
-                dispatch({ type: StateActionType.DialogDismissed });
-              }}
-              onNegativeClick={() =>
-                dispatch({ type: StateActionType.DialogDismissed })
-              }
-              titleText={t('goals.deleteGoalModalTitle', {
-                name: state.actionableGoal?.name,
-              })}
-              descriptionText={t('goals.deleteGoalModalSubtitle')}
-              alert={t('goals.deleteGoalModalAlert')}
-              positiveText={t('common.delete')}
-            />
-          )}
-          <Grid size={{ xs: 12, md: 8 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mb: 2 }}
-              startIcon={<AddCircleOutline />}
-              onClick={() => {
-                dispatch({ type: StateActionType.AddClick });
-              }}
-            >
-              {t('goals.addGoalCTA')}
-            </Button>
-          </Grid>
-          <Grid
-            sx={{ display: 'flex', justifyContent: 'flex-end' }}
-            size={{ xs: 12, md: 4 }}
+      <Card variant="outlined" sx={{ backgroundImage: 'none' }}>
+        <Box
+          sx={{ px: { xs: 1, sm: 2 }, borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Tabs
+            value={goalView}
+            onChange={(_, value: GoalView) => setGoalView(value)}
+            variant={isSmallScreen ? 'scrollable' : 'standard'}
+            scrollButtons="auto"
+            aria-label={t('goals.goalViews')}
           >
-            <TextField
-              id="search"
-              label={t('common.search')}
-              variant="outlined"
-              margin="dense"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                dispatch({
-                  type: StateActionType.SearchQueryUpdated,
-                  payload: event.target.value,
-                });
-              }}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                },
-              }}
+            <Tab
+              value="inProgress"
+              label={`${t('goals.inProgress')} (${inProgressGoals.length})`}
             />
-          </Grid>
-          <Grid size={12}>
-            <MyFinStaticTable
-              isRefetching={getGoalsRequest.isRefetching}
-              rows={rows || []}
-              columns={columns}
-              paginationModel={{ pageSize: 20 }}
-              onRowClicked={(id) => {
-                const goal = state.goals?.find((goal) => goal.goal_id == id);
-                if (!goal) return;
-                dispatch({ type: StateActionType.EditClick, payload: goal });
-              }}
+            <Tab
+              value="completed"
+              label={`${t('goals.completed')} (${completedGoals.length})`}
             />
-          </Grid>
-        </Grid>
-      </Paper>
-    </Box>*/
+            <Tab
+              value="archived"
+              icon={<Archive fontSize="small" />}
+              iconPosition="start"
+              label={`${t('goals.archived')} (${archivedGoals.length})`}
+            />
+            <Tab value="all" label={`${t('goals.all')} (${allGoals.length})`} />
+          </Tabs>
+        </Box>
+
+        <Stack direction={{ xs: 'column', md: 'row' }} gap={1.5} sx={{ p: 2 }}>
+          <Button
+            variant={underfundedOnly ? 'contained' : 'outlined'}
+            startIcon={<FilterList />}
+            onClick={() => setUnderfundedOnly((current) => !current)}
+            aria-pressed={underfundedOnly}
+            sx={{ whiteSpace: 'nowrap' }}
+          >
+            {t('goals.underfundedOnly')}
+          </Button>
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel id="goal-sort-label">{t('goals.sortBy')}</InputLabel>
+            <Select
+              labelId="goal-sort-label"
+              value={goalSort}
+              label={t('goals.sortBy')}
+              onChange={(event) => setGoalSort(event.target.value as GoalSort)}
+            >
+              <MenuItem value="dueDate">{t('goals.dueDate')}</MenuItem>
+              <MenuItem value="priority">{t('goals.priority')}</MenuItem>
+              <MenuItem value="progress">{t('goals.progress')}</MenuItem>
+              <MenuItem value="name">{t('goals.name')}</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            size="small"
+            value={state.searchQuery}
+            placeholder={t('goals.searchGoals')}
+            onChange={(event) =>
+              dispatch({
+                type: StateActionType.SearchQueryUpdated,
+                payload: event.target.value,
+              })
+            }
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search fontSize="small" />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            sx={{ ml: { md: 'auto' }, minWidth: { md: 260 } }}
+          />
+        </Stack>
+
+        <Box sx={{ px: { xs: 0, sm: 1 }, pb: 1 }}>
+          <MyFinStaticTable
+            isRefetching={
+              getActiveGoalsRequest.isRefetching ||
+              getAllGoalsRequest.isRefetching
+            }
+            rows={rows}
+            columns={columns}
+            paginationModel={{ pageSize: 20 }}
+            onRowClicked={(id) => {
+              const goal = allGoals.find((item) => item.goal_id === id);
+              if (!goal) return;
+              dispatch({ type: StateActionType.EditClick, payload: goal });
+            }}
+          />
+        </Box>
+      </Card>
+    </Box>
   );
 };
 

@@ -17,6 +17,7 @@ export type Goal = {
   is_archived: boolean;
   currently_funded_amount: number;
   is_underfunded: boolean;
+  is_underfunded_by_priority: boolean;
   funding_accounts: FundingAccount[];
 };
 
