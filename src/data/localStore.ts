@@ -1,4 +1,9 @@
 import { Account, UserSession } from '../services/auth/authServices.ts';
+import {
+  DEFAULT_MY_FIN_THEME,
+  MY_FIN_THEME_NAMES,
+  type MyFinThemeName,
+} from '../theme';
 
 const storagePrefix = 'myfin';
 
@@ -16,6 +21,12 @@ export type CachedTransaction = {
   entity_id?: bigint;
   is_essential: 0 | 1;
 };
+
+const isMyFinThemeName = (
+  value: string | null,
+): value is MyFinThemeName =>
+  value !== null &&
+  (MY_FIN_THEME_NAMES as readonly string[]).includes(value);
 
 const localStore = {
   getSessionData: (): UserSession => {
@@ -52,19 +63,26 @@ const localStore = {
       ) ?? []
     );
   },
-  getUiMode: (): 'light' | 'dark' => {
-    return (
-      (window.localStorage.getItem(`${storagePrefix}.${uiModeTag}`) as
-        | 'light'
-        | 'dark') ?? 'dark'
+  getUiMode: (): MyFinThemeName => {
+    const storedTheme = window.localStorage.getItem(
+      `${storagePrefix}.${uiModeTag}`,
+    );
+    return isMyFinThemeName(storedTheme)
+      ? storedTheme
+      : DEFAULT_MY_FIN_THEME;
+  },
+  setUiMode: (themeName: MyFinThemeName) => {
+    window.localStorage.setItem(
+      `${storagePrefix}.${uiModeTag}`,
+      themeName,
     );
   },
-  setUiMode: (mode: 'light' | 'dark') => {
-    window.localStorage.setItem(`${storagePrefix}.${uiModeTag}`, mode);
-  },
   toggleUiMode: () => {
-    const prevMode = localStore.getUiMode();
-    localStore.setUiMode(prevMode === 'light' ? 'dark' : 'light');
+    const currentTheme = localStore.getUiMode();
+    const currentIndex = MY_FIN_THEME_NAMES.indexOf(currentTheme);
+    const nextTheme =
+      MY_FIN_THEME_NAMES[(currentIndex + 1) % MY_FIN_THEME_NAMES.length];
+    localStore.setUiMode(nextTheme);
   },
   getLastCachedTrx: (): CachedTransaction | null => {
     return JSON.parse(

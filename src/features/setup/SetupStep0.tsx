@@ -1,4 +1,4 @@
-import { Autocomplete, Divider, PaletteMode, useTheme } from '@mui/material';
+import { Autocomplete, Divider, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import React, { useContext, useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
@@ -12,6 +12,11 @@ import FormControl from '@mui/material/FormControl';
 import i18next from 'i18next';
 import { ColorModeContext } from '../../providers/MyFinThemeProvider.tsx';
 import { useUserData } from '../../providers/UserProvider.tsx';
+import {
+  MY_FIN_THEME_LABEL_KEYS,
+  MY_FIN_THEME_NAMES,
+  type MyFinThemeName,
+} from '../../theme';
 import Stack from '@mui/material/Stack';
 import { CURRENCIES, Currency } from '../../consts/Currency.ts';
 import TextField from '@mui/material/TextField';
@@ -30,15 +35,8 @@ const SetupStep0 = (props: Props) => {
   const { partiallyUpdateUserSessionData } = useUserData();
 
   const [language, setLanguage] = useState(i18next.resolvedLanguage || 'en');
-  const [currentTheme, setTheme] = useState<PaletteMode>(
-    theme.palette.mode || 'dark',
-  );
 
   const [currency, setCurrency] = useState<Currency>(CURRENCIES.EUR);
-
-  useEffect(() => {
-    colorMode.setColorMode(currentTheme);
-  }, [currentTheme]);
 
   useEffect(() => {
     i18next.changeLanguage(language);
@@ -47,10 +45,6 @@ const SetupStep0 = (props: Props) => {
 
   function handleLanguageChange(event: React.ChangeEvent<HTMLInputElement>) {
     setLanguage(event.currentTarget.value);
-  }
-
-  function handleThemeChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setTheme(event.currentTarget.value as PaletteMode);
   }
 
   return (
@@ -86,20 +80,22 @@ const SetupStep0 = (props: Props) => {
         <Divider sx={{ mb: 2, mt: 1 }} />
         <FormControl>
           <RadioGroup
-            value={currentTheme}
+            value={colorMode.themeName}
             name="theme-radio-buttons-group"
-            onChange={handleThemeChange}
+            onChange={(event) =>
+              colorMode.setColorMode(
+                event.currentTarget.value as MyFinThemeName,
+              )
+            }
           >
-            <FormControlLabel
-              value="light"
-              control={<Radio />}
-              label={t('profile.lightTheme')}
-            />
-            <FormControlLabel
-              value="dark"
-              control={<Radio />}
-              label={t('profile.darkTheme')}
-            />
+            {MY_FIN_THEME_NAMES.map((themeName) => (
+              <FormControlLabel
+                key={themeName}
+                value={themeName}
+                control={<Radio />}
+                label={t(MY_FIN_THEME_LABEL_KEYS[themeName])}
+              />
+            ))}
           </RadioGroup>
         </FormControl>
         <Typography variant="h5" pt={theme.spacing(4)}>

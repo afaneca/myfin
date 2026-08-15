@@ -4,7 +4,6 @@ import {
   AccordionSummary,
   Divider,
   Link,
-  PaletteMode,
   useTheme,
 } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -27,20 +26,53 @@ import Utilities from './Utilities.tsx';
 import ChangePasswordForm from './ChangePasswordForm.tsx';
 import { useUserData } from '../../providers/UserProvider.tsx';
 import ChangeCurrencyForm from './ChangeCurrencyForm.tsx';
+import {
+  MY_FIN_THEME_LABEL_KEYS,
+  MY_FIN_THEME_NAMES,
+  MY_FIN_THEME_PALETTE_PREVIEWS,
+  type MyFinThemeName,
+} from '../../theme';
+
+const ThemePaletteIndicator = ({
+  themeName,
+  label,
+}: {
+  themeName: MyFinThemeName;
+  label: string;
+}) => (
+  <Stack component="span" direction="row" alignItems="center" gap={1}>
+    <Stack
+      component="span"
+      direction="row"
+      aria-hidden
+      sx={{
+        width: 72,
+        height: 18,
+        borderRadius: 1,
+        overflow: 'hidden',
+        flexShrink: 0,
+        border: 1,
+        borderColor: 'divider',
+      }}
+    >
+      {MY_FIN_THEME_PALETTE_PREVIEWS[themeName].map((color, index) => (
+        <Box
+          component="span"
+          key={`${themeName}-${index}`}
+          sx={{ flex: 1, backgroundColor: color }}
+        />
+      ))}
+    </Stack>
+    <Typography component="span">{label}</Typography>
+  </Stack>
+);
 
 const Profile = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const colorMode = useContext(ColorModeContext);
   const [language, setLanguage] = useState(i18next.resolvedLanguage || 'en');
-  const [currentTheme, setTheme] = useState<PaletteMode>(
-    theme.palette.mode || 'dark',
-  );
   const { partiallyUpdateUserSessionData, userSessionData } = useUserData();
-
-  useEffect(() => {
-    colorMode.setColorMode(currentTheme);
-  }, [currentTheme]);
 
   useEffect(() => {
     i18next.changeLanguage(language);
@@ -49,10 +81,6 @@ const Profile = () => {
 
   function handleLanguageChange(event: React.ChangeEvent<HTMLInputElement>) {
     setLanguage(event.currentTarget.value);
-  }
-
-  function handleThemeChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setTheme(event.currentTarget.value as PaletteMode);
   }
 
   return (
@@ -179,20 +207,27 @@ const Profile = () => {
             <AccordionDetails>
               <FormControl>
                 <RadioGroup
-                  value={currentTheme}
+                  value={colorMode.themeName}
                   name="theme-radio-buttons-group"
-                  onChange={handleThemeChange}
+                  onChange={(event) =>
+                    colorMode.setColorMode(
+                      event.currentTarget.value as MyFinThemeName,
+                    )
+                  }
                 >
-                  <FormControlLabel
-                    value="light"
-                    control={<Radio />}
-                    label={t('profile.lightTheme')}
-                  />
-                  <FormControlLabel
-                    value="dark"
-                    control={<Radio />}
-                    label={t('profile.darkTheme')}
-                  />
+                  {MY_FIN_THEME_NAMES.map((themeName) => (
+                    <FormControlLabel
+                      key={themeName}
+                      value={themeName}
+                      control={<Radio />}
+                      label={
+                        <ThemePaletteIndicator
+                          themeName={themeName}
+                          label={t(MY_FIN_THEME_LABEL_KEYS[themeName])}
+                        />
+                      }
+                    />
+                  ))}
                 </RadioGroup>
               </FormControl>
             </AccordionDetails>

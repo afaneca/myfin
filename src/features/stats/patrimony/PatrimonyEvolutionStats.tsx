@@ -27,6 +27,7 @@ type UiState = {
 const enum StateActionType {
   DataLoaded,
   AccountSelected,
+  RequestFailed,
 }
 
 type StateAction =
@@ -34,6 +35,7 @@ type StateAction =
       type: StateActionType.DataLoaded;
       payload: NamedBalanceSnapshot;
     }
+  | { type: StateActionType.RequestFailed }
   | { type: StateActionType.AccountSelected; payload?: bigint };
 
 const createInitialState = (): UiState => {
@@ -54,6 +56,11 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
       return {
         ...prevState,
         filteredAccountId: action.payload,
+      };
+    case StateActionType.RequestFailed:
+      return {
+        ...prevState,
+        isLoading: false,
       };
   }
 };
@@ -98,6 +105,7 @@ const PatrimonyEvolutionStats = () => {
   // Error
   useEffect(() => {
     if (getBalanceSnapshotsRequest.isError) {
+      dispatch({ type: StateActionType.RequestFailed });
       snackbar.showSnackbar(
         t('common.somethingWentWrongTryAgain'),
         AlertSeverity.ERROR,
