@@ -7,11 +7,15 @@ import {
   useState,
 } from 'react';
 import localStore from '../data/localStore.ts';
-import { createTheme, PaletteMode } from '@mui/material';
+import { createTheme } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import CssBaseline from '@mui/material/CssBaseline';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import { ThemeProvider } from '@mui/material/styles';
-import { generateGlobalTheme } from '../theme';
+import {
+  generateGlobalTheme,
+  type MyFinThemeName,
+} from '../theme';
 import { LoadingProvider } from './LoadingProvider.tsx';
 import { SnackbarProvider } from './SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
@@ -28,32 +32,31 @@ import { UserContextProvider } from './UserProvider.tsx';
 type SupportedLocales = keyof typeof locales;
 
 interface ColorModeContextType {
-  toggleColorMode: () => void;
-  setColorMode: (mode: PaletteMode) => void;
+  themeName: MyFinThemeName;
+  setColorMode: (themeName: MyFinThemeName) => void;
 }
 export const ColorModeContext = createContext({} as ColorModeContextType);
 
 const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [mode, setMode] = useState<PaletteMode>(localStore.getUiMode());
+  const [themeName, setThemeName] = useState<MyFinThemeName>(
+    localStore.getUiMode(),
+  );
   const colorMode = useMemo(
     () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-        localStore.toggleUiMode();
-      },
-      setColorMode: (mode: PaletteMode) => {
-        setMode(mode);
-        localStore.setUiMode(mode);
+      themeName,
+      setColorMode: (selectedThemeName: MyFinThemeName) => {
+        setThemeName(selectedThemeName);
+        localStore.setUiMode(selectedThemeName);
       },
     }),
-    [mode],
+    [themeName],
   );
 
   const [locale, setLocale] = useState<SupportedLocales>('ptPT');
   const [dayJsLocale, setDayJsLocale] = useState<'en' | 'pt' | 'fr'>('pt');
   const theme = useMemo(
-    () => createTheme(generateGlobalTheme(mode), locales[locale]),
-    [mode, locale],
+    () => createTheme(generateGlobalTheme(themeName), locales[locale]),
+    [themeName, locale],
   );
   const { i18n } = useTranslation();
 
@@ -99,6 +102,15 @@ const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
           <ThemeProvider theme={theme}>
             <Suspense fallback={<CircularProgress color="inherit" />}>
               <CssBaseline />
+              <GlobalStyles
+                styles={(theme) => ({
+                  ':root': {
+                    '--myfin-scrollbar-track': theme.palette.background.default,
+                    '--myfin-scrollbar-thumb': theme.palette.divider,
+                    '--myfin-scrollbar-thumb-hover': theme.palette.action.hover,
+                  },
+                })}
+              />
               <LoadingProvider>
                 <SnackbarProvider>{children}</SnackbarProvider>
               </LoadingProvider>

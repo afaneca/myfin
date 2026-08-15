@@ -6,6 +6,7 @@ import {
   Description,
   ExpandMore,
   Flag,
+  InfoOutlined,
   PlayArrow,
   Send,
   Undo,
@@ -52,6 +53,7 @@ import { Account } from '../../services/auth/authServices.ts';
 import { useCreateGoal, useUpdateGoal } from '../../services/goal/goalHooks.ts';
 import { Goal } from '../../services/goal/goalServices.ts';
 import { useFormatNumberAsCurrency } from '../../utils/textHooks.ts';
+import { PriorityTooltip } from './GoalIndicators.tsx';
 
 type AccountOption = {
   id: number;
@@ -447,15 +449,29 @@ const AddEditGoalDialog = (props: Props) => {
                 color="primary"
               >
                 <ToggleButton value="active">
-                  <Stack direction="row" spacing={1}>
+                  <Stack
+                    component="span"
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                    justifyContent="center"
+                  >
                     <PlayArrow />
-                    <Typography variant="body2">{t('goals.active')}</Typography>
+                    <Typography component="span" variant="body2">
+                      {t('goals.active')}
+                    </Typography>
                   </Stack>
                 </ToggleButton>
                 <ToggleButton value="archived">
-                  <Stack direction="row" spacing={1}>
+                  <Stack
+                    component="span"
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                    justifyContent="center"
+                  >
                     <AcUnit />
-                    <Typography variant="body2">
+                    <Typography component="span" variant="body2">
                       {t('goals.archived')}
                     </Typography>
                   </Stack>
@@ -551,6 +567,19 @@ const AddEditGoalDialog = (props: Props) => {
               slotProps={{
                 htmlInput: {
                   min: 1,
+                },
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <PriorityTooltip>
+                        <InfoOutlined
+                          tabIndex={0}
+                          aria-label={t('goals.priorityHelp')}
+                          sx={{ color: 'text.secondary', fontSize: 20 }}
+                        />
+                      </PriorityTooltip>
+                    </InputAdornment>
+                  ),
                 },
               }}
             />

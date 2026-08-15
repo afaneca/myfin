@@ -4,17 +4,17 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #393737;
+  background: var(--myfin-scrollbar-track, #393737);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: var(--myfin-scrollbar-thumb, #888);
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--myfin-scrollbar-thumb-hover, #555);
 }
 
 @media print {
