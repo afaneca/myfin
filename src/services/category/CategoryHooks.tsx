@@ -1,5 +1,6 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { queryClient } from '../../data/react-query.ts';
+import { QUERY_KEY_GET_BUDGET_MATRIX } from '../budget/budgetHooks.ts';
 import CategoryServices, {
   AddCategoryRequest,
   EditCategoryRequest,
@@ -27,6 +28,9 @@ export function useRemoveCategory() {
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_CATEGORIES],
     });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
+    });
     return result;
   }
 
@@ -42,6 +46,9 @@ export function useAddCategory() {
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_CATEGORIES],
     });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
+    });
     return result;
   }
 
@@ -56,6 +63,9 @@ export function useEditCategory() {
 
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_CATEGORIES],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
     });
     return result;
   }

@@ -1,16 +1,18 @@
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { queryClient } from '../../data/react-query.ts';
 import BudgetServices, {
   CreateBudgetRequest,
   UpdateBudgetRequest,
+  UpdateBudgetDescriptionRequest,
+  UpdateBudgetMatrixCellRequest,
 } from './budgetServices.ts';
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { queryClient } from '../../data/react-query.ts';
 
 const QUERY_KEY_GET_BUDGETS = 'QUERY_KEY_GET_BUDGETS';
 const QUERY_KEY_GET_BUDGET = 'QUERY_KEY_GET_BUDGET';
 const QUERY_KEY_CLONE_BUDGET = 'QUERY_KEY_CLONE_BUDGET';
 const QUERY_KEY_CREATE_BUDGET_STEP0 = 'QUERY_KEY_CREATE_BUDGET_STEP0';
 const QUERY_KEY_GET_BUDGET_LIST_SUMMARY = 'QUERY_KEY_GET_BUDGET_LIST_SUMMARY';
-
+export const QUERY_KEY_GET_BUDGET_MATRIX = 'QUERY_KEY_GET_BUDGET_MATRIX';
 export function useGetBudgets(
   page: number,
   pageSize: number,
@@ -41,6 +43,10 @@ export function useRemoveBudget() {
       queryKey: [QUERY_KEY_GET_BUDGET_LIST_SUMMARY],
     });
 
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
+    });
+
     return request;
   }
 
@@ -63,6 +69,9 @@ export function useUpdateBudgetStatus() {
 
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_BUDGET],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
     });
     return request;
   }
@@ -109,6 +118,10 @@ export function useUpdateBudget() {
       queryKey: [QUERY_KEY_GET_BUDGET_LIST_SUMMARY],
     });
 
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
+    });
+
     return request;
   }
 
@@ -141,6 +154,10 @@ export function useCreateBudgetStep1() {
 
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_BUDGET_LIST_SUMMARY],
+    });
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
     });
 
     return request.data;
@@ -186,5 +203,54 @@ export function useGetBudgetToClone(budgetId: bigint | null) {
     queryFn: getBudget,
     placeholderData: keepPreviousData,
     enabled: !!budgetId,
+  });
+}
+export function useGetBudgetMatrix(budgetIds: bigint[]) {
+  const normalizedBudgetIds = budgetIds.map((budgetId) => budgetId.toString());
+
+  async function getBudgetMatrix({ signal }: { signal: AbortSignal }) {
+    const data = await BudgetServices.getBudgetMatrix(budgetIds, signal);
+    return data.data;
+  }
+
+  return useQuery({
+    queryKey: [QUERY_KEY_GET_BUDGET_MATRIX, normalizedBudgetIds],
+    queryFn: getBudgetMatrix,
+    placeholderData: keepPreviousData,
+    enabled: budgetIds.length > 0,
+  });
+}
+
+export function useUpdateBudgetMatrixCell() {
+  async function updateBudgetMatrixCell(request: UpdateBudgetMatrixCellRequest) {
+    const response = await BudgetServices.updateBudgetMatrixCell(request);
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET, request.budget_id],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
+    });
+    return response.data;
+  }
+
+  return useMutation({
+    mutationFn: updateBudgetMatrixCell,
+  });
+}
+
+export function useUpdateBudgetDescription() {
+  async function updateBudgetDescription(request: UpdateBudgetDescriptionRequest) {
+    const response = await BudgetServices.updateBudgetDescription(request);
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET, request.budget_id],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
+    });
+    return response.data;
+  }
+
+  return useMutation({
+    mutationFn: updateBudgetDescription,
   });
 }

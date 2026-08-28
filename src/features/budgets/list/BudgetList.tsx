@@ -1,21 +1,3 @@
-import { Checkbox, FormGroup, useTheme } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import React, { memo, useEffect, useMemo, useState } from 'react';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import PageHeader from '../../../components/PageHeader.tsx';
-import Stack from '@mui/material/Stack';
-import {
-  useGetBudgets,
-  useRemoveBudget,
-} from '../../../services/budget/budgetHooks.ts';
-import { useLoading } from '../../../providers/LoadingProvider.tsx';
-import { GridColDef } from '@mui/x-data-grid';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../../providers/SnackbarProvider.tsx';
-import { Budget } from '../../../services/budget/budgetServices.ts';
 import {
   AddCircleOutline,
   ArrowOutward,
@@ -23,31 +5,51 @@ import {
   Lock,
   LockOpen,
   Search,
+  TableView,
   Visibility,
 } from '@mui/icons-material';
+import { Checkbox, FormGroup, Tooltip, useTheme } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { GridColDef } from '@mui/x-data-grid';
+import { debounce } from 'lodash';
+import React, { memo, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
+import MyFinTable from '../../../components/MyFinTable.tsx';
+import PageHeader from '../../../components/PageHeader.tsx';
+import { useLoading } from '../../../providers/LoadingProvider.tsx';
+import {
+  ROUTE_BUDGET_DETAILS,
+  ROUTE_BUDGET_MATRIX,
+  ROUTE_BUDGET_NEW,
+} from '../../../providers/RoutesProvider.tsx';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../../providers/SnackbarProvider.tsx';
+import {
+  useGetBudgets,
+  useRemoveBudget,
+} from '../../../services/budget/budgetHooks.ts';
+import { Budget } from '../../../services/budget/budgetServices.ts';
 import {
   getCurrentMonth,
   getCurrentYear,
   getMonthsFullName,
 } from '../../../utils/dateUtils.ts';
-import { formatNumberAsPercentage } from '../../../utils/textUtils.ts';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import MyFinTable from '../../../components/MyFinTable.tsx';
-import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import IconButton from '@mui/material/IconButton';
-import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
-import { useNavigate } from 'react-router-dom';
-import {
-  ROUTE_BUDGET_DETAILS,
-  ROUTE_BUDGET_NEW,
-} from '../../../providers/RoutesProvider.tsx';
-import { debounce } from 'lodash';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
+import { formatNumberAsPercentage } from '../../../utils/textUtils.ts';
 
 const BudgetList = () => {
   const theme = useTheme();
@@ -120,6 +122,9 @@ const BudgetList = () => {
 
   const handleAddBudgetClick = () => {
     navigate(ROUTE_BUDGET_NEW);
+  };
+  const handleBudgetMatrixClick = () => {
+    navigate(ROUTE_BUDGET_MATRIX);
   };
 
   const handleRemoveBudgetClick = (budget: Budget) => {
@@ -354,27 +359,50 @@ const BudgetList = () => {
           }}
         >
           <Grid>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddCircleOutline />}
-              onClick={() => {
-                handleAddBudgetClick();
-              }}
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={1}
+              alignItems={{ xs: 'stretch', sm: 'center' }}
+              flexWrap="wrap"
             >
-              {t('budgets.addBudget')}
-            </Button>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showOnlyOpen}
-                    onChange={(_, checked) => setShowOnlyOpen(checked)}
-                  />
-                }
-                label={t('budgets.onlyOpened')}
-              />
-            </FormGroup>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddCircleOutline />}
+                onClick={() => {
+                  handleAddBudgetClick();
+                }}
+              >
+                {t('budgets.addBudget')}
+              </Button>
+              <Tooltip title={t('budgets.matrixView')} placement="top">
+                <IconButton
+                  size="small"
+                  color="primary"
+                  aria-label={t('budgets.matrixView')}
+                  onClick={handleBudgetMatrixClick}
+                  sx={{
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 1,
+                  }}
+                >
+                  <TableView fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <FormGroup sx={{ m: 0 }}>
+                <FormControlLabel
+                  sx={{ m: 0 }}
+                  control={
+                    <Checkbox
+                      checked={showOnlyOpen}
+                      onChange={(_, checked) => setShowOnlyOpen(checked)}
+                    />
+                  }
+                  label={t('budgets.onlyOpened')}
+                />
+              </FormGroup>
+            </Stack>
           </Grid>
         </Grid>
 
@@ -401,7 +429,7 @@ const BudgetList = () => {
                     <Search />
                   </InputAdornment>
                 ),
-              }
+              },
             }}
           />
         </Grid>

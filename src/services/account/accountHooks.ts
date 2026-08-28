@@ -4,6 +4,7 @@ import AccountServices, {
   EditAccountRequest,
 } from './accountServices.ts';
 import { queryClient } from '../../data/react-query.ts';
+import { QUERY_KEY_GET_BUDGET_MATRIX } from '../budget/budgetHooks.ts';
 import { useUserData } from '../../providers/UserProvider.tsx';
 
 const QUERY_KEY_GET_ACCOUNTS = 'QUERY_KEY_GET_ACCOUNTS';
@@ -31,6 +32,9 @@ export function useRemoveAccount() {
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_ACCOUNTS],
     });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
+    });
     return result;
   }
 
@@ -46,6 +50,9 @@ export function useAddAccount() {
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_ACCOUNTS],
     });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
+    });
     return result;
   }
 
@@ -60,6 +67,9 @@ export function useEditAccount() {
 
     void queryClient.invalidateQueries({
       queryKey: [QUERY_KEY_GET_ACCOUNTS],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_BUDGET_MATRIX],
     });
     return result;
   }

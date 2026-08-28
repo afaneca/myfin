@@ -1,13 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import PageHeader from '../../../components/PageHeader.tsx';
-import Grid from '@mui/material/Grid';
-import { DatePicker } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
-import { addLeadingZero } from '../../../utils/textUtils.ts';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import Paper from '@mui/material/Paper';
-import { Box, List, ListItem, useTheme } from '@mui/material';
-import Button from '@mui/material/Button';
 import {
   ArrowBackIos,
   ArrowForwardIos,
@@ -15,8 +5,39 @@ import {
   FileCopy,
   Lock,
   LockOpen,
+  TableView,
 } from '@mui/icons-material';
+import {
+  Box,
+  IconButton,
+  List,
+  ListItem,
+  Tooltip,
+  useTheme,
+} from '@mui/material';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+import { debounce } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import PageHeader from '../../../components/PageHeader.tsx';
+import TransactionsTableDialog from '../../../components/TransactionsTableDialog.tsx';
+import { useLoading } from '../../../providers/LoadingProvider.tsx';
+import {
+  ROUTE_BUDGET_DETAILS,
+  ROUTE_BUDGET_MATRIX,
+} from '../../../providers/RoutesProvider.tsx';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../../providers/SnackbarProvider.tsx';
 import {
   useCreateBudgetStep0,
   useCreateBudgetStep1,
@@ -26,25 +47,15 @@ import {
   useUpdateBudget,
   useUpdateBudgetStatus,
 } from '../../../services/budget/budgetHooks.ts';
-import { useLoading } from '../../../providers/LoadingProvider.tsx';
-import {
-  AlertSeverity,
-  useSnackbar,
-} from '../../../providers/SnackbarProvider.tsx';
 import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
-import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import { ROUTE_BUDGET_DETAILS } from '../../../providers/RoutesProvider.tsx';
 import { TransactionType } from '../../../services/trx/trxServices.ts';
-import TransactionsTableDialog from '../../../components/TransactionsTableDialog.tsx';
-import BudgetListSummaryDialog from './BudgetListSummaryDialog.tsx';
-import BudgetCategoryRow from './BudgetCategoryRow.tsx';
-import BudgetSummaryBoard from './BudgetSummaryBoard.tsx';
-import { debounce } from 'lodash';
-import BudgetDescription from './BudgetDescription.tsx';
-import Stack from '@mui/material/Stack';
 import { getMonthsFullName } from '../../../utils/dateUtils.ts';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
+import { addLeadingZero } from '../../../utils/textUtils.ts';
+import BudgetCategoryRow from './BudgetCategoryRow.tsx';
+import BudgetDescription from './BudgetDescription.tsx';
+import BudgetListSummaryDialog from './BudgetListSummaryDialog.tsx';
+import BudgetSummaryBoard from './BudgetSummaryBoard.tsx';
 
 type RelatedBudget = {
   id: bigint;
@@ -472,20 +483,51 @@ const BudgetDetails = () => {
           isOpen
         />
       )}
-      <Box display="flex" justifyContent="space-between" alignItems="center">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="flex-start"
+        gap={2}
+        flexWrap="wrap"
+      >
         <PageHeader
           title={t('budgetDetails.budget')}
           subtitle={t('budgetDetails.strapLine')}
         />
-        <Button
-          size="small"
-          variant="contained"
-          disabled={!isOpen}
-          startIcon={<FileCopy />}
-          onClick={handleCloneBudgetClick}
+        <Stack
+          direction="row"
+          spacing={1}
+          flexWrap="wrap"
+          justifyContent="flex-end"
+          sx={{ rowGap: 1 }}
         >
-          {t('budgetDetails.cloneAnotherBudget')}
-        </Button>
+          <Button
+            size="small"
+            variant="contained"
+            disabled={!isOpen}
+            startIcon={<FileCopy />}
+            onClick={handleCloneBudgetClick}
+          >
+            {t('budgetDetails.cloneAnotherBudget')}
+          </Button>
+          <Tooltip title={t('budgets.matrixView')} placement="top">
+            <IconButton
+              size="small"
+              color="primary"
+              aria-label={t('budgets.matrixView')}
+              onClick={() =>
+                navigate(ROUTE_BUDGET_MATRIX + '?anchor=' + (id || ''))
+              }
+              sx={{
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1,
+              }}
+            >
+              <TableView fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Stack>
       </Box>
       <Grid container spacing={2}>
         <Grid
