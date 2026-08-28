@@ -1,31 +1,34 @@
-import { memo, useCallback, useMemo } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { styled } from '@mui/material/styles';
 import {
   Card,
   CardActions,
   Chip,
   Divider,
   LinearProgress,
-  linearProgressClasses,
   ListItemText,
+  linearProgressClasses,
   Stack,
   TextField,
   Tooltip,
   Typography,
 } from '@mui/material';
-import { NumberFormatValues, NumericFormat } from 'react-number-format';
-import { cssGradients } from '../../../utils/gradientUtils.ts';
-import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
-import CategoryIconBadge from '../../../services/category/CategoryIconBadge.tsx';
-import { ColorGradient } from '../../../consts';
-import { getMonthsFullName } from '../../../utils/dateUtils.ts';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
+import { styled } from '@mui/material/styles';
+import { memo, useCallback, useMemo } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { NumberFormatValues, NumericFormat } from 'react-number-format';
+import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
+import { ColorGradient } from '../../../consts';
+import {
+  BudgetCategory,
+  BudgetCategoryTooltipData,
+} from '../../../services/budget/budgetServices.ts';
+import CategoryIconBadge from '../../../services/category/CategoryIconBadge.tsx';
+import { getMonthsFullName } from '../../../utils/dateUtils.ts';
+import { cssGradients } from '../../../utils/gradientUtils.ts';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
-import InputAdornment from '@mui/material/InputAdornment';
-import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
 
 type Props = {
   isOpen: boolean;
@@ -38,7 +41,7 @@ type Props = {
 };
 
 interface TooltipContentProps {
-  category: BudgetCategory;
+  category: BudgetCategoryTooltipData;
   isDebit: boolean;
   t: (key: string) => string;
   month: number;
@@ -46,7 +49,7 @@ interface TooltipContentProps {
 }
 
 // Separate Tooltip Content for memoization
-const TooltipContent = memo(
+export const BudgetCategoryTooltipContent = memo(
   ({ category, isDebit, t, month, year }: TooltipContentProps) => {
     const formatNumberAsCurrency = useFormatNumberAsCurrency();
     return (
@@ -143,13 +146,13 @@ const TooltipContent = memo(
     );
   },
 );
-TooltipContent.displayName = 'TooltipContent';
+BudgetCategoryTooltipContent.displayName = 'BudgetCategoryTooltipContent';
 
 const TooltipBottomCard = ({
   category,
   isDebit,
 }: {
-  category: BudgetCategory;
+  category: BudgetCategoryTooltipData;
   isDebit: boolean;
 }) => {
   const { t } = useTranslation();
@@ -280,7 +283,7 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
 
   const renderCategoryTooltip = useMemo(
     () => (
-      <TooltipContent
+      <BudgetCategoryTooltipContent
         category={category}
         isDebit={isDebit}
         month={month}
@@ -320,9 +323,7 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
                     iconKey={category.icon_key}
                     colorGradient={category.color_gradient}
                   />
-                  <Typography component="span">
-                    {category.name}
-                  </Typography>
+                  <Typography component="span">{category.name}</Typography>
                 </Stack>
               }
               sx={{ cursor: 'pointer' }}
