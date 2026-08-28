@@ -6,6 +6,7 @@ import Profile from '../features/profile/Profile.tsx';
 import Transactions from '../features/transactions/Transactions.tsx';
 import BudgetList from '../features/budgets/list/BudgetList.tsx';
 import BudgetDetails from '../features/budgets/details/BudgetDetails.tsx';
+import BudgetMatrix from '../features/budgets/matrix/BudgetMatrix.tsx';
 import Accounts from '../features/accounts/Accounts.tsx';
 import Categories from '../features/categories/Categories.tsx';
 import Entities from '../features/entities/Entities.tsx';
@@ -24,6 +25,7 @@ export const ROUTE_DASHBOARD = '/dashboard';
 export const ROUTE_PROFILE = '/profile';
 export const ROUTE_TRX = '/transactions';
 export const ROUTE_BUDGETS = '/budgets';
+export const ROUTE_BUDGET_MATRIX = '/budgets/matrix';
 export const ROUTE_BUDGET_DETAILS = '/budget/:id';
 export const ROUTE_BUDGET_NEW = '/budget/new';
 export const ROUTE_ACCOUNTS = '/accounts';
@@ -60,6 +62,7 @@ const RoutesProvider = () => {
           <Route path={ROUTE_PROFILE} element={<Profile />} />
           <Route path={ROUTE_TRX} element={<Transactions />} />
           <Route path={ROUTE_BUDGETS} element={<BudgetList />} />
+          <Route path={ROUTE_BUDGET_MATRIX} element={<BudgetMatrix />} />
           <Route path={ROUTE_BUDGET_DETAILS} element={<BudgetDetails />} />
           <Route path={ROUTE_BUDGET_NEW} element={<BudgetDetails />} />
           <Route path={ROUTE_ACCOUNTS} element={<Accounts />} />
