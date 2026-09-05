@@ -137,6 +137,8 @@ const formatStatus = (
       return t('investments.returnMetrics.statusNoSolution');
     case 'insufficient_data':
       return t('investments.returnMetrics.statusInsufficientData');
+    case 'invalid_data':
+      return t('investments.returnMetrics.statusInvalidData');
     case 'ok':
       return '';
   }
@@ -154,6 +156,21 @@ const statusMetadata = (
           value: formatStatus(t, status),
         },
       ];
+
+const issueMetadata = (
+  t: TFunction<'translation', undefined>,
+  issues: PeriodReturnMetrics['portfolio_return']['data_issues'],
+) =>
+  (issues ?? []).map((issue) => ({
+    label: t('investments.returnMetrics.dataIssue'),
+    value: t(`investments.snapshotIssues.${issue.code}`, {
+      asset: issue.asset_name,
+      date:
+        issue.month === undefined
+          ? `${issue.year}`
+          : `${issue.month}/${issue.year}`,
+    }),
+  }));
 
 const ReturnMetricsDetails = (props: {
   ariaLabel: string;
@@ -287,6 +304,10 @@ const ReturnMetricsDetails = (props: {
                     ),
                   },
                   ...statusMetadata(t, props.metrics.portfolio_return.status),
+                  ...issueMetadata(
+                    t,
+                    props.metrics.portfolio_return.data_issues,
+                  ),
                 ]}
                 secondaryValue={portfolioAnnualized}
                 value={formatPercentage(

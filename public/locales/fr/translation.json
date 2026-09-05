@@ -602,6 +602,31 @@
     "backdatedTransactionTitle": "Alerte : transaction antidatée",
     "backdatedTransactionDescription": "Vous avez ajouté, modifié ou supprimé une transaction affectant un mois passé. Il est conseillé de vérifier l'historique de l'actif pour s'assurer que les valeurs mensuelles sont correctes.",
     "backdatedTransactionAlert": "L'historique des valeurs de l'actif pourrait nécessiter des ajustements.",
+    "returnMetrics": {
+      "statusInvalidData": "Données historiques invalides",
+      "dataIssue": "Problème de données"
+    },
+    "snapshotStatusLabel": "Statut",
+    "snapshotStatus": {
+      "valid": "Valide",
+      "invalid": "Invalide",
+      "needs_valuation": "Valorisation requise",
+      "suspicious": "Suspect"
+    },
+    "snapshotIssues": {
+      "before_first_activity": "{{asset}} possède une valeur au {{date}} antérieure à sa première activité enregistrée.",
+      "missing_valuation": "{{asset}} possède des unités au {{date}}, mais aucune valorisation confirmée.",
+      "possible_rollover_corruption": "La valeur de {{asset}} au {{date}} a peut-être été copiée depuis décembre par l'ancien problème de changement d'année.",
+      "missing_opening_valuation": "Aucune valorisation initiale fiable n'est disponible pour le {{date}}."
+    },
+    "showSnapshotIssuesOnly": "Afficher uniquement les problèmes",
+    "snapshotValueConfirmed": "Valeur historique confirmée.",
+    "snapshotValueDeleted": "Snapshot historique invalide supprimé.",
+    "deleteInvalidSnapshot": "Supprimer ce snapshot invalide",
+    "deleteSnapshotTitle": "Supprimer le snapshot invalide ?",
+    "deleteSnapshotDescription": "Supprimer le snapshot historique du {{date}} pour {{name}} ?",
+    "deleteSnapshotAlert": "Seul ce snapshot historique sera supprimé. Les transactions et l'actif d'investissement ne seront pas modifiés.",
+    "invalidSnapshotCannotBeConfirmed": "Ce snapshot est antérieur à la première activité de l'actif et doit être supprimé plutôt que confirmé.",
     "tooltips": {
       "amount_buy": "Montant payé pour acquérir cet actif lors de cet achat (hors frais)",
       "amount_sell": "Montant total reçu de la vente de cet actif (hors frais)",

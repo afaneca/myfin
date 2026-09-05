@@ -27,7 +27,23 @@ export type YearlyRoi = {
   withdrawals: number;
 };
 
-export type ReturnMetricStatus = 'ok' | 'insufficient_data' | 'no_solution';
+export type ReturnMetricStatus =
+  | 'ok'
+  | 'insufficient_data'
+  | 'no_solution'
+  | 'invalid_data';
+
+export type ReturnDataIssue = {
+  asset_id?: number;
+  asset_name?: string;
+  code:
+    | 'before_first_activity'
+    | 'missing_valuation'
+    | 'possible_rollover_corruption'
+    | 'missing_opening_valuation';
+  month?: number;
+  year: number;
+};
 
 export type PeriodReturnMetrics = {
   absolute_return_value: number;
@@ -48,6 +64,7 @@ export type PeriodReturnMetrics = {
     annualized_percentage: number | null;
     method: 'linked_monthly_modified_dietz';
     status: ReturnMetricStatus;
+    data_issues?: ReturnDataIssue[];
   };
   personal_return: {
     annualized_percentage: number | null;
@@ -66,6 +83,13 @@ export type MonthlySnapshot = {
   month: number;
   units: number;
   year: number;
+  valuation_source: 'observed' | 'carried' | 'generated' | 'legacy';
+  validation_status: 'valid' | 'invalid' | 'needs_valuation' | 'suspicious';
+  validation_reasons: Array<
+    | 'before_first_activity'
+    | 'missing_valuation'
+    | 'possible_rollover_corruption'
+  >;
 };
 
 export type InvestAsset = {
@@ -139,6 +163,16 @@ const updateAssetValue = (
     month: month,
     year: year,
   });
+};
+
+const removeAssetValueSnapshot = (
+  assetId: bigint,
+  month: number,
+  year: number,
+) => {
+  return axios.delete<string>(
+    `invest/assets/${assetId}/value/${year}/${month}`,
+  );
 };
 
 export type AddAssetRequest = {
@@ -335,6 +369,7 @@ export default {
   getAssets,
   removeAsset,
   updateAssetValue,
+  removeAssetValueSnapshot,
   addAsset,
   editAsset,
   getTransactions,

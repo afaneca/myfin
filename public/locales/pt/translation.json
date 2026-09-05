@@ -580,10 +580,33 @@
       "simpleRoi": "ROI simples",
       "simpleRoiHelp": "Retorno simples dividido pelo capital bruto investido. Fácil de ler, mas distorcido por muitas compras e vendas.",
       "status": "Estado",
+      "statusInvalidData": "Dados históricos inválidos",
       "statusInsufficientData": "Dados insuficientes",
       "statusNoSolution": "Sem solução",
+      "dataIssue": "Problema nos dados",
       "xirr": "XIRR"
     },
+    "snapshotStatusLabel": "Estado",
+    "snapshotStatus": {
+      "valid": "Válido",
+      "invalid": "Inválido",
+      "needs_valuation": "Requer valorização",
+      "suspicious": "Suspeito"
+    },
+    "snapshotIssues": {
+      "before_first_activity": "{{asset}} tem um valor em {{date}} anterior à primeira atividade registada.",
+      "missing_valuation": "{{asset}} tem unidades em {{date}}, mas não tem uma valorização observada.",
+      "possible_rollover_corruption": "O valor de {{asset}} em {{date}} pode ter sido copiado de dezembro pelo erro histórico de transição do ano.",
+      "missing_opening_valuation": "Não existe uma valorização inicial fiável para {{date}}."
+    },
+    "showSnapshotIssuesOnly": "Mostrar apenas problemas",
+    "snapshotValueConfirmed": "Valor histórico confirmado.",
+    "snapshotValueDeleted": "Snapshot histórico inválido eliminado.",
+    "deleteInvalidSnapshot": "Eliminar este snapshot inválido",
+    "deleteSnapshotTitle": "Eliminar snapshot inválido?",
+    "deleteSnapshotDescription": "Eliminar o snapshot histórico de {{date}} para {{name}}?",
+    "deleteSnapshotAlert": "Esta ação remove apenas este snapshot histórico. As transações e o ativo de investimento não são alterados.",
+    "invalidSnapshotCannotBeConfirmed": "Este snapshot é anterior à primeira atividade do ativo e deve ser eliminado em vez de confirmado.",
     "transactionSuccessfullyAdded": "Transação adicionada com sucesso",
     "assetSuccessfullyAdded": "Ativo adicionado com sucesso",
     "percentageOfPortfolio": "{{percentage}} do portefólio",

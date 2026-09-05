@@ -580,10 +580,33 @@
       "simpleRoi": "Simple ROI",
       "simpleRoiHelp": "Simple return divided by gross invested capital. Easy to read, but distorted by lots of buys and sells.",
       "status": "Status",
+      "statusInvalidData": "Invalid historical data",
       "statusInsufficientData": "Insufficient data",
       "statusNoSolution": "No solution",
+      "dataIssue": "Data issue",
       "xirr": "XIRR"
     },
+    "snapshotStatusLabel": "Status",
+    "snapshotStatus": {
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "needs_valuation": "Needs valuation",
+      "suspicious": "Suspicious"
+    },
+    "snapshotIssues": {
+      "before_first_activity": "{{asset}} has a value at {{date}} before its first recorded activity.",
+      "missing_valuation": "{{asset}} has units at {{date}}, but no observed valuation.",
+      "possible_rollover_corruption": "The value for {{asset}} at {{date}} may have been copied from December by the historical rollover bug.",
+      "missing_opening_valuation": "No reliable opening valuation is available for {{date}}."
+    },
+    "showSnapshotIssuesOnly": "Show issues only",
+    "snapshotValueConfirmed": "Historical value confirmed.",
+    "snapshotValueDeleted": "Invalid historical snapshot deleted.",
+    "deleteInvalidSnapshot": "Delete this invalid snapshot",
+    "deleteSnapshotTitle": "Delete invalid snapshot?",
+    "deleteSnapshotDescription": "Delete the {{date}} historical snapshot for {{name}}?",
+    "deleteSnapshotAlert": "This removes only this historical snapshot. Transactions and the investment asset are not changed.",
+    "invalidSnapshotCannotBeConfirmed": "This snapshot predates the asset's first activity and must be deleted instead of confirmed.",
     "transactionSuccessfullyAdded": "Transaction successfully added",
     "assetSuccessfullyAdded": "Asset successfully added",
     "percentageOfPortfolio": "{{percentage}} of portfolio",

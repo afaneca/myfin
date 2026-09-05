@@ -21,13 +21,9 @@ const CombinedRoiByYearList = (props: Props) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
-  const filteredItems = useMemo(() => {
-    return props.list;
-  }, [props.list]);
-
   const rows = useMemo(
     () =>
-      props.list
+      [...props.list]
         .sort((a, b) => b.year - a.year)
         .map((item) => ({
           id: item.year,
@@ -42,15 +38,15 @@ const CombinedRoiByYearList = (props: Props) => {
             item.total_outflow,
           globalValue: item.ending_value,
           portfolioReturn: {
-            percentage:
-              item.return_metrics?.portfolio_return.cumulative_percentage ??
-              item.roi_percentage,
+            percentage: item.return_metrics
+              ? item.return_metrics.portfolio_return.cumulative_percentage
+              : item.roi_percentage,
             absolute:
               item.return_metrics?.absolute_return_value ?? item.roi_value,
             metrics: item.return_metrics,
           },
         })),
-    [filteredItems],
+    [props.list],
   );
   const columns: GridColDef[] = [
     {
