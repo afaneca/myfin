@@ -1,3 +1,5 @@
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { queryClient } from '../../data/react-query.ts';
 import investServices from './investServices.ts';
 import InvestServices, {
   AddAssetRequest,
@@ -5,8 +7,6 @@ import InvestServices, {
   EditAssetRequest,
   EditInvestTransactionRequest,
 } from './investServices.ts';
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { queryClient } from '../../data/react-query.ts';
 
 const QUERY_KEY_GET_INVEST_STATS = 'QUERY_KEY_GET_INVEST_STATS';
 const QUERY_KEY_GET_ASSETS = 'QUERY_KEY_GET_ASSETS';
@@ -81,6 +81,32 @@ export function useUpdateAssetValue() {
 
   return useMutation({
     mutationFn: updateAssetValue,
+  });
+}
+
+export function useRemoveAssetValueSnapshot() {
+  async function removeAssetValueSnapshot(request: {
+    assetId: bigint;
+    month: number;
+    year: number;
+  }) {
+    const result = await InvestServices.removeAssetValueSnapshot(
+      request.assetId,
+      request.month,
+      request.year,
+    );
+
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_ASSETS],
+    });
+    void queryClient.invalidateQueries({
+      queryKey: [QUERY_KEY_GET_INVEST_STATS],
+    });
+    return result;
+  }
+
+  return useMutation({
+    mutationFn: removeAssetValueSnapshot,
   });
 }
 

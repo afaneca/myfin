@@ -9,6 +9,7 @@ import {
 } from '../../../providers/SnackbarProvider.tsx';
 import { useGetInvestStats } from '../../../services/invest/investHooks.ts';
 import {
+  AssetClassReturnStats,
   AssetType,
   GetInvestStatsResponse,
   InvestAsset,
@@ -33,12 +34,14 @@ import CombinedRoiByYearList, {
   CombinedRoiByYearData,
 } from './CombinedRoiByYearList.tsx';
 import PortfolioEvolutionChart from './PortfolioEvolutionChart.tsx';
+import AssetClassRoiList from './AssetClassRoiList.tsx';
 
 type UiState = {
   isLoading: boolean;
   distributionByAssetClassData?: ChartDataItem[];
   distributionByAssetData?: ChartDataItem[];
   assets?: InvestAsset[];
+  assetClassReturns?: AssetClassReturnStats[];
   combinedRoiByYearData?: CombinedRoiByYearData[];
   monthlySnapshots?: MonthlySnapshot[];
 };
@@ -104,6 +107,7 @@ const reduceState = (prevState: UiState, action: StateAction): UiState => {
         distributionByAssetClassData: assetClassChartData,
         distributionByAssetData: assetChartData,
         assets: action.payload.data.top_performing_assets,
+        assetClassReturns: action.payload.data.returns_by_asset_class,
         combinedRoiByYearData: combinedRoiByYear,
         monthlySnapshots: action.payload.data.monthly_snapshots,
       };
@@ -215,7 +219,7 @@ const InvestStats = () => {
       </Grid>
       <SectionHeader title={t('investments.returnsByAssetClass')} />
       <Grid size={12}>
-        <i>{t('common.soon')}...</i>
+        <AssetClassRoiList list={state.assetClassReturns ?? []} />
       </Grid>
       <SectionHeader title={t('investments.combinedPerformanceByYear')} />
       <Grid size={12}>
