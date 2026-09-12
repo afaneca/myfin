@@ -1,13 +1,32 @@
-import { useMemo, useState, useEffect } from 'react';
-import { Box, Drawer, IconButton, Typography } from '@mui/material';
+import { CheckCircleOutline, Close, Delete, Edit } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Chip,
+  Drawer,
+  FormControlLabel,
+  IconButton,
+  Switch,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import { GridColDef } from '@mui/x-data-grid';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetInvestStats } from '../../../services/invest/investHooks.ts';
-import { Close, Edit } from '@mui/icons-material';
+import GenericConfirmationDialog from '../../../components/GenericConfirmationDialog.tsx';
+import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../../providers/SnackbarProvider.tsx';
+import {
+  useGetInvestStats,
+  useRemoveAssetValueSnapshot,
+  useUpdateAssetValue,
+} from '../../../services/invest/investHooks.ts';
+import { MonthlySnapshot } from '../../../services/invest/investServices.ts';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
 import UpdateAssetValueDialog from './UpdateAssetValueDialog.tsx';
-import { MonthlySnapshot } from '../../../services/invest/investServices.ts';
-import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
-import { GridColDef } from '@mui/x-data-grid';
 
 type Props = {
   isOpen: boolean;
@@ -32,16 +51,21 @@ const AssetValueHistoryDrawer = ({
 }: Props) => {
   const { t } = useTranslation();
   const formatCurrency = useFormatNumberAsCurrency();
+  const snackbar = useSnackbar();
 
   const { data: statsData, isFetching } = useGetInvestStats();
 
-  const [editingSnapshot, setEditingSnapshot] = useState<MonthlySnapshot | null>(
-    null,
-  );
+  const [editingSnapshot, setEditingSnapshot] =
+    useState<MonthlySnapshot | null>(null);
+  const [deletingSnapshot, setDeletingSnapshot] =
+    useState<MonthlySnapshot | null>(null);
   const [paginationModel, setPaginationModel] = useState({
     pageSize: PAGE_SIZE,
     page: 0,
   });
+  const [issuesOnly, setIssuesOnly] = useState(false);
+  const updateAssetValueRequest = useUpdateAssetValue();
+  const removeAssetValueSnapshotRequest = useRemoveAssetValueSnapshot();
 
   const { history, targetId, targetPage } = useMemo<{
     history: HistoryRow[];
@@ -58,7 +82,12 @@ const AssetValueHistoryDrawer = ({
         if (a.year !== b.year) return b.year - a.year;
         return b.month - a.month;
       })
-      .map((s, index: number) => ({ ...s, id: index, highlight: s.month === highlightMonth && s.year === highlightYear }));
+      .filter((s) => !issuesOnly || s.validation_status !== 'valid')
+      .map((s, index: number) => ({
+        ...s,
+        id: index,
+        highlight: s.month === highlightMonth && s.year === highlightYear,
+      }));
 
     if (!highlightMonth || !highlightYear || sortedHistory.length === 0) {
       return { history: sortedHistory, targetId: undefined, targetPage: 0 };
@@ -74,7 +103,7 @@ const AssetValueHistoryDrawer = ({
 
     const page = Math.floor(targetIndex / PAGE_SIZE);
     return { history: sortedHistory, targetId: targetIndex, targetPage: page };
-  }, [statsData, assetId, highlightMonth, highlightYear]);
+  }, [statsData, assetId, highlightMonth, highlightYear, issuesOnly]);
 
   // Adjust page if target changes
   useEffect(() => {
@@ -91,6 +120,65 @@ const AssetValueHistoryDrawer = ({
     setEditingSnapshot(null);
   };
 
+  const handleConfirmClick = (snapshot: MonthlySnapshot) => {
+    updateAssetValueRequest.mutate(
+      {
+        assetId,
+        newValue: snapshot.current_value,
+        month: snapshot.month,
+        year: snapshot.year,
+      },
+      {
+        onError: () =>
+          snackbar.showSnackbar(
+            t('common.somethingWentWrongTryAgain'),
+            AlertSeverity.ERROR,
+          ),
+        onSuccess: () =>
+          snackbar.showSnackbar(
+            t('investments.snapshotValueConfirmed'),
+            AlertSeverity.SUCCESS,
+          ),
+      },
+    );
+  };
+
+  const handleDeleteSnapshot = () => {
+    if (!deletingSnapshot) return;
+
+    removeAssetValueSnapshotRequest.mutate(
+      {
+        assetId,
+        month: deletingSnapshot.month,
+        year: deletingSnapshot.year,
+      },
+      {
+        onError: () =>
+          snackbar.showSnackbar(
+            t('common.somethingWentWrongTryAgain'),
+            AlertSeverity.ERROR,
+          ),
+        onSuccess: () => {
+          setDeletingSnapshot(null);
+          snackbar.showSnackbar(
+            t('investments.snapshotValueDeleted'),
+            AlertSeverity.SUCCESS,
+          );
+        },
+      },
+    );
+  };
+
+  const getIssueText = (snapshot: MonthlySnapshot) =>
+    snapshot.validation_reasons
+      .map((reason) =>
+        t(`investments.snapshotIssues.${reason}`, {
+          asset: snapshot.asset_name,
+          date: `${snapshot.month}/${snapshot.year}`,
+        }),
+      )
+      .join(' ');
+
   const columns: GridColDef[] = [
     {
       field: 'date',
@@ -105,18 +193,83 @@ const AssetValueHistoryDrawer = ({
       renderCell: (params) => formatCurrency.invoke(params.row.current_value),
     },
     {
+      field: 'validationStatus',
+      headerName: t('investments.snapshotStatusLabel'),
+      minWidth: 150,
+      flex: 1,
+      renderCell: (params) => {
+        const snapshot = params.row as MonthlySnapshot;
+        const status = snapshot.validation_status;
+        const color =
+          status === 'invalid'
+            ? 'error'
+            : status === 'valid'
+              ? 'success'
+              : 'warning';
+        return (
+          <Tooltip title={getIssueText(snapshot)}>
+            <Chip
+              color={color}
+              label={t(`investments.snapshotStatus.${status}`)}
+              size="small"
+              variant={status === 'valid' ? 'outlined' : 'filled'}
+            />
+          </Tooltip>
+        );
+      },
+    },
+    {
       field: 'actions',
       headerName: t('common.actions'),
-      width: 70,
-      renderCell: (params) => (
-        <IconButton
-          edge="end"
-          aria-label="edit"
-          onClick={() => handleEditClick(params.row)}
-        >
-          <Edit />
-        </IconButton>
-      ),
+      width: 180,
+      renderCell: (params) => {
+        const snapshot = params.row as MonthlySnapshot;
+        const isInvalid = snapshot.validation_status === 'invalid';
+        return (
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
+            <Tooltip
+              title={
+                isInvalid
+                  ? t('investments.invalidSnapshotCannotBeConfirmed')
+                  : t('common.edit')
+              }
+            >
+              <span>
+                <IconButton
+                  aria-label={t('common.edit')}
+                  disabled={isInvalid}
+                  edge="end"
+                  onClick={() => handleEditClick(snapshot)}
+                >
+                  <Edit />
+                </IconButton>
+              </span>
+            </Tooltip>
+            {snapshot.validation_status !== 'valid' && !isInvalid && (
+              <Button
+                disabled={updateAssetValueRequest.isPending}
+                onClick={() => handleConfirmClick(snapshot)}
+                size="small"
+                startIcon={<CheckCircleOutline />}
+              >
+                {t('common.confirm')}
+              </Button>
+            )}
+            {isInvalid && (
+              <Tooltip title={t('investments.deleteInvalidSnapshot')}>
+                <IconButton
+                  aria-label={t('common.delete')}
+                  color="error"
+                  disabled={removeAssetValueSnapshotRequest.isPending}
+                  onClick={() => setDeletingSnapshot(snapshot)}
+                >
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
+        );
+      },
     },
   ];
 
@@ -144,6 +297,17 @@ const AssetValueHistoryDrawer = ({
             {t('investments.valueHistoryDescription')}
           </Typography>
 
+          <FormControlLabel
+            control={
+              <Switch
+                checked={issuesOnly}
+                onChange={(event) => setIssuesOnly(event.target.checked)}
+              />
+            }
+            label={t('investments.showSnapshotIssuesOnly')}
+            sx={{ mb: 1 }}
+          />
+
           <MyFinStaticTable
             isRefetching={isFetching}
             rows={history}
@@ -165,6 +329,21 @@ const AssetValueHistoryDrawer = ({
           currentValue={editingSnapshot.current_value}
           month={editingSnapshot.month}
           year={editingSnapshot.year}
+        />
+      )}
+      {deletingSnapshot && (
+        <GenericConfirmationDialog
+          isOpen={!!deletingSnapshot}
+          onClose={() => setDeletingSnapshot(null)}
+          onPositiveClick={handleDeleteSnapshot}
+          onNegativeClick={() => setDeletingSnapshot(null)}
+          titleText={t('investments.deleteSnapshotTitle')}
+          descriptionText={t('investments.deleteSnapshotDescription', {
+            date: `${deletingSnapshot.month}/${deletingSnapshot.year}`,
+            name: assetName,
+          })}
+          positiveText={t('common.delete')}
+          alert={t('investments.deleteSnapshotAlert')}
         />
       )}
     </>
