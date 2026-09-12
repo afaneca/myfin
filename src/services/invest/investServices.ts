@@ -38,6 +38,7 @@ export type ReturnDataIssue = {
   asset_name?: string;
   code:
     | 'before_first_activity'
+    | 'cash_flow_timing_sensitivity'
     | 'missing_valuation'
     | 'possible_rollover_corruption'
     | 'missing_opening_valuation';
@@ -73,6 +74,28 @@ export type PeriodReturnMetrics = {
   };
 };
 
+export type YearlyAssetReturn = {
+  beginning_value: number;
+  ending_value: number;
+  return_metrics: PeriodReturnMetrics;
+};
+
+export type AssetReturnMetrics = {
+  by_year?: { [year: string]: YearlyAssetReturn };
+  current_year: PeriodReturnMetrics;
+  global: PeriodReturnMetrics;
+};
+
+export type AssetClassReturnStats = {
+  type: AssetType;
+  asset_count: number;
+  invested_value: number;
+  fees_taxes: number;
+  current_value: number;
+  allocation_percentage: number;
+  return_metrics: Pick<AssetReturnMetrics, 'current_year' | 'global'>;
+};
+
 export type MonthlySnapshot = {
   asset_broker: string;
   asset_id: bigint;
@@ -105,10 +128,7 @@ export type InvestAsset = {
   name: string;
   price_per_unit: string;
   relative_roi_percentage: number | string;
-  return_metrics?: {
-    current_year: PeriodReturnMetrics;
-    global: PeriodReturnMetrics;
-  };
+  return_metrics?: AssetReturnMetrics;
   ticker: string;
   type: AssetType;
   units: number;
@@ -135,6 +155,7 @@ export type GetInvestStatsResponse = {
     current_year: PeriodReturnMetrics;
     global: PeriodReturnMetrics;
   };
+  returns_by_asset_class: AssetClassReturnStats[];
   top_performing_assets: InvestAsset[];
   total_current_value: number;
   total_currently_invested_value: number;

@@ -1,8 +1,9 @@
-import { Box, useTheme } from '@mui/material';
+import { Timeline } from '@mui/icons-material';
+import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { GridColDef } from '@mui/x-data-grid';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MyFinStaticTable from '../../../components/MyFinStaticTable.tsx';
 import PercentageChip from '../../../components/PercentageChip.tsx';
@@ -11,6 +12,7 @@ import { getCurrentYear } from '../../../utils/dateUtils.ts';
 import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 import { useGetLocalizedAssetType } from '../InvestUtilHooks.ts';
 import ReturnMetricsDetails from '../ReturnMetricsDetails.tsx';
+import AssetYearlyPerformanceDialog from './AssetYearlyPerformanceDialog.tsx';
 
 type Props = {
   list: InvestAsset[];
@@ -21,6 +23,7 @@ const AssetRoiList = (props: Props) => {
   const { t } = useTranslation();
 
   const getLocalizedAssetType = useGetLocalizedAssetType();
+  const [selectedAsset, setSelectedAsset] = useState<InvestAsset | null>(null);
 
   const filteredAssets = useMemo(() => {
     return props.list;
@@ -30,7 +33,7 @@ const AssetRoiList = (props: Props) => {
     () =>
       props.list.map((asset) => ({
         id: asset.asset_id,
-        name: { name: asset.name, type: asset.type },
+        name: { asset, name: asset.name, type: asset.type },
         invested: {
           invested: asset.invested_value,
           pricePerUnit: asset.price_per_unit,
@@ -57,10 +60,27 @@ const AssetRoiList = (props: Props) => {
       editable: false,
       sortable: false,
       renderCell: (params) => (
-        <Stack pt={2} pb={2}>
-          <Typography variant="body1" color={theme.palette.text.primary}>
-            {params.value.name}
-          </Typography>
+        <Stack py={2}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="body1" color={theme.palette.text.primary}>
+              {params.value.name}
+            </Typography>
+            <Tooltip title={t('investments.yearlyPerformance')}>
+              <IconButton
+                aria-label={t('investments.yearlyPerformanceAriaLabel', {
+                  name: params.value.name,
+                })}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setSelectedAsset(params.value.asset);
+                }}
+                size="small"
+                sx={{ ml: 0.5, color: 'text.secondary' }}
+              >
+                <Timeline fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
           <Typography variant="caption" color={theme.palette.text.secondary}>
             {getLocalizedAssetType.invoke(params.value.type)}
             {params.value.broker}
@@ -212,12 +232,18 @@ const AssetRoiList = (props: Props) => {
   ];
 
   return (
-    <MyFinStaticTable
-      rows={rows}
-      columns={columns}
-      paginationModel={{ pageSize: 5 }}
-      isRefetching={false}
-    />
+    <>
+      <MyFinStaticTable
+        rows={rows}
+        columns={columns}
+        paginationModel={{ pageSize: 5 }}
+        isRefetching={false}
+      />
+      <AssetYearlyPerformanceDialog
+        asset={selectedAsset}
+        onClose={() => setSelectedAsset(null)}
+      />
+    </>
   );
 };
 

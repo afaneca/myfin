@@ -162,7 +162,11 @@ const issueMetadata = (
   issues: PeriodReturnMetrics['portfolio_return']['data_issues'],
 ) =>
   (issues ?? []).map((issue) => ({
-    label: t('investments.returnMetrics.dataIssue'),
+    label: t(
+      issue.code === 'cash_flow_timing_sensitivity'
+        ? 'investments.returnMetrics.stabilityNotice'
+        : 'investments.returnMetrics.dataIssue',
+    ),
     value: t(`investments.snapshotIssues.${issue.code}`, {
       asset: issue.asset_name,
       date:
@@ -195,6 +199,10 @@ const ReturnMetricsDetails = (props: {
           ),
         })
       : undefined;
+  const stabilityIssues = (
+    props.metrics.portfolio_return.data_issues ?? []
+  ).filter((issue) => issue.code === 'cash_flow_timing_sensitivity');
+  const hasStabilityWarning = stabilityIssues.length > 0;
 
   return (
     <>
@@ -221,6 +229,34 @@ const ReturnMetricsDetails = (props: {
                 props.metrics.portfolio_return.cumulative_percentage,
               )}
             />
+            {hasStabilityWarning && (
+              <Box
+                sx={{
+                  bgcolor: 'warning.main',
+                  borderRadius: 1,
+                  color: 'warning.contrastText',
+                  p: 1,
+                }}
+              >
+                <Typography fontWeight={700} variant="body2">
+                  {t('investments.returnMetrics.stabilityNotice')}
+                </Typography>
+                {stabilityIssues.map((issue) => (
+                  <Typography
+                    display="block"
+                    key={`${issue.year}-${issue.month}-${issue.code}`}
+                    variant="caption"
+                  >
+                    {t(`investments.snapshotIssues.${issue.code}`, {
+                      date:
+                        issue.month === undefined
+                          ? `${issue.year}`
+                          : `${issue.month}/${issue.year}`,
+                    })}
+                  </Typography>
+                ))}
+              </Box>
+            )}
             <MetricLine
               description={t('investments.returnMetrics.personalReturnHelp')}
               label={t('investments.returnMetrics.personalReturn')}
@@ -260,7 +296,11 @@ const ReturnMetricsDetails = (props: {
           }}
           onMouseDown={(event) => event.stopPropagation()}
           size="small"
-          sx={{ ml: 0.5, color: 'text.secondary', opacity: 0.75 }}
+          sx={{
+            ml: 0.5,
+            color: hasStabilityWarning ? 'warning.main' : 'text.secondary',
+            opacity: hasStabilityWarning ? 1 : 0.75,
+          }}
         >
           <HelpOutline sx={{ fontSize: 16 }} />
         </IconButton>
