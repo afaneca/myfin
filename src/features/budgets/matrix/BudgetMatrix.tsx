@@ -1,3 +1,4 @@
+import BudgetBreakdownEditor from '../BudgetBreakdownEditor.tsx';
 import {
   Add,
   Edit,
@@ -463,6 +464,8 @@ function AddMonthDialog(props: {
           category_id: category.category_id.toString(),
           planned_value_debit: String(category.planned_amount_debit || 0),
           planned_value_credit: String(category.planned_amount_credit || 0),
+          expense_items: category.expense_items,
+          income_items: category.income_items,
         })),
       });
       props.onCreated(BigInt(response.budget_id));
@@ -547,6 +550,7 @@ function BudgetMatrix() {
   const updateStatus = useUpdateBudgetStatus();
   const [selectedBudgetIds, setSelectedBudgetIds] = useState<bigint[]>([]);
   const [matrix, setMatrix] = useState<BudgetMatrixResponse | null>(null);
+  const [breakdownKey, setBreakdownKey] = useState<string | null>(null);
   const [cellDrafts, setCellDrafts] = useState<Record<string, string>>({});
   const [cellStates, setCellStates] = useState<Record<string, CellState>>({});
   const [activeTransaction, setActiveTransaction] =
@@ -1158,6 +1162,7 @@ function BudgetMatrix() {
     const balance = isExpense ? planned - actual : actual - planned;
     const key = getCellKey(budget.budget_id, category.category_id, isExpense);
     const state = cellStates[key];
+    const items = (isExpense ? value.expense_items : value.income_items) ?? [];
     const muted = category.exclude_from_budgets === 1;
     const tooltipCategory = getTooltipCategory(category, value);
     return (
@@ -1188,6 +1193,10 @@ function BudgetMatrix() {
           <InputBase
             value={cellDrafts[key] ?? String(planned)}
             disabled={!budget.is_open}
+            readOnly={items.length > 0}
+            onClick={() => {
+              if (items.length) setBreakdownKey(key);
+            }}
             onChange={(event) =>
               setCellDrafts((current) => ({
                 ...current,
@@ -1206,7 +1215,15 @@ function BudgetMatrix() {
                 );
               }
             }}
-            onKeyDown={(event) =>
+            onKeyDown={(event) => {
+              if (
+                items.length &&
+                (event.key === 'Enter' || event.key === ' ')
+              ) {
+                event.preventDefault();
+                setBreakdownKey(key);
+                return;
+              }
               handleCellKeyDown(
                 event,
                 row,
@@ -1214,8 +1231,8 @@ function BudgetMatrix() {
                 budget,
                 category,
                 isExpense,
-              )
-            }
+              );
+            }}
             inputProps={{
               'aria-label':
                 category.name + ' ' + t('budgetMatrix.budgetedValue'),
@@ -1224,6 +1241,64 @@ function BudgetMatrix() {
               inputMode: 'decimal',
             }}
             startAdornment={
+              <BudgetBreakdownEditor
+                open={breakdownKey === key}
+                onOpen={() => setBreakdownKey(key)}
+                onClose={() => setBreakdownKey(null)}
+                title={`${category.name} · ${t(isExpense ? 'common.debit' : 'common.credit')}`}
+                items={items}
+                total={planned}
+                readOnly={!budget.is_open}
+                compact
+                onSave={async (next, amount) => {
+                  const pending = cellRequestChains.current.get(key);
+                  if (pending) await pending;
+                  await updateCell.mutateAsync({
+                    budget_id: budget.budget_id,
+                    category_id: category.category_id,
+                    ...(isExpense
+                      ? { expense_items: next, planned_expense: amount }
+                      : { income_items: next, planned_income: amount }),
+                  });
+                  updateLocalCategory(
+                    budget.budget_id,
+                    category.category_id,
+                    amount,
+                    isExpense,
+                  );
+                  setMatrix((current) =>
+                    current
+                      ? {
+                          ...current,
+                          budgets: current.budgets.map((b) =>
+                            b.budget_id === budget.budget_id
+                              ? {
+                                  ...b,
+                                  categories: b.categories.map((c) =>
+                                    c.category_id === category.category_id
+                                      ? {
+                                          ...c,
+                                          ...(isExpense
+                                            ? { expense_items: next }
+                                            : { income_items: next }),
+                                        }
+                                      : c,
+                                  ),
+                                }
+                              : b,
+                          ),
+                        }
+                      : current,
+                  );
+                  setCellDrafts((current) => {
+                    const nextDrafts = { ...current };
+                    delete nextDrafts[key];
+                    return nextDrafts;
+                  });
+                }}
+              />
+            }
+            endAdornment={
               state?.status === 'saved' ? (
                 <Save
                   sx={{
@@ -1233,10 +1308,7 @@ function BudgetMatrix() {
                     opacity: 0.5,
                   }}
                 />
-              ) : null
-            }
-            endAdornment={
-              state?.status === 'saving' ? (
+              ) : state?.status === 'saving' ? (
                 <CircularProgress size={13} />
               ) : state?.status === 'error' ? (
                 <Tooltip title={t('budgetMatrix.retry')}>

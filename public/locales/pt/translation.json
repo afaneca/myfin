@@ -910,4 +910,28 @@
     "step2PasswordConfirmationLabel": "Password (Confirmação)",
     "step3Description": "Está feito! Agora está preparado para aceder à sua conta pela primeira vez. Vamos a isso?"
   }
+,
+  "budgetBreakdown": {
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} itens",
+    "title": "Decomposição",
+    "add": "Adicionar decomposição",
+    "action": "Decomposição · {{count}} itens",
+    "help": "Apenas valores planeados. Os gastos reais são apresentados por categoria.",
+    "label": "Nome do item",
+    "amount": "Valor",
+    "items": "{{count}} itens",
+    "options": "Opções do item",
+    "up": "Mover para cima",
+    "down": "Mover para baixo",
+    "remove": "Remover item",
+    "addItem": "Adicionar item",
+    "invalid": "Use nomes preenchidos e valores não negativos com até duas casas decimais.",
+    "total": "Total calculado",
+    "close": "Fechar",
+    "single": "Usar um valor único",
+    "save": "Guardar",
+    "saving": "A guardar…",
+    "saveFailed": "Não foi possível guardar. As alterações foram mantidas; tente novamente."
+  }
 }
