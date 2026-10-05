@@ -1,28 +1,34 @@
-import { ExpandMore } from '@mui/icons-material';
+import {
+  ExpandMore,
+  MoreHoriz,
+  ReceiptLongOutlined,
+  FormatListBulleted,
+} from '@mui/icons-material';
 import BudgetBreakdownEditor from '../BudgetBreakdownEditor.tsx';
 import type { BudgetBreakdownItem } from '../../../services/budget/budgetServices.ts';
 import {
   Card,
   Button,
-  CardActions,
+  Box,
+  IconButton,
+  InputBase,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  alpha,
+  useTheme,
   Chip,
   Divider,
   LinearProgress,
-  ListItemText,
-  linearProgressClasses,
   Stack,
-  TextField,
   Tooltip,
   Typography,
 } from '@mui/material';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import InputAdornment from '@mui/material/InputAdornment';
-import { styled } from '@mui/material/styles';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
-import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
 import { ColorGradient } from '../../../consts';
 import {
   BudgetCategory,
@@ -36,14 +42,20 @@ import { formatNumberAsCurrency } from '../../../utils/textUtils.ts';
 
 type Props = {
   isOpen: boolean;
+  breakdownRevision: number;
   month: number;
   year: number;
   isDebit: boolean;
   category: BudgetCategory;
   onCategoryClick: (category: BudgetCategory, isDebit: boolean) => void;
-  onInputChange: (input: number) => void;
-  onBreakdownChange: (items: BudgetBreakdownItem[], total: number) => void;
-  onBreakdownValidityChange: (valid: boolean) => void;
+  onInputChange: (categoryId: bigint, isDebit: boolean, input: number) => void;
+  onBreakdownChange: (
+    categoryId: bigint,
+    isDebit: boolean,
+    items: BudgetBreakdownItem[],
+    total: number,
+  ) => void;
+  onBreakdownValidityChange: (key: string, valid: boolean) => void;
 };
 
 interface TooltipContentProps {
@@ -227,57 +239,9 @@ const TooltipBottomCard = ({
   );
 };
 
-const DebitBorderLinearProgress = memo(
-  styled(LinearProgress)(({ theme }) => ({
-    height: 10,
-    borderRadius: 5,
-    [`&.${linearProgressClasses.colorPrimary}`]: {
-      backgroundColor:
-        theme.palette.grey[theme.palette.mode === 'light' ? 200 : 500],
-    },
-    [`& .${linearProgressClasses.bar}`]: {
-      borderRadius: 5,
-      background: cssGradients[ColorGradient.Red],
-    },
-  })),
-);
-
-const CreditBorderLinearProgress = memo(
-  styled(LinearProgress)(({ theme }) => ({
-    height: 10,
-    borderRadius: 5,
-    [`&.${linearProgressClasses.colorPrimary}`]: {
-      backgroundColor:
-        theme.palette.grey[theme.palette.mode === 'light' ? 200 : 500],
-    },
-    [`& .${linearProgressClasses.bar}`]: {
-      borderRadius: 5,
-      background: cssGradients[ColorGradient.Green],
-    },
-  })),
-);
-
-function getCurrentCategoryValuePercentage(
-  category: BudgetCategory,
-  isDebit: boolean,
-) {
-  if (isDebit)
-    return Math.min(
-      Math.ceil(
-        (category.current_amount_debit * 100) / category.planned_amount_debit,
-      ),
-      100,
-    );
-  return Math.min(
-    Math.ceil(
-      (category.current_amount_credit * 100) / category.planned_amount_credit,
-    ),
-    100,
-  );
-}
-
 const BudgetCategoryRow = memo(function BudgetCategoryRow({
   isOpen,
+  breakdownRevision,
   isDebit,
   month,
   year,
@@ -288,6 +252,9 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
   onBreakdownValidityChange,
 }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const format = useFormatNumberAsCurrency();
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [breakdownValid, setBreakdownValid] = useState(true);
   const items =
@@ -316,45 +283,171 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
   const handleInputChange = useCallback(
     (values: NumberFormatValues) => {
       const { floatValue } = values;
-      onInputChange(floatValue ?? 0);
+      onInputChange(category.category_id, isDebit, floatValue ?? 0);
     },
-    [onInputChange],
+    [category.category_id, isDebit, onInputChange],
   );
 
+  const handleBreakdownChange = useCallback(
+    (next: BudgetBreakdownItem[], amount: number) => {
+      onBreakdownChange(category.category_id, isDebit, next, amount);
+    },
+    [category.category_id, isDebit, onBreakdownChange],
+  );
+  const handleBreakdownValidityChange = useCallback(
+    (valid: boolean) => {
+      setBreakdownValid(valid);
+      onBreakdownValidityChange(
+        `${category.category_id}:${isDebit ? 'expense' : 'income'}`,
+        valid,
+      );
+    },
+    [category.category_id, isDebit, onBreakdownValidityChange],
+  );
+
+  const actual = isDebit
+    ? category.current_amount_debit
+    : category.current_amount_credit;
+  const percentage = total > 0 ? Math.max(0, (actual / total) * 100) : 0;
+  const progressColor = isDebit
+    ? percentage >= 100
+      ? '#f66c78'
+      : percentage >= 80
+        ? '#f6bd42'
+        : '#34d77b'
+    : '#34d77b';
   return (
-    <Card variant="elevation" sx={{ width: '100%', pt: 1, pb: 1 }}>
-      <Grid container spacing={2} p={2} size={12}>
-        <Grid
-          size={{
-            xs: 12,
-            md: 4,
+    <Card
+      elevation={0}
+      sx={{
+        width: '100%',
+        border: '1px solid',
+        borderColor: breakdownOpen
+          ? '#20b9dd'
+          : alpha(theme.palette.text.primary, 0.08),
+        borderRadius: 2,
+        background:
+          theme.palette.mode === 'dark'
+            ? 'linear-gradient(110deg, #14202d, #111b27)'
+            : theme.palette.background.paper,
+        transition: 'border-color 180ms',
+        overflow: 'hidden',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'repeat(2, minmax(0, 1fr))',
+            sm: 'minmax(0, 1fr) 96px 128px 28px',
+            lg: 'minmax(0, 1fr) 88px 112px 24px',
+            xl: 'minmax(0, 1fr) 100px 144px 28px',
+          },
+          position: 'relative',
+          gap: { xs: 1.5, sm: 2 },
+          alignItems: 'center',
+          px: { xs: 1.5, sm: 2 },
+          py: 2,
+        }}
+      >
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={1.5}
+          sx={{
+            minWidth: 0,
+            gridColumn: { xs: '1 / 3', sm: 1 },
+            pr: { xs: 4, sm: 0 },
           }}
         >
-          <Tooltip title={renderCategoryTooltip}>
-            <ListItemText
-              primary={
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <CategoryIconBadge
-                    iconKey={category.icon_key}
-                    colorGradient={category.color_gradient}
-                  />
-                  <Typography component="span">{category.name}</Typography>
-                </Stack>
-              }
-              sx={{ cursor: 'pointer' }}
-              onClick={handleCategoryClick}
+          <Box
+            sx={{
+              width: 44,
+              height: 44,
+              display: 'grid',
+              placeItems: 'center',
+              flexShrink: 0,
+              bgcolor: alpha(progressColor, 0.1),
+              borderRadius: 1.5,
+              '& > div': {
+                bgcolor: 'transparent',
+                width: 38,
+                height: 38,
+                '& svg': { fontSize: 24 },
+              },
+            }}
+          >
+            <CategoryIconBadge
+              iconKey={category.icon_key}
+              colorGradient={category.color_gradient}
             />
-          </Tooltip>
-        </Grid>
-        <Grid
-          size={{
-            xs: 12,
-            md: 4,
+          </Box>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Tooltip title={renderCategoryTooltip}>
+              <Button
+                onClick={handleCategoryClick}
+                color="inherit"
+                sx={{
+                  p: 0,
+                  minWidth: 0,
+                  textTransform: 'none',
+                  justifyContent: 'flex-start',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  textAlign: 'left',
+                  lineHeight: 1.4,
+                }}
+              >
+                {category.name}
+              </Button>
+            </Tooltip>
+            <Typography
+              sx={{
+                fontSize: 12,
+                mt: 0.5,
+                color: breakdownValid ? 'text.secondary' : 'error.main',
+              }}
+            >
+              {items.length
+                ? t('budgetBreakdown.items', { count: items.length })
+                : t('budgetBreakdown.singleAmount')}
+            </Typography>
+          </Box>
+          <IconButton
+            size="small"
+            aria-label={`${category.name}: ${t('budgetBreakdown.title')}`}
+            aria-expanded={breakdownOpen}
+            disabled={!isOpen && !items.length}
+            onClick={() => setBreakdownOpen((value) => !value)}
+            sx={{ color: 'text.secondary', mr: -0.5 }}
+          >
+            <ExpandMore
+              sx={{
+                fontSize: 20,
+                transform: breakdownOpen ? 'rotate(180deg)' : 'none',
+                transition: 'transform 180ms',
+              }}
+            />
+          </IconButton>
+        </Stack>
+        <Box
+          sx={{
+            gridRow: { xs: 2, sm: 1 },
+            gridColumn: { xs: 1, sm: 2 },
+            borderLeft: { sm: '1px solid' },
+            borderColor: 'divider',
+            pl: { xs: 0, sm: 2 },
           }}
         >
+          <Typography sx={{ color: 'text.secondary', fontSize: 11, mb: 0.5 }}>
+            {t('budgetDetails.estimated')}
+          </Typography>
           <NumericFormat
-            required
-            disabled={!isOpen}
+            customInput={InputBase}
+            inputProps={{
+              'aria-label': `${category.name}: ${t('budgetDetails.estimated')}`,
+            }}
+            readOnly={!isOpen || items.length > 0 || breakdownOpen}
             onValueChange={
               items.length || breakdownOpen || !isOpen
                 ? undefined
@@ -373,122 +466,135 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
               }
             }}
             allowNegative={false}
-            InputProps={{
-              readOnly: items.length > 0 || breakdownOpen,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <CurrencyIcon />
-                </InputAdornment>
-              ),
-            }}
-            margin="none"
-            customInput={TextField}
-            label={t('budgetDetails.estimated')}
-            fullWidth
-            variant="outlined"
             decimalScale={2}
             fixedDecimalScale
             thousandSeparator
-            value={
-              isDebit
-                ? category.planned_amount_debit
-                : category.planned_amount_credit
-            }
-            onFocus={(event) => {
-              event.target.select();
+            prefix={format.invoke(0).replace(/[\d.,\s]/g, '')}
+            value={total}
+            onFocus={(event) => event.target.select()}
+            sx={{
+              width: '100%',
+              fontSize: 14,
+              fontWeight: 650,
+              fontVariantNumeric: 'tabular-nums',
+              '& input': { p: 0 },
+              borderRadius: 0.5,
+              '&:focus-within': {
+                outline: isOpen && !items.length ? '1px solid' : 'none',
+                outlineColor: 'primary.main',
+              },
             }}
           />
-          <Button
-            size="small"
-            aria-expanded={breakdownOpen}
-            disabled={!isOpen && !items.length}
-            onClick={() => setBreakdownOpen((current) => !current)}
-            endIcon={
-              <ExpandMore
+        </Box>
+        <Box sx={{ gridRow: { xs: 2, sm: 1 }, gridColumn: { xs: 2, sm: 3 } }}>
+          <Typography sx={{ color: 'text.secondary', fontSize: 11, mb: 0.5 }}>
+            {t('budgetDetails.current')}
+          </Typography>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: 600,
+                fontVariantNumeric: 'tabular-nums',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {format.invoke(actual)}
+            </Typography>
+            <Box sx={{ flex: 1, minWidth: 32 }}>
+              <LinearProgress
+                variant="determinate"
+                value={Math.min(100, percentage)}
+                aria-label={`${category.name}: ${t('budgetDetails.current')}`}
                 sx={{
-                  transform: breakdownOpen ? 'rotate(180deg)' : 'none',
-                  transition: 'transform 180ms',
+                  height: 5,
+                  borderRadius: 5,
+                  bgcolor: alpha(theme.palette.text.primary, 0.17),
+                  '& .MuiLinearProgress-bar': {
+                    bgcolor: progressColor,
+                    borderRadius: 5,
+                  },
                 }}
               />
-            }
-            sx={{
-              mt: 0.5,
-              px: 0,
-              textTransform: 'none',
-              color: breakdownValid ? 'text.secondary' : 'error.main',
-              fontSize: 12,
-            }}
-          >
-            {items.length
-              ? t('budgetBreakdown.items', { count: items.length })
-              : t('budgetBreakdown.add')}
-          </Button>
-        </Grid>
-        <Grid
-          size={{
-            xs: 12,
-            md: 4,
+              <Typography
+                sx={{
+                  fontSize: 10,
+                  textAlign: 'right',
+                  mt: 0.5,
+                  color:
+                    percentage >= 80 && isDebit
+                      ? progressColor
+                      : 'text.secondary',
+                }}
+              >
+                {Math.round(percentage)}%
+              </Typography>
+            </Box>
+          </Stack>
+        </Box>
+        <IconButton
+          size="small"
+          aria-label={`${category.name}: ${t('budgetBreakdown.options')}`}
+          onClick={(event) => setMenuAnchor(event.currentTarget)}
+          sx={{
+            position: { xs: 'absolute', sm: 'static' },
+            top: 16,
+            right: 12,
+            gridRow: 1,
+            gridColumn: { xs: 2, sm: 4 },
+            alignSelf: 'start',
+            color: 'text.secondary',
+            mt: -0.5,
           }}
         >
-          <NumericFormat
-            required
-            disabled
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <CurrencyIcon />
-                </InputAdornment>
-              ),
-            }}
-            margin="none"
-            customInput={TextField}
-            label={t('budgetDetails.current')}
-            fullWidth
-            variant="outlined"
-            decimalScale={2}
-            fixedDecimalScale
-            thousandSeparator
-            value={
-              isDebit
-                ? category.current_amount_debit
-                : category.current_amount_credit
-            }
-          />
-        </Grid>
-        <Grid size={12} sx={{ display: breakdownOpen ? undefined : 'none' }}>
-          <BudgetBreakdownEditor
-            inline
-            open={breakdownOpen}
-            onOpen={() => setBreakdownOpen(true)}
-            onClose={() => setBreakdownOpen(false)}
-            title={`${category.name} · ${t(isDebit ? 'common.debit' : 'common.credit')}`}
-            items={items}
-            total={total}
-            readOnly={!isOpen}
-            onChange={onBreakdownChange}
-            onValidityChange={(valid) => {
-              setBreakdownValid(valid);
-              onBreakdownValidityChange(valid);
-            }}
-            onSave={async (next, amount) => onBreakdownChange(next, amount)}
-          />
-        </Grid>
-      </Grid>
-      <CardActions disableSpacing>
-        <Stack spacing={2} sx={{ flexGrow: 1 }}>
-          {isDebit ? (
-            <DebitBorderLinearProgress
-              variant="determinate"
-              value={getCurrentCategoryValuePercentage(category, isDebit)}
-            />
-          ) : (
-            <CreditBorderLinearProgress
-              variant="determinate"
-              value={getCurrentCategoryValuePercentage(category, isDebit)}
-            />
-          )}
-        </Stack>
-      </CardActions>
+          <MoreHoriz sx={{ fontSize: 20 }} />
+        </IconButton>
+      </Box>
+      <Menu
+        anchorEl={menuAnchor}
+        open={!!menuAnchor}
+        onClose={() => setMenuAnchor(null)}
+      >
+        <MenuItem
+          onClick={() => {
+            setMenuAnchor(null);
+            handleCategoryClick();
+          }}
+        >
+          <ListItemIcon>
+            <ReceiptLongOutlined fontSize="small" />
+          </ListItemIcon>
+          {t('budgetDetails.transactionsList')}
+        </MenuItem>
+        <MenuItem
+          disabled={!isOpen && !items.length}
+          onClick={() => {
+            setMenuAnchor(null);
+            setBreakdownOpen(true);
+          }}
+        >
+          <ListItemIcon>
+            <FormatListBulleted fontSize="small" />
+          </ListItemIcon>
+          {t(items.length ? 'budgetBreakdown.title' : 'budgetBreakdown.add')}
+        </MenuItem>
+      </Menu>
+      <Box sx={{ px: { xs: 1.5, sm: 2 }, pb: breakdownOpen ? 1.5 : 0 }}>
+        <BudgetBreakdownEditor
+          key={breakdownRevision}
+          inline
+          open={breakdownOpen}
+          onOpen={() => setBreakdownOpen(true)}
+          onClose={() => setBreakdownOpen(false)}
+          title={`${category.name} · ${t(isDebit ? 'common.debit' : 'common.credit')}`}
+          items={items}
+          total={total}
+          readOnly={!isOpen}
+          onChange={handleBreakdownChange}
+          onValidityChange={handleBreakdownValidityChange}
+          onSave={async (next, amount) => handleBreakdownChange(next, amount)}
+        />
+      </Box>
     </Card>
   );
 });
