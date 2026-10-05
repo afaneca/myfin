@@ -869,4 +869,28 @@
     "step2PasswordConfirmationLabel": "Mot de passe (confirmation)",
     "step3Description": "Tout est prêt ! Vous pouvez maintenant accéder à votre compte pour la première fois. Prêt ?"
   }
+,
+  "budgetBreakdown": {
+    "items_one": "{{count}} élément",
+    "items_other": "{{count}} éléments",
+    "title": "Décomposition",
+    "add": "Ajouter une décomposition",
+    "action": "Décomposition · {{count}} éléments",
+    "help": "Montants prévus uniquement. Les dépenses réelles sont affichées par catégorie.",
+    "label": "Nom de l’élément",
+    "amount": "Montant",
+    "items": "{{count}} éléments",
+    "options": "Options de l’élément",
+    "up": "Monter",
+    "down": "Descendre",
+    "remove": "Supprimer l’élément",
+    "addItem": "Ajouter un élément",
+    "invalid": "Utilisez des noms non vides et des montants positifs ou nuls avec deux décimales maximum.",
+    "total": "Total calculé",
+    "close": "Fermer",
+    "single": "Utiliser un montant unique",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saveFailed": "Impossible d’enregistrer. Vos modifications sont conservées ; réessayez."
+  }
 }

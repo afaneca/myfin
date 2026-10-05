@@ -47,7 +47,10 @@ import {
   useUpdateBudget,
   useUpdateBudgetStatus,
 } from '../../../services/budget/budgetHooks.ts';
-import { BudgetCategory } from '../../../services/budget/budgetServices.ts';
+import {
+  BudgetCategory,
+  type BudgetBreakdownItem,
+} from '../../../services/budget/budgetServices.ts';
 import { TransactionType } from '../../../services/trx/trxServices.ts';
 import { getMonthsFullName } from '../../../utils/dateUtils.ts';
 import { useFormatNumberAsCurrency } from '../../../utils/textHooks.ts';
@@ -86,6 +89,14 @@ const BudgetDetails = () => {
   const formatNumberAsCurrency = useFormatNumberAsCurrency();
   const [isOpen, setOpen] = useState(false);
   const [isNew, setNew] = useState(true);
+  const [invalidBreakdowns, setInvalidBreakdowns] = useState<
+    Record<string, boolean>
+  >({});
+  const setBreakdownValidity = (key: string, valid: boolean) => {
+    setInvalidBreakdowns((current) =>
+      current[key] === !valid ? current : { ...current, [key]: !valid },
+    );
+  };
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const debouncedCategories = useMemo(() => debounce(setCategories, 300), []);
   const [initialBalance, setInitialBalance] = useState(0);
@@ -225,6 +236,7 @@ const BudgetDetails = () => {
   // Fetch
   useEffect(() => {
     setNew(!id);
+    setInvalidBreakdowns({});
     if (!id) {
       createBudgetStep0Request.refetch();
     } else {
@@ -366,6 +378,7 @@ const BudgetDetails = () => {
   // Get budget to clone request success
   useEffect(() => {
     if (!getBudgetToCloneRequest.data) return;
+    setInvalidBreakdowns({});
     setDescriptionValue(getBudgetToCloneRequest.data.observations);
     setCategories(getBudgetToCloneRequest.data.categories);
   }, [getBudgetToCloneRequest.data]);
@@ -387,6 +400,8 @@ const BudgetDetails = () => {
         category_id: category.category_id + '',
         planned_value_debit: plannedDebit + '',
         planned_value_credit: plannedCredit + '',
+        expense_items: category.expense_items,
+        income_items: category.income_items,
       };
     });
     createBudgetStep1Request.mutate({
@@ -405,6 +420,8 @@ const BudgetDetails = () => {
         category_id: category.category_id + '',
         planned_value_debit: plannedDebit + '',
         planned_value_credit: plannedCredit + '',
+        expense_items: category.expense_items,
+        income_items: category.income_items,
       };
     });
     updateBudgetRequest.mutate({
@@ -438,13 +455,34 @@ const BudgetDetails = () => {
     return null;
   }
 
+  function updateBreakdown(
+    categoryId: bigint,
+    isDebit: boolean,
+    items: BudgetBreakdownItem[],
+    total: number,
+  ) {
+    debouncedCategories.flush();
+    setCategories((current) =>
+      current.map((category) =>
+        category.category_id === categoryId
+          ? {
+              ...category,
+              ...(isDebit
+                ? { expense_items: items, planned_amount_debit: total }
+                : { income_items: items, planned_amount_credit: total }),
+            }
+          : category,
+      ),
+    );
+  }
+
   function onCategoryPlannedAmountChange(
     category: BudgetCategory,
     isDebit: boolean,
     value: number,
   ) {
-    debouncedCategories(
-      categories.map((c) =>
+    debouncedCategories((current: BudgetCategory[]) =>
+      current.map((c) =>
         c.category_id == category.category_id
           ? {
               ...c,
@@ -589,14 +627,25 @@ const BudgetDetails = () => {
           </Stack>
           <List>
             {debitCategories.map((category) => (
-              <React.Fragment key={category.category_id}>
+              <React.Fragment
+                key={`${id ?? 'new'}:${budgetToClone}:${category.category_id}`}
+              >
                 <ListItem alignItems="flex-start" sx={{ pl: 0, pr: 0 }}>
                   <BudgetCategoryRow
                     category={category}
                     isOpen={isOpen}
                     isDebit={true}
+                    onBreakdownValidityChange={(valid) =>
+                      setBreakdownValidity(
+                        `${category.category_id}:expense`,
+                        valid,
+                      )
+                    }
                     month={monthYear.month}
                     year={monthYear.year}
+                    onBreakdownChange={(items, total) =>
+                      updateBreakdown(category.category_id, true, items, total)
+                    }
                     onCategoryClick={handleCategoryClick}
                     onInputChange={(amount) =>
                       onCategoryPlannedAmountChange(category, true, amount)
@@ -617,14 +666,25 @@ const BudgetDetails = () => {
           <Typography variant="h4">{t('common.credit')}</Typography>
           <List>
             {creditCategories.map((category) => (
-              <React.Fragment key={category.category_id}>
+              <React.Fragment
+                key={`${id ?? 'new'}:${budgetToClone}:${category.category_id}`}
+              >
                 <ListItem alignItems="flex-start">
                   <BudgetCategoryRow
                     category={category}
                     isOpen={isOpen}
                     isDebit={false}
+                    onBreakdownValidityChange={(valid) =>
+                      setBreakdownValidity(
+                        `${category.category_id}:income`,
+                        valid,
+                      )
+                    }
                     month={monthYear.month}
                     year={monthYear.year}
+                    onBreakdownChange={(items, total) =>
+                      updateBreakdown(category.category_id, false, items, total)
+                    }
                     onCategoryClick={handleCategoryClick}
                     onInputChange={(amount) =>
                       onCategoryPlannedAmountChange(category, false, amount)
@@ -695,6 +755,9 @@ const BudgetDetails = () => {
                 size="large"
                 startIcon={<CloudUpload />}
                 sx={{ margin: 1 }}
+                disabled={
+                  !isOpen || Object.values(invalidBreakdowns).some(Boolean)
+                }
                 onClick={() => (isNew ? createBudget() : updateBudget())}
               >
                 {t(

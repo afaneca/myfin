@@ -910,4 +910,28 @@
     "step2PasswordConfirmationLabel": "Password (Confirmation)",
     "step3Description": "All done! Now you're ready to access your account for the very first time. Are you ready?"
   }
+,
+  "budgetBreakdown": {
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items",
+    "title": "Breakdown",
+    "add": "Add breakdown",
+    "action": "Breakdown · {{count}} items",
+    "help": "Planned amounts only. Actual spending is shown for the category.",
+    "label": "Item name",
+    "amount": "Amount",
+    "items": "{{count}} items",
+    "options": "Item options",
+    "up": "Move up",
+    "down": "Move down",
+    "remove": "Remove item",
+    "addItem": "Add item",
+    "invalid": "Use nonblank names and nonnegative amounts with at most two decimal places.",
+    "total": "Calculated total",
+    "close": "Close",
+    "single": "Use a single amount",
+    "save": "Save",
+    "saving": "Saving…",
+    "saveFailed": "Could not save. Your changes are still here; try again."
+  }
 }

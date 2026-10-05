@@ -1,5 +1,9 @@
+import { ExpandMore } from '@mui/icons-material';
+import BudgetBreakdownEditor from '../BudgetBreakdownEditor.tsx';
+import type { BudgetBreakdownItem } from '../../../services/budget/budgetServices.ts';
 import {
   Card,
+  Button,
   CardActions,
   Chip,
   Divider,
@@ -15,7 +19,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import { styled } from '@mui/material/styles';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import CurrencyIcon from '../../../components/CurrencyIcon.tsx';
@@ -38,6 +42,8 @@ type Props = {
   category: BudgetCategory;
   onCategoryClick: (category: BudgetCategory, isDebit: boolean) => void;
   onInputChange: (input: number) => void;
+  onBreakdownChange: (items: BudgetBreakdownItem[], total: number) => void;
+  onBreakdownValidityChange: (valid: boolean) => void;
 };
 
 interface TooltipContentProps {
@@ -278,8 +284,17 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
   category,
   onCategoryClick,
   onInputChange,
+  onBreakdownChange,
+  onBreakdownValidityChange,
 }: Props) {
   const { t } = useTranslation();
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [breakdownValid, setBreakdownValid] = useState(true);
+  const items =
+    (isDebit ? category.expense_items : category.income_items) ?? [];
+  const total = isDebit
+    ? category.planned_amount_debit
+    : category.planned_amount_credit;
 
   const renderCategoryTooltip = useMemo(
     () => (
@@ -340,8 +355,26 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
           <NumericFormat
             required
             disabled={!isOpen}
-            onValueChange={handleInputChange}
+            onValueChange={
+              items.length || breakdownOpen || !isOpen
+                ? undefined
+                : handleInputChange
+            }
+            onClick={() => {
+              if (items.length) setBreakdownOpen(true);
+            }}
+            onKeyDown={(event) => {
+              if (
+                items.length &&
+                (event.key === 'Enter' || event.key === ' ')
+              ) {
+                event.preventDefault();
+                setBreakdownOpen(true);
+              }
+            }}
+            allowNegative={false}
             InputProps={{
+              readOnly: items.length > 0 || breakdownOpen,
               startAdornment: (
                 <InputAdornment position="start">
                   <CurrencyIcon />
@@ -365,6 +398,31 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
               event.target.select();
             }}
           />
+          <Button
+            size="small"
+            aria-expanded={breakdownOpen}
+            disabled={!isOpen && !items.length}
+            onClick={() => setBreakdownOpen((current) => !current)}
+            endIcon={
+              <ExpandMore
+                sx={{
+                  transform: breakdownOpen ? 'rotate(180deg)' : 'none',
+                  transition: 'transform 180ms',
+                }}
+              />
+            }
+            sx={{
+              mt: 0.5,
+              px: 0,
+              textTransform: 'none',
+              color: breakdownValid ? 'text.secondary' : 'error.main',
+              fontSize: 12,
+            }}
+          >
+            {items.length
+              ? t('budgetBreakdown.items', { count: items.length })
+              : t('budgetBreakdown.add')}
+          </Button>
         </Grid>
         <Grid
           size={{
@@ -395,6 +453,24 @@ const BudgetCategoryRow = memo(function BudgetCategoryRow({
                 ? category.current_amount_debit
                 : category.current_amount_credit
             }
+          />
+        </Grid>
+        <Grid size={12} sx={{ display: breakdownOpen ? undefined : 'none' }}>
+          <BudgetBreakdownEditor
+            inline
+            open={breakdownOpen}
+            onOpen={() => setBreakdownOpen(true)}
+            onClose={() => setBreakdownOpen(false)}
+            title={`${category.name} · ${t(isDebit ? 'common.debit' : 'common.credit')}`}
+            items={items}
+            total={total}
+            readOnly={!isOpen}
+            onChange={onBreakdownChange}
+            onValidityChange={(valid) => {
+              setBreakdownValid(valid);
+              onBreakdownValidityChange(valid);
+            }}
+            onSave={async (next, amount) => onBreakdownChange(next, amount)}
           />
         </Grid>
       </Grid>
