@@ -20,98 +20,122 @@ const emojiLocales = {
   pt: 'pt',
 } as const;
 
-const BudgetDescription = forwardRef(({}, ref: Ref<HTMLTextAreaElement>) => {
-  const theme = useTheme();
-  const { t } = useTranslation();
-  const matchesSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
+type Props = { compact?: boolean; readOnly?: boolean };
 
-  const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
-  const currentLanguage = i18next.resolvedLanguage?.split('-')[0];
-  const emojiLocale =
-    emojiLocales[currentLanguage as keyof typeof emojiLocales] ?? 'en';
+const BudgetDescription = forwardRef(
+  (
+    { compact = false, readOnly = false }: Props,
+    ref: Ref<HTMLTextAreaElement>,
+  ) => {
+    const theme = useTheme();
+    const { t } = useTranslation();
+    const matchesSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const handleEmojiAdded = (emojiText: string) => {
-    // add the emoji text at the current caret position
-    const input = (ref as MutableRefObject<HTMLTextAreaElement>)?.current;
-    if (input) {
-      input.focus();
-      const start = input.selectionStart || 0;
-      const end = input.selectionEnd || 0;
+    const [isEmojiPickerOpen, setEmojiPickerOpen] = useState(false);
+    const currentLanguage = i18next.resolvedLanguage?.split('-')[0];
+    const emojiLocale =
+      emojiLocales[currentLanguage as keyof typeof emojiLocales] ?? 'en';
 
-      // Insert the emoji text at the caret position
-      input.value =
-        input.value.substring(0, start) +
-        emojiText +
-        input.value.substring(end);
+    const handleEmojiAdded = (emojiText: string) => {
+      // add the emoji text at the current caret position
+      const input = (ref as MutableRefObject<HTMLTextAreaElement>)?.current;
+      if (input) {
+        input.focus();
+        const start = input.selectionStart || 0;
+        const end = input.selectionEnd || 0;
 
-      // Set the caret position right after the inserted emoji
-      input.selectionStart = input.selectionEnd = start + emojiText.length;
-      setEmojiPickerOpen(false);
-    }
-  };
+        // Insert the emoji text at the caret position
+        input.value =
+          input.value.substring(0, start) +
+          emojiText +
+          input.value.substring(end);
 
-  return (
-    <Box sx={{ position: 'relative' }}>
-      <TextField
-        inputRef={ref}
-        required
-        fullWidth
-        margin="none"
-        id="description"
-        name="description"
-        label={t('common.description')}
-        placeholder={t('common.description')}
-        slotProps={{
-          input: {
-            startAdornment: (
-              <InputAdornment position="start">
-                <Description />
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                <Tooltip title={'Emojis'}>
-                  <IconButton
-                    aria-label={'Emojis'}
-                    onClick={() => setEmojiPickerOpen(!isEmojiPickerOpen)}
-                    edge="end"
-                  >
-                    {matchesSmScreen ? null : isEmojiPickerOpen ? (
-                      <AddReaction color="primary" />
-                    ) : (
-                      <AddReactionOutlined color="primary" />
-                    )}
-                  </IconButton>
-                </Tooltip>
-              </InputAdornment>
-            ),
+        // Set the caret position right after the inserted emoji
+        input.selectionStart = input.selectionEnd = start + emojiText.length;
+        setEmojiPickerOpen(false);
+      }
+    };
+
+    return (
+      <Box sx={{ position: 'relative' }}>
+        <TextField
+          inputRef={ref}
+          required
+          fullWidth
+          margin="none"
+          id="description"
+          name="description"
+          label={compact ? undefined : t('common.description')}
+          multiline={compact}
+          minRows={compact ? 3 : undefined}
+          maxRows={compact ? 5 : undefined}
+          placeholder={t('common.description')}
+          sx={
+            compact
+              ? {
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 1.5,
+                    fontSize: 13,
+                    alignItems: 'flex-start',
+                  },
+                }
+              : undefined
           }
-        }}
-      />
-      {isEmojiPickerOpen && (
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 10,
-            right: 0,
-            transform: 'translateY(100%)',
-            zIndex: 2,
-            maxHeight: '300px',
+          slotProps={{
+            htmlInput: { 'aria-label': t('common.description') },
+            input: {
+              readOnly,
+              startAdornment: !compact && (
+                <InputAdornment position="start">
+                  <Description />
+                </InputAdornment>
+              ),
+              endAdornment: !readOnly && (
+                <InputAdornment position="end">
+                  <Tooltip title={'Emojis'}>
+                    <IconButton
+                      aria-label={'Emojis'}
+                      onClick={() => setEmojiPickerOpen(!isEmojiPickerOpen)}
+                      edge="end"
+                    >
+                      {matchesSmScreen &&
+                      !compact ? null : isEmojiPickerOpen ? (
+                        <AddReaction color="primary" />
+                      ) : (
+                        <AddReactionOutlined color="primary" />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            },
           }}
-        >
-          <Picker
-            data={data}
-            onEmojiSelect={(emoji: { native: string }) =>
-              handleEmojiAdded(emoji.native)
-            }
-            theme={theme.palette.mode}
-            locale={emojiLocale}
-          />
-        </Box>
-      )}
-    </Box>
-  );
-});
+        />
+        {isEmojiPickerOpen && !readOnly && (
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 10,
+              right: 0,
+              transform: 'translateY(100%)',
+              zIndex: 20,
+              maxHeight: '300px',
+            }}
+          >
+            <Picker
+              data={data}
+              onEmojiSelect={(emoji: { native: string }) =>
+                handleEmojiAdded(emoji.native)
+              }
+              theme={theme.palette.mode}
+              locale={emojiLocale}
+            />
+          </Box>
+        )}
+      </Box>
+    );
+  },
+);
 BudgetDescription.displayName = 'BudgetDescription';
 
 export default BudgetDescription;

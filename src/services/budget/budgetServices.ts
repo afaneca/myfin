@@ -1,23 +1,34 @@
 import { axios } from '../../data/axios.ts';
 import { Category } from '../category/categoryServices.ts';
 
-export type BudgetCategory = Category & {
-  avg_12_months_credit: number;
-  avg_12_months_debit: number;
-  avg_lifetime_credit: number;
-  avg_lifetime_debit: number;
-  avg_previous_month_credit: number;
-  avg_previous_month_debit: number;
-  avg_same_month_previous_year_credit: number;
-  avg_same_month_previous_year_debit: number;
-  budgets_budget_id: number;
-  planned_amount_credit: number;
-  planned_amount_debit: number;
-  current_amount_credit: number;
-  current_amount_debit: number;
-  initial_planned_amount_debit?: number;
-  initial_planned_amount_credit?: number;
+export type BudgetBreakdownItem = {
+  label: string;
+  amount: number;
+  sort_order?: number;
 };
+export type BudgetBreakdowns = {
+  expense_items?: BudgetBreakdownItem[];
+  income_items?: BudgetBreakdownItem[];
+};
+
+export type BudgetCategory = Category &
+  BudgetBreakdowns & {
+    avg_12_months_credit: number;
+    avg_12_months_debit: number;
+    avg_lifetime_credit: number;
+    avg_lifetime_debit: number;
+    avg_previous_month_credit: number;
+    avg_previous_month_debit: number;
+    avg_same_month_previous_year_credit: number;
+    avg_same_month_previous_year_debit: number;
+    budgets_budget_id: number;
+    planned_amount_credit: number;
+    planned_amount_debit: number;
+    current_amount_credit: number;
+    current_amount_debit: number;
+    initial_planned_amount_debit?: number;
+    initial_planned_amount_credit?: number;
+  };
 
 export type BudgetCategoryTooltipData = Pick<
   BudgetCategory,
@@ -97,7 +108,7 @@ export type BudgetMatrixTooltip = Pick<
   | 'avg_same_month_previous_year_debit'
 >;
 
-export type BudgetMatrixValue = {
+export type BudgetMatrixValue = BudgetBreakdowns & {
   category_id: bigint;
   planned_amount_credit: number;
   planned_amount_debit: number;
@@ -122,7 +133,7 @@ export type BudgetMatrixResponse = {
   budgets: BudgetMatrixItem[];
 };
 
-export type UpdateBudgetMatrixCellRequest = {
+export type UpdateBudgetMatrixCellRequest = BudgetBreakdowns & {
   budget_id: bigint;
   category_id: bigint;
   planned_expense?: number;
@@ -169,7 +180,7 @@ const updateBudgetStatus = (budgetId: bigint, isOpen: boolean) => {
   });
 };
 
-export type UpdateBudgetCatValues = {
+export type UpdateBudgetCatValues = BudgetBreakdowns & {
   category_id: string;
   planned_value_debit: string;
   planned_value_credit: string;
@@ -243,6 +254,8 @@ const updateBudgetMatrixCell = (request: UpdateBudgetMatrixCellRequest) => {
     category_id: request.category_id,
     planned_expense: request.planned_expense,
     planned_income: request.planned_income,
+    expense_items: request.expense_items,
+    income_items: request.income_items,
   });
 };
 
