@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS build
+FROM node:22.23.4-alpine AS build
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ FROM nginx:alpine
 
 WORKDIR /usr/share/nginx/html
 
-ARG VERSION="10.7.0"
+ARG VERSION="10.7.1"
 
 # Add metadata
 LABEL maintainer="José Valdiviesso <me@zmiguel.me>"

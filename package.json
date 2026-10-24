@@ -1,7 +1,7 @@
 {
   "name": "myfin-web",
   "private": true,
-  "version": "10.7.0",
+  "version": "10.7.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -56,7 +56,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "baseline-browser-mapping": "^2.9.18",
     "typescript": "^5.9.2",
-    "vite": "8.0.16"
+    "vite": "8.3.5"
   },
   "overrides": {
     "@emoji-mart/react": {
