@@ -73,6 +73,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          pull: true
           no-cache: true
           platforms: linux/amd64,linux/arm64
 
